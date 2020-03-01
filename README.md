@@ -1,7 +1,7 @@
 # NetPalm
 
 Why NetPalm?
-Netpalm is a ReST API into your dusty old network devices, NetPalm makes it easy to push and pull network state through.
+Netpalm is a ReST API into your dusty old network devices, NetPalm makes it easy to push and pull network state from your web apps.
 NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm) and [netmiko](https://github.com/ktbyers/netmiko) library's for network device communication, these powerful libs supprt a vast number of vendors and OS
 
 ## Netpalm Features
