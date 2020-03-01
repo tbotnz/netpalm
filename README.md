@@ -18,17 +18,17 @@ NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm) 
 #### Concepts
 Netpalm acts as a ReST broken for NAPALM and Netmiko.
 You make an API call to netpalm and it will establish a queue to your device and start sending configuration
-![np](/images/netpalm_concept.png)Format: ![netpalm]
+(/images/netpalm_concept.png)
 
 #### Get config from a network device
 Post some config to the getconfig route
 
 ### Postman example
 getconfig method
-![np](/images/netpalm_eg_1.png)Format: ![netpalm]
+[np](/images/netpalm_eg_1.png)
 
 check response
-![np](/images/netpalm_eg_2.png)Format: ![netpalm]
+[np](/images/netpalm_eg_2.png)
 
 ##### netmiko
 ```
