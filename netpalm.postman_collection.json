@@ -182,7 +182,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"netmiko\",\r\n    \"driver\":\"cisco_ios\",\r\n    \"command\": [\"show run | i hostname\", \"show ip int brief\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"netmiko\",\r\n    \"driver\":\"cisco_ios\",\r\n    \"config\": [\"hostname cat\", \"hostname frog\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
 				},
 				"url": {
 					"raw": "127.0.0.1:9000/getconfig",
@@ -221,7 +221,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"netmiko\",\r\n    \"driver\":\"cisco_ios\",\r\n    \"command\": [\"show run | i hostname\", \"show ip int brief\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"netmiko\",\r\n    \"driver\":\"cisco_ios\",\r\n    \"config\": [\"hostname yeti\", \"hostname bufoon\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
 				},
 				"url": {
 					"raw": "127.0.0.1:9000/getconfig",
@@ -260,7 +260,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"napalm\",\r\n    \"driver\":\"ios\",\r\n    \"command\": [\"hostname frog\", \"no ip domain lookup\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"napalm\",\r\n    \"driver\":\"ios\",\r\n    \"config\": [\"hostname frog\", \"no ip domain lookup\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
 				},
 				"url": {
 					"raw": "127.0.0.1:9000/getconfig",
@@ -299,7 +299,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"napalm\",\r\n    \"driver\":\"ios\",\r\n    \"command\": \"hostnam cat\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"napalm\",\r\n    \"driver\":\"ios\",\r\n    \"config\": \"hostnam cat\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
 				},
 				"url": {
 					"raw": "127.0.0.1:9000/setconfig",
