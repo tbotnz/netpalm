@@ -1,0 +1,12 @@
+version: '2'
+services:
+    netpalm:
+        build: .
+        ports:
+            - "9000:9000"
+        volumes:
+            - .:/code
+        depends_on:
+            - redis
+    redis:
+        image: redis

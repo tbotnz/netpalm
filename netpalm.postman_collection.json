@@ -1,0 +1,459 @@
+{
+	"info": {
+		"_postman_id": "007ccc57-7a55-4083-8658-137b644c1d06",
+		"name": "restpalm",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getconfig napalm",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"napalm\",\r\n    \"driver\":\"ios\",\r\n    \"command\": \"show run | i hostname\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getconfig napalm - multiple",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"napalm\",\r\n    \"driver\":\"ios\",\r\n    \"command\": [\"show run | i hostname\", \"show ip int brief\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getconfig netmiko",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"netmiko\",\r\n    \"driver\":\"cisco_ios\",\r\n    \"command\": \"show run | i hostname\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getconfig netmiko - multiple",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"netmiko\",\r\n    \"driver\":\"cisco_ios\",\r\n    \"command\": [\"show run | i hostname\", \"show ip int brief\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setconfig netmiko",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"netmiko\",\r\n    \"driver\":\"cisco_ios\",\r\n    \"command\": [\"show run | i hostname\", \"show ip int brief\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setconfig netmiko - multiple",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"netmiko\",\r\n    \"driver\":\"cisco_ios\",\r\n    \"command\": [\"show run | i hostname\", \"show ip int brief\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setconfig napalm - multiple",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"napalm\",\r\n    \"driver\":\"ios\",\r\n    \"command\": [\"hostname frog\", \"no ip domain lookup\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setconfig napalm",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"napalm\",\r\n    \"driver\":\"ios\",\r\n    \"command\": \"hostnam cat\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/setconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"setconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "taskqueue- specific device (verbose)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "127.0.0.1:9000/taskqueue/10.0.2.33",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"taskqueue",
+						"10.0.2.33"
+					]
+				},
+				"description": "127.0.0.1:9000/getconfig/task/host/10.0.2.33"
+			},
+			"response": []
+		},
+		{
+			"name": "taskqueue",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "127.0.0.1:9000/taskqueue/",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"taskqueue",
+						""
+					]
+				},
+				"description": "127.0.0.1:9000/getconfig/task/host/10.0.2.33"
+			},
+			"response": []
+		},
+		{
+			"name": "task",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/task/3ad9e9d6-8c14-4f82-a2b9-1546d9083a07",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"task",
+						"3ad9e9d6-8c14-4f82-a2b9-1546d9083a07"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"id": "65809de6-ee3a-40b7-8f30-8ce015e7635f",
+			"key": "device_password",
+			"value": "admin",
+			"type": "string"
+		},
+		{
+			"id": "2f8f7bbc-1231-48c8-a378-694e236f8017",
+			"key": "device_ip_address",
+			"value": "10.0.2.33",
+			"type": "string"
+		},
+		{
+			"id": "9da40105-ef80-4d5d-82cb-b183deab96af",
+			"key": "apikey",
+			"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+			"type": "string"
+		},
+		{
+			"id": "58a564c5-c4b3-4c5a-aa69-51ac7601af2e",
+			"key": "device_username",
+			"value": "admin",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
