@@ -109,7 +109,7 @@ sudo apt-get install docker-compose
 
 clone in netpalm
 ```
-git clone $netpalm
+git clone https://github.com/tbotnz/netpalm.git
 cd netpalm
 ```
 
