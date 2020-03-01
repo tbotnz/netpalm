@@ -126,15 +126,18 @@ sudo docker build -t netpalm .
 sudo docker-compose up -d
 ```
 
-import the postman collection, set the ip addresses to that of your docker host and off you go 
-
+import the postman collection, set the ip addresses to that of your docker host and off you go (default netpalm port is 9000)
+```
+http://$(yourdockerhost):9000
+```
 ### Kubernetes Installation
 stateful set coming soon
 
 ### ToDo
 - add support for more netmiko/napalm methods
 - add support for netmiko/napalm args
--
+- change webserver
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
