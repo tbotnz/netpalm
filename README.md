@@ -15,6 +15,11 @@ NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm) 
 
 ### Using Netpalm
 
+#### Concepts
+Netpalm acts as a ReST broken for NAPALM and Netmiko.
+You make an API call to netpalm and it will establish a queue to your device and start sending configuration
+![GitHub Logo](/images/netpalm_concept.png)Format: ![netpalm]
+
 #### Get config from a network device
 Post some config to the getconfig route
 
@@ -82,7 +87,7 @@ curl --location --request POST '127.0.0.1:9000/setconfig' \
 
 ### Configuring Netpalm
 edit the config.json file too set params as required
-
+```
 {
     "apikey": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
     "listen_port": 9000,
@@ -93,7 +98,7 @@ edit the config.json file too set params as required
     "redis_port":6379,
     "redis_core_q":"process"
 }
-
+```
 
 ### Container Installation
 ensure you first have docker installed
