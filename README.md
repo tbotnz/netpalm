@@ -25,16 +25,17 @@ Post some config to the getconfig route
 
 ### Postman example
 getconfig method
-![np](/images/netpalm_eg_1.png)!
+![np](/images/netpalm_eg_1.png)Format:!
 
 check response
-![np](/images/netpalm_eg_2.png)Format: !
+![np](/images/netpalm_eg_2.png)Format:!
 
+#### Get config from a network device using the librarys arg
 netpalm also supports all arguments for the transport libs, simply pass them in as below
-![np](/images/netpalm_eg_3.png)Format: !
+![np](/images/netpalm_eg_3.png)Format:!
 
 check response
-![np](/images/netpalm_eg_4.png)Format: !
+![np](/images/netpalm_eg_4.png)Format:!
 
 ##### netmiko
 ```
@@ -144,7 +145,8 @@ stateful set coming soon
 - change webserver
 - improve textfsm capabilities
 - introduce kubernetes based stateful set
-- Write how to on adding your own custom FSM templates (all existing ntc-templates are installed during the build process)
+- write how to on adding your own custom txtFSM templates (all existing ntc-templates are installed during the build process)
+- refactor documentation
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
