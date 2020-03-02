@@ -25,7 +25,7 @@ Post some config to the getconfig route
 
 ### Postman example
 getconfig method
-![np](/images/netpalm_eg_1.png)Format: !
+![np](/images/netpalm_eg_1.png)!
 
 check response
 ![np](/images/netpalm_eg_2.png)Format: !
