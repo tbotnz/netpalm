@@ -30,6 +30,12 @@ getconfig method
 check response
 ![np](/images/netpalm_eg_2.png)Format: !
 
+netpalm also supports all arguments for the transport libs, simply pass them in as below
+![np](/images/netpalm_eg_3.png)Format: !
+
+check response
+![np](/images/netpalm_eg_4.png)Format: !
+
 ##### netmiko
 ```
 curl --location --request POST '127.0.0.1:9000/getconfig' \
@@ -134,9 +140,11 @@ http://$(yourdockerhost):9000
 stateful set coming soon
 
 ### ToDo
-- add support for more netmiko/napalm methods
-- add support for netmiko/napalm args
+- add support for more napalm methods
 - change webserver
+- improve textfsm capabilities
+- introduce kubernetes based stateful set
+- Write how to on adding your own custom FSM templates (all existing ntc-templates are installed during the build process)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

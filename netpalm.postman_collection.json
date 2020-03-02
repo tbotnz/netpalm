@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "007ccc57-7a55-4083-8658-137b644c1d06",
-		"name": "restpalm",
+		"_postman_id": "546e5a55-f9ea-403f-95b4-51622691304f",
+		"name": "netpalm",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -27,6 +27,45 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"napalm\",\r\n    \"driver\":\"ios\",\r\n    \"command\": \"show run | i hostname\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getconfig napalm with args",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"napalm\",\r\n    \"driver\":\"ios\",\r\n    \"command\": \"show run | i hostname\",\r\n    \"args\":{\r\n    \t\"call\":\"get_interfaces\"\r\n    },\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}      "
 				},
 				"url": {
 					"raw": "127.0.0.1:9000/getconfig",
@@ -105,6 +144,45 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"netmiko\",\r\n    \"driver\":\"cisco_ios\",\r\n    \"command\": \"show run | i hostname\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getconfig netmiko - with args",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"netmiko\",\r\n    \"driver\":\"cisco_ios\",\r\n    \"command\": \"show ip int brief\",\r\n    \"args\":{\r\n    \t\"use_textfsm\":true\r\n    },\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}      "
 				},
 				"url": {
 					"raw": "127.0.0.1:9000/getconfig",

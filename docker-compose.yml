@@ -2,6 +2,8 @@ version: '2'
 services:
     netpalm:
         build: .
+        environment:
+            - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
         ports:
             - "9000:9000"
         volumes:

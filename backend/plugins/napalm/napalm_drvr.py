@@ -7,14 +7,15 @@ class naplm:
         self.password = kwargs.get('password', False)
         self.driver = kwargs.get('driver', False)
         self.host = kwargs.get('host', False)
-    
+        self.kwarg = kwargs.get('args', False)
+        
     def connect(self):
         try:
             driver = napalm.get_network_driver(self.driver)
             napalmses = driver(hostname=self.host, username=self.username, password=self.password)
             return napalmses
         except Exception as e:
-            return e
+            return str(e)
 
     def sendcommand(self, session=False, command=False):
         try:
@@ -25,7 +26,7 @@ class naplm:
                 result[command] = response[command].split('\n')
             return result
         except Exception as e:
-            return e
+            return str(e)
 
     def config(self, session=False, command=False):
         try:
@@ -39,11 +40,11 @@ class naplm:
             result["changes"] = diff.split('\n')
             return result
         except Exception as e:
-            return e
+            return str(e)
 
     def logout(self, session):
         try:
             response = session.close()
             return response
         except Exception as e:
-            return e
+            return str(e)

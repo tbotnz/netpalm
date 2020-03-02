@@ -12,7 +12,7 @@ def exec_config(**kwargs):
             netmik.logout(sesh)
             return result
         except Exception as e:
-            return e
+            return str(e)
     elif lib == "napalm":
         try:
             napl = naplm(**kwargs)
@@ -21,4 +21,4 @@ def exec_config(**kwargs):
             napl.logout(sesh)
             return result
         except Exception as e:
-            return e
+            return str(e)
