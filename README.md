@@ -21,20 +21,6 @@ All of the code you need is located in this repo. Clone the repo and access it w
 git clone https://github.com/tbotnz/netpalm
 cd netpalm
 ```
-Python Environment Setup
-It is recommended that this code be used with Python 3.6. It is highly recommended to leverage Python Virtual Environments (venv).
-
-Follow these steps to create and activate a venv.
-
-### OS X or Linux
-```
-virtualenv venv --python=python3.6
-source venv/bin/activate
-Install the code requirements
-pip install -r requirements.txt
-```
-
-If you don't have Postman already installed, you can download it from [here](https://getpostman.com/).
 
 #### Concepts
 Netpalm acts as a ReST broker for NAPALM and Netmiko.
