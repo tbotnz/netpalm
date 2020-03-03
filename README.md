@@ -151,5 +151,8 @@ stateful set coming soon
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
+## Netpalm slack channel
+#netpalm on networktocode.slack.com
+
 ## License
 All code belongs to that of its respective owners
