@@ -13,10 +13,17 @@ NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm) 
 - Large amount of supported multivendor devices ( cheers to the netmiko & napalm lads )
 - Included postman collection of examples
 
-### Using Netpalm
+## Using Netpalm
+
+### Code
+All of the code you need is located in this repo. Clone the repo and access it with the following commands:
+```
+git clone https://github.com/tbotnz/netpalm
+cd netpalm
+```
 
 #### Concepts
-Netpalm acts as a ReST broken for NAPALM and Netmiko.
+Netpalm acts as a ReST broker for NAPALM and Netmiko.
 You make an API call to netpalm and it will establish a queue to your device and start sending configuration
 ![np](/images/netpalm_concept.png)Format: !
 
@@ -137,19 +144,6 @@ import the postman collection, set the ip addresses to that of your docker host 
 ```
 http://$(yourdockerhost):9000
 ```
-### Kubernetes Installation
-stateful set coming soon
-
-### ToDo
-- add support for more napalm methods
-- change webserver
-- improve textfsm capabilities
-- introduce kubernetes based stateful set
-- write how to on adding your own custom txtFSM templates (all existing ntc-templates are installed during the build process)
-- refactor documentation
-
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## Netpalm slack channel
 #netpalm on networktocode.slack.com
