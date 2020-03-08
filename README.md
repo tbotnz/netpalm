@@ -12,6 +12,8 @@ NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm) 
 - Standard ReST interface
 - Large amount of supported multivendor devices ( cheers to the netmiko & napalm lads )
 - Included postman collection of examples
+- TextFSM support via netmiko
+- Supports rapid TextFSM development and deployment via integration into http://textfsm.nornir.techdeployment 
 
 ## Using Netpalm
 
@@ -43,6 +45,10 @@ netpalm also supports all arguments for the transport libs, simply pass them in 
 
 check response
 ![np](/images/netpalm_eg_4.png)Format:!
+
+#### Rapid template development and deployment
+netpalm is integrated into http://textfsm.nornir.tech so you can ingest your templates with ease
+![np](/images/netpalm_ingest.gif)Format:!
 
 ##### netmiko
 ```
