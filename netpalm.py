@@ -163,4 +163,5 @@ def template():
 if __name__ == '__main__':
    processworkerprocess()
    reds = rediz()
+   os.system('ln -sf /usr/local/lib/python3.8/site-packages/ntc_templates/templates/ backend/plugins/ntc-templates')
    app.run(host=config().listen_ip, port=config().listen_port, debug=True, threaded=True)
