@@ -13,15 +13,13 @@ from backend.core.redis.rediz import rediz
 
 #load config
 from backend.core.confload.confload import config
-
 from backend.core.redis.rediz import rediz
+
+#load routes
+from backend.core.routes.routes import routes
 
 app = Flask(__name__)
 app.secret_key = os.urandom(12)
-
-
-#dict to keep track of nodeworker processes
-ques = {}
 
 #login decorator
 def login_required(view_function):
@@ -33,6 +31,7 @@ def login_required(view_function):
           return redirect(url_for('denied'))
     return decorated_function
 
+#utility route - denied
 @app.route("/denied", methods = ['GET', 'POST'])
 def denied():
   response_object = {
@@ -43,6 +42,7 @@ def denied():
     }
   return jsonify(response_object), 401
 
+#utility route - error
 @app.route("/error", methods = ['GET', 'POST'])
 def error():
   status_code = request.args.get("status_code", False)
@@ -55,7 +55,7 @@ def error():
     }
   return jsonify(response_object), status_code
 
-#configdeploy
+#deploy a configuration
 @app.route("/setconfig", methods = ['POST'])
 @login_required
 def setconfig():
@@ -73,7 +73,7 @@ def setconfig():
     return redirect(url_for('error', error=e, status_code=500))
     pass
 
-#task view route
+#get specific task 
 @app.route("/task/<task_id>", methods=['GET'])
 @login_required
 def get_status(task_id):
@@ -88,6 +88,7 @@ def get_status(task_id):
     return redirect(url_for('error', error=str(e), status_code=500))
     pass
 
+#get all tasks in queue
 @app.route("/taskqueue/", methods=['GET'])
 @login_required
 def get_tasklist():
@@ -130,6 +131,31 @@ def getconfig():
       return resp, 201
     else:
       return redirect(url_for('error', error="POST required", status_code=500))
+  except Exception as e:
+    return redirect(url_for('error', error=str(e), status_code=500))
+    pass
+
+
+#template routes
+@app.route("/template", methods = ['GET', 'POST', 'DELETE'])
+@login_required
+def template():
+  try:
+    if request.method == 'GET':
+      r = routes["gettemplate"]()
+      resp = jsonify(r)
+      return resp, 200
+    elif request.method == 'POST':
+      req_data = request.get_json()
+      r = routes["addtemplate"](kwargs=req_data)
+      resp = jsonify(r)
+      return resp, 201
+    elif request.method == 'DELETE':
+      req_data = request.get_json()
+      r = routes["removetemplate"](kwargs=req_data)
+      resp = jsonify(r)
+      return resp, 200
+      #return redirect(url_for('error', error="GET required", status_code=500))
   except Exception as e:
     return redirect(url_for('error', error=str(e), status_code=500))
     pass
