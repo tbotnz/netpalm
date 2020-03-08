@@ -27,90 +27,32 @@ cd netpalm
 #### Concepts
 Netpalm acts as a ReST broker for NAPALM and Netmiko.
 You make an API call to netpalm and it will establish a queue to your device and start sending configuration
-![np](/images/netpalm_concept.png)Format: !
+![netpalm concept](/images/netpalm_concept.png)
 
 #### Get config from a network device
 Post some config to the getconfig route
 
 ### Postman example
 getconfig method
-![np](/images/netpalm_eg_1.png)Format:!
+![netpalm eg1](/images/netpalm_eg_1.png)
 
 check response
-![np](/images/netpalm_eg_2.png)Format:!
+![netpalm eg2](/images/netpalm_eg_2.png)
 
 #### Get config from a network device using the librarys arg
 netpalm also supports all arguments for the transport libs, simply pass them in as below
-![np](/images/netpalm_eg_3.png)Format:!
+![netpalm eg3](/images/netpalm_eg_3.png)
 
 check response
-![np](/images/netpalm_eg_4.png)Format:!
+![netpalm eg4](/images/netpalm_eg_4.png)
 
 #### Rapid template development and deployment
 netpalm is integrated into http://textfsm.nornir.tech so you can ingest your templates with ease
-![np](/images/netpalm_ingest.gif)Format:!
+![netpalm auto ingest](/images/netpalm_ingest.gif)
 
-##### netmiko
-```
-curl --location --request POST '127.0.0.1:9000/getconfig' \
---header 'x-api-key: 2a84465a-cf38-46b2-9d86-b84Q7d57f288' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "host":"10.0.2.33",
-    "library": "netmiko",
-    "driver":"cisco_ios",
-    "command": "show run | i hostname",
-    "username": "admin",
-    "password": "admin"
-}      '
-```
-
-##### napalm
-```
-curl --location --request POST '127.0.0.1:9000/getconfig' \
---header 'x-api-key: 2a84465a-cf38-46b2-9d86-b84Q7d57f288' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "host":"10.0.2.33",
-    "library": "napalm",
-    "driver":"ios",
-    "command": "show run | i hostname",
-    "username": "admin",
-    "password": "admin"
-}      '
-```
-
-#### Set Config on a network device
-
-##### netmiko
-```
-curl --location --request POST '127.0.0.1:9000/setconfig' \
---header 'x-api-key: 2a84465a-cf38-46b2-9d86-b84Q7d57f288' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "host":"10.0.2.33",
-    "library": "netmiko",
-    "driver":"cisco_ios",
-    "command": "hostname cat",
-    "username": "admin",
-    "password": "admin"
-}'
-```
-
-##### napalm
-```
-curl --location --request POST '127.0.0.1:9000/setconfig' \
---header 'Content-Type: application/json' \
---header 'x-api-key: 2a84465a-cf38-46b2-9d86-b84Q7d57f288' \
---data-raw '{
-    "host":"10.0.2.33",
-    "library": "napalm",
-    "driver":"ios",
-    "config": ["hostname testing123", "int loopback01\n ip address 192.168.1.3 255.255.255.0\n"],
-    "username": "admin",
-    "password": "admin"
-}      '
-```
+#### Postman Collection
+netpalm comes bundled with a postman collection to make it easy to get going
+![netpalm postman](/images/netpalm_postman.png)
 
 ### Configuring Netpalm
 edit the config.json file too set params as required
