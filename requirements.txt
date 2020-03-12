@@ -3,5 +3,4 @@ netmiko
 napalm
 requests
 redis
-rq 
-ntc-templates
+rq
