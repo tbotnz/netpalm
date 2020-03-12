@@ -1,4 +1,4 @@
-# NetPalm
+![netpalm_log](/images/netpalm.png)
 
 Why NetPalm?
 Netpalm is a ReST API into your dusty old network devices, NetPalm makes it easy to push and pull network state from your web apps.
