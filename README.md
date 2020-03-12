@@ -12,7 +12,7 @@ NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm) 
 - Standard ReST interface
 - Large amount of supported multivendor devices ( cheers to the netmiko & napalm lads )
 - Included postman collection of examples
-- TextFSM support via netmiko
+- TextFSM support via netmiko ( cheers to [NTC](https://github.com/networktocode/ntc-templates) lads )
 - Supports rapid TextFSM development and deployment via integration into http://textfsm.nornir.techdeployment 
 
 ## Using Netpalm
