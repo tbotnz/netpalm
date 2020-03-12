@@ -15,61 +15,48 @@ NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm) 
 - TextFSM support via netmiko ( cheers to [networktocode](https://github.com/networktocode/ntc-templates) lads )
 - Supports rapid TextFSM development and deployment via integration into http://textfsm.nornir.tech deployment 
 
-## Using Netpalm
+## Concepts
 
-### Code
-All of the code you need is located in this repo. Clone the repo and access it with the following commands:
-```
-git clone https://github.com/tbotnz/netpalm
-cd netpalm
-```
-
-#### Concepts
 Netpalm acts as a ReST broker for NAPALM and Netmiko.
 You make an API call to netpalm and it will establish a queue to your device and start sending configuration
+
 ![netpalm concept](/images/netpalm_concept.png)
 
-#### Get config from a network device
-Post some config to the getconfig route
+## Using Netpalm
 
-### Postman example
-getconfig method
+
+### Postman example - getconfig method
+
 ![netpalm eg1](/images/netpalm_eg_1.png)
 
-check response
+#### check response
+
 ![netpalm eg2](/images/netpalm_eg_2.png)
 
-#### Get config from a network device using the librarys arg
+### Postman example - getconfig method with textfsm arg
+
 netpalm also supports all arguments for the transport libs, simply pass them in as below
+
 ![netpalm eg3](/images/netpalm_eg_3.png)
 
-check response
+#### check response
+
 ![netpalm eg4](/images/netpalm_eg_4.png)
 
-#### Rapid template development and deployment
+### Rapid template development and deployment
+
 netpalm is integrated into http://textfsm.nornir.tech so you can ingest your templates with ease
+
 ![netpalm auto ingest](/images/netpalm_ingest.gif)
 
-#### Postman Collection
+### Included Postman Collection
+
 netpalm comes bundled with a postman collection to make it easy to get going
+
 ![netpalm postman](/images/netpalm_postman.png)
 
-### Configuring Netpalm
-edit the config.json file too set params as required
-```
-{
-    "apikey": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
-    "listen_port": 9000,
-    "listen_ip":"0.0.0.0",
-    "redis_task_ttl":500,
-    "redis_task_timeout":500,
-    "redis_server":"redis",
-    "redis_port":6379,
-    "redis_core_q":"process"
-}
-```
+## Container Installation
 
-### Container Installation
 ensure you first have docker installed
 ```
 sudo apt-get install docker.io
@@ -93,8 +80,27 @@ import the postman collection, set the ip addresses to that of your docker host 
 http://$(yourdockerhost):9000
 ```
 
-## Netpalm slack channel
+
+#### Configuring Netpalm
+
+edit the config.json file too set params as required
+```
+{
+    "apikey": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+    "listen_port": 9000,
+    "listen_ip":"0.0.0.0",
+    "redis_task_ttl":500,
+    "redis_task_timeout":500,
+    "redis_server":"redis",
+    "redis_port":6379,
+    "redis_core_q":"process"
+}
+```
+
+### Netpalm slack channe
+
 #netpalm on networktocode.slack.com
 
-## License
+### License
+
 All code belongs to that of its respective owners
