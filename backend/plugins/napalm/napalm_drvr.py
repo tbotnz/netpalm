@@ -12,6 +12,10 @@ class naplm:
     def connect(self):
         try:
             driver = napalm.get_network_driver(self.driver)
+            if self.kwarg:
+                napalmses = driver(hostname=self.host, username=self.username, password=self.password, optional_args=self.kwarg)
+            else:
+                napalmses = driver(hostname=self.host, username=self.username, password=self.password)
             napalmses = driver(hostname=self.host, username=self.username, password=self.password)
             return napalmses
         except Exception as e:
