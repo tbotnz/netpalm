@@ -15,3 +15,4 @@ class config:
             self.redis_task_timeout = data["redis_task_timeout"]
             self.txtfsm_index_file = data["txtfsm_index_file"]
             self.txtfsm_template_server = data["txtfsm_template_server"]
+            self.custom_scripts = data["custom_scripts"]

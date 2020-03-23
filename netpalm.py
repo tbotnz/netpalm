@@ -73,6 +73,23 @@ def setconfig():
     return redirect(url_for('error', error=e, status_code=500))
     pass
 
+@app.route("/script", methods = ['POST'])
+@login_required
+def exec_script():
+  try:
+    if request.method == 'POST':
+      req_data = request.get_json()
+      host = req_data.get("script", False)
+      reds.check_and_create_q_w(hst=host)
+      r = reds.sendtask(q=host,exe='script',kwargs=req_data)
+      resp = jsonify(r)
+      return resp, 201
+    else:
+      return redirect(url_for('error', error="POST required", status_code=500))
+  except Exception as e:
+    return redirect(url_for('error', error=e, status_code=500))
+    pass
+
 #get specific task 
 @app.route("/task/<task_id>", methods=['GET'])
 @login_required

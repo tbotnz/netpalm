@@ -55,7 +55,7 @@ class rediz:
                     'data': {
                         'task_id': task.get_id(),
                         'created_on': task.created_at,
-                        'task_device': q,
+                        'task_queue': q,
                         'task_status': task.get_status(),
                         'task_result': task.result
                     }
@@ -73,7 +73,7 @@ class rediz:
                     'data': {
                         'task_id': task.get_id(),
                         'created_on': task.created_at,
-                        'task_device': task.description,
+                        'task_queue': task.description,
                         'task_status': task.get_status(),
                         'task_result': task.result,
                     }
@@ -148,7 +148,7 @@ class rediz:
                             'task_id': jobstatus.get_id(),
                             'created_on': jobstatus.created_at,
                             'task_status': jobstatus.get_status(),
-                            'task_device': jobstatus.description,
+                            'task_queue': jobstatus.description,
                             'task_result': jobstatus.result,
                             }
                             response_object["data"]["task_id"].append(jobdata)
