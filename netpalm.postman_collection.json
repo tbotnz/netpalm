@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "546e5a55-f9ea-403f-95b4-51622691304f",
+		"_postman_id": "2bf1f677-b130-4e4f-a139-63278328a0d6",
 		"name": "netpalm",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -610,7 +610,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "127.0.0.1:9000/task/3ad9e9d6-8c14-4f82-a2b9-1546d9083a07",
+					"raw": "127.0.0.1:9000/task/1721e3ed-538f-49b4-9924-e52e643f7e19",
 					"host": [
 						"127",
 						"0",
@@ -620,7 +620,43 @@
 					"port": "9000",
 					"path": [
 						"task",
-						"3ad9e9d6-8c14-4f82-a2b9-1546d9083a07"
+						"1721e3ed-538f-49b4-9924-e52e643f7e19"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "exec script",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"script\":\"hello_world\",\r\n\t\"args\":{\r\n\t\t\"hello\":\"world\"\r\n\t}\r\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/script",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"script"
 					]
 				}
 			},
