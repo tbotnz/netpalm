@@ -34,8 +34,12 @@ class naplm:
 
     def config(self, session=False, command=False):
         try:
-            #normalise config for napalm
-            napalmconfig = "\n".join(command[0:])
+            if type(command) == list:
+                napalmconfig = ""
+                for comm in command:
+                    napalmconfig += comm + "\n"
+            else:
+                napalmconfig = command
             session.open()
             session.load_merge_candidate(config=napalmconfig)
             diff = session.compare_config()
