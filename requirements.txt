@@ -4,3 +4,4 @@ napalm
 requests
 redis
 rq
+xmltodict
