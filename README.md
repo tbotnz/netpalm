@@ -6,14 +6,16 @@ NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm) 
 
 ## Netpalm Features
 
+- Talks a Rest API to your app and CLI/NETCONF to your network devices
 - Asynchronous parallel processing
 - Task oriented
 - Per device configuration queuing (Ensure you dont overload your VTY's)
 - Standard ReST interface
-- Large amount of supported multivendor devices ( cheers to the netmiko & napalm lads )
+- Large amount of supported multivendor devices ( cheers to the netmiko & napalm & ncclient lads )
 - Included postman collection of examples
 - TextFSM support via netmiko ( cheers to [networktocode](https://github.com/networktocode/ntc-templates) lads )
 - Supports rapid TextFSM development and deployment via integration into http://textfsm.nornir.tech deployment 
+- Can execute any python script via the API
 
 ## Concepts
 
