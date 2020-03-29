@@ -1,6 +1,7 @@
 Flask
 netmiko
 napalm
+ncclient
 requests
 redis
 rq
