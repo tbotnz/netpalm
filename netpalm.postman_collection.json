@@ -201,45 +201,6 @@
 			"response": []
 		},
 		{
-			"name": "setconfig ncclient",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-api-key",
-						"type": "text",
-						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
-					},
-					{
-						"key": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"host\":\"10.0.2.39\",\r\n    \"library\": \"ncclient\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\",\r\n    \"driver\":\"nexus\",\r\n    \"args\":{\r\n    \t\"target\":\"running\",\r\n    \t\"config\":\"<nc:config xmlns:nc='urn:ietf:params:xml:ns:netconf:base:1.0'><configure xmlns='http://www.cisco.com/nxos:1.0:vlan_mgr_cli'><__XML__MODE__exec_configure><interface><ethernet><interface>helloworld</interface><__XML__MODE_if-ethernet-switch><switchport><trunk><allowed><vlan><add><__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans><add-vlans>99</add-vlans></__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans></add></vlan></allowed></trunk></switchport></__XML__MODE_if-ethernet-switch></ethernet></interface></__XML__MODE__exec_configure></configure></nc:config>\"\r\n    }\r\n}      "
-				},
-				"url": {
-					"raw": "127.0.0.1:9000/setconfig",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "9000",
-					"path": [
-						"setconfig"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "getconfig netmiko - with args",
 			"request": {
 				"auth": {
@@ -318,6 +279,45 @@
 			"response": []
 		},
 		{
+			"name": "setconfig ncclient",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"host\":\"10.0.2.39\",\r\n    \"library\": \"ncclient\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\",\r\n    \"driver\":\"nexus\",\r\n    \"args\":{\r\n    \t\"target\":\"running\",\r\n    \t\"config\":\"<nc:config xmlns:nc='urn:ietf:params:xml:ns:netconf:base:1.0'><configure xmlns='http://www.cisco.com/nxos:1.0:vlan_mgr_cli'><__XML__MODE__exec_configure><interface><ethernet><interface>helloworld</interface><__XML__MODE_if-ethernet-switch><switchport><trunk><allowed><vlan><add><__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans><add-vlans>99</add-vlans></__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans></add></vlan></allowed></trunk></switchport></__XML__MODE_if-ethernet-switch></ethernet></interface></__XML__MODE__exec_configure></configure></nc:config>\"\r\n    }\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/setconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"setconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "setconfig netmiko",
 			"request": {
 				"auth": {
@@ -341,7 +341,7 @@
 					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"netmiko\",\r\n    \"driver\":\"cisco_ios\",\r\n    \"config\": [\"hostname cat\", \"hostname frog\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
 				},
 				"url": {
-					"raw": "127.0.0.1:9000/getconfig",
+					"raw": "127.0.0.1:9000/setconfig",
 					"host": [
 						"127",
 						"0",
@@ -350,7 +350,7 @@
 					],
 					"port": "9000",
 					"path": [
-						"getconfig"
+						"setconfig"
 					]
 				}
 			},
@@ -380,7 +380,7 @@
 					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"netmiko\",\r\n    \"driver\":\"cisco_ios\",\r\n    \"config\": [\"hostname yeti\", \"hostname bufoon\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
 				},
 				"url": {
-					"raw": "127.0.0.1:9000/getconfig",
+					"raw": "127.0.0.1:9000/setconfig",
 					"host": [
 						"127",
 						"0",
@@ -389,7 +389,7 @@
 					],
 					"port": "9000",
 					"path": [
-						"getconfig"
+						"setconfig"
 					]
 				}
 			},
@@ -419,7 +419,7 @@
 					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"napalm\",\r\n    \"driver\":\"ios\",\r\n    \"config\": [\"hostname frog\", \"no ip domain lookup\"],\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
 				},
 				"url": {
-					"raw": "127.0.0.1:9000/getconfig",
+					"raw": "127.0.0.1:9000/setconfig",
 					"host": [
 						"127",
 						"0",
@@ -428,7 +428,7 @@
 					],
 					"port": "9000",
 					"path": [
-						"getconfig"
+						"setconfig"
 					]
 				}
 			},
