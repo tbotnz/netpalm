@@ -201,6 +201,45 @@
 			"response": []
 		},
 		{
+			"name": "getconfig ncclient - renderjson",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"host\":\"10.0.2.39\",\r\n    \"library\": \"ncclient\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\",\r\n    \"driver\":\"nexus\",\r\n    \"args\":{\r\n    \t\"source\":\"running\",\r\n    \t\"filter\":\"<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>\",\r\n    \t\"render_json\":true\r\n    }\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "getconfig netmiko - with args",
 			"request": {
 				"auth": {
