@@ -17,6 +17,8 @@ NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm) 
 - Supports rapid TextFSM development and deployment via integration into http://textfsm.nornir.tech deployment 
 - Can execute any python script via the API
 - Jinja2 template rendering & deployment over ReST API through CLI & Netconf via CLI ncclient/netpalm/netmiko
+- Dynamic JSON schema creation for any existing Jinja2 Template over API
+- Rendering of any NETCONF get config call back as JSON if required
 
 ## Concepts
 
