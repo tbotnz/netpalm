@@ -4,15 +4,12 @@ import json
 class netmko:
 
     def __init__(self, **kwargs):
-        self.username = kwargs.get('username', False)
-        self.password = kwargs.get('password', False)
-        self.driver = kwargs.get('driver', False)
-        self.host = kwargs.get('host', False)
         self.kwarg = kwargs.get('args', False)
-    
+        self.connection_args = kwargs.get('connection_args', False)
+        
     def connect(self):
         try:
-            netmikoses = ConnectHandler(device_type=self.driver, host=self.host, username=self.username, password=self.password)
+            netmikoses = ConnectHandler(**self.connection_args)
             return netmikoses
         except Exception as e:
             return str(e)
