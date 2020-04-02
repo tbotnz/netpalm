@@ -32,10 +32,11 @@ class netmko:
 
     def config(self, session=False, command=False):
         try:
+            comm = command.splitlines()
             if self.kwarg:
-                response = session.send_config_set(command, **self.kwarg)
+                response = session.send_config_set(comm, **self.kwarg)
             else:
-                response = session.send_config_set(command)
+                response = session.send_config_set(comm)
             result = {}
             result["changes"] = response.split('\n')
             return result
