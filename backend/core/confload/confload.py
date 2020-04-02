@@ -16,3 +16,4 @@ class config:
             self.txtfsm_index_file = data["txtfsm_index_file"]
             self.txtfsm_template_server = data["txtfsm_template_server"]
             self.custom_scripts = data["custom_scripts"]
+            self.jinja2_templates = data["jinja2_templates"]

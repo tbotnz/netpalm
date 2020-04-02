@@ -62,7 +62,7 @@ def setconfig():
   try:
     if request.method == 'POST':
       req_data = request.get_json()
-      host = req_data.get("host", False)
+      host = req_data["connection_args"].get("host", False)
       reds.check_and_create_q_w(hst=host)
       r = reds.sendtask(q=host,exe='setconfig',kwargs=req_data)
       resp = jsonify(r)
@@ -141,7 +141,7 @@ def getconfig():
   try:
     if request.method == 'POST':
       req_data = request.get_json()
-      host = req_data.get("host", False)
+      host = req_data["connection_args"].get("host", False)
       reds.check_and_create_q_w(hst=host)
       r = reds.sendtask(q=host,exe='getconfig',kwargs=req_data)
       resp = jsonify(r)
@@ -153,7 +153,7 @@ def getconfig():
     pass
 
 
-#template routes
+#text fsmtemplate routes
 @app.route("/template", methods = ['GET', 'POST', 'DELETE'])
 @login_required
 def template():
@@ -170,6 +170,49 @@ def template():
     elif request.method == 'DELETE':
       req_data = request.get_json()
       r = routes["removetemplate"](kwargs=req_data)
+      resp = jsonify(r)
+      return resp, 200
+      #return redirect(url_for('error', error="GET required", status_code=500))
+  except Exception as e:
+    return redirect(url_for('error', error=str(e), status_code=500))
+    pass
+
+
+
+#j2 routes
+@app.route("/j2template", methods = ['GET'])
+@login_required
+def j2templat():
+  try:
+    if request.method == 'GET' :
+      r = routes["j2gettemplates"]()
+      resp = jsonify(r)
+      return resp, 200
+      #return redirect(url_for('error', error="GET required", status_code=500))
+  except Exception as e:
+    return redirect(url_for('error', error=str(e), status_code=500))
+    pass
+
+@app.route("/j2template/<tmpname>", methods = ['GET'])
+@login_required
+def j2template(tmpname=None):
+  try:
+    if request.method == 'GET' and tmpname:
+      r = routes["j2gettemplate"](tmpname)
+      resp = jsonify(r)
+      return resp, 200
+      #return redirect(url_for('error', error="GET required", status_code=500))
+  except Exception as e:
+    return redirect(url_for('error', error=str(e), status_code=500))
+    pass
+
+@app.route("/j2template/render/<tmpname>", methods = ['POST'])
+@login_required
+def j2rentemplate(tmpname=None):
+  try:
+    if request.method == 'POST' and tmpname:
+      req_data = request.get_json()
+      r = routes["render_j2template"](tmpname, kwargs=req_data)
       resp = jsonify(r)
       return resp, 200
       #return redirect(url_for('error', error="GET required", status_code=500))

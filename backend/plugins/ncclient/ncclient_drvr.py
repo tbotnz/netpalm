@@ -11,13 +11,14 @@ class ncclien:
         self.driver = kwargs.get('driver', False)
         self.host = kwargs.get('host', False)
         self.kwarg = kwargs.get('args', False)
-        
+        self.connection_args = kwargs.get('connection_args', False)     
+
     def connect(self):
         try:
-            conn = manager.connect(host=self.host, port=830, username=self.username, password=self.password, hostkey_verify=False, device_params={'name':self.driver})
+            conn = manager.connect(**self.connection_args)
             return conn
         except Exception as e:
-            return str(e)
+            return e
 
     def getconfig(self, session=False, command=False):
         try:

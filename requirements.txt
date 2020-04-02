@@ -6,3 +6,5 @@ requests
 redis
 rq
 xmltodict
+jinja2
+jinja2schema

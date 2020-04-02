@@ -3,20 +3,17 @@ import napalm
 class naplm:
 
     def __init__(self, **kwargs):
-        self.username = kwargs.get('username', False)
-        self.password = kwargs.get('password', False)
-        self.driver = kwargs.get('driver', False)
-        self.host = kwargs.get('host', False)
-        self.kwarg = kwargs.get('args', False)
-        
+        self.connection_args = kwargs.get('connection_args', False)
+        #convert the netmiko naming format to the native napalm format
+        driver_lookup = {"arista_eos":"eos","juniper":"junos","cisco_xr":"iosxr", "nxos":"nxos", "cisco_nxos_ssh":"nxos_ssh", "cisco_ios":"ios"}
+        self.driver = driver_lookup[self.connection_args.get('device_type', False)]
+        self.connection_args["hostname"] = self.connection_args.pop("host")
+        del self.connection_args["device_type"]
+
     def connect(self):
         try:
             driver = napalm.get_network_driver(self.driver)
-            if self.kwarg:
-                napalmses = driver(hostname=self.host, username=self.username, password=self.password, optional_args=self.kwarg)
-            else:
-                napalmses = driver(hostname=self.host, username=self.username, password=self.password)
-            napalmses = driver(hostname=self.host, username=self.username, password=self.password)
+            napalmses = driver(**self.connection_args)
             return napalmses
         except Exception as e:
             return str(e)
