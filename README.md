@@ -2,36 +2,39 @@
 
 Why NetPalm?
 Netpalm is a ReST API into your dusty old network devices, NetPalm makes it easy to push and pull network state from your web apps.
-NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm) and [netmiko](https://github.com/ktbyers/netmiko) library's for network device communication, these powerful libs supprt a vast number of vendors and OS
+NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko) and ncclient library's for network device communication, these powerful libs supprt a vast number of vendors and OS
 
 ## Netpalm Features
 
 - Talks a Rest API to your app and CLI/NETCONF to your network devices
+- Per device task queuing (Ensure you dont overload your VTY's)
+- Large amount of supported multivendor devices ( cheers to the netmiko & napalm & ncclient lads )
+- Supports TextFSM for parsing/structuring device data (includes [ntc-templates](https://github.com/networktocode/ntc-templates))
+- Supports Jinja2 for model driven deployments of config onto devices accross [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko) and ncclient
+- Can be used to execute any python script via the ReST API and includes passing in of parameters
+- Includes large postman collection of examples
+- Supports automated download and installation of TextFSM templates from http://textfsm.nornir.tech online TextFSM development tool
+- Automatically generates a JSON schema for any Jinja2 Template
+- Can render NETCONF XML responses into JSON on the fly
+- Can render Jinja2 templates only if required via the API
+- Normalised ReST interface
 - Asynchronous parallel processing
 - Task oriented
-- Per device configuration queuing (Ensure you dont overload your VTY's)
-- Standard ReST interface
-- Large amount of supported multivendor devices ( cheers to the netmiko & napalm & ncclient lads )
-- Included postman collection of examples
-- TextFSM support via netmiko ( cheers to [networktocode](https://github.com/networktocode/ntc-templates) lads )
-- Supports rapid TextFSM development and deployment via integration into http://textfsm.nornir.tech deployment 
-- Can execute any python script via the API
-- Jinja2 template rendering & deployment over ReST API through CLI & Netconf via CLI ncclient/netpalm/netmiko
-- Dynamic JSON schema creation for any existing Jinja2 Template over API
-- Rendering of any NETCONF get config call back as JSON if required
 
 ## Concepts
 
-Netpalm acts as a ReST broker for NAPALM and Netmiko.
+Netpalm acts as a ReST broker for NAPALM, Netmiko, NCCLIENT or a Python Script.
+It uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
 You make an API call to netpalm and it will establish a queue to your device and start sending configuration
 
-![netpalm concept](/images/netpalm_concept.png)
+![netpalm concept](/images/arch.png)
 
 ## Using Netpalm
 
+### API catalog
+[Please view the API docs here](https://documenter.getpostman.com/view/2391814/SzYbxcQx?version=latest)
 
 ### Postman example - getconfig method
-
 ![netpalm eg1](/images/netpalm_eg_1.png)
 
 #### check response
@@ -98,11 +101,15 @@ edit the config.json file too set params as required
     "redis_task_timeout":500,
     "redis_server":"redis",
     "redis_port":6379,
-    "redis_core_q":"process"
+    "redis_core_q":"process",
+    "txtfsm_index_file":"backend/plugins/ntc-templates/index",
+    "txtfsm_template_server":"http://textfsm.nornir.tech",
+    "custom_scripts":"backend/plugins/custom_scripts/",
+    "jinja2_templates":"backend/plugins/jinja2_templates/"
 }
 ```
 
-### Netpalm slack channe
+### Netpalm slack channel
 
 #netpalm on networktocode.slack.com
 
