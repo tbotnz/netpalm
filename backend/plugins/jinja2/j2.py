@@ -91,7 +91,6 @@ class j2:
             templat = template + '.j2'
             tmp_template = self.env.get_template(templat)
             output = tmp_template.render(kwargs)
-            print(output)
             resultdata = {
                     'status': 'success',
                     'data': {
