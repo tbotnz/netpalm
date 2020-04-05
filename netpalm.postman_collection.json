@@ -26,7 +26,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": \"show run | i hostname\"\r\n}      "
+					"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.23\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": \"show run | i hostname\"\r\n}      "
 				},
 				"url": {
 					"raw": "127.0.0.1:9000/getconfig",
@@ -45,7 +45,7 @@
 			"response": []
 		},
 		{
-			"name": "getconfig napalm with args",
+			"name": "getconfig napalm with napalm getter",
 			"request": {
 				"auth": {
 					"type": "noauth"
@@ -65,7 +65,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": \"show run | i hostname\",\r\n    \"args\":{\r\n    \t\"call\":\"get_interfaces\"\r\n    }\r\n}      "
+					"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.23\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": \"get_facts\"\r\n}"
 				},
 				"url": {
 					"raw": "127.0.0.1:9000/getconfig",
@@ -104,7 +104,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"library\": \"napalm\",\r\n    \"command\": [\"show run | i hostname\", \"show ip int brief\"]\r\n}      "
+					"raw": "{\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.23\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"library\": \"napalm\",\r\n    \"command\": [\"show run | i hostname\", \"show ip int brief\"]\r\n}      "
 				},
 				"url": {
 					"raw": "127.0.0.1:9000/getconfig",
@@ -416,7 +416,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"j2config\": {\r\n    \t\"template\":\"test\",\r\n    \t\"args\":{\r\n    \t\t\"vlans\": [\"1\",\"2\",\"3\"]\r\n    \t}\r\n    }\r\n\r\n}"
+					"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.31\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"j2config\": {\r\n    \t\"template\":\"test\",\r\n    \t\"args\":{\r\n    \t\t\"vlans\": [\"1\",\"2\",\"3\"]\r\n    \t}\r\n    }\r\n\r\n}"
 				},
 				"url": {
 					"raw": "127.0.0.1:9000/setconfig",
@@ -572,7 +572,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"j2config\": {\r\n    \t\"template\":\"createvlan\",\r\n    \t\"args\":{\r\n    \t\t\"vlans\": [\"1\",\"2\",\"3\"]\r\n    \t}\r\n    }\r\n}"
+					"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"j2config\": {\r\n    \t\"template\":\"test\",\r\n    \t\"args\":{\r\n    \t\t\"vlans\": [\"1\",\"2\",\"3\"]\r\n    \t}\r\n    }\r\n}"
 				},
 				"url": {
 					"raw": "127.0.0.1:9000/setconfig",
@@ -614,49 +614,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"napalm\",\r\n    \"driver\":\"ios\",\r\n    \"config\": \"hostnam cat\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
-				},
-				"url": {
-					"raw": "127.0.0.1:9000/template",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "9000",
-					"path": [
-						"template"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get txtfsm templates Copy",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "x-api-key",
-						"type": "text",
-						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
-					},
-					{
-						"key": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"host\":\"10.0.2.33\",\r\n    \"library\": \"napalm\",\r\n    \"driver\":\"ios\",\r\n    \"config\": \"hostnam cat\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
+					"raw": ""
 				},
 				"url": {
 					"raw": "127.0.0.1:9000/template",
@@ -847,7 +805,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "127.0.0.1:9000/task/4abb686a-8f72-4306-8767-ee85a3c07cc3",
+					"raw": "127.0.0.1:9000/task/d2fb79ce-793b-486d-9771-897397c6d5be",
 					"host": [
 						"127",
 						"0",
@@ -857,7 +815,7 @@
 					"port": "9000",
 					"path": [
 						"task",
-						"4abb686a-8f72-4306-8767-ee85a3c07cc3"
+						"d2fb79ce-793b-486d-9771-897397c6d5be"
 					]
 				}
 			},
