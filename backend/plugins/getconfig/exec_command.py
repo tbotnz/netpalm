@@ -1,6 +1,7 @@
 from backend.plugins.netmiko.netmiko_drvr import netmko
 from backend.plugins.napalm.napalm_drvr import naplm
 from backend.plugins.ncclient.ncclient_drvr import ncclien
+from backend.plugins.restconf.restconf import restconf
 
 def exec_command(**kwargs):
     lib = kwargs.get("library", False)
@@ -33,6 +34,15 @@ def exec_command(**kwargs):
             sesh = ncc.connect()
             result = ncc.getconfig(sesh)
             ncc.logout(sesh)
+            return result
+        except Exception as e:
+            return str(e)
+    elif lib == "restconf":
+        try:
+            rc = restconf(**kwargs)
+            sesh = rc.connect()
+            result = rc.sendcommand(sesh)
+            rc.logout(sesh)
             return result
         except Exception as e:
             return str(e)

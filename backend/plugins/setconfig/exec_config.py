@@ -2,6 +2,8 @@ from backend.plugins.netmiko.netmiko_drvr import netmko
 from backend.plugins.napalm.napalm_drvr import naplm
 from backend.plugins.ncclient.ncclient_drvr import ncclien
 from backend.plugins.jinja2.j2 import render_j2template
+from backend.plugins.restconf.restconf import restconf
+
 def exec_config(**kwargs):
     lib = kwargs.get("library", False)
     config = kwargs.get("config", False)
@@ -38,6 +40,15 @@ def exec_config(**kwargs):
             sesh = ncc.connect()
             result = ncc.editconfig(sesh)
             ncc.logout(sesh)
+            return result
+        except Exception as e:
+            return str(e)
+    elif lib == "restconf":
+        try:
+            rcc = restconf(**kwargs)
+            sesh = rcc.connect()
+            result = rcc.config(sesh)
+            rcc.logout(sesh)
             return result
         except Exception as e:
             return str(e)
