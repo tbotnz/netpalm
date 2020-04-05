@@ -20,11 +20,17 @@ class naplm:
 
     def sendcommand(self, session=False, command=False):
         try:
-            session.open()
-            response = session.cli(command)
             result = {}
-            for command in response:
-                result[command] = response[command].split('\n')
+            session.open()
+            for c in command:
+                if hasattr(session, str(c)):
+                    response = getattr(session, str(c))()
+                    result[c] = response
+                else:
+                    response = session.cli([c])
+                    result[c] = response[c].split('\n')
+            # for command in response:
+            #     result[command] = response[command].split('\n')
             return result
         except Exception as e:
             return str(e)
