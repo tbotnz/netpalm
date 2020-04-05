@@ -123,357 +123,6 @@
 			"response": []
 		},
 		{
-			"name": "getconfig netmiko",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-api-key",
-						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
-						"type": "text"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": \"show run | i hostname\"\r\n}      "
-				},
-				"url": {
-					"raw": "127.0.0.1:9000/getconfig",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "9000",
-					"path": [
-						"getconfig"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "getconfig ncclient",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-api-key",
-						"type": "text",
-						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
-					},
-					{
-						"key": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"library\": \"ncclient\",\r\n    \"connection_args\":{\r\n\t\t\"host\":\"10.0.2.39\", \"username\":\"admin\", \"password\":\"admin\", \"port\":830, \"hostkey_verify\":false\r\n    },\r\n    \"args\":{\r\n    \t\"source\":\"running\",\r\n    \t\"filter\":\"<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>\"\r\n    }\r\n}      "
-				},
-				"url": {
-					"raw": "127.0.0.1:9000/getconfig",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "9000",
-					"path": [
-						"getconfig"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "getconfig ncclient - renderjson",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-api-key",
-						"type": "text",
-						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
-					},
-					{
-						"key": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"library\": \"ncclient\",\r\n    \"connection_args\":{\r\n\t\t\"host\":\"10.0.2.39\", \"username\":\"admin\", \"password\":\"admin\", \"port\":830, \"hostkey_verify\":false\r\n    },\r\n    \"args\":{\r\n    \t\"source\":\"running\",\r\n    \t\"filter\":\"<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>\",\r\n    \t\"render_json\":true\r\n    }\r\n}      "
-				},
-				"url": {
-					"raw": "127.0.0.1:9000/getconfig",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "9000",
-					"path": [
-						"getconfig"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "getconfig netmiko - with args",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-api-key",
-						"type": "text",
-						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
-					},
-					{
-						"key": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": \"show ip int brief\",\r\n    \"args\":{\r\n    \t\"use_textfsm\":true\r\n    }\r\n}      "
-				},
-				"url": {
-					"raw": "127.0.0.1:9000/getconfig",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "9000",
-					"path": [
-						"getconfig"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "getconfig netmiko - multiple",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-api-key",
-						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
-						"type": "text"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": [\"show run | i hostname\", \"show ip int brief\"]\r\n}"
-				},
-				"url": {
-					"raw": "127.0.0.1:9000/getconfig",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "9000",
-					"path": [
-						"getconfig"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "setconfig ncclient",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-api-key",
-						"type": "text",
-						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
-					},
-					{
-						"key": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"library\": \"ncclient\",\r\n    \"connection_args\":{\r\n\t\t\"host\":\"10.0.2.39\", \"username\":\"admin\", \"password\":\"admin\", \"port\":830, \"hostkey_verify\":false\r\n    },\r\n    \"args\":{\r\n    \t\"target\":\"running\",\r\n    \t\"config\":\"<nc:config xmlns:nc='urn:ietf:params:xml:ns:netconf:base:1.0'><configure xmlns='http://www.cisco.com/nxos:1.0:vlan_mgr_cli'><__XML__MODE__exec_configure><interface><ethernet><interface>helloworld</interface><__XML__MODE_if-ethernet-switch><switchport><trunk><allowed><vlan><add><__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans><add-vlans>99</add-vlans></__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans></add></vlan></allowed></trunk></switchport></__XML__MODE_if-ethernet-switch></ethernet></interface></__XML__MODE__exec_configure></configure></nc:config>\"\r\n    }\r\n}      "
-				},
-				"url": {
-					"raw": "127.0.0.1:9000/setconfig",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "9000",
-					"path": [
-						"setconfig"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "setconfig netmiko",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-api-key",
-						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
-						"type": "text"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"config\": [\"hostname cat\"]\r\n\r\n}"
-				},
-				"url": {
-					"raw": "127.0.0.1:9000/setconfig",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "9000",
-					"path": [
-						"setconfig"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "setconfig netmiko j2",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-api-key",
-						"type": "text",
-						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
-					},
-					{
-						"key": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.31\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"j2config\": {\r\n    \t\"template\":\"test\",\r\n    \t\"args\":{\r\n    \t\t\"vlans\": [\"1\",\"2\",\"3\"]\r\n    \t}\r\n    }\r\n\r\n}"
-				},
-				"url": {
-					"raw": "127.0.0.1:9000/setconfig",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "9000",
-					"path": [
-						"setconfig"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "setconfig netmiko - multiple",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-api-key",
-						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
-						"type": "text"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"config\": [\"hostname yeti\", \"hostname bufoon\"]\r\n}"
-				},
-				"url": {
-					"raw": "127.0.0.1:9000/setconfig",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "9000",
-					"path": [
-						"setconfig"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "setconfig napalm - multiple",
 			"request": {
 				"auth": {
@@ -585,6 +234,552 @@
 					"port": "9000",
 					"path": [
 						"setconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getconfig netmiko",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": \"show run | i hostname\"\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getconfig netmiko - with args",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": \"show ip int brief\",\r\n    \"args\":{\r\n    \t\"use_textfsm\":true\r\n    }\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getconfig netmiko - multiple",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": [\"show run | i hostname\", \"show ip int brief\"]\r\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setconfig netmiko",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"config\": [\"hostname cat\"]\r\n\r\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/setconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"setconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setconfig netmiko - multiple",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"config\": [\"hostname yeti\", \"hostname bufoon\"]\r\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/setconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"setconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setconfig netmiko j2",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.31\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"j2config\": {\r\n    \t\"template\":\"test\",\r\n    \t\"args\":{\r\n    \t\t\"vlans\": [\"1\",\"2\",\"3\"]\r\n    \t}\r\n    }\r\n\r\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/setconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"setconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getconfig ncclient",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"library\": \"ncclient\",\r\n    \"connection_args\":{\r\n\t\t\"host\":\"10.0.2.39\", \"username\":\"admin\", \"password\":\"admin\", \"port\":830, \"hostkey_verify\":false\r\n    },\r\n    \"args\":{\r\n    \t\"source\":\"running\",\r\n    \t\"filter\":\"<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>\"\r\n    }\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getconfig ncclient - renderjson",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"library\": \"ncclient\",\r\n    \"connection_args\":{\r\n\t\t\"host\":\"10.0.2.39\", \"username\":\"admin\", \"password\":\"admin\", \"port\":830, \"hostkey_verify\":false\r\n    },\r\n    \"args\":{\r\n    \t\"source\":\"running\",\r\n    \t\"filter\":\"<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>\",\r\n    \t\"render_json\":true\r\n    }\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setconfig ncclient",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"library\": \"ncclient\",\r\n    \"connection_args\":{\r\n\t\t\"host\":\"10.0.2.39\", \"username\":\"admin\", \"password\":\"admin\", \"port\":830, \"hostkey_verify\":false\r\n    },\r\n    \"args\":{\r\n    \t\"target\":\"running\",\r\n    \t\"config\":\"<nc:config xmlns:nc='urn:ietf:params:xml:ns:netconf:base:1.0'><configure xmlns='http://www.cisco.com/nxos:1.0:vlan_mgr_cli'><__XML__MODE__exec_configure><interface><ethernet><interface>helloworld</interface><__XML__MODE_if-ethernet-switch><switchport><trunk><allowed><vlan><add><__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans><add-vlans>99</add-vlans></__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans></add></vlan></allowed></trunk></switchport></__XML__MODE_if-ethernet-switch></ethernet></interface></__XML__MODE__exec_configure></configure></nc:config>\"\r\n    }\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/setconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"setconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getconfig restconf get",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"library\": \"restconf\",\r\n    \"connection_args\":{\r\n    \t\"host\":\"10.0.2.40\", \"port\":80, \"username\":\"admin\", \"password\":\"admin\", \"verify\":false, \"timeout\":10, \"transport\":\"http\", \"headers\":{\r\n    \t\t\"Content-Type\": \"application/vnd.yang.collection+json\", \"Accept\": \"application/vnd.yang.collection+json\"\r\n    \t}\r\n    },\r\n    \"args\":{\r\n    \t\"uri\":\"/restconf/api/config/native/interface/BDI/\"\r\n    }\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setconfig restconf patch",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"library\": \"restconf\",\r\n    \"connection_args\":{\r\n    \t\"host\":\"10.0.2.40\", \"port\":80, \"username\":\"admin\", \"password\":\"admin\", \"verify\":false, \"timeout\":10, \"transport\":\"http\", \"headers\":{\r\n    \t\t\"Content-Type\": \"application/vnd.yang.data+json\", \"Accept\": \"application/vnd.yang.data+json\"\r\n    \t}\r\n    },\r\n    \"args\":{\r\n    \t\"uri\":\"/restconf/api/config/native/interface/BDI/\",\r\n    \t\"action\":\"patch\",\r\n    \t\"payload\":{\r\n\t\t\t\t\"ned:BDI\": {\r\n                \"description\": \"cat\",\r\n                \"ip\": {\r\n                  \"no-address\": {\r\n                    \"address\": false\r\n                  }\r\n                },\r\n                \"mop\": {\r\n                  \"enabled\": false\r\n                },\r\n                \"name\": \"1\"\r\n            }\r\n\t\t}\r\n    }\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setconfig restconf post",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"library\": \"restconf\",\r\n    \"connection_args\":{\r\n    \t\"host\":\"10.0.2.40\", \"port\":80, \"username\":\"admin\", \"password\":\"admin\", \"verify\":false, \"timeout\":10, \"transport\":\"http\", \"headers\":{\r\n    \t\t\"Content-Type\": \"application/vnd.yang.data+json\", \"Accept\": \"application/vnd.yang.data+json\"\r\n    \t}\r\n    },\r\n    \"args\":{\r\n    \t\"uri\":\"/restconf/api/config/native/interface/BDI/\",\r\n    \t\"action\":\"post\",\r\n    \t\"payload\":{\r\n\t\t\t\t\"ned:BDI\": {\r\n                \"description\": \"cat\",\r\n                \"ip\": {\r\n                  \"no-address\": {\r\n                    \"address\": false\r\n                  }\r\n                },\r\n                \"mop\": {\r\n                  \"enabled\": false\r\n                },\r\n                \"name\": \"1\"\r\n            }\r\n\t\t}\r\n    }\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/setconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"setconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setconfig restconf delete",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"library\": \"restconf\",\r\n    \"connection_args\":{\r\n    \t\"host\":\"10.0.2.40\", \"port\":80, \"username\":\"admin\", \"password\":\"admin\", \"verify\":false, \"timeout\":10, \"transport\":\"http\", \"headers\":{\r\n    \t\t\"Content-Type\": \"application/vnd.yang.collection+json\", \"Accept\": \"application/vnd.yang.collection+json\"\r\n    \t}\r\n    },\r\n    \"args\":{\r\n    \t\"uri\":\"/restconf/api/config/native/interface/BDI/\",\r\n    \t\"action\":\"delete\"\r\n    }\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/setconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"setconfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setconfig restconf put",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"library\": \"restconf\",\r\n    \"connection_args\":{\r\n    \t\"host\":\"10.0.2.40\", \"port\":80, \"username\":\"admin\", \"password\":\"admin\", \"verify\":false, \"timeout\":10, \"transport\":\"http\", \"headers\":{\r\n    \t\t\"Content-Type\": \"application/vnd.yang.data+json\", \"Accept\": \"application/vnd.yang.data+json\"\r\n    \t}\r\n    },\r\n    \"args\":{\r\n    \t\"uri\":\"/restconf/api/config/native/interface/BDI/\",\r\n    \t\"action\":\"put\",\r\n    \t\"payload\":{\r\n\t\t\t\t\"ned:BDI\": {\r\n                \"description\": \"cat\",\r\n                \"ip\": {\r\n                  \"no-address\": {\r\n                    \"address\": false\r\n                  }\r\n                },\r\n                \"mop\": {\r\n                  \"enabled\": false\r\n                },\r\n                \"name\": \"1\"\r\n            }\r\n\t\t}\r\n    }\r\n}      "
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/getconfig",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"getconfig"
 					]
 				}
 			},
@@ -805,7 +1000,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "127.0.0.1:9000/task/d2fb79ce-793b-486d-9771-897397c6d5be",
+					"raw": "127.0.0.1:9000/task/4e1c5321-e70f-41fd-bb78-f2dc897fe8ac",
 					"host": [
 						"127",
 						"0",
@@ -815,7 +1010,7 @@
 					"port": "9000",
 					"path": [
 						"task",
-						"d2fb79ce-793b-486d-9771-897397c6d5be"
+						"4e1c5321-e70f-41fd-bb78-f2dc897fe8ac"
 					]
 				}
 			},

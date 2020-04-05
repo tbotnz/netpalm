@@ -15,7 +15,6 @@ def run(**kwargs):
         args = kwargs.get("kwargs")
         # access your vars here in a dict format - payload is now {'hello': 'world'}
         world = args.get('hello')
-        print (world)
         #reutn 'world'
         return world
     except Exception as e:

@@ -29,8 +29,6 @@ class naplm:
                 else:
                     response = session.cli([c])
                     result[c] = response[c].split('\n')
-            # for command in response:
-            #     result[command] = response[command].split('\n')
             return result
         except Exception as e:
             return str(e)
