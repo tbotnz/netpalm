@@ -6,12 +6,14 @@ import os
 
 from jinja2 import Template, Environment, FileSystemLoader
 
-# syn
 class j2:
 
-    def __init__(self, **kwargs):
+    def __init__(self, service=False, **kwargs):
         self.kwarg = kwargs.get('kwargs', False)
-        self.jinja_template_dir = config().jinja2_templates
+        if not service:
+            self.jinja_template_dir = config().jinja2_templates
+        elif service:
+            self.jinja_template_dir = config().jinja2_service_templates
         self.file_loader = FileSystemLoader(self.jinja_template_dir)
         self.env = Environment(loader=self.file_loader)
 
@@ -104,53 +106,32 @@ class j2:
         except Exception as e:
             return e
 
-def j2gettemplates():
-    t = j2()
-    res = t.gettemplates()
-    return res
+def j2gettemplates(service=False):
+    if not service:
+        t = j2()
+        res = t.gettemplates()
+        return res
+    else:
+        t = j2(service=True)
+        res = t.gettemplates()
+        return res
 
-def j2gettemplate(tmplate):
-    t = j2()
-    res = t.gettemplate(tmplate)
-    return res
+def j2gettemplate(tmplate, service=False):
+    if not service:
+        t = j2()
+        res = t.gettemplate(tmplate)
+        return res
+    else:
+        t = j2(service=True)
+        res = t.gettemplate(tmplate)
+        return res
 
-def render_j2template(templat, **kwargs):
-    t = j2()
-    res = t.render_j2template(template=templat, kwargs=kwargs["kwargs"])
-    return res
-
-    # def addtemplate(self):
-    #     try:
-    #         #reload indexfile
-    #         shutil.move(tmpfile, config().txtfsm_index_file)
-    #         resultdata = {
-    #                 'status': 'success',
-    #                 'data': {
-    #                     "task_result": file_name + ' added'
-    #                 }
-    #         }
-    #         return resultdata
-    #     except Exception as e:
-    #         resultdata = {
-    #                 'status': 'error',
-    #                 'data': str(e)
-    #         }
-    #         return resultdata
-
-    # def removetemplate(self):
-    #     try:
-
-    #         shutil.move(tmpfile, config().txtfsm_index_file)
-    #         resultdata = {
-    #                 'status': 'success',
-    #                 'data': {
-    #                     "task_result": self.kwarg["template"] + ' removed'
-    #                 }
-    #         }
-    #         return resultdata
-    #     except Exception as e:
-    #         resultdata = {
-    #                 'status': 'error',
-    #                 'data': str(e)
-    #         }
-    #         return resultdata        
+def render_j2template(templat, service=False, **kwargs):
+    if not service:
+        t = j2()
+        res = t.render_j2template(template=templat, kwargs=kwargs["kwargs"])
+        return res
+    else:
+        t = j2(service=True)
+        res = t.render_j2template(template=templat, kwargs=kwargs["kwargs"])
+        return res
