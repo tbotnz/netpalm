@@ -1177,6 +1177,126 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "service - create",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"operation\": \"create\",\n\t\"args\":{\n\t\t\"hosts\":[\"10.0.2.25\",\"10.0.2.23\"],\n\t\t\"username\":\"admin\",\n\t\t\"password\":\"admin\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/service/vlan_service",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"service",
+						"vlan_service"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "service - retrieve",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"operation\": \"retrieve\",\n\t\"args\":{\n\t\t\"hosts\":[\"10.0.2.25\",\"10.0.2.23\"],\n\t\t\"username\":\"admin\",\n\t\t\"password\":\"admin\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/service/vlan_service",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"service",
+						"vlan_service"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "service - delete",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"operation\": \"delete\",\n\t\"args\":{\n\t\t\"hosts\":[\"10.0.2.25\",\"10.0.2.23\"],\n\t\t\"username\":\"admin\",\n\t\t\"password\":\"admin\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:9000/service/vlan_service",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"service",
+						"vlan_service"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [

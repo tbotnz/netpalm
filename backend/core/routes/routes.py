@@ -8,6 +8,7 @@ from backend.plugins.scriptrunner.script import script_exec
 from backend.plugins.jinja2.j2 import j2gettemplates
 from backend.plugins.jinja2.j2 import j2gettemplate
 from backend.plugins.jinja2.j2 import render_j2template
+from backend.plugins.service.service import render_service
 
 routes = {
     'getconfig':exec_command,
@@ -18,5 +19,6 @@ routes = {
     'script': script_exec,
     'j2gettemplates': j2gettemplates,
     'j2gettemplate':j2gettemplate,
-    'render_j2template':render_j2template
+    'render_j2template':render_j2template,
+    'render_service':render_service
     }

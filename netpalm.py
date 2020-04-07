@@ -171,7 +171,7 @@ def template():
       req_data = request.get_json()
       r = routes["removetemplate"](kwargs=req_data)
       resp = jsonify(r)
-      return resp, 200
+      return resp, 204
       #return redirect(url_for('error', error="GET required", status_code=500))
   except Exception as e:
     return redirect(url_for('error', error=str(e), status_code=500))
@@ -214,11 +214,26 @@ def j2rentemplate(tmpname=None):
       req_data = request.get_json()
       r = routes["render_j2template"](tmpname, kwargs=req_data)
       resp = jsonify(r)
-      return resp, 200
+      return resp, 201
       #return redirect(url_for('error', error="GET required", status_code=500))
   except Exception as e:
     return redirect(url_for('error', error=str(e), status_code=500))
     pass
+
+@app.route("/service/<servicename>", methods = ['POST'])
+@login_required
+def runservice(servicename=None):
+  try:
+    if request.method == 'POST' and servicename:
+      req_data = request.get_json()
+      r = routes["render_service"](servicename, kwargs=req_data)
+      resp = jsonify(r)
+      return resp, 201
+      #return redirect(url_for('error', error="GET required", status_code=500))
+  except Exception as e:
+    return redirect(url_for('error', error=str(e), status_code=500))
+    pass
+
 
 if __name__ == '__main__':
    processworkerprocess()

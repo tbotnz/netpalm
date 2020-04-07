@@ -1,0 +1,67 @@
+{# DEMO NETPALM SERVICE#}
+{# CREATES VLANS ON MULTIPLE HOSTS #}
+{# PAYLOAD MAPS TO STANDARD NETPALM OBJECTS WHICH ARE AVAILABLE VIA API #}
+[
+  {% for host in hosts %}
+  {
+    "supported_methods": [
+      {
+        "operation": "create",
+        "payload": {
+          "library": "napalm",
+          "connection_args": {
+            "device_type": "cisco_ios",
+            "host": "{{host}}",
+            "username": "{{username}}",
+            "password": "{{password}}"
+          },
+        "j2config": {
+    	    "template":"cisco_ios_create_vlans",
+    	    "args":{
+    		    "vlans": [99]
+    	    }
+        }
+      }
+      },
+      {
+        "operation": "retrieve",
+        "payload": {
+          "library": "netmiko",
+          "connection_args": {
+            "device_type": "cisco_ios",
+            "host": "{{host}}",
+            "username": "{{username}}",
+            "password": "{{password}}"
+          },
+        "command": "show vlans",
+        "args":{
+            "use_textfsm":true
+        }
+        }
+      },
+      {
+        "operation": "delete",
+        "payload": {
+          "library": "napalm",
+          "connection_args": {
+            "device_type": "cisco_ios",
+            "host": "{{host}}",
+            "username": "{{username}}",
+            "password": "{{password}}"
+          },
+        "j2config": {
+    	    "template":"cisco_ios_remove_vlans",
+    	    "args":{
+    		    "vlans": [99]
+    	    }
+        }
+      }
+      }
+    ]
+  }{% if not loop.last %},{% endif %}{# THIS IS REQUIRED TO CONSTRUCT THE DATA CORRECTLY #}
+  {% endfor -%}
+]
+
+
+
+
