@@ -12,6 +12,7 @@ NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 - Supports TextFSM for parsing/structuring device data (includes [ntc-templates](https://github.com/networktocode/ntc-templates))
 - Supports Jinja2 for model driven deployments of config onto devices accross [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko) and ncclient
 - Can be used to execute any python script via the ReST API and includes passing in of parameters
+- Provides an abstraction interface for service modeling of Create, Retrieve, Delete methods for a service
 - Includes large postman collection of examples
 - Supports automated download and installation of TextFSM templates from http://textfsm.nornir.tech online TextFSM development tool
 - Automatically generates a JSON schema for any Jinja2 Template
