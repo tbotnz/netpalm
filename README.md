@@ -1,24 +1,24 @@
 ![netpalm_log](/images/netpalm.png)
 
 Why NetPalm?
-Netpalm is a ReST API into your dusty old network devices, NetPalm makes it easy to push and pull network state from your web apps.
-NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko) and ncclient library's for network device communication, these powerful libs supprt a vast number of vendors and OS
+netpalm is a ReST API into your dusty old network devices, netpalm makes it easy to push and pull network state from your apps. netpalm can abstract and render structured data both inbound and outbound to your network devices native telnet, SSH, NETCONF or RESTCONF interface.
+NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  ncclient and requests library's for network device communication, these powerful libs supprt a vast number of vendors and OS
 
 ## Netpalm Features
 
-- Talks a Rest API to your app and CLI/NETCONF to your network devices
+- Talks a Rest API to your app and CLI/NETCONF/RESTCONF to your network devices
+- Provides a multi-level abstraction interface for service modeling of Create, Retrieve, Delete methods
+- Ability to write your own [service templates](https://github.com/tbotnz/netpalm/blob/master/backend/plugins/service_templates/vlan_service.j2)
 - Per device task queuing (Ensure you dont overload your VTY's)
 - Large amount of supported multivendor devices ( cheers to the netmiko & napalm & ncclient lads )
 - Supports TextFSM for parsing/structuring device data (includes [ntc-templates](https://github.com/networktocode/ntc-templates))
 - Supports Jinja2 for model driven deployments of config onto devices accross [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko) and ncclient
 - Can be used to execute any python script via the ReST API and includes passing in of parameters
-- Provides an abstraction interface for service modeling of Create, Retrieve, Delete methods for a service
 - Includes large postman collection of examples
 - Supports automated download and installation of TextFSM templates from http://textfsm.nornir.tech online TextFSM development tool
 - Automatically generates a JSON schema for any Jinja2 Template
 - Can render NETCONF XML responses into JSON on the fly
 - Can render Jinja2 templates only if required via the API
-- Normalised ReST interface
 - Asynchronous parallel processing
 - Task oriented
 
