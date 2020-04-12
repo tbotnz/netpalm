@@ -1,31 +1,41 @@
 {# DEMO NETPALM SERVICE#}
-{# CREATES VLANS ON MULTIPLE HOSTS #}
+{# CREATES IP ADDRESS ON INTERFACES #}
 {#
-!!!! EXAMPLE PAYLOAD TO SEND IN TO SERVICE API AS BELOW
-{
-	"operation": "create",
-	"args":{
-		"hosts":["10.0.2.25","10.0.2.23"],
-		"username":"admin",
-		"password":"admin"
-	}
-}
-or 
-{
-	"operation": "retrieve",
-	"args":{
-		"hosts":["10.0.2.25","10.0.2.23"],
-		"username":"admin",
-		"password":"admin"
-	}
-}
-or
+!!!! EXAMPLE PAYLOAD AS BELOW
 {
 	"operation": "delete",
 	"args":{
 		"hosts":["10.0.2.25","10.0.2.23"],
 		"username":"admin",
-		"password":"admin"
+		"password":"admin",
+		"interfaces":{
+			"FastEthernet1/0":"192.168.3.1 255.255.255.0",
+			"FastEthernet2/0":"192.168.1.1 255.255.255.0",
+			"FastEthernet3/0":"192.168.2.1 255.255.255.0"
+		}
+	}
+}
+{
+	"operation": "retrieve",
+	"args":{
+		"hosts":["10.0.2.25","10.0.2.23"],
+		"username":"admin",
+		"password":"admin",
+		"interfaces":{
+		}
+	}
+}
+{
+	"operation": "delete",
+	"args":{
+		"hosts":["10.0.2.25","10.0.2.23"],
+		"username":"admin",
+		"password":"admin",
+		"interfaces":{
+			"FastEthernet1/0":"192.168.3.1 255.255.255.0",
+			"FastEthernet2/0":"192.168.1.1 255.255.255.0",
+			"FastEthernet3/0":"192.168.2.1 255.255.255.0"
+		}
 	}
 }
 #}
@@ -36,7 +46,7 @@ or
       {
         "operation": "create",
         "payload": {
-          "library": "napalm",
+          "library": "netmiko",
           "connection_args": {
             "device_type": "cisco_ios",
             "host": "{{host}}",
@@ -44,9 +54,10 @@ or
             "password": "{{password}}"
           },
         "j2config": {
-    	    "template":"cisco_ios_create_vlans",
+    	    "template":"cisco_ios_add_ip_int",
     	    "args":{
-    		    "vlans": [99]
+            {# tojson filter is required if passing in json objects into service template eg dict list #}
+    		    "interfaces": {{interfaces | tojson }}
     	    }
         }
       }
@@ -61,7 +72,7 @@ or
             "username": "{{username}}",
             "password": "{{password}}"
           },
-        "command": "show int vlan 99",
+        "command": "show ip int brief",
         "args":{
             "use_textfsm":true
         }
@@ -78,16 +89,17 @@ or
             "password": "{{password}}"
           },
         "j2config": {
-    	    "template":"cisco_ios_remove_vlans",
+    	    "template":"cisco_ios_remove_ip_int",
     	    "args":{
-    		    "vlans": [99]
+            {# tojson filter is required if passing in json objects into service template eg dict list #}
+    		    "interfaces": {{interfaces | tojson }}
     	    }
         }
       }
       }
     ]
   }{% if not loop.last %},{% endif %}{# THIS IS REQUIRED TO CONSTRUCT THE DATA CORRECTLY #}
-  {% endfor -%}
+  {% endfor %}
 ]
 
 

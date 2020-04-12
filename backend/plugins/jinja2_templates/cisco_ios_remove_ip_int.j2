@@ -1,0 +1,4 @@
+{% for int in interfaces -%} 
+    int {{int}}
+    no ip address {{interfaces[int]}}
+{% endfor %}

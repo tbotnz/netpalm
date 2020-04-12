@@ -1,0 +1,61 @@
+{# NETPALM SERVICE BOILERPLATE #}
+{#
+!!!! EXAMPLE PAYLOAD AS BELOW
+{
+	"operation": "create",
+	"args":{
+		"hosts":["10.0.2.25","10.0.2.23"],
+	}
+}
+or
+{
+	"operation": "delete",
+	"args":{
+		"hosts":["10.0.2.25","10.0.2.23"],
+	}
+}
+or
+{
+	"operation": "retrieve",
+	"args":{
+		"hosts":["10.0.2.25","10.0.2.23"],
+	}
+}
+!!!! ANY PAYLOAD CAN BE ADDED TO THE ARGS DICT, THESE ARE THEN AVAILABLE IN THE J2 TEMPLATE AS BELOW
+#}
+[
+  {% for host in hosts %}
+  {
+    "supported_methods": [
+      {
+        "operation": "create",
+        "payload": {
+          {#
+          insert the payload of a getconfig API CALL
+          #}
+      }
+      },
+      {
+        "operation": "retrieve",
+        "payload": {
+          {#
+          insert the payload of a getconfig API CALL
+          #}
+        }
+      },
+      {
+        "operation": "delete",
+        "payload": {
+          {#
+          insert the payload of a setconfig API CALL
+          #}
+      }
+      }
+    ]
+  }{% if not loop.last %},{% endif %}{# THIS IS REQUIRED TO CONSTRUCT THE DATA CORRECTLY #}
+  {% endfor -%}
+]
+
+
+
+
