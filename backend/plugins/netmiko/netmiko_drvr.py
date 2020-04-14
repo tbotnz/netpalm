@@ -32,7 +32,10 @@ class netmko:
 
     def config(self, session=False, command=False):
         try:
-            comm = command.splitlines()
+            if type(command) == list:
+                comm = command
+            else:
+                comm = command.splitlines()
             if self.kwarg:
                 response = session.send_config_set(comm, **self.kwarg)
             else:
