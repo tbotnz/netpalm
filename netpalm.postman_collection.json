@@ -653,7 +653,7 @@
 					"raw": "{\r\n    \"library\": \"restconf\",\r\n    \"connection_args\":{\r\n    \t\"host\":\"10.0.2.40\", \"port\":80, \"username\":\"admin\", \"password\":\"admin\", \"verify\":false, \"timeout\":10, \"transport\":\"http\", \"headers\":{\r\n    \t\t\"Content-Type\": \"application/vnd.yang.data+json\", \"Accept\": \"application/vnd.yang.data+json\"\r\n    \t}\r\n    },\r\n    \"args\":{\r\n    \t\"uri\":\"/restconf/api/config/native/interface/BDI/\",\r\n    \t\"action\":\"patch\",\r\n    \t\"payload\":{\r\n\t\t\t\t\"ned:BDI\": {\r\n                \"description\": \"cat\",\r\n                \"ip\": {\r\n                  \"no-address\": {\r\n                    \"address\": false\r\n                  }\r\n                },\r\n                \"mop\": {\r\n                  \"enabled\": false\r\n                },\r\n                \"name\": \"1\"\r\n            }\r\n\t\t}\r\n    }\r\n}      "
 				},
 				"url": {
-					"raw": "127.0.0.1:9000/getconfig",
+					"raw": "127.0.0.1:9000/setconfig",
 					"host": [
 						"127",
 						"0",
@@ -770,7 +770,7 @@
 					"raw": "{\r\n    \"library\": \"restconf\",\r\n    \"connection_args\":{\r\n    \t\"host\":\"10.0.2.40\", \"port\":80, \"username\":\"admin\", \"password\":\"admin\", \"verify\":false, \"timeout\":10, \"transport\":\"http\", \"headers\":{\r\n    \t\t\"Content-Type\": \"application/vnd.yang.data+json\", \"Accept\": \"application/vnd.yang.data+json\"\r\n    \t}\r\n    },\r\n    \"args\":{\r\n    \t\"uri\":\"/restconf/api/config/native/interface/BDI/\",\r\n    \t\"action\":\"put\",\r\n    \t\"payload\":{\r\n\t\t\t\t\"ned:BDI\": {\r\n                \"description\": \"cat\",\r\n                \"ip\": {\r\n                  \"no-address\": {\r\n                    \"address\": false\r\n                  }\r\n                },\r\n                \"mop\": {\r\n                  \"enabled\": false\r\n                },\r\n                \"name\": \"1\"\r\n            }\r\n\t\t}\r\n    }\r\n}      "
 				},
 				"url": {
-					"raw": "127.0.0.1:9000/getconfig",
+					"raw": "127.0.0.1:9000/setconfig",
 					"host": [
 						"127",
 						"0",
