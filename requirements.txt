@@ -9,3 +9,5 @@ xmltodict
 jinja2
 jinja2schema
 jsonschema
+genie
+pyats
