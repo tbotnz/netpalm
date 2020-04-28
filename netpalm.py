@@ -73,6 +73,23 @@ def setconfig():
     return redirect(url_for('error', error=e, status_code=500))
     pass
 
+@app.route("/setconfig/dry-run", methods = ['POST'])
+@login_required
+def dryrun():
+  try:
+    if request.method == 'POST':
+      req_data = request.get_json()
+      host = req_data["connection_args"].get("host", False)
+      reds.check_and_create_q_w(hst=host)
+      r = reds.sendtask(q=host,exe='dryrun',kwargs=req_data)
+      resp = jsonify(r)
+      return resp, 201
+    else:
+      return redirect(url_for('error', error="POST required", status_code=500))
+  except Exception as e:
+    return redirect(url_for('error', error=e, status_code=500))
+    pass
+
 @app.route("/script", methods = ['POST'])
 @login_required
 def exec_script():
