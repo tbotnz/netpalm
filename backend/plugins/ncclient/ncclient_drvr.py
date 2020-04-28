@@ -44,12 +44,16 @@ class ncclien:
         except Exception as e:
             return str(e)
 
-    def editconfig(self, session=False):
+    def editconfig(self, session=False, dry_run=False):
         try:
             result = {}
             if self.kwarg:
                 response = session.edit_config(**self.kwarg)
-                if respdict:
+                if dry_run:
+                    session.discard_changes()
+                else:
+                    session.commit()
+                if response:
                     result["edit_config"] = response
             else:
                 raise Exception('args are required')

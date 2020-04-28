@@ -33,7 +33,7 @@ class naplm:
         except Exception as e:
             return str(e)
 
-    def config(self, session=False, command=False):
+    def config(self, session=False, command=False, dry_run=False):
         try:
             if type(command) == list:
                 napalmconfig = ""
@@ -44,7 +44,10 @@ class naplm:
             session.open()
             session.load_merge_candidate(config=napalmconfig)
             diff = session.compare_config()
-            response = session.commit_config()
+            if dry_run:
+                response = session.discard_config()
+            else:
+                response = session.commit_config()
             result = {}
             result["changes"] = diff.split('\n')
             return result
