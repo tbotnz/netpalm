@@ -10,3 +10,5 @@ jinja2
 jinja2schema
 jsonschema
 genie
+gunicorn
+pytest

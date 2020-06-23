@@ -2,6 +2,7 @@
     "apikey": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
     "listen_port": 9000,
     "listen_ip":"0.0.0.0",
+    "gunicorn_workers":3,
     "redis_task_ttl":500,
     "redis_task_timeout":500,
     "redis_server":"redis",
