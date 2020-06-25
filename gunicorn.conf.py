@@ -10,3 +10,4 @@ workers = data["gunicorn_workers"]
 timeout = 3 * 60
 keepalive = 24 * 60 * 60
 worker_class = "gthread"
+threads = 45
