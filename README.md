@@ -113,9 +113,9 @@ edit the config.json file too set params as required
 ### Useful Netpalm Resources
 
 Netpalm getting started blog:
-[Netpalm Intro Part 1](https://blog.wimwauters.com/networkprogrammability/2020-04-14_netpalm_introduction_part1/)
-[Netpalm Intro Part 2](https://blog.wimwauters.com/networkprogrammability/2020-04-15_netpalm_introduction_part2/)
-[Netpalm Intro Part 3](https://blog.wimwauters.com/networkprogrammability/2020-04-17_netpalm_introduction_part3/)
+- [Netpalm Intro Part 1](https://blog.wimwauters.com/networkprogrammability/2020-04-14_netpalm_introduction_part1/)
+- [Netpalm Intro Part 2](https://blog.wimwauters.com/networkprogrammability/2020-04-15_netpalm_introduction_part2/)
+- [Netpalm Intro Part 3](https://blog.wimwauters.com/networkprogrammability/2020-04-17_netpalm_introduction_part3/)
 
 ### Netpalm slack channel
 
