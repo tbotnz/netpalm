@@ -6,6 +6,8 @@ import jsonschema
 from backend.plugins.jinja2.j2 import render_j2template
 from backend.core.confload.confload import config
 
+import time
+
 class service:
     
     def __init__(self):
@@ -136,6 +138,7 @@ class service:
             for operation in host["supported_methods"]:
                 if operation["operation"] == posted_operation:
                     res = self.execute_api_call(oper=self.operation_mapping[posted_operation],payload=json.dumps(operation["payload"]))
+                    time.sleep(1)
                     returrn_res["data"].append({
                             "host": operation["payload"]["connection_args"]["host"],
                             "operation": posted_operation,
