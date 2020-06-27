@@ -12,3 +12,4 @@ jsonschema
 genie
 gunicorn
 pytest
+marshmallow
