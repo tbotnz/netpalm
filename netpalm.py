@@ -18,8 +18,13 @@ from backend.core.redis.rediz import rediz
 #load routes
 from backend.core.routes.routes import routes
 
+#load models
+from backend.core.models.models import *
+from marshmallow import ValidationError
+
 app = Flask(__name__)
 app.secret_key = os.urandom(12)
+
 
 #login decorator
 def login_required(view_function):
@@ -62,6 +67,7 @@ def setconfig():
   try:
     if request.method == 'POST':
       req_data = request.get_json()
+      model_setconfig().load(req_data)
       host = req_data["connection_args"].get("host", False)
       reds.check_and_create_q_w(hst=host)
       r = reds.sendtask(q=host,exe='setconfig',kwargs=req_data)
@@ -79,6 +85,7 @@ def dryrun():
   try:
     if request.method == 'POST':
       req_data = request.get_json()
+      model_setconfig().load(req_data)
       host = req_data["connection_args"].get("host", False)
       reds.check_and_create_q_w(hst=host)
       r = reds.sendtask(q=host,exe='dryrun',kwargs=req_data)
@@ -96,6 +103,7 @@ def exec_script():
   try:
     if request.method == 'POST':
       req_data = request.get_json()
+      model_script().load(req_data)
       host = req_data.get("script", False)
       reds.check_and_create_q_w(hst=host)
       r = reds.sendtask(q=host,exe='script',kwargs=req_data)
@@ -158,6 +166,7 @@ def getconfig():
   try:
     if request.method == 'POST':
       req_data = request.get_json()
+      model_getconfig().load(req_data)
       host = req_data["connection_args"].get("host", False)
       reds.check_and_create_q_w(hst=host)
       r = reds.sendtask(q=host,exe='getconfig',kwargs=req_data)
@@ -181,11 +190,13 @@ def template():
       return resp, 200
     elif request.method == 'POST':
       req_data = request.get_json()
+      model_template_add().load(req_data)
       r = routes["addtemplate"](kwargs=req_data)
       resp = jsonify(r)
       return resp, 201
     elif request.method == 'DELETE':
       req_data = request.get_json()
+      model_template_remove().load(req_data)
       r = routes["removetemplate"](kwargs=req_data)
       resp = jsonify(r)
       return resp, 204
@@ -243,6 +254,7 @@ def runservice(servicename=None):
   try:
     if request.method == 'POST' and servicename:
       req_data = request.get_json()
+      model_service().load(req_data)
       r = routes["render_service"](servicename, kwargs=req_data)
       resp = jsonify(r)
       return resp, 201
