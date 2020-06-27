@@ -22,7 +22,8 @@ class model_setconfig(Schema):
     connection_args = fields.Dict(required=True)
     config = fields.Raw()
     j2config = fields.Nested(model_j2config)
-
+    args = fields.Nested(model_setconfig_args)
+    
 class model_template_add(Schema):
     key = fields.Str()
     driver = fields.Str()
