@@ -14,7 +14,7 @@ class netpalm_testhelper:
         # test devices go here
         self.test_device_ios_cli = "10.0.2.30"
         self.test_device_netconf = "10.0.2.39"
-        self.test_device_restconf = "10.0.2.40"
+        self.test_device_restconf = "ios-xe-mgmt-latest.cisco.com"
 
     def check_task(self, taskid):
         try:

@@ -145,13 +145,15 @@ def test_getconfig_restconf():
     pl = {
         "library": "restconf",
         "connection_args":{
-            "host":helper.test_device_restconf, "port":80, "username":"admin", "password":"admin", "verify":False, "timeout":10, "transport":"http", "headers":{
-                "Content-Type": "application/vnd.yang.collection+json", "Accept": "application/vnd.yang.collection+json"
+            "host":helper.test_device_restconf, "port":9443, "username":"developer", "password":"C1sco12345", "verify":False, "timeout":10, "transport":"https", "headers":{
+                "Content-Type": "application/yang-data+json", "Accept": "application/yang-data+json"
             }
         },
         "args":{
-            "uri":"/restconf/api/config/native/interface/BDI/"
+            "uri":"/restconf/data/Cisco-IOS-XE-native:native/interface/",
+            "action":"get"
         }
-    }    
+    } 
     res = helper.post_and_check('/getconfig',pl)
-    assert res["http://10.0.2.40:80/restconf/api/config/native/interface/BDI/"]
+    assert res["https://ios-xe-mgmt-latest.cisco.com:9443/restconf/data/Cisco-IOS-XE-native:native/interface/"]["result"]["Cisco-IOS-XE-native:interface"]
+

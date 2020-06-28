@@ -128,4 +128,68 @@ def test_setconfig_ncclient():
     }
     res = helper.post_and_check('/setconfig',pl)
     assert res == "Namespace=\"http://www.cisco.com/nxos:1.0:vlan_mgr_cli\""
-      
+
+
+@pytest.mark.setconfig
+def test_setconfig_restconf_post():
+    pl = {
+        "library": "restconf",
+        "connection_args":{
+            "host":helper.test_device_restconf, "port":9443, "username":"developer", "password":"C1sco12345", "verify":False, "timeout":10, "transport":"https", "headers":{
+                "Content-Type": "application/yang-data+json", "Accept": "application/yang-data+json"
+            }
+        },
+        "args":{
+            "uri":"/restconf/data/Cisco-IOS-XE-native:native/interface/",
+        "action":"post",
+        "payload": {
+            "Cisco-IOS-XE-native:BDI":{
+            "name":"4001",
+            "description": "netpalm"
+            }
+        }
+        }
+    }      
+    res = helper.post_and_check('/setconfig',pl)
+    assert res["https://ios-xe-mgmt-latest.cisco.com:9443/restconf/data/Cisco-IOS-XE-native:native/interface/"]["status_code"] == 201
+
+@pytest.mark.setconfig
+def test_setconfig_restconf_patch():
+    pl = {
+        "library": "restconf",
+        "connection_args":{
+            "host":helper.test_device_restconf, "port":9443, "username":"developer", "password":"C1sco12345", "verify":False, "timeout":10, "transport":"https", "headers":{
+                "Content-Type": "application/yang-data+json", "Accept": "application/yang-data+json"
+            }
+        },
+        "args":{
+            "uri":"/restconf/data/Cisco-IOS-XE-native:native/interface/BDI=4001",
+        "action":"patch",
+        "payload": {
+            "Cisco-IOS-XE-native:BDI":{
+            "name":"4001",
+            "description": "netpalm - namechange"
+            }
+        }
+        }
+    }          
+    res = helper.post_and_check('/setconfig',pl)
+    assert res["https://ios-xe-mgmt-latest.cisco.com:9443/restconf/data/Cisco-IOS-XE-native:native/interface/BDI=4001"]["status_code"] == 204
+
+@pytest.mark.setconfig
+def test_setconfig_restconf_delete():
+    pl = {
+        "library": "restconf",
+        "connection_args":{
+            "host":helper.test_device_restconf, "port":9443, "username":"developer", "password":"C1sco12345", "verify":False, "timeout":10, "transport":"https", "headers":{
+                "Content-Type": "application/yang-data+json", "Accept": "application/yang-data+json"
+            }
+        },
+        "args":{
+            "uri":"/restconf/data/Cisco-IOS-XE-native:native/interface/BDI=4001",
+            "action":"delete"
+        }
+    }               
+    res = helper.post_and_check('/setconfig',pl)
+    assert res["https://ios-xe-mgmt-latest.cisco.com:9443/restconf/data/Cisco-IOS-XE-native:native/interface/BDI=4001"]["status_code"] == 204
+
