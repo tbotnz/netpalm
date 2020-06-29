@@ -7,7 +7,7 @@ class netpalm_testhelper:
     def __init__(self):
         with open("../config.json") as json_file:
             data = json.load(json_file)
-        self.apikey = data["apikey"]
+        self.apikey = data["api_key"]
         self.ip = data["listen_ip"]
         self.port = data["listen_port"]
         self.headers = {'Content-type': 'application/json', 'Accept': 'text/plain', 'x-api-key': self.apikey}

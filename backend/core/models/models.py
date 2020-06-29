@@ -1,43 +1,43 @@
-from marshmallow import Schema, fields
+from typing import Optional, Set, Any
+import typing
+from pydantic import BaseModel
 
-class model_getconfig(Schema):
-    library = fields.Str(required=True)
-    connection_args = fields.Dict(required=True)
-    command = fields.Raw()
-    args = fields.Dict()
+class model_j2config(BaseModel):
+    template: str
+    args: str
 
-class model_j2config(Schema):
-    template = fields.Str(required=True)
-    args = fields.Dict(required=True)
-
-class model_setconfig_args(Schema):
-    target = fields.Str()
-    config = fields.Str()
-    uri = fields.Str()
-    action = fields.Str()
-    payload = fields.Dict()
-
-class model_setconfig(Schema):
-    library = fields.Str(required=True)
-    connection_args = fields.Dict(required=True)
-    config = fields.Raw()
-    j2config = fields.Nested(model_j2config)
-    args = fields.Nested(model_setconfig_args)
+class model_setconfig_args(BaseModel):
+    payload: Any
+    target: Optional[str]
+    config: Optional[str]
+    uri: Optional[str]
+    action: Optional[str]
     
-class model_template_add(Schema):
-    key = fields.Str()
-    driver = fields.Str()
-    command = fields.Str()
+class model_setconfig(BaseModel):
+    library: str
+    connection_args: dict
+    config: Optional[Any]
+    j2config: Optional[model_j2config]
+    args: Optional[model_setconfig_args]
 
-class model_template_remove(Schema):
-    template = fields.Str()
+class model_script(BaseModel):
+    script: str
+    args: dict
 
-class model_service(Schema):
-    operation = fields.Str(required=True)
-    args = fields.Dict(required=True)
+class model_getconfig(BaseModel):
+    library: str
+    connection_args: dict
+    command: Any
+    args: Optional[dict]
 
-class model_script(Schema):
-    script = fields.Str(required=True)
-    args = fields.Dict(required=True)
+class model_template_add(BaseModel):
+    key: str
+    driver: str
+    command: str
 
+class model_template_remove(BaseModel):
+    template: str
 
+class model_service(BaseModel):
+    operation: str
+    args: dict

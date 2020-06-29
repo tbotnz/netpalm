@@ -11,7 +11,7 @@ import time
 class service:
     
     def __init__(self):
-        self.api_key = config().apikey
+        self.api_key = config().api_key
         self.listen_ip = config().listen_ip
         self.listen_port = config().listen_port
         self.self_api_call_timeout = config().self_api_call_timeout

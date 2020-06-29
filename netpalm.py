@@ -1,6 +1,13 @@
-from flask import Flask
-from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify, url_for
-from functools import wraps
+#load fast api
+from fastapi import FastAPI, Header, HTTPException
+from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi.openapi.utils import get_openapi
+from fastapi import Depends, FastAPI, Request
+from fastapi.security.api_key import APIKeyQuery, APIKeyCookie, APIKeyHeader, APIKey
+from fastapi.encoders import jsonable_encoder
+
+from starlette.responses import RedirectResponse, JSONResponse
+from backend.core.security.get_api_key import get_api_key
 
 import json
 import os
@@ -20,247 +27,207 @@ from backend.core.routes.routes import routes
 
 #load models
 from backend.core.models.models import *
-from marshmallow import ValidationError
 
-app = Flask(__name__)
-app.secret_key = os.urandom(12)
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
+#general routes
+@app.get("/swaggerfile", tags=["swagger file"])
+#async def get_open_api_endpoint(api_key: APIKey = Depends(get_api_key)):
+async def get_open_api_endpoint():
+    response = JSONResponse(
+        get_openapi(title="netpalm", version=0.4, routes=app.routes)
+    )
+    return response
 
-#login decorator
-def login_required(view_function):
-    @wraps(view_function)
-    def decorated_function(*args, **kwargs):
-        if request.headers.get('x-api-key') and request.headers.get('x-api-key') == config().apikey:
-            return view_function(*args, **kwargs)
-        else:
-          return redirect(url_for('denied'))
-    return decorated_function
+@app.get("/", tags=["swaggerui"])
+#async def get_documentation(api_key: APIKey = Depends(get_api_key)):
+async def get_documentation():
+    response = get_swagger_ui_html(openapi_url="/swaggerfile", title="docs")
+    response.set_cookie(
+        config().api_key_name,
+        value=config().api_key,
+        domain=config().cookie_domain,
+        max_age=1800,
+        expires=1800,
+    )
+    return response
+
+@app.get("/logout")
+async def route_logout_and_remove_cookie(api_key: APIKey = Depends(get_api_key)):
+    response = RedirectResponse(url="/")
+    response.delete_cookie(config().api_key_name, domain=config().cookie_domain)
+    response.delete_cookie("Authorization", domain=config().cookie_domain)
+    return response
 
 #utility route - denied
-@app.route("/denied", methods = ['GET', 'POST'])
-def denied():
-  response_object = {
-    'status': 'error',
-        'data': {
-            'response': 'forbidden'
-        }
-    }
-  return jsonify(response_object), 401
-
-#utility route - error
-@app.route("/error", methods = ['GET', 'POST'])
-def error():
-  status_code = request.args.get("status_code", False)
-  err = request.args.get("error", False)
-  response_object = {
-    'status': 'error',
-        'data': {
-            'task_result': str(err)
-        }
-    }
-  return jsonify(response_object), status_code
+@app.get("/denied")
+async def denied():
+  raise HTTPException(status_code=403, detail="forbidden")
 
 #deploy a configuration
-@app.route("/setconfig", methods = ['POST'])
-@login_required
-def setconfig():
+@app.post("/setconfig")
+async def set_config(setcfg: model_setconfig, api_key: APIKey = Depends(get_api_key)):
   try:
-    if request.method == 'POST':
-      req_data = request.get_json()
-      model_setconfig().load(req_data)
-      host = req_data["connection_args"].get("host", False)
-      reds.check_and_create_q_w(hst=host)
-      r = reds.sendtask(q=host,exe='setconfig',kwargs=req_data)
-      resp = jsonify(r)
-      return resp, 201
-    else:
-      return redirect(url_for('error', error="POST required", status_code=500))
+    req_data = setcfg.dict()
+    host = req_data["connection_args"].get("host", False)
+    reds.check_and_create_q_w(hst=host)
+    r = reds.sendtask(q=host,exe='setconfig',kwargs=req_data)
+    resp = jsonable_encoder(r)
+    return resp
   except Exception as e:
-    return redirect(url_for('error', error=e, status_code=500))
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
-@app.route("/setconfig/dry-run", methods = ['POST'])
-@login_required
-def dryrun():
+#dry run a configuration
+@app.post("/setconfig/dry-run")
+async def set_config_dry_run(setcfg: model_setconfig, api_key: APIKey = Depends(get_api_key)):
   try:
-    if request.method == 'POST':
-      req_data = request.get_json()
-      model_setconfig().load(req_data)
-      host = req_data["connection_args"].get("host", False)
-      reds.check_and_create_q_w(hst=host)
-      r = reds.sendtask(q=host,exe='dryrun',kwargs=req_data)
-      resp = jsonify(r)
-      return resp, 201
-    else:
-      return redirect(url_for('error', error="POST required", status_code=500))
+    req_data = setcfg.dict()
+    host = req_data["connection_args"].get("host", False)
+    reds.check_and_create_q_w(hst=host)
+    r = reds.sendtask(q=host,exe='dryrun',kwargs=req_data)
+    resp = jsonable_encoder(r)
+    return resp
   except Exception as e:
-    return redirect(url_for('error', error=e, status_code=500))
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
-@app.route("/script", methods = ['POST'])
-@login_required
-def exec_script():
+@app.post("/script")
+async def execute_script(script: model_script, api_key: APIKey = Depends(get_api_key)):
   try:
-    if request.method == 'POST':
-      req_data = request.get_json()
-      model_script().load(req_data)
-      host = req_data.get("script", False)
-      reds.check_and_create_q_w(hst=host)
-      r = reds.sendtask(q=host,exe='script',kwargs=req_data)
-      resp = jsonify(r)
-      return resp, 201
-    else:
-      return redirect(url_for('error', error="POST required", status_code=500))
+    req_data = script.dict()
+    host = req_data.get("script", False)
+    reds.check_and_create_q_w(hst=host)
+    r = reds.sendtask(q=host,exe='script',kwargs=req_data)
+    resp = jsonable_encoder(r)
+    return resp
   except Exception as e:
-    return redirect(url_for('error', error=e, status_code=500))
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
-#get specific task 
-@app.route("/task/<task_id>", methods=['GET'])
-@login_required
-def get_status(task_id):
+# get specific task 
+@app.get("/task/{task_id}")
+async def get_task(task_id: str, api_key: APIKey = Depends(get_api_key)):
   try:
     r = reds.fetchtask(task_id=task_id)
-    if r:
-      resp = jsonify(r)
-      return resp, 200
-    else:
-      return redirect(url_for('error', error="task not foud", status_code=404))
+    resp = jsonable_encoder(r)
+    return resp
   except Exception as e:
-    return redirect(url_for('error', error=str(e), status_code=500))
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
 #get all tasks in queue
-@app.route("/taskqueue/", methods=['GET'])
-@login_required
-def get_tasklist():
+@app.get("/taskqueue/")
+async def get_task_list(api_key: APIKey = Depends(get_api_key)):
   try:
     r = reds.getjoblist(q=False)
     if r:
-      resp = jsonify(r)
-      return resp, 200
+      resp = jsonable_encoder(r)
+      return resp
   except Exception as e:
-    return redirect(url_for('error', error=str(e), status_code=500))
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
 #task view route for specific host
-@app.route("/taskqueue/<host>", methods=['GET'])
-@login_required
-def get_host_tasklist(host):
+@app.get("/taskqueue/{host}")
+async def get_host_task_list(host: str, api_key: APIKey = Depends(get_api_key)):
   try:
     r = reds.getjobliststatus(q=host)
-    if r:
-      resp = jsonify(r)
-      return resp, 200
-    else:
-      return redirect(url_for('error', error="host not foud", status_code=404))
+    resp = jsonable_encoder(r)
+    return resp
   except Exception as e:
-    return redirect(url_for('error', error=str(e), status_code=500))
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
-
 #read config
-@app.route("/getconfig", methods = ['POST'])
-@login_required
-def getconfig():
+@app.post("/getconfig")
+async def get_config(getcfg: model_getconfig, api_key: APIKey = Depends(get_api_key)):
   try:
-    if request.method == 'POST':
-      req_data = request.get_json()
-      model_getconfig().load(req_data)
-      host = req_data["connection_args"].get("host", False)
-      reds.check_and_create_q_w(hst=host)
-      r = reds.sendtask(q=host,exe='getconfig',kwargs=req_data)
-      resp = jsonify(r)
-      return resp, 201
-    else:
-      return redirect(url_for('error', error="POST required", status_code=500))
+    req_data = getcfg.dict()
+    host = req_data["connection_args"].get("host", False)
+    reds.check_and_create_q_w(hst=host)
+    r = reds.sendtask(q=host,exe='getconfig',kwargs=req_data)
+    resp = jsonable_encoder(r)
+    return resp
   except Exception as e:
-    return redirect(url_for('error', error=str(e), status_code=500))
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
 
 #text fsmtemplate routes
-@app.route("/template", methods = ['GET', 'POST', 'DELETE'])
-@login_required
-def template():
+@app.get("/template")
+async def get_j2_template(api_key: APIKey = Depends(get_api_key)):
   try:
-    if request.method == 'GET':
-      r = routes["gettemplate"]()
-      resp = jsonify(r)
-      return resp, 200
-    elif request.method == 'POST':
-      req_data = request.get_json()
-      model_template_add().load(req_data)
-      r = routes["addtemplate"](kwargs=req_data)
-      resp = jsonify(r)
-      return resp, 201
-    elif request.method == 'DELETE':
-      req_data = request.get_json()
-      model_template_remove().load(req_data)
-      r = routes["removetemplate"](kwargs=req_data)
-      resp = jsonify(r)
-      return resp, 204
-      #return redirect(url_for('error', error="GET required", status_code=500))
+    r = routes["gettemplate"]()
+    resp = jsonable_encoder(r)
+    return resp, 200
   except Exception as e:
-    return redirect(url_for('error', error=str(e), status_code=500))
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
+@app.post("/template")
+async def add_template(template_add: model_template_add, api_key: APIKey = Depends(get_api_key)):
+  try:
+    req_data = template_add.dict()
+    r = routes["addtemplate"](kwargs=req_data)
+    resp = jsonable_encoder(r)
+    return resp
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
+    pass
 
+@app.post("/template")
+async def delete_j2_template(template_remove: model_template_remove, api_key: APIKey = Depends(get_api_key)):
+  try:
+      req_data = template_remove.dict()
+      r = routes["removetemplate"](kwargs=req_data)
+      resp = jsonable_encoder(r)
+      return resp
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
+    pass
 
 #j2 routes
-@app.route("/j2template", methods = ['GET'])
-@login_required
-def j2templat():
+@app.get("/j2template")
+async def get_j2_templates(api_key: APIKey = Depends(get_api_key)):
   try:
-    if request.method == 'GET' :
-      r = routes["j2gettemplates"]()
-      resp = jsonify(r)
-      return resp, 200
-      #return redirect(url_for('error', error="GET required", status_code=500))
+    r = routes["j2gettemplates"]()
+    resp = jsonable_encoder(r)
+    return resp
   except Exception as e:
-    return redirect(url_for('error', error=str(e), status_code=500))
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
-@app.route("/j2template/<tmpname>", methods = ['GET'])
-@login_required
-def j2template(tmpname=None):
+@app.get("/j2template/{tmpname}")
+async def get_j2_template(tmpname: str, api_key: APIKey = Depends(get_api_key)):
   try:
-    if request.method == 'GET' and tmpname:
       r = routes["j2gettemplate"](tmpname)
-      resp = jsonify(r)
+      resp = jsonable_encoder(r)
       return resp, 200
-      #return redirect(url_for('error', error="GET required", status_code=500))
   except Exception as e:
-    return redirect(url_for('error', error=str(e), status_code=500))
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
-@app.route("/j2template/render/<tmpname>", methods = ['POST'])
-@login_required
-def j2rentemplate(tmpname=None):
+@app.post("/j2template/render/{tmpname}")
+async def add_j2_template(tmpname: str, data: dict, api_key: APIKey = Depends(get_api_key)):
   try:
-    if request.method == 'POST' and tmpname:
-      req_data = request.get_json()
-      r = routes["render_j2template"](tmpname, kwargs=req_data)
-      resp = jsonify(r)
-      return resp, 201
-      #return redirect(url_for('error', error="GET required", status_code=500))
+    req_data = data
+    r = routes["render_j2template"](tmpname, kwargs=req_data)
+    resp = jsonable_encoder(r)
+    return resp
   except Exception as e:
-    return redirect(url_for('error', error=str(e), status_code=500))
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
-@app.route("/service/<servicename>", methods = ['POST'])
-@login_required
-def runservice(servicename=None):
+@app.post("/service/{servicename}")
+async def execute_service(servicename: str, service: model_service, api_key: APIKey = Depends(get_api_key)):
   try:
-    if request.method == 'POST' and servicename:
-      req_data = request.get_json()
-      model_service().load(req_data)
-      r = routes["render_service"](servicename, kwargs=req_data)
-      resp = jsonify(r)
-      return resp, 201
-      #return redirect(url_for('error', error="GET required", status_code=500))
+    req_data = service.dict()
+    r = routes["render_service"](servicename, kwargs=req_data)
+    resp = jsonable_encoder(r)
+    return resp
   except Exception as e:
-    return redirect(url_for('error', error=str(e), status_code=500))
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
 processworkerprocess()
