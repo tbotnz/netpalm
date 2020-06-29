@@ -21,6 +21,7 @@ NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 - Can render Jinja2 templates only if required via the API
 - Asynchronous parallel processing
 - Task oriented
+- built in Swagger 
 
 ## Concepts
 
@@ -95,7 +96,7 @@ http://$(yourdockerhost):9000
 edit the config.json file too set params as required
 ```
 {
-    "apikey": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+    "api_key": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
     "listen_port": 9000,
     "listen_ip":"0.0.0.0",
     "redis_task_ttl":500,

@@ -1,4 +1,5 @@
-Flask
+fastapi
+uvicorn
 netmiko
 napalm
 ncclient
@@ -12,4 +13,3 @@ jsonschema
 genie
 gunicorn
 pytest
-marshmallow
