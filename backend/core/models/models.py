@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 class model_j2config(BaseModel):
     template: str
-    args: str
+    args: dict
 
 class model_setconfig_args(BaseModel):
     payload: Any
