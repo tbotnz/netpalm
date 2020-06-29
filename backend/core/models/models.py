@@ -7,7 +7,7 @@ class model_j2config(BaseModel):
     args: dict
 
 class model_setconfig_args(BaseModel):
-    payload: Any
+    payload: Optional[Any]
     target: Optional[str]
     config: Optional[str]
     uri: Optional[str]
