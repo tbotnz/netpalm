@@ -12,7 +12,7 @@ class netpalm_testhelper:
         self.port = data["listen_port"]
         self.headers = {'Content-type': 'application/json', 'Accept': 'text/plain', 'x-api-key': self.apikey}
         # test devices go here
-        self.test_device_ios_cli = "10.0.2.30"
+        self.test_device_ios_cli = "10.0.2.25"
         self.test_device_netconf = "10.0.2.39"
         self.test_device_restconf = "ios-xe-mgmt-latest.cisco.com"
 
