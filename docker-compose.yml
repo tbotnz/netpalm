@@ -19,6 +19,8 @@ services:
         build:
             context: .
             dockerfile: ./netpalm-pinned_worker-dockerfile
+        environment:
+            - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
         volumes:
             - .:/code
 
@@ -26,6 +28,8 @@ services:
         build:
             context: .
             dockerfile: ./netpalm-fifo_worker-dockerfile
+        environment:
+            - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
         volumes:
             - .:/code
 

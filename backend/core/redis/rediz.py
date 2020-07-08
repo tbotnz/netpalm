@@ -108,6 +108,7 @@ class rediz:
 
     def getjoblist(self, q):
         try:
+            self.getqueue(q)
             # if single host lookup
             if q:
                 qexists = self.local_queuedb.get(q, False)
@@ -142,6 +143,7 @@ class rediz:
     def getjobliststatus(self, q):
         try:
             if q:
+                self.getqueue(q)
                 task = self.local_queuedb[q]["queue"].get_job_ids()
                 response_object = {
                     'status': 'success',
