@@ -6,9 +6,9 @@ import json
 from multiprocessing import Process
 from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegistry
 
+from pinned_worker import pinned_worker_constructor
+
 from backend.core.routes import routes
-from backend.core.redis.rediz_workers import nodeworker
-from backend.core.redis.rediz_workers import nodeworkerconstructor
 from backend.core.confload.confload import config
 
 class rediz:
@@ -24,18 +24,42 @@ class rediz:
         self.core_q = config().redis_core_q
         self.base_connection = Redis(self.server, self.port)
         self.base_q = Queue(self.core_q, connection=self.base_connection)
-        self.queuedb = {}
+        self.networked_queuedb = config().redis_queue_store
+        self.local_queuedb = {}
 
     def getqueue(self, host):
-        result = self.queuedb.get(host, False)
-        return result
+        #checks a centralised db / queue exists and creates a empty db if one does not exist
+        try:
+            result = self.base_connection.get(self.networked_queuedb)
+            if result:
+                jsresult = json.loads(result)
+                res = jsresult.get(host, False)
+                #check if the local controller queue db is out of sync with the networked db
+                if res:
+                    q_exists_in_local_db = self.local_queuedb.get(host, False)
+                    if not q_exists_in_local_db:
+                        self.local_queuedb[host]["queue"] = Queue(host, connection=self.base_connection)
+                return res
+            else:
+                nulldb = json.dumps({})
+                self.base_connection.set(self.networked_queuedb, nulldb)
+                self.local_queuedb = {}
+                self.local_queuedb[config().redis_fifo_q]["queue"] = Queue(config().redis_fifo_q, connection=self.base_connection)
+                return False
+        except Exception as e:
+            return e
 
     def create_queue_worker(self, qname):
         try:
-            self.base_q.enqueue_call(func=nodeworkerconstructor, args=(qname,), ttl=self.ttl)
-            self.queuedb[qname] = {}
-            self.queuedb[qname]["queue"] = Queue(qname, connection=self.base_connection)
-            return self.queuedb[qname]["queue"]
+            self.base_q.enqueue_call(func=pinned_worker_constructor, args=(qname,), ttl=self.ttl)
+            result = self.base_connection.get(self.networked_queuedb)
+            tmpdb = json.loads(result)
+            tmpdb[qname] = {}
+            jsresult = json.dumps(tmpdb)
+            self.base_connection.set(self.networked_queuedb, jsresult)
+            self.local_queuedb[qname] = {}
+            self.local_queuedb[qname]["queue"] = Queue(qname, connection=self.base_connection)
+            return self.local_queuedb[qname]["queue"]
         except Exception as e:
             return e
 
@@ -49,7 +73,7 @@ class rediz:
 
     def sendtask(self, q, exe, **kwargs):
         try:
-            task = self.queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl, kwargs=kwargs["kwargs"], timeout=self.timeout)
+            task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl, kwargs=kwargs["kwargs"], timeout=self.timeout)
             resultdata = {
                     'status': 'success',
                     'data': {
@@ -86,9 +110,9 @@ class rediz:
         try:
             # if single host lookup
             if q:
-                qexists = self.queuedb.get(q, False)
+                qexists = self.local_queuedb.get(q, False)
                 if qexists:
-                    t = self.queuedb[q]["queue"].get_job_ids()
+                    t = self.local_queuedb[q]["queue"].get_job_ids()
                     if t:
                         response_object = {
                             'status': 'success',
@@ -103,8 +127,8 @@ class rediz:
                     return False
             #multi host lookup
             elif not q:
-                for i in self.queuedb:
-                    task = self.queuedb[i]["queue"].get_job_ids()
+                for i in self.local_queuedb:
+                    task = self.local_queuedb[i]["queue"].get_job_ids()
                 response_object = {
                     'status': 'success',
                     'data': {
@@ -118,7 +142,7 @@ class rediz:
     def getjobliststatus(self, q):
         try:
             if q:
-                task = self.queuedb[q]["queue"].get_job_ids()
+                task = self.local_queuedb[q]["queue"].get_job_ids()
                 response_object = {
                     'status': 'success',
                     'data': {
@@ -126,17 +150,17 @@ class rediz:
                     }
                 }
                 #get startedjobs
-                startedjobs = self.getstartedjobs(self.queuedb[q]["queue"])
+                startedjobs = self.getstartedjobs(self.local_queuedb[q]["queue"])
                 for job in startedjobs:
                     task.append(job)
 
                 #get finishedjobs
-                finishedjobs = self.getfinishedjobs(self.queuedb[q]["queue"])
+                finishedjobs = self.getfinishedjobs(self.local_queuedb[q]["queue"])
                 for job in finishedjobs:
                     task.append(job)
 
                 #get failedjobs
-                failedjobs = self.getfailedjobs(self.queuedb[q]["queue"])
+                failedjobs = self.getfailedjobs(self.local_queuedb[q]["queue"])
                 for job in failedjobs:
                     task.append(job)
 

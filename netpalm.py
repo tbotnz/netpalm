@@ -8,7 +8,7 @@ from starlette.responses import JSONResponse
 from backend.core.security.get_api_key import get_api_key
 
 #load process constructor
-from backend.core.redis.rediz_workers import processworkerprocess
+#from backend.core.redis.rediz_workers import processworkerprocess
 
 #load views
 from routers import getconfig, setconfig, task, template, script, service, util, public
@@ -38,7 +38,5 @@ async def get_open_api_endpoint():
 async def get_documentation():
     response = get_swagger_ui_html(openapi_url="/swaggerfile", title="docs")
     return response
-
-processworkerprocess()
 
 os.system('ln -sf /usr/local/lib/python3.8/site-packages/ntc_templates/templates/ backend/plugins/ntc-templates')

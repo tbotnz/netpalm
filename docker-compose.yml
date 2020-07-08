@@ -1,7 +1,9 @@
 version: '2'
 services:
-    netpalm:
-        build: .
+    netpalm-controller:
+        build:
+            context: .
+            dockerfile: ./netpalm-controller-dockerfile
         environment:
             - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
         ports:
@@ -10,5 +12,22 @@ services:
             - .:/code
         depends_on:
             - redis
+            - netpalm-node-pinned
+            - netpalm-node-fifo
+
+    netpalm-node-pinned:
+        build:
+            context: .
+            dockerfile: ./netpalm-pinned_worker-dockerfile
+        volumes:
+            - .:/code
+
+    netpalm-node-fifo:
+        build:
+            context: .
+            dockerfile: ./netpalm-fifo_worker-dockerfile
+        volumes:
+            - .:/code
+
     redis:
         image: redis
