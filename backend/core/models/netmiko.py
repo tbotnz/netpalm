@@ -23,6 +23,7 @@ class model_netmiko_getconfig(BaseModel):
     connection_args: dict
     command: Optional[Any]
     args: Optional[netmiko_send_config_args]
+    queue_strategy: Optional[str] = "fifo"
 
     class Config:
         schema_extra = {
@@ -34,7 +35,8 @@ class model_netmiko_getconfig(BaseModel):
                 "command": "show ip int brief",
                 "args":{
                     "use_textfsm":True
-                }  
+                },
+                "queue_strategy": "fifo"  
             }
         }
 
@@ -44,6 +46,7 @@ class model_netmiko_setconfig(BaseModel):
     config: Optional[Any]
     args: Optional[netmiko_send_config_args]
     j2config: Optional[model_j2config]
+    queue_strategy: Optional[str] = "pinned"
 
     class Config:
         schema_extra = {
@@ -52,6 +55,7 @@ class model_netmiko_setconfig(BaseModel):
             "connection_args":{
                 "device_type":"cisco_ios", "host":"10.0.2.33", "username":"admin", "password":"admin"
             },
-            "config": ["hostname cat"]
+            "config": ["hostname cat"],
+            "queue_strategy": "pinned"
             }
         }

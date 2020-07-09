@@ -24,6 +24,7 @@ class model_ncclient_setconfig(BaseModel):
     library: str
     connection_args: model_ncclient_connection_args
     args: ncclient_send_config_args
+    queue_strategy: Optional[str] = "pinned"
 
     class Config:
         schema_extra = {
@@ -35,7 +36,8 @@ class model_ncclient_setconfig(BaseModel):
     "args":{
     	"target":"running",
     	"config":"<nc:config xmlns:nc='urn:ietf:params:xml:ns:netconf:base:1.0'><configure xmlns='http://www.cisco.com/nxos:1.0:vlan_mgr_cli'><__XML__MODE__exec_configure><interface><ethernet><interface>helloworld</interface><__XML__MODE_if-ethernet-switch><switchport><trunk><allowed><vlan><add><__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans><add-vlans>99</add-vlans></__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans></add></vlan></allowed></trunk></switchport></__XML__MODE_if-ethernet-switch></ethernet></interface></__XML__MODE__exec_configure></configure></nc:config>"
-    }
+    },
+    "queue_strategy": "pinned"
             }
         }
 
@@ -43,6 +45,7 @@ class model_ncclient_getconfig(BaseModel):
     library: str
     connection_args: model_ncclient_connection_args
     args: ncclient_get_config_args
+    queue_strategy: Optional[str] = "fifo"
 
     class Config:
         schema_extra = {
@@ -54,6 +57,7 @@ class model_ncclient_getconfig(BaseModel):
     "args":{
     	"source":"running",
     	"filter":"<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>"
-    }
+    },
+    "queue_strategy": "fifo"
             }
         }

@@ -7,9 +7,6 @@ from starlette.responses import JSONResponse
 #load api key
 from backend.core.security.get_api_key import get_api_key
 
-#load process constructor
-#from backend.core.redis.rediz_workers import processworkerprocess
-
 #load views
 from routers import getconfig, setconfig, task, template, script, service, util, public
 

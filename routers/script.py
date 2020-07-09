@@ -14,9 +14,7 @@ router = APIRouter()
 async def execute_script(script: model_script):
   try:
     req_data = script.dict()
-    host = req_data.get("script", False)
-    reds.check_and_create_q_w(hst=host)
-    r = reds.sendtask(q=host,exe='script',kwargs=req_data)
+    r = reds.execute_task(method="script",kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:

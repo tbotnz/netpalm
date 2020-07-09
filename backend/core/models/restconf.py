@@ -22,6 +22,7 @@ class model_restconf(BaseModel):
     library: str
     connection_args: model_restconf_connection_args
     args: model_restconf_payload
+    queue_strategy: Optional[str] = "fifo"
 
     class Config:
         schema_extra = {
@@ -41,6 +42,7 @@ class model_restconf(BaseModel):
                         "description": "netpalm"
                         }
                     }
-                    }
+                    },
+                    "queue_strategy": "pinned"
             }
         }

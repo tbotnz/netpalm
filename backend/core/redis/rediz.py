@@ -6,7 +6,7 @@ import json
 from multiprocessing import Process
 from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegistry
 
-from pinned_worker import pinned_worker_constructor
+from netpalm_pinned_worker import pinned_worker_constructor
 
 from backend.core.routes import routes
 from backend.core.confload.confload import config
@@ -26,10 +26,13 @@ class rediz:
         self.base_q = Queue(self.core_q, connection=self.base_connection)
         self.networked_queuedb = config().redis_queue_store
         self.local_queuedb = {}
+        self.local_queuedb[config().redis_fifo_q] = {}
+        self.local_queuedb[config().redis_fifo_q]["queue"] = Queue(config().redis_fifo_q, connection=self.base_connection)
 
     def getqueue(self, host):
         #checks a centralised db / queue exists and creates a empty db if one does not exist
         try:
+            #check the db store for something
             result = self.base_connection.get(self.networked_queuedb)
             if result:
                 jsresult = json.loads(result)
@@ -39,24 +42,26 @@ class rediz:
                     q_exists_in_local_db = self.local_queuedb.get(host, False)
                     if not q_exists_in_local_db:
                         self.local_queuedb[host]["queue"] = Queue(host, connection=self.base_connection)
-                return res
+                    return True
+                elif not res:
+                    return False
             else:
-                nulldb = json.dumps({})
+                #congrats you are the first node, go on and init the datastores
+                nulldb = json.dumps({"netpalm-db":"queue-val"})
                 self.base_connection.set(self.networked_queuedb, nulldb)
                 self.local_queuedb = {}
-                self.local_queuedb[config().redis_fifo_q]["queue"] = Queue(config().redis_fifo_q, connection=self.base_connection)
                 return False
         except Exception as e:
             return e
 
     def create_queue_worker(self, qname):
         try:
-            self.base_q.enqueue_call(func=pinned_worker_constructor, args=(qname,), ttl=self.ttl)
             result = self.base_connection.get(self.networked_queuedb)
             tmpdb = json.loads(result)
-            tmpdb[qname] = {}
+            tmpdb[qname] = True
             jsresult = json.dumps(tmpdb)
             self.base_connection.set(self.networked_queuedb, jsresult)
+            self.base_q.enqueue_call(func=pinned_worker_constructor, args=(qname,), ttl=self.ttl)
             self.local_queuedb[qname] = {}
             self.local_queuedb[qname]["queue"] = Queue(qname, connection=self.base_connection)
             return self.local_queuedb[qname]["queue"]
@@ -87,7 +92,21 @@ class rediz:
             return resultdata
         except Exception as e:
             return e
-            
+
+    def execute_task(self, method, **kwargs):
+        try:
+            kw = kwargs.get("kwargs", False)
+            host = kw["connection_args"].get("host", False)
+            queue_strategy = kw.get("queue_strategy", False)
+            if queue_strategy == "pinned":
+                self.check_and_create_q_w(hst=host)
+                r = self.sendtask(q=host,exe=method,kwargs=kw)
+            else:
+                r = self.sendtask(q=config().redis_fifo_q,exe=method,kwargs=kw)
+            return r
+        except Exception as e:
+            return e
+
     def fetchtask(self, task_id):
         try:
             task = Job.fetch(task_id, connection=self.base_connection)
