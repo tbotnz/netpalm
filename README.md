@@ -16,13 +16,14 @@ NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 - Supports Jinja2 for model driven deployments of config onto devices accross [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko) and ncclient
 - Can be used to execute any python script via the ReST API and includes passing in of parameters
 - Includes large postman collection of examples
+- Task oriented Asynchronous parallel processing
+- Provides the ability to change the job queuing strategy on the fly between either pooled workers across process / containers or pinned workers to devices accross process / containers
+- OpenAPI / SwaggerUI docs inbuilt via the default / route
+- Provides ability to scale out the controllers and or workers infinitley
 - Supports automated download and installation of TextFSM templates from http://textfsm.nornir.tech online TextFSM development tool
 - Automatically generates a JSON schema for any Jinja2 Template
 - Can render NETCONF XML responses into JSON on the fly
 - Can render Jinja2 templates only if required via the API
-- Asynchronous parallel processing
-- Task oriented
-- built in Swagger 
 
 ## Concepts
 
@@ -82,8 +83,7 @@ cd netpalm
 
 build container
 ```
-sudo docker build -t netpalm .
-sudo docker-compose up -d
+sudo docker-compose up -d --build
 ```
 
 import the postman collection, set the ip addresses to that of your docker host and off you go (default netpalm port is 9000)
@@ -91,6 +91,11 @@ import the postman collection, set the ip addresses to that of your docker host 
 http://$(yourdockerhost):9000
 ```
 
+## Scaling out
+netpalm containers can be scaled out as required, define how many containers are required of each type
+```
+docker-compose scale netpalm-controller=1 netpalm-worker-pinned=2 netpalm-worker-fifo=3
+```
 
 #### Configuring Netpalm
 
@@ -98,17 +103,26 @@ edit the config.json file too set params as required
 ```
 {
     "api_key": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+    "api_key_name" : "x-api-key",
+    "cookie_domain" : "netpalm.local",
     "listen_port": 9000,
     "listen_ip":"0.0.0.0",
+    "gunicorn_workers":3,
     "redis_task_ttl":500,
     "redis_task_timeout":500,
     "redis_server":"redis",
     "redis_port":6379,
     "redis_core_q":"process",
+    "redis_fifo_q":"fifo",
+    "redis_queue_store":"netpalm_queue_store",
+    "pinned_process_per_node":100,
+    "fifo_process_per_node":10,
     "txtfsm_index_file":"backend/plugins/ntc-templates/index",
     "txtfsm_template_server":"http://textfsm.nornir.tech",
     "custom_scripts":"backend/plugins/custom_scripts/",
-    "jinja2_templates":"backend/plugins/jinja2_templates/"
+    "jinja2_config_templates":"backend/plugins/jinja2_templates/",
+    "jinja2_service_templates":"backend/plugins/service_templates/",
+    "self_api_call_timeout":15
 }
 ```
 

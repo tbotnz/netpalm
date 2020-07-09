@@ -18,9 +18,7 @@ router = APIRouter()
 async def get_config(getcfg: model_getconfig):
   try:
     req_data = getcfg.dict()
-    host = req_data["connection_args"].get("host", False)
-    reds.check_and_create_q_w(hst=host)
-    r = reds.sendtask(q=host,exe='getconfig',kwargs=req_data)
+    r = reds.execute_task(method="getconfig",kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:
@@ -32,9 +30,7 @@ async def get_config(getcfg: model_getconfig):
 async def get_config_netmiko(getcfg: model_netmiko_getconfig):
   try:
     req_data = getcfg.dict()
-    host = req_data["connection_args"].get("host", False)
-    reds.check_and_create_q_w(hst=host)
-    r = reds.sendtask(q=host,exe='getconfig',kwargs=req_data)
+    r = reds.execute_task(method="getconfig",kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:
@@ -46,9 +42,7 @@ async def get_config_netmiko(getcfg: model_netmiko_getconfig):
 async def get_config_napalm(getcfg: model_napalm_getconfig):
   try:
     req_data = getcfg.dict()
-    host = req_data["connection_args"].get("host", False)
-    reds.check_and_create_q_w(hst=host)
-    r = reds.sendtask(q=host,exe='getconfig',kwargs=req_data)
+    r = reds.execute_task(method="getconfig",kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:
@@ -60,9 +54,7 @@ async def get_config_napalm(getcfg: model_napalm_getconfig):
 async def get_config_ncclient(getcfg: model_ncclient_getconfig):
   try:
     req_data = getcfg.dict()
-    host = req_data["connection_args"].get("host", False)
-    reds.check_and_create_q_w(hst=host)
-    r = reds.sendtask(q=host,exe='getconfig',kwargs=req_data)
+    r = reds.execute_task(method="getconfig",kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:
@@ -74,9 +66,7 @@ async def get_config_ncclient(getcfg: model_ncclient_getconfig):
 async def get_config_restconf(getcfg: model_restconf):
   try:
     req_data = getcfg.dict()
-    host = req_data["connection_args"].get("host", False)
-    reds.check_and_create_q_w(hst=host)
-    r = reds.sendtask(q=host,exe='getconfig',kwargs=req_data)
+    r = reds.execute_task(method="getconfig",kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:

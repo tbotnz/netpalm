@@ -24,6 +24,7 @@ class model_napalm_getconfig(BaseModel):
     library: str
     connection_args: napalm_connection_args
     command: Any
+    queue_strategy: Optional[str] = "fifo"
 
     class Config:
         schema_extra = {
@@ -32,7 +33,8 @@ class model_napalm_getconfig(BaseModel):
                 "connection_args":{
                     "device_type":"cisco_ios", "host":"10.0.2.23", "username":"admin", "password":"admin"
                 },
-                "command": "get_facts"
+                "command": "get_facts",
+                "queue_strategy": "fifo"
             }
         }
 
@@ -41,6 +43,7 @@ class model_napalm_setconfig(BaseModel):
     connection_args: napalm_connection_args
     config: Optional[Any]
     j2config: Optional[model_j2config]
+    queue_strategy: Optional[str] = "pinned"
 
     class Config:
         schema_extra = {
@@ -49,6 +52,7 @@ class model_napalm_setconfig(BaseModel):
                 "connection_args":{
                     "device_type":"cisco_ios", "host":"10.0.2.33", "username":"admin", "password":"admin"
                 },
-                "config": "hostnam cat"
+                "config": "hostnam cat",
+                "queue_strategy": "pinned"
             }
         }

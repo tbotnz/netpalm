@@ -19,16 +19,19 @@ class model_setconfig(BaseModel):
     config: Optional[Any]
     j2config: Optional[model_j2config]
     args: Optional[model_setconfig_args]
+    queue_strategy: Optional[str] = "pinned"
 
 class model_script(BaseModel):
     script: str
     args: dict
+    queue_strategy: Optional[str] = "fifo"
 
 class model_getconfig(BaseModel):
     library: str
     connection_args: dict
     command: Any
     args: Optional[dict]
+    queue_strategy: Optional[str] = "fifo"
 
 class model_template_add(BaseModel):
     key: str
@@ -41,6 +44,7 @@ class model_template_remove(BaseModel):
 class model_service(BaseModel):
     operation: str
     args: dict
+    queue_strategy: Optional[str] = "fifo"
 
 class model_task_response(BaseModel):
     task_id: str

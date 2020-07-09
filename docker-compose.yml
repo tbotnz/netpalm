@@ -1,14 +1,35 @@
-version: '2'
+version: "3.7"
+
 services:
-    netpalm:
-        build: .
+
+    netpalm-controller:
+        build:
+            context: .
+            dockerfile: ./netpalm_controller_dockerfile
         environment:
             - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
         ports:
             - "9000:9000"
-        volumes:
-            - .:/code
+
+    netpalm-worker-pinned:
+        build:
+            context: .
+            dockerfile: ./netpalm_pinned_worker_dockerfile
+        environment:
+            - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
         depends_on:
-            - redis
+            - netpalm-controller
+
+    netpalm-worker-fifo:
+        build:
+            context: .
+            dockerfile: ./netpalm_fifo_worker_dockerfile
+        environment:
+            - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+        depends_on:
+            - netpalm-controller
+
     redis:
         image: redis
+        depends_on:
+            - netpalm-controller

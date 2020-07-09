@@ -19,9 +19,7 @@ router = APIRouter()
 async def set_config(setcfg: model_setconfig):
   try:
     req_data = setcfg.dict()
-    host = req_data["connection_args"].get("host", False)
-    reds.check_and_create_q_w(hst=host)
-    r = reds.sendtask(q=host,exe='setconfig',kwargs=req_data)
+    r = reds.execute_task(method="setconfig",kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:
@@ -33,9 +31,7 @@ async def set_config(setcfg: model_setconfig):
 async def set_config_dry_run(setcfg: model_setconfig):
   try:
     req_data = setcfg.dict()
-    host = req_data["connection_args"].get("host", False)
-    reds.check_and_create_q_w(hst=host)
-    r = reds.sendtask(q=host,exe='dryrun',kwargs=req_data)
+    r = reds.execute_task(method="dryrun",kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:
@@ -47,9 +43,7 @@ async def set_config_dry_run(setcfg: model_setconfig):
 async def set_config_netmiko(setcfg: model_netmiko_setconfig):
   try:
     req_data = setcfg.dict()
-    host = req_data["connection_args"].get("host", False)
-    reds.check_and_create_q_w(hst=host)
-    r = reds.sendtask(q=host,exe='setconfig',kwargs=req_data)
+    r = reds.execute_task(method="setconfig",kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:
@@ -61,9 +55,7 @@ async def set_config_netmiko(setcfg: model_netmiko_setconfig):
 async def set_config_napalm(setcfg: model_napalm_setconfig):
   try:
     req_data = setcfg.dict()
-    host = req_data["connection_args"].get("host", False)
-    reds.check_and_create_q_w(hst=host)
-    r = reds.sendtask(q=host,exe='setconfig',kwargs=req_data)
+    r = reds.execute_task(method="setconfig",kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:
@@ -75,9 +67,7 @@ async def set_config_napalm(setcfg: model_napalm_setconfig):
 async def set_config_ncclient(setcfg: model_ncclient_setconfig):
   try:
     req_data = setcfg.dict()
-    host = req_data["connection_args"].get("host", False)
-    reds.check_and_create_q_w(hst=host)
-    r = reds.sendtask(q=host,exe='setconfig',kwargs=req_data)
+    r = reds.execute_task(method="setconfig",kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:
@@ -89,9 +79,7 @@ async def set_config_ncclient(setcfg: model_ncclient_setconfig):
 async def set_config_restconf(setcfg: model_restconf):
   try:
     req_data = setcfg.dict()
-    host = req_data["connection_args"].get("host", False)
-    reds.check_and_create_q_w(hst=host)
-    r = reds.sendtask(q=host,exe='setconfig',kwargs=req_data)
+    r = reds.execute_task(method="setconfig",kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:

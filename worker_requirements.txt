@@ -1,0 +1,11 @@
+netmiko
+napalm
+ncclient
+requests
+redis
+rq
+xmltodict
+jinja2
+jinja2schema
+jsonschema
+genie
