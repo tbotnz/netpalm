@@ -32,8 +32,7 @@ def pinned_worker(queue):
         return e
 
 def pinned_worker_constructor(queue):
-    for i in range(config().pinned_process_per_node):
-        p = Process(target=pinned_worker, args=(queue,))
-        p.start()
+    p = Process(target=pinned_worker, args=(queue,))
+    p.start()
 
 processworkerprocess()
