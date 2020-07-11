@@ -10,8 +10,8 @@ class ncclient_send_config_args(BaseModel):
 
 class ncclient_get_config_args(BaseModel):
     source: str
-    filter: Optional[str]
-    render_json:Optional[bool]
+    filter: Optional[str] = None
+    render_json:Optional[bool] = None
 
 class model_ncclient_connection_args(BaseModel):
     host: str
@@ -24,7 +24,7 @@ class model_ncclient_setconfig(BaseModel):
     library: str
     connection_args: model_ncclient_connection_args
     args: ncclient_send_config_args
-    queue_strategy: Optional[str] = "fifo"
+    queue_strategy: Optional[str] = None
 
     class Config:
         schema_extra = {
@@ -45,7 +45,7 @@ class model_ncclient_getconfig(BaseModel):
     library: str
     connection_args: model_ncclient_connection_args
     args: ncclient_get_config_args
-    queue_strategy: Optional[str] = "fifo"
+    queue_strategy: Optional[str] = None
 
     class Config:
         schema_extra = {
