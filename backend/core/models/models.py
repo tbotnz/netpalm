@@ -23,7 +23,7 @@ class model_setconfig(BaseModel):
 
 class model_script(BaseModel):
     script: str
-    args: dict
+    args: Optional[dict] = None
     queue_strategy: Optional[str] = None
 
 class model_getconfig(BaseModel):
