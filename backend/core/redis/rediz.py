@@ -96,7 +96,9 @@ class rediz:
     def execute_task(self, method, **kwargs):
         try:
             kw = kwargs.get("kwargs", False)
-            host = kw["connection_args"].get("host", False)
+            connectionargs = kw.get("connection_args", False)
+            if connectionargs:
+                host = kw["connection_args"].get("host", False)
             queue_strategy = kw.get("queue_strategy", False)
             if queue_strategy == "pinned":
                 self.check_and_create_q_w(hst=host)
