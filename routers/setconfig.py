@@ -16,7 +16,7 @@ router = APIRouter()
 
 #deploy a configuration
 @router.post("/setconfig", response_model=model_response, status_code=201)
-async def set_config(setcfg: model_setconfig):
+def set_config(setcfg: model_setconfig):
   try:
     req_data = setcfg.dict()
     r = reds.execute_task(method="setconfig",kwargs=req_data)
@@ -28,7 +28,7 @@ async def set_config(setcfg: model_setconfig):
 
 #dry run a configuration
 @router.post("/setconfig/dry-run", response_model=model_response, status_code=201)
-async def set_config_dry_run(setcfg: model_setconfig):
+def set_config_dry_run(setcfg: model_setconfig):
   try:
     req_data = setcfg.dict()
     r = reds.execute_task(method="dryrun",kwargs=req_data)
@@ -40,7 +40,7 @@ async def set_config_dry_run(setcfg: model_setconfig):
 
 #deploy a configuration
 @router.post("/setconfig/netmiko", response_model=model_response, status_code=201)
-async def set_config_netmiko(setcfg: model_netmiko_setconfig):
+def set_config_netmiko(setcfg: model_netmiko_setconfig):
   try:
     req_data = setcfg.dict()
     r = reds.execute_task(method="setconfig",kwargs=req_data)
@@ -52,7 +52,7 @@ async def set_config_netmiko(setcfg: model_netmiko_setconfig):
 
 #deploy a configuration
 @router.post("/setconfig/napalm", response_model=model_response, status_code=201)
-async def set_config_napalm(setcfg: model_napalm_setconfig):
+def set_config_napalm(setcfg: model_napalm_setconfig):
   try:
     req_data = setcfg.dict()
     r = reds.execute_task(method="setconfig",kwargs=req_data)
@@ -64,7 +64,7 @@ async def set_config_napalm(setcfg: model_napalm_setconfig):
 
 #deploy a configuration
 @router.post("/setconfig/ncclient", response_model=model_response, status_code=201)
-async def set_config_ncclient(setcfg: model_ncclient_setconfig):
+def set_config_ncclient(setcfg: model_ncclient_setconfig):
   try:
     req_data = setcfg.dict()
     r = reds.execute_task(method="setconfig",kwargs=req_data)
@@ -76,7 +76,7 @@ async def set_config_ncclient(setcfg: model_ncclient_setconfig):
 
 #deploy a configuration
 @router.post("/setconfig/restconf", response_model=model_response, status_code=201)
-async def set_config_restconf(setcfg: model_restconf):
+def set_config_restconf(setcfg: model_restconf):
   try:
     req_data = setcfg.dict()
     r = reds.execute_task(method="setconfig",kwargs=req_data)

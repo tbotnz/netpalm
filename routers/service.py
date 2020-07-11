@@ -14,7 +14,7 @@ from backend.core.routes.routes import routes
 router = APIRouter()
 
 @router.post("/service/{servicename}", status_code=201)
-async def execute_service(servicename: str, service: model_service):
+def execute_service(servicename: str, service: model_service):
   try:
     req_data = service.dict()
     r = routes["render_service"](servicename, kwargs=req_data)

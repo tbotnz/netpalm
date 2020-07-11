@@ -24,7 +24,7 @@ class model_ncclient_setconfig(BaseModel):
     library: str
     connection_args: model_ncclient_connection_args
     args: ncclient_send_config_args
-    queue_strategy: Optional[str] = "pinned"
+    queue_strategy: Optional[str] = "fifo"
 
     class Config:
         schema_extra = {

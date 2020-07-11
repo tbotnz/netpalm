@@ -43,6 +43,6 @@ class model_restconf(BaseModel):
                         }
                     }
                     },
-                    "queue_strategy": "pinned"
+                    "queue_strategy": "fifo"
             }
         }
