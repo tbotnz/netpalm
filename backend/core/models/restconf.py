@@ -16,13 +16,13 @@ class model_restconf_connection_args(BaseModel):
 class model_restconf_payload(BaseModel):
     uri: str
     action: str
-    payload: Optional[dict]
+    payload: Optional[dict] = None
 
 class model_restconf(BaseModel):
     library: str
     connection_args: model_restconf_connection_args
     args: model_restconf_payload
-    queue_strategy: Optional[str] = "fifo"
+    queue_strategy: Optional[str] = None
 
     class Config:
         schema_extra = {

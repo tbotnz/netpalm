@@ -5,25 +5,25 @@ from pydantic import BaseModel
 from backend.core.models.models import model_j2config
 
 class netmiko_send_config_args(BaseModel):
-    command_string: Optional[str]
-    expect_string: Optional[str]
-    delay_factor: Optional[int]
-    max_loops: Optional[int]
-    auto_find_prompt: Optional[bool]
-    strip_prompt: Optional[bool]
-    strip_command: Optional[bool]
-    normalize: Optional[bool]
-    use_textfsm: Optional[bool]
-    textfsm_template: Optional[str]
-    use_genie: Optional[bool]
-    cmd_verify: Optional[bool]
+    command_string: Optional[str] = None
+    expect_string: Optional[str] = None
+    delay_factor: Optional[int] = None
+    max_loops: Optional[int] = None
+    auto_find_prompt: Optional[bool] = None
+    strip_prompt: Optional[bool] = None
+    strip_command: Optional[bool] = None
+    normalize: Optional[bool] = None
+    use_textfsm: Optional[bool] = None
+    textfsm_template: Optional[str] = None
+    use_genie: Optional[bool] = None
+    cmd_verify: Optional[bool] = None
 
 class model_netmiko_getconfig(BaseModel):
     library: str
     connection_args: dict
-    command: Optional[Any]
-    args: Optional[netmiko_send_config_args]
-    queue_strategy: Optional[str] = "fifo"
+    command: Optional[Any] = None
+    args: Optional[netmiko_send_config_args] = None
+    queue_strategy: Optional[str] = None
 
     class Config:
         schema_extra = {
@@ -43,10 +43,10 @@ class model_netmiko_getconfig(BaseModel):
 class model_netmiko_setconfig(BaseModel):
     library: str
     connection_args: dict
-    config: Optional[Any]
-    args: Optional[netmiko_send_config_args]
-    j2config: Optional[model_j2config]
-    queue_strategy: Optional[str] = "fifo"
+    config: Optional[Any] = None
+    args: Optional[netmiko_send_config_args] = None
+    j2config: Optional[model_j2config] = None
+    queue_strategy: Optional[str] = None
 
     class Config:
         schema_extra = {

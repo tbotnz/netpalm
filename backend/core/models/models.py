@@ -7,31 +7,31 @@ class model_j2config(BaseModel):
     args: dict
 
 class model_setconfig_args(BaseModel):
-    payload: Optional[Any]
-    target: Optional[str]
-    config: Optional[str]
-    uri: Optional[str]
-    action: Optional[str]
+    payload: Optional[Any] = None
+    target: Optional[str] = None
+    config: Optional[str] = None
+    uri: Optional[str] = None
+    action: Optional[str] = None
     
 class model_setconfig(BaseModel):
     library: str
     connection_args: dict
-    config: Optional[Any]
-    j2config: Optional[model_j2config]
-    args: Optional[model_setconfig_args]
-    queue_strategy: Optional[str] = "fifo"
+    config: Optional[Any] = None
+    j2config: Optional[model_j2config] = None
+    args: Optional[model_setconfig_args] = None
+    queue_strategy: Optional[str] = None
 
 class model_script(BaseModel):
     script: str
     args: dict
-    queue_strategy: Optional[str] = "fifo"
+    queue_strategy: Optional[str] = None
 
 class model_getconfig(BaseModel):
     library: str
     connection_args: dict
     command: Any
-    args: Optional[dict]
-    queue_strategy: Optional[str] = "fifo"
+    args: Optional[dict] = None
+    queue_strategy: Optional[str] = None
 
 class model_template_add(BaseModel):
     key: str
@@ -44,7 +44,7 @@ class model_template_remove(BaseModel):
 class model_service(BaseModel):
     operation: str
     args: dict
-    queue_strategy: Optional[str] = "fifo"
+    queue_strategy: Optional[str]
 
 class model_task_response(BaseModel):
     task_id: str
