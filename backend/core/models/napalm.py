@@ -43,7 +43,7 @@ class model_napalm_setconfig(BaseModel):
     connection_args: napalm_connection_args
     config: Optional[Any]
     j2config: Optional[model_j2config]
-    queue_strategy: Optional[str] = "pinned"
+    queue_strategy: Optional[str] = "fifo"
 
     class Config:
         schema_extra = {
@@ -53,6 +53,6 @@ class model_napalm_setconfig(BaseModel):
                     "device_type":"cisco_ios", "host":"10.0.2.33", "username":"admin", "password":"admin"
                 },
                 "config": "hostnam cat",
-                "queue_strategy": "pinned"
+                "queue_strategy": "fifo"
             }
         }

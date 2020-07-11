@@ -10,8 +10,8 @@ from backend.core.models.models import model_script, model_response
 
 router = APIRouter()
 
-@router.post("/script", response_model=model_response, status_code=201)
-async def execute_script(script: model_script):
+@router.post("/script", status_code=201)
+def execute_script(script: model_script):
   try:
     req_data = script.dict()
     r = reds.execute_task(method="script",kwargs=req_data)

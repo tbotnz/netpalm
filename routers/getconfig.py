@@ -15,7 +15,7 @@ router = APIRouter()
 
 #read config
 @router.post("/getconfig", response_model=model_response, status_code=201)
-async def get_config(getcfg: model_getconfig):
+def get_config(getcfg: model_getconfig):
   try:
     req_data = getcfg.dict()
     r = reds.execute_task(method="getconfig",kwargs=req_data)
@@ -27,7 +27,7 @@ async def get_config(getcfg: model_getconfig):
 
 #read config
 @router.post("/getconfig/netmiko", response_model=model_response, status_code=201)
-async def get_config_netmiko(getcfg: model_netmiko_getconfig):
+def get_config_netmiko(getcfg: model_netmiko_getconfig):
   try:
     req_data = getcfg.dict()
     r = reds.execute_task(method="getconfig",kwargs=req_data)
@@ -39,7 +39,7 @@ async def get_config_netmiko(getcfg: model_netmiko_getconfig):
 
 #read config
 @router.post("/getconfig/napalm", response_model=model_response, status_code=201)
-async def get_config_napalm(getcfg: model_napalm_getconfig):
+def get_config_napalm(getcfg: model_napalm_getconfig):
   try:
     req_data = getcfg.dict()
     r = reds.execute_task(method="getconfig",kwargs=req_data)
@@ -51,7 +51,7 @@ async def get_config_napalm(getcfg: model_napalm_getconfig):
 
 #read config
 @router.post("/getconfig/ncclient", response_model=model_response, status_code=201)
-async def get_config_ncclient(getcfg: model_ncclient_getconfig):
+def get_config_ncclient(getcfg: model_ncclient_getconfig):
   try:
     req_data = getcfg.dict()
     r = reds.execute_task(method="getconfig",kwargs=req_data)
@@ -63,7 +63,7 @@ async def get_config_ncclient(getcfg: model_ncclient_getconfig):
 
 #read config
 @router.post("/getconfig/restconf", response_model=model_response, status_code=201)
-async def get_config_restconf(getcfg: model_restconf):
+def get_config_restconf(getcfg: model_restconf):
   try:
     req_data = getcfg.dict()
     r = reds.execute_task(method="getconfig",kwargs=req_data)

@@ -46,7 +46,7 @@ class model_netmiko_setconfig(BaseModel):
     config: Optional[Any]
     args: Optional[netmiko_send_config_args]
     j2config: Optional[model_j2config]
-    queue_strategy: Optional[str] = "pinned"
+    queue_strategy: Optional[str] = "fifo"
 
     class Config:
         schema_extra = {

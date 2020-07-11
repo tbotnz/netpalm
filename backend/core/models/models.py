@@ -19,7 +19,7 @@ class model_setconfig(BaseModel):
     config: Optional[Any]
     j2config: Optional[model_j2config]
     args: Optional[model_setconfig_args]
-    queue_strategy: Optional[str] = "pinned"
+    queue_strategy: Optional[str] = "fifo"
 
 class model_script(BaseModel):
     script: str
