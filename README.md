@@ -5,7 +5,7 @@
 netpalm is a ReST API into your dusty old network devices, netpalm makes it easy to push and pull network state from your apps. netpalm can abstract and render structured data both inbound and outbound to your network devices native telnet, SSH, NETCONF or RESTCONF interface.
 netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  ncclient and requests library's for network device communication, these powerful libs supprt a vast number of vendors and OS
 
-## netpalm Features
+## netpalm features
 
 - Speaks ReST to your app and CLI/NETCONF/RESTCONF to your network devices
 - Provides a multi-level abstraction interface for service modeling of Create, Retrieve, Delete methods
