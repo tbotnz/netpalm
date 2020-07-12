@@ -28,6 +28,10 @@ class rediz:
         self.local_queuedb = {}
         self.local_queuedb[config().redis_fifo_q] = {}
         self.local_queuedb[config().redis_fifo_q]["queue"] = Queue(config().redis_fifo_q, connection=self.base_connection)
+        net_db_exists = self.base_connection.get(self.networked_queuedb)
+        if not net_db_exists:
+            nulldb = json.dumps({"netpalm-db":"queue-val"})
+            self.base_connection.set(self.networked_queuedb, nulldb)
 
     def getqueue(self, host):
         #checks a centralised db / queue exists and creates a empty db if one does not exist
@@ -41,15 +45,12 @@ class rediz:
                 if res:
                     q_exists_in_local_db = self.local_queuedb.get(host, False)
                     if not q_exists_in_local_db:
+                        self.local_queuedb[host] = {}
                         self.local_queuedb[host]["queue"] = Queue(host, connection=self.base_connection)
                     return True
                 elif not res:
                     return False
             else:
-                #congrats you are the first node, go on and init the datastores
-                nulldb = json.dumps({"netpalm-db":"queue-val"})
-                self.base_connection.set(self.networked_queuedb, nulldb)
-                self.local_queuedb = {}
                 return False
         except Exception as e:
             return e
