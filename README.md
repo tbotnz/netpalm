@@ -1,6 +1,6 @@
 ![netpalm_log](/images/netpalm.png)
 
-Why netpalm?
+## why netpalm?
 
 netpalm is a ReST API into your dusty old network devices, netpalm makes it easy to push and pull network state from your apps. netpalm can abstract and render structured data both inbound and outbound to your network devices native telnet, SSH, NETCONF or RESTCONF interface.
 netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  ncclient and requests library's for network device communication, these powerful libs supprt a vast number of vendors and OS
@@ -25,7 +25,7 @@ netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 - Can render NETCONF XML responses into JSON on the fly
 - Can render Jinja2 templates only if required via the API
 
-## Concepts
+## concepts
 
 netpalm acts as a ReST broker for NAPALM, Netmiko, NCCLIENT or a Python Script.
 It uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
@@ -33,19 +33,19 @@ You make an API call to netpalm and it will establish a queue to your device and
 
 ![netpalm concept](/images/arch.png)
 
-## Using netpalm
+## using netpalm
 
 ### API catalog
 [Please view the API docs here](https://documenter.getpostman.com/view/2391814/SzYbxcQx?version=latest)
 
-### Postman example - getconfig method
+### postman example - getconfig method
 ![netpalm eg1](/images/netpalm_eg_1.png)
 
 #### check response
 
 ![netpalm eg2](/images/netpalm_eg_2.png)
 
-### Postman example - getconfig method with textfsm arg
+### postman example - getconfig method with textfsm arg
 
 netpalm also supports all arguments for the transport libs, simply pass them in as below
 
@@ -55,19 +55,19 @@ netpalm also supports all arguments for the transport libs, simply pass them in 
 
 ![netpalm eg4](/images/netpalm_eg_4.png)
 
-### Rapid template development and deployment
+### rapid template development and deployment
 
 netpalm is integrated into http://textfsm.nornir.tech so you can ingest your templates with ease
 
 ![netpalm auto ingest](/images/netpalm_ingest.gif)
 
-### Included Postman Collection
+### included postman collection
 
 netpalm comes bundled with a postman collection to make it easy to get going
 
 ![netpalm postman](/images/netpalm_postman.png)
 
-## Container Installation
+## container installation
 
 ensure you first have docker installed
 ```
@@ -91,13 +91,13 @@ import the postman collection, set the ip addresses to that of your docker host 
 http://$(yourdockerhost):9000
 ```
 
-## Scaling out
-netpalm containers can be scaled out as required, define how many containers are required of each type
+## scaling
+netpalm containers can be scaled out/in as required, define how many containers are required of each type
 ```
 docker-compose scale netpalm-controller=1 netpalm-worker-pinned=2 netpalm-worker-fifo=3
 ```
 
-#### Configuring netpalm
+#### configuring netpalm
 
 edit the config.json file too set params as required
 ```
@@ -126,7 +126,7 @@ edit the config.json file too set params as required
 }
 ```
 
-### Useful netpalm Resources
+### useful netpalm resources
 
 netpalm getting started blog:
 - [netpalm Intro Part 1](https://blog.wimwauters.com/networkprogrammability/2020-04-14_netpalm_introduction_part1/)
@@ -137,6 +137,6 @@ netpalm getting started blog:
 
 #netpalm on networktocode.slack.com
 
-### License
+### license
 
 All code belongs to that of its respective owners
