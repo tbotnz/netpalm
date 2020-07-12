@@ -1,11 +1,11 @@
 ![netpalm_log](/images/netpalm.png)
 
-Why NetPalm?
+Why netpalm?
 
-NetPalm is a ReST API into your dusty old network devices, NetPalm makes it easy to push and pull network state from your apps. NetPalm can abstract and render structured data both inbound and outbound to your network devices native telnet, SSH, NETCONF or RESTCONF interface.
-NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  ncclient and requests library's for network device communication, these powerful libs supprt a vast number of vendors and OS
+netpalm is a ReST API into your dusty old network devices, netpalm makes it easy to push and pull network state from your apps. netpalm can abstract and render structured data both inbound and outbound to your network devices native telnet, SSH, NETCONF or RESTCONF interface.
+netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  ncclient and requests library's for network device communication, these powerful libs supprt a vast number of vendors and OS
 
-## NetPalm Features
+## netpalm Features
 
 - Speaks ReST to your app and CLI/NETCONF/RESTCONF to your network devices
 - Provides a multi-level abstraction interface for service modeling of Create, Retrieve, Delete methods
@@ -27,13 +27,13 @@ NetPalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 
 ## Concepts
 
-Netpalm acts as a ReST broker for NAPALM, Netmiko, NCCLIENT or a Python Script.
+netpalm acts as a ReST broker for NAPALM, Netmiko, NCCLIENT or a Python Script.
 It uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
 You make an API call to netpalm and it will establish a queue to your device and start sending configuration
 
 ![netpalm concept](/images/arch.png)
 
-## Using Netpalm
+## Using netpalm
 
 ### API catalog
 [Please view the API docs here](https://documenter.getpostman.com/view/2391814/SzYbxcQx?version=latest)
@@ -97,7 +97,7 @@ netpalm containers can be scaled out as required, define how many containers are
 docker-compose scale netpalm-controller=1 netpalm-worker-pinned=2 netpalm-worker-fifo=3
 ```
 
-#### Configuring Netpalm
+#### Configuring netpalm
 
 edit the config.json file too set params as required
 ```
@@ -126,14 +126,14 @@ edit the config.json file too set params as required
 }
 ```
 
-### Useful Netpalm Resources
+### Useful netpalm Resources
 
-Netpalm getting started blog:
-- [Netpalm Intro Part 1](https://blog.wimwauters.com/networkprogrammability/2020-04-14_netpalm_introduction_part1/)
-- [Netpalm Intro Part 2](https://blog.wimwauters.com/networkprogrammability/2020-04-15_netpalm_introduction_part2/)
-- [Netpalm Intro Part 3](https://blog.wimwauters.com/networkprogrammability/2020-04-17_netpalm_introduction_part3/)
+netpalm getting started blog:
+- [netpalm Intro Part 1](https://blog.wimwauters.com/networkprogrammability/2020-04-14_netpalm_introduction_part1/)
+- [netpalm Intro Part 2](https://blog.wimwauters.com/networkprogrammability/2020-04-15_netpalm_introduction_part2/)
+- [netpalm Intro Part 3](https://blog.wimwauters.com/networkprogrammability/2020-04-17_netpalm_introduction_part3/)
 
-### Netpalm slack channel
+### netpalm slack channel
 
 #netpalm on networktocode.slack.com
 
