@@ -10,6 +10,8 @@ services:
             - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
         ports:
             - "9000:9000"
+        networks:
+        - "netpalm-network"
 
     netpalm-worker-pinned:
         build:
@@ -19,6 +21,8 @@ services:
             - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
         depends_on:
             - netpalm-controller
+        networks:
+        - "netpalm-network"
 
     netpalm-worker-fifo:
         build:
@@ -28,8 +32,19 @@ services:
             - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
         depends_on:
             - netpalm-controller
+        networks:
+        - "netpalm-network"
 
     redis:
         image: redis
+        command: redis-server --requirepass Red1zp4ww0rd_
+
         depends_on:
             - netpalm-controller
+        networks:
+        - "netpalm-network"
+
+networks:
+
+  netpalm-network:
+    name: "netpalm-network"

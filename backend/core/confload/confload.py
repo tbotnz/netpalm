@@ -13,6 +13,7 @@ class config:
             self.redis_task_ttl = data["redis_task_ttl"]
             self.redis_server = data["redis_server"]
             self.redis_port = data["redis_port"]
+            self.redis_key = data["redis_key"]
             self.redis_core_q = data["redis_core_q"]
             self.redis_fifo_q = data["redis_fifo_q"]
             self.redis_queue_store = data["redis_queue_store"]

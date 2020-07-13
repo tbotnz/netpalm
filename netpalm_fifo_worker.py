@@ -9,7 +9,7 @@ from backend.core.confload.confload import config
 
 def fifo_worker(queue):
     try:
-        with Connection(Redis(config().redis_server,config().redis_port)):
+        with Connection(Redis(host=config().redis_server,port=config().redis_port,password=config().redis_key)):
             q = Queue(queue)
             worker = Worker(q)
             worker.work()

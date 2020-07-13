@@ -7,20 +7,20 @@ netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 
 ## netpalm features
 
-- Speaks ReST to your app and CLI/NETCONF/RESTCONF to your network devices
+- Speaks ReST & JSON to your app and CLI/NETCONF/RESTCONF to your network devices
 - Provides a multi-level abstraction interface for service modeling of Create, Retrieve, Delete methods
 - Ability to write your own [service templates](https://github.com/tbotnz/netpalm/blob/master/backend/plugins/service_templates/vlan_service.j2)
-- Per device task queuing (Ensure you dont overload your VTY's)
+- Per device async task queuing (Ensure you dont overload your VTY's) or Pooled async processes
 - Large amount of supported multivendor devices ( cheers to the netmiko & napalm & ncclient lads )
 - Supports TextFSM for parsing/structuring device data (includes [ntc-templates](https://github.com/networktocode/ntc-templates))
 - Supports Jinja2 for model driven deployments of config onto devices accross [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko) and ncclient
-- Can be used to execute any python script via the ReST API and includes passing in of parameters
-- Includes large postman collection of examples
-- Task oriented Asynchronous parallel processing
-- Provides the ability to change the job queuing strategy on the fly between either pooled workers across process / containers or pinned workers to devices accross process / containers
-- OpenAPI / SwaggerUI docs inbuilt via the default / route
-- Provides ability to scale out the controllers and or workers infinitley
 - Supports automated download and installation of TextFSM templates from http://textfsm.nornir.tech online TextFSM development tool
+- Can be used to execute any python script async via the ReST API and includes passing in of parameters
+- Task oriented asynchronous parallel processing
+- Supports on the fly changes to async queue strategy for a device
+- OpenAPI / SwaggerUI docs inbuilt via the default / route
+- Includes large postman collection of examples
+- Horizontal scale out architecture supported by each component
 - Automatically generates a JSON schema for any Jinja2 Template
 - Can render NETCONF XML responses into JSON on the fly
 - Can render Jinja2 templates only if required via the API
