@@ -18,11 +18,12 @@ class rediz:
         #globals
         self.server = config().redis_server
         self.port = config().redis_port
+        self.key = config().redis_key
         self.ttl = config().redis_task_ttl
         self.timeout = config().redis_task_timeout
         self.routes = routes.routes
         self.core_q = config().redis_core_q
-        self.base_connection = Redis(self.server, self.port)
+        self.base_connection = Redis(host=self.server, port=self.port, password=self.key)
         self.base_q = Queue(self.core_q, connection=self.base_connection)
         self.networked_queuedb = config().redis_queue_store
         self.local_queuedb = {}

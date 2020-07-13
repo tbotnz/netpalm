@@ -15,7 +15,7 @@ def processworkerprocess():
 #used to create a queue for establish processes
 def processworker():
     try:
-        with Connection(Redis(config().redis_server,config().redis_port)):
+        with Connection(Redis(host=config().redis_server,port=config().redis_port,password=config().redis_key)):
             q = Queue(config().redis_core_q)
             worker = Worker(q)
             worker.work()
@@ -24,7 +24,7 @@ def processworker():
 
 def pinned_worker(queue):
     try:
-        with Connection(Redis(config().redis_server,config().redis_port)):
+        with Connection(Redis(host=config().redis_server,port=config().redis_port,password=config().redis_key)):
             q = Queue(queue)
             worker = Worker(q)
             worker.work()

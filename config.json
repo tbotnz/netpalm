@@ -9,6 +9,7 @@
     "redis_task_timeout":500,
     "redis_server":"redis",
     "redis_port":6379,
+    "redis_key": "Red1zp4ww0rd_",
     "redis_core_q":"process",
     "redis_fifo_q":"fifo",
     "redis_queue_store":"netpalm_queue_store",
