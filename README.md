@@ -33,19 +33,17 @@ You make an API call to netpalm and it will establish a queue to your device and
 
 ![netpalm concept](/images/arch.png)
 
-## using netpalm
+## using netpalm examples
 
-### API catalog
-[Please view the API docs here](https://documenter.getpostman.com/view/2391814/SzYbxcQx?version=latest)
+### getconfig method
 
-### postman example - getconfig method
 ![netpalm eg1](/images/netpalm_eg_1.png)
 
 #### check response
 
 ![netpalm eg2](/images/netpalm_eg_2.png)
 
-### postman example - getconfig method with textfsm arg
+### getconfig method with textfsm arg
 
 netpalm also supports all arguments for the transport libs, simply pass them in as below
 
@@ -61,11 +59,10 @@ netpalm is integrated into http://textfsm.nornir.tech so you can ingest your tem
 
 ![netpalm auto ingest](/images/netpalm_ingest.gif)
 
-### included postman collection
+### API documentation
 
-netpalm comes bundled with a postman collection to make it easy to get going
-
-![netpalm postman](/images/netpalm_postman.png)
+netpalm comes with a [postman collection](https://documenter.getpostman.com/view/2391814/SzYbxcQx?version=latest) and an OpenAPI based API with swagger ui
+![netpalm swagger](/images/oapi.png)
 
 ## container installation
 
