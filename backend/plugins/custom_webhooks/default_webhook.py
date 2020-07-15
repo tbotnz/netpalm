@@ -13,14 +13,13 @@ IMPORTANT NOTES:
     - **kwargs (dict)
 
 """
-def run_webhook(netpalm_task_result=False, **kwargs):
+def run_webhook(netpalm_task_result=False, netpalm_webhook_args=False):
     try:
         if netpalm_task_result:
-            #prepare payload
+            if netpalm_webhook_args:
+                netpalm_task_result["webhook_args"] = netpalm_webhook_args
+            # convert to json    
             pl = json.dumps(netpalm_task_result)
-            args = kwargs
-            if args:
-                pl["webhook_args"] = args
             #prepare requests data
             url_val = config().default_webhook_url
             headers_val = config().default_webhook_headers

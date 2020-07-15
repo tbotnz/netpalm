@@ -12,15 +12,15 @@ from backend.plugins.service.service import render_service
 from backend.plugins.dryrun.dryrun import dryrun
 
 routes = {
-    'getconfig':exec_command,
-    'setconfig':exec_config,
-    'gettemplate': gettemplate,
-    'addtemplate': addtemplate,
-    'removetemplate': removetemplate,
-    'script': script_exec,
-    'j2gettemplates': j2gettemplates,
-    'j2gettemplate':j2gettemplate,
-    'render_j2template':render_j2template,
-    'render_service':render_service,
-    'dryrun':dryrun
+    "getconfig":exec_command,
+    "setconfig":exec_config,
+    "gettemplate": gettemplate,
+    "addtemplate": addtemplate,
+    "removetemplate": removetemplate,
+    "script": script_exec,
+    "j2gettemplates": j2gettemplates,
+    "j2gettemplate":j2gettemplate,
+    "render_j2template":render_j2template,
+    "render_service":render_service,
+    "dryrun":dryrun
     }

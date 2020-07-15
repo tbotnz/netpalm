@@ -3,14 +3,16 @@ from backend.plugins.napalm.napalm_drvr import naplm
 from backend.plugins.ncclient.ncclient_drvr import ncclien
 from backend.plugins.jinja2.j2 import render_j2template
 from backend.plugins.restconf.restconf import restconf
+
 from backend.plugins.webhook.webhook import exec_webhook_func
+from backend.core.meta.rediz_meta import prepare_netpalm_payload
 
 def exec_config(**kwargs):
     lib = kwargs.get("library", False)
     config = kwargs.get("config", False)
     j2conf =  kwargs.get("j2config", False)
     webhook = kwargs.get("webhook", False)
-    
+
     if j2conf:
         j2confargs = j2conf.get("args")
         try:
@@ -43,7 +45,8 @@ def exec_config(**kwargs):
             result = rcc.config(sesh)
             rcc.logout(sesh)
         if webhook:
-            exec_webhook_func(kwargs=webhook)
+            current_jobdata = prepare_netpalm_payload(job_result=result)
+            exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
         return result
 
     except Exception as e:

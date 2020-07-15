@@ -6,12 +6,12 @@ import json
 class ncclien:
 
     def __init__(self, **kwargs):
-        self.username = kwargs.get('username', False)
-        self.password = kwargs.get('password', False)
-        self.driver = kwargs.get('driver', False)
-        self.host = kwargs.get('host', False)
-        self.kwarg = kwargs.get('args', False)
-        self.connection_args = kwargs.get('connection_args', False)     
+        self.username = kwargs.get("username", False)
+        self.password = kwargs.get("password", False)
+        self.driver = kwargs.get("driver", False)
+        self.host = kwargs.get("host", False)
+        self.kwarg = kwargs.get("args", False)
+        self.connection_args = kwargs.get("connection_args", False)     
 
     def connect(self):
         try:
@@ -39,7 +39,7 @@ class ncclien:
                 else:
                     result["get_config"] = response
             else:
-                raise Exception('args are required')
+                raise Exception("args are required")
             return result
         except Exception as e:
             return str(e)
@@ -56,7 +56,7 @@ class ncclien:
                 if response:
                     result["edit_config"] = response
             else:
-                raise Exception('args are required')
+                raise Exception("args are required")
             return result
         except Exception as e:
             return str(e)

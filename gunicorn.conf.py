@@ -5,7 +5,7 @@ import multiprocessing
 with open("/code/config.json") as json_file:
     data = json.load(json_file)
 
-bind = data["listen_ip"] +':'+str(data["listen_port"])
+bind = data["listen_ip"] +":"+str(data["listen_port"])
 workers = data["gunicorn_workers"]
 timeout = 3 * 60
 keepalive = 24 * 60 * 60

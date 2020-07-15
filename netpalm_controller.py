@@ -36,4 +36,4 @@ async def get_documentation():
     response = get_swagger_ui_html(openapi_url="/swaggerfile", title="docs")
     return response
 
-os.system('ln -sf /usr/local/lib/python3.8/site-packages/ntc_templates/templates/ backend/plugins/ntc-templates')
+os.system("ln -sf /usr/local/lib/python3.8/site-packages/ntc_templates/templates/ backend/plugins/ntc-templates")

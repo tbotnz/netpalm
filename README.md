@@ -7,20 +7,20 @@ netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 
 ## netpalm features
 
-- Speaks ReST & JSON to your app and CLI/NETCONF/RESTCONF to your network devices
-- Provides a multi-level abstraction interface for service modeling of Create, Retrieve, Delete methods
+- Speaks ReST & JSON to your app and CLI over SSH or Telnet or NETCONF/RESTCONF to your network devices
+- In built multi-level abstraction interface for service modeling of Create, Retrieve, Delete methods
 - Ability to write your own [service templates](https://github.com/tbotnz/netpalm/blob/master/backend/plugins/service_templates/vlan_service.j2)
 - Per device async task queuing (Ensure you dont overload your VTY's) or Pooled async processes
 - Large amount of supported multivendor devices ( cheers to the netmiko & napalm & ncclient lads )
-- Supports TextFSM for parsing/structuring device data (includes [ntc-templates](https://github.com/networktocode/ntc-templates))
-- Supports Jinja2 for model driven deployments of config onto devices accross [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko) and ncclient
-- Supports automated download and installation of TextFSM templates from http://textfsm.nornir.tech online TextFSM development tool
-- Can be used to execute any python script async via the ReST API and includes passing in of parameters
-- Task oriented asynchronous parallel processing
-- Supports on the fly changes to async queue strategy for a device
-- OpenAPI / SwaggerUI docs inbuilt via the default / route
-- Includes large postman collection of examples
-- Horizontal scale out architecture supported by each component
+- TextFSM for parsing/structuring device data (includes [ntc-templates](https://github.com/networktocode/ntc-templates))
+- Jinja2 for model driven deployments of config onto devices accross [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko) and ncclient
+- Automated download and installation of TextFSM templates from http://textfsm.nornir.tech online TextFSM development tool
+- ReST based Webhook w/ args & the ability for you to BYO webhooks
+- Execute ANY python script as async via the ReST API and includes passing in of parameters
+- Supports on the fly changes to async queue strategy for a device ( either per device pinned queues or pooled queues )
+- OpenAPI / SwaggerUI docs inbuilt via the default route
+- Large [online](https://documenter.getpostman.com/view/2391814/SzYbxcQx?version=latest) postman collection of examples
+- Horizontal container based scale out architecture supported by each component
 - Automatically generates a JSON schema for any Jinja2 Template
 - Can render NETCONF XML responses into JSON on the fly
 - Can render Jinja2 templates only if required via the API
@@ -33,19 +33,17 @@ You make an API call to netpalm and it will establish a queue to your device and
 
 ![netpalm concept](/images/arch.png)
 
-## using netpalm
+## using netpalm examples
 
-### API catalog
-[Please view the API docs here](https://documenter.getpostman.com/view/2391814/SzYbxcQx?version=latest)
+### getconfig method
 
-### postman example - getconfig method
 ![netpalm eg1](/images/netpalm_eg_1.png)
 
 #### check response
 
 ![netpalm eg2](/images/netpalm_eg_2.png)
 
-### postman example - getconfig method with textfsm arg
+### getconfig method with textfsm arg
 
 netpalm also supports all arguments for the transport libs, simply pass them in as below
 
@@ -61,11 +59,10 @@ netpalm is integrated into http://textfsm.nornir.tech so you can ingest your tem
 
 ![netpalm auto ingest](/images/netpalm_ingest.gif)
 
-### included postman collection
+### API documentation
 
-netpalm comes bundled with a postman collection to make it easy to get going
-
-![netpalm postman](/images/netpalm_postman.png)
+netpalm comes with a [postman collection](https://documenter.getpostman.com/view/2391814/SzYbxcQx?version=latest) and an OpenAPI based API with swagger ui
+![netpalm swagger](/images/oapi.png)
 
 ## container installation
 

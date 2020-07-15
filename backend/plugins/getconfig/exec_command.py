@@ -2,9 +2,9 @@ from backend.plugins.netmiko.netmiko_drvr import netmko
 from backend.plugins.napalm.napalm_drvr import naplm
 from backend.plugins.ncclient.ncclient_drvr import ncclien
 from backend.plugins.restconf.restconf import restconf
-from backend.plugins.webhook.webhook import exec_webhook_func
 
-from backend.core.redis.rediz_meta import prepare_netpalm_payload
+from backend.plugins.webhook.webhook import exec_webhook_func
+from backend.core.meta.rediz_meta import prepare_netpalm_payload
 
 def exec_command(**kwargs):
     lib = kwargs.get("library", False)
@@ -17,7 +17,7 @@ def exec_command(**kwargs):
         commandlst = command
 
     try:
-        result = False
+        result = {}
         if lib == "netmiko":
             netmik = netmko(**kwargs)
             sesh = netmik.connect()
@@ -39,8 +39,8 @@ def exec_command(**kwargs):
             result = rc.sendcommand(sesh)
             rc.logout(sesh)
         if webhook:
-            current_jobdata = prepare_netpalm_payload()
-            exec_webhook_func(jobdata=current_jobdata, kwargs=webhook)
+            current_jobdata = prepare_netpalm_payload(job_result=result)
+            exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
         return result
 
     except Exception as e:
