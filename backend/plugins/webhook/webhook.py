@@ -8,7 +8,7 @@ class webhook_runner:
         self.webhook_dir_path = config().custom_webhooks
         if not webhook_name:
             self.webhook_name_raw = config().default_webhook_name
-        self.webhook_name = self.webhook_dir_path.replace("/",".") + self.webhook_name_raw
+        self.webhook_name = self.webhook_dir_path.replace("/",".") + webhook_name
         self.webhook_args = webhook_args
 
     def webhook_exec(self,job_data):
