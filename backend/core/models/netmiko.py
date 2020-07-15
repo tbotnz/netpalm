@@ -3,6 +3,7 @@ import typing
 from pydantic import BaseModel
 
 from backend.core.models.models import model_j2config
+from backend.core.models.models import model_webhook
 
 class netmiko_send_config_args(BaseModel):
     command_string: Optional[str] = None
@@ -23,6 +24,7 @@ class model_netmiko_getconfig(BaseModel):
     connection_args: dict
     command: Optional[Any] = None
     args: Optional[netmiko_send_config_args] = None
+    webhook: Optional[model_webhook] = None
     queue_strategy: Optional[str] = None
 
     class Config:
@@ -46,6 +48,7 @@ class model_netmiko_setconfig(BaseModel):
     config: Optional[Any] = None
     args: Optional[netmiko_send_config_args] = None
     j2config: Optional[model_j2config] = None
+    webhook: Optional[model_webhook] = None
     queue_strategy: Optional[str] = None
 
     class Config:

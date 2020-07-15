@@ -3,10 +3,10 @@ import napalm
 class naplm:
 
     def __init__(self, **kwargs):
-        self.connection_args = kwargs.get('connection_args', False)
+        self.connection_args = kwargs.get("connection_args", False)
         #convert the netmiko naming format to the native napalm format
         driver_lookup = {"arista_eos":"eos","juniper":"junos","cisco_xr":"iosxr", "nxos":"nxos", "cisco_nxos_ssh":"nxos_ssh", "cisco_ios":"ios"}
-        self.driver = driver_lookup[self.connection_args.get('device_type', False)]
+        self.driver = driver_lookup[self.connection_args.get("device_type", False)]
         self.connection_args["hostname"] = self.connection_args.pop("host")
         del self.connection_args["device_type"]
 
@@ -28,7 +28,7 @@ class naplm:
                     result[c] = response
                 else:
                     response = session.cli([c])
-                    result[c] = response[c].split('\n')
+                    result[c] = response[c].split("\n")
             return result
         except Exception as e:
             return str(e)
@@ -49,7 +49,7 @@ class naplm:
             else:
                 response = session.commit_config()
             result = {}
-            result["changes"] = diff.split('\n')
+            result["changes"] = diff.split("\n")
             return result
         except Exception as e:
             return str(e)

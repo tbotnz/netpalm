@@ -4,8 +4,8 @@ import json
 class netmko:
 
     def __init__(self, **kwargs):
-        self.kwarg = kwargs.get('args', False)
-        self.connection_args = kwargs.get('connection_args', False)
+        self.kwarg = kwargs.get("args", False)
+        self.connection_args = kwargs.get("connection_args", False)
         
     def connect(self):
         try:
@@ -25,7 +25,7 @@ class netmko:
                 else:
                     response = session.send_command(commands)
                     if response:
-                        result[commands] = response.split('\n')
+                        result[commands] = response.split("\n")
             return result
         except Exception as e:
             return str(e)
@@ -41,7 +41,7 @@ class netmko:
             else:
                 response = session.send_config_set(comm)
             result = {}
-            result["changes"] = response.split('\n')
+            result["changes"] = response.split("\n")
             return result
         except Exception as e:
             return str(e)

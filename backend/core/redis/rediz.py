@@ -82,13 +82,13 @@ class rediz:
         try:
             task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl, kwargs=kwargs["kwargs"], timeout=self.timeout)
             resultdata = {
-                    'status': 'success',
-                    'data': {
-                        'task_id': task.get_id(),
-                        'created_on': task.created_at,
-                        'task_queue': q,
-                        'task_status': task.get_status(),
-                        'task_result': task.result
+                    "status": "success",
+                    "data": {
+                        "task_id": task.get_id(),
+                        "created_on": task.created_at,
+                        "task_queue": q,
+                        "task_status": task.get_status(),
+                        "task_result": task.result
                     }
             }
             return resultdata
@@ -116,13 +116,13 @@ class rediz:
             task = Job.fetch(task_id, connection=self.base_connection)
             if task:
                 response_object = {
-                    'status': 'success',
-                    'data': {
-                        'task_id': task.get_id(),
-                        'created_on': task.created_at,
-                        'task_queue': task.description,
-                        'task_status': task.get_status(),
-                        'task_result': task.result,
+                    "status": "success",
+                    "data": {
+                        "task_id": task.get_id(),
+                        "created_on": task.created_at,
+                        "task_queue": task.description,
+                        "task_status": task.get_status(),
+                        "task_result": task.result,
                     }
                 }
             return response_object
@@ -139,9 +139,9 @@ class rediz:
                     t = self.local_queuedb[q]["queue"].get_job_ids()
                     if t:
                         response_object = {
-                            'status': 'success',
-                            'data': {
-                                'task_id': t
+                            "status": "success",
+                            "data": {
+                                "task_id": t
                             }
                         }
                         return response_object
@@ -154,9 +154,9 @@ class rediz:
                 for i in self.local_queuedb:
                     task = self.local_queuedb[i]["queue"].get_job_ids()
                 response_object = {
-                    'status': 'success',
-                    'data': {
-                        'task_id': task
+                    "status": "success",
+                    "data": {
+                        "task_id": task
                     }
                 }
                 return response_object
@@ -169,9 +169,9 @@ class rediz:
                 self.getqueue(q)
                 task = self.local_queuedb[q]["queue"].get_job_ids()
                 response_object = {
-                    'status': 'success',
-                    'data': {
-                        'task_id': []
+                    "status": "success",
+                    "data": {
+                        "task_id": []
                     }
                 }
                 #get startedjobs
@@ -194,11 +194,11 @@ class rediz:
                         try:
                             jobstatus = Job.fetch(job, connection=self.base_connection)
                             jobdata = {
-                            'task_id': jobstatus.get_id(),
-                            'created_on': jobstatus.created_at,
-                            'task_status': jobstatus.get_status(),
-                            'task_queue': jobstatus.description,
-                            'task_result': jobstatus.result,
+                            "task_id": jobstatus.get_id(),
+                            "created_on": jobstatus.created_at,
+                            "task_status": jobstatus.get_status(),
+                            "task_queue": jobstatus.description,
+                            "task_result": jobstatus.result,
                             }
                             response_object["data"]["task_id"].append(jobdata)
                         except Exception as e:

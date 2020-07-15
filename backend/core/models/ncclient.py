@@ -3,6 +3,7 @@ import typing
 from pydantic import BaseModel
 
 from backend.core.models.models import model_j2config
+from backend.core.models.models import model_webhook
 
 class ncclient_send_config_args(BaseModel):
     target: str
@@ -24,6 +25,7 @@ class model_ncclient_setconfig(BaseModel):
     library: str
     connection_args: model_ncclient_connection_args
     args: ncclient_send_config_args
+    webhook: Optional[model_webhook] = None
     queue_strategy: Optional[str] = None
 
     class Config:
@@ -45,6 +47,7 @@ class model_ncclient_getconfig(BaseModel):
     library: str
     connection_args: model_ncclient_connection_args
     args: ncclient_get_config_args
+    webhook: Optional[model_webhook] = None
     queue_strategy: Optional[str] = None
 
     class Config:
