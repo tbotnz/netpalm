@@ -26,3 +26,10 @@ class config:
             self.jinja2_templates = data["jinja2_config_templates"]
             self.jinja2_service_templates = data["jinja2_service_templates"]
             self.self_api_call_timeout = data["self_api_call_timeout"]
+            self.default_webhook_url = data["default_webhook_url"]
+            self.default_webhook_ssl_verify = data["default_webhook_ssl_verify"]
+            self.default_webhook_timeout = data["default_webhook_timeout"]
+            self.default_webhook_name = data["default_webhook_name"]
+            self.default_webhook_headers = data["default_webhook_headers"]
+            self.custom_webhooks = data["custom_webhooks"]
+

@@ -3,6 +3,7 @@ import typing
 from pydantic import BaseModel
 
 from backend.core.models.models import model_j2config
+from backend.core.models.models import model_webhook
 
 class napalm_optional_connection_args(BaseModel):
     fortios_vdom: Optional[str] = None
@@ -24,6 +25,7 @@ class model_napalm_getconfig(BaseModel):
     library: str
     connection_args: napalm_connection_args
     command: Any
+    webhook: Optional[model_webhook] = None
     queue_strategy: Optional[str] = None
 
     class Config:
@@ -43,6 +45,7 @@ class model_napalm_setconfig(BaseModel):
     connection_args: napalm_connection_args
     config: Optional[Any] = None
     j2config: Optional[model_j2config] = None
+    webhook: Optional[model_webhook] = None
     queue_strategy: Optional[str] = None
 
     class Config:

@@ -1,4 +1,6 @@
 from backend.core.confload.confload import config
+from backend.plugins.webhook.webhook import exec_webhook_func
+
 import importlib
 
 class script_kiddy:
@@ -20,6 +22,9 @@ class script_kiddy:
             return e
 
 def script_exec(**kwargs):
+    webhook = kwargs.get("webhook",False)
     scrip = script_kiddy(kwargs=kwargs)
     execute = scrip.s_exec()
+    if webhook:
+        exec_webhook_func(kwargs=webhook)
     return execute

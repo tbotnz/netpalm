@@ -3,6 +3,7 @@ import typing
 from pydantic import BaseModel
 
 from backend.core.models.models import model_j2config
+from backend.core.models.models import model_webhook
 
 class model_restconf_connection_args(BaseModel):
     host: str
@@ -22,6 +23,7 @@ class model_restconf(BaseModel):
     library: str
     connection_args: model_restconf_connection_args
     args: model_restconf_payload
+    webhook: Optional[model_webhook] = None
     queue_strategy: Optional[str] = None
 
     class Config:

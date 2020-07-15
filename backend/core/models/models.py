@@ -2,6 +2,10 @@ from typing import Optional, Set, Any, Dict
 import typing
 from pydantic import BaseModel
 
+class model_webhook(BaseModel):
+    name: Optional[str] = None
+    arg: Optional[dict] = None
+
 class model_j2config(BaseModel):
     template: str
     args: dict
@@ -19,11 +23,13 @@ class model_setconfig(BaseModel):
     config: Optional[Any] = None
     j2config: Optional[model_j2config] = None
     args: Optional[model_setconfig_args] = None
+    webhook: Optional[model_webhook] = None
     queue_strategy: Optional[str] = None
 
 class model_script(BaseModel):
     script: str
     args: Optional[dict] = None
+    webhook: Optional[model_webhook] = None
     queue_strategy: Optional[str] = None
 
 class model_getconfig(BaseModel):
@@ -31,6 +37,7 @@ class model_getconfig(BaseModel):
     connection_args: dict
     command: Any
     args: Optional[dict] = None
+    webhook: Optional[model_webhook] = None
     queue_strategy: Optional[str] = None
 
 class model_template_add(BaseModel):
