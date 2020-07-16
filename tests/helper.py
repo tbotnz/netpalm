@@ -44,3 +44,14 @@ class netpalm_testhelper:
             return result
         except Exception as e:
             return e
+
+    def post_and_check_many(self, url, payload):
+        try:
+            r = requests.post('http://'+self.ip+':'+str(self.port)+url, json=payload, headers=self.headers)
+            result = []
+            for task in r.json()["data"]:
+                res = self.poll_task(task["data"]["data"]["task_id"])
+                result.append(res)
+            return result
+        except Exception as e:
+            return e
