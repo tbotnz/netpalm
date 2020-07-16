@@ -3,7 +3,7 @@ import requests
 import json
 import jsonschema
 
-from backend.plugins.jinja2.j2 import render_j2template
+from backend.plugins.management.jinja2.j2 import render_j2template
 from backend.core.confload.confload import config
 
 import time

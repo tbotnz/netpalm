@@ -16,8 +16,7 @@ IMPORTANT NOTES:
 def run_webhook(netpalm_task_result=False, netpalm_webhook_args=False):
     try:
         if netpalm_task_result:
-            if netpalm_webhook_args:
-                netpalm_task_result["webhook_args"] = netpalm_webhook_args
+            netpalm_task_result["webhook_args"] = netpalm_webhook_args
             # convert to json    
             pl = json.dumps(netpalm_task_result)
             #prepare requests data
