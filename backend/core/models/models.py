@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 class model_webhook(BaseModel):
     name: Optional[str] = None
-    arg: Optional[dict] = None
+    args: Optional[dict] = None
 
 class model_j2config(BaseModel):
     template: str

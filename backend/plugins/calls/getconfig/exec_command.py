@@ -1,9 +1,9 @@
-from backend.plugins.netmiko.netmiko_drvr import netmko
-from backend.plugins.napalm.napalm_drvr import naplm
-from backend.plugins.ncclient.ncclient_drvr import ncclien
-from backend.plugins.restconf.restconf import restconf
+from backend.plugins.drivers.netmiko.netmiko_drvr import netmko
+from backend.plugins.drivers.napalm.napalm_drvr import naplm
+from backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
+from backend.plugins.drivers.restconf.restconf import restconf
 
-from backend.plugins.webhook.webhook import exec_webhook_func
+from backend.plugins.calls.webhook.webhook import exec_webhook_func
 from backend.core.meta.rediz_meta import prepare_netpalm_payload
 
 def exec_command(**kwargs):

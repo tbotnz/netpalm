@@ -1,8 +1,7 @@
 from backend.core.confload.confload import config
-from backend.plugins.webhook.webhook import exec_webhook_func
-
-from backend.plugins.webhook.webhook import exec_webhook_func
 from backend.core.meta.rediz_meta import prepare_netpalm_payload
+
+from backend.plugins.calls.webhook.webhook import exec_webhook_func
 
 import importlib
 
