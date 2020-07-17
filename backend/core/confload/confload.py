@@ -32,4 +32,5 @@ class config:
             self.default_webhook_name = data["default_webhook_name"]
             self.default_webhook_headers = data["default_webhook_headers"]
             self.custom_webhooks = data["custom_webhooks"]
+            self.webhook_jinja2_templates = data["webhook_jinja2_templates"]
 

@@ -5,12 +5,12 @@ from backend.plugins.calls.service.service import render_service
 from backend.plugins.calls.dryrun.dryrun import dryrun
 from backend.plugins.calls.scriptrunner.script import script_exec
 
-from backend.plugins.management.textfsm.template import gettemplate
-from backend.plugins.management.textfsm.template import addtemplate
-from backend.plugins.management.textfsm.template import removetemplate
-from backend.plugins.management.jinja2.j2 import j2gettemplates
-from backend.plugins.management.jinja2.j2 import j2gettemplate
-from backend.plugins.management.jinja2.j2 import render_j2template
+from backend.plugins.utilities.textfsm.template import gettemplate
+from backend.plugins.utilities.textfsm.template import addtemplate
+from backend.plugins.utilities.textfsm.template import removetemplate
+from backend.plugins.utilities.jinja2.j2 import j2gettemplates
+from backend.plugins.utilities.jinja2.j2 import j2gettemplate
+from backend.plugins.utilities.jinja2.j2 import render_j2template
 
 
 routes = {

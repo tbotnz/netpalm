@@ -99,6 +99,7 @@ class rediz:
         try:
             kw = kwargs.get("kwargs", False)
             connectionargs = kw.get("connection_args", False)
+            host = False
             if connectionargs:
                 host = kw["connection_args"].get("host", False)
             queue_strategy = kw.get("queue_strategy", False)
@@ -114,17 +115,16 @@ class rediz:
     def fetchtask(self, task_id):
         try:
             task = Job.fetch(task_id, connection=self.base_connection)
-            if task:
-                response_object = {
-                    "status": "success",
-                    "data": {
-                        "task_id": task.get_id(),
-                        "created_on": task.created_at,
-                        "task_queue": task.description,
-                        "task_status": task.get_status(),
-                        "task_result": task.result,
-                    }
+            response_object = {
+                "status": "success",
+                "data": {
+                    "task_id": task.get_id(),
+                    "created_on": task.created_at,
+                    "task_queue": task.description,
+                    "task_status": task.get_status(),
+                    "task_result": task.result,
                 }
+            }
             return response_object
         except Exception as e:
             return e
