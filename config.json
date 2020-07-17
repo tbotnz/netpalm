@@ -24,6 +24,7 @@
     "default_webhook_url": "https://9d4f355779c960d7509368ad5a7e3503.m.pipedream.net",
     "default_webhook_ssl_verify":true,
     "default_webhook_timeout":5,
+    "webhook_jinja2_templates": "backend/plugins/extensibles/custom_webhook_jinja2_templates/",
     "default_webhook_name": "default_webhook",
     "default_webhook_headers": {
         "Content-Type": "application/json"

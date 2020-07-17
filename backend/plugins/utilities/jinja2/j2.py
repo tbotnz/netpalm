@@ -8,12 +8,14 @@ from jinja2 import Template, Environment, FileSystemLoader
 
 class j2:
 
-    def __init__(self, service=False, **kwargs):
+    def __init__(self, service=False, webhk=False, **kwargs):
         self.kwarg = kwargs.get('kwargs', False)
         if not service:
             self.jinja_template_dir = config().jinja2_templates
         elif service:
             self.jinja_template_dir = config().jinja2_service_templates
+        if webhk:
+            self.jinja_template_dir = config().webhook_jinja2_templates
         self.file_loader = FileSystemLoader(self.jinja_template_dir)
         self.env = Environment(loader=self.file_loader)
 
@@ -126,12 +128,17 @@ def j2gettemplate(tmplate, service=False):
         res = t.gettemplate(tmplate)
         return res
 
-def render_j2template(templat, service=False, **kwargs):
-    if not service:
+#remember to clean this up at some point
+def render_j2template(templat, service=False, webhook=False, **kwargs):
+    if not service and not webhook:
         t = j2()
         res = t.render_j2template(template=templat, kwargs=kwargs["kwargs"])
         return res
-    else:
+    elif service and not webhook:
         t = j2(service=True)
+        res = t.render_j2template(template=templat, kwargs=kwargs["kwargs"])
+        return res
+    elif webhook:
+        t = j2(webhk=True)
         res = t.render_j2template(template=templat, kwargs=kwargs["kwargs"])
         return res

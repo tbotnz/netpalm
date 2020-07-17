@@ -1,8 +1,8 @@
 from backend.plugins.drivers.napalm.napalm_drvr import naplm
 from backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
-from backend.plugins.management.jinja2.j2 import render_j2template
+from backend.plugins.utilities.jinja2.j2 import render_j2template
 
-from backend.plugins.calls.webhook.webhook import exec_webhook_func
+from backend.plugins.utilities.webhook.webhook import exec_webhook_func
 from backend.core.meta.rediz_meta import prepare_netpalm_payload
 
 def dryrun(**kwargs):
@@ -31,9 +31,11 @@ def dryrun(**kwargs):
             sesh = ncc.connect()
             result = ncc.editconfig(session=sesh,dry_run=True)
             ncc.logout(sesh)
-        if webhook:
-            current_jobdata = prepare_netpalm_payload(job_result=result)
-            exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
-        return result
     except Exception as e:
-        return str(e)
+        result = str(e)
+
+    if webhook:
+        current_jobdata = prepare_netpalm_payload(job_result=result)
+        exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
+        
+    return result

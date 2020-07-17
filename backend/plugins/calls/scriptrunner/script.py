@@ -1,7 +1,7 @@
 from backend.core.confload.confload import config
 from backend.core.meta.rediz_meta import prepare_netpalm_payload
 
-from backend.plugins.calls.webhook.webhook import exec_webhook_func
+from backend.plugins.utilities.webhook.webhook import exec_webhook_func
 
 import importlib
 
@@ -25,9 +25,14 @@ class script_kiddy:
 
 def script_exec(**kwargs):
     webhook = kwargs.get("webhook",False)
-    scrip = script_kiddy(kwargs=kwargs)
-    execute = scrip.s_exec()
+    try:
+        scrip = script_kiddy(kwargs=kwargs)
+        result = scrip.s_exec()
+    except Exception as e:
+        result = str(e)
+
     if webhook:
-        current_jobdata = prepare_netpalm_payload(job_result=execute)
+        current_jobdata = prepare_netpalm_payload(job_result=result)
         exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
-    return execute
+        
+    return result
