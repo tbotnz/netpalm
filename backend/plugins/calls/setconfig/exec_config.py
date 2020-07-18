@@ -17,7 +17,7 @@ def exec_config(**kwargs):
     if j2conf:
         j2confargs = j2conf.get("args")
         try:
-            res = render_j2template(j2conf["template"], kwargs=j2confargs)
+            res = render_j2template(j2conf["template"], template_type="config", kwargs=j2confargs)
             config = res["data"]["task_result"]["template_render_result"]
         except Exception as e:
             config = False
