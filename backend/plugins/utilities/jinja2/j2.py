@@ -8,13 +8,13 @@ from jinja2 import Template, Environment, FileSystemLoader
 
 class j2:
 
-    def __init__(self, service=False, webhk=False, **kwargs):
+    def __init__(self, j2_type=False, **kwargs):
         self.kwarg = kwargs.get('kwargs', False)
-        if not service:
-            self.jinja_template_dir = config().jinja2_templates
-        elif service:
+        if j2_type == "config":
+            self.jinja_template_dir = config().jinja2_config_templates
+        elif j2_type == "service":
             self.jinja_template_dir = config().jinja2_service_templates
-        if webhk:
+        if j2_type == "webhook":
             self.jinja_template_dir = config().webhook_jinja2_templates
         self.file_loader = FileSystemLoader(self.jinja_template_dir)
         self.env = Environment(loader=self.file_loader)
@@ -108,37 +108,17 @@ class j2:
         except Exception as e:
             return e
 
-def j2gettemplates(service=False):
-    if not service:
-        t = j2()
-        res = t.gettemplates()
-        return res
-    else:
-        t = j2(service=True)
-        res = t.gettemplates()
-        return res
+def j2gettemplates(template_type=False):
+    t = j2(j2_type=template_type)
+    res = t.gettemplates()
+    return res
 
-def j2gettemplate(tmplate, service=False):
-    if not service:
-        t = j2()
-        res = t.gettemplate(tmplate)
-        return res
-    else:
-        t = j2(service=True)
-        res = t.gettemplate(tmplate)
-        return res
+def j2gettemplate(tmplate, template_type=False):
+    t = j2(j2_type=template_type)
+    res = t.gettemplate(tmplate)
+    return res
 
-#remember to clean this up at some point
-def render_j2template(templat, service=False, webhook=False, **kwargs):
-    if not service and not webhook:
-        t = j2()
-        res = t.render_j2template(template=templat, kwargs=kwargs["kwargs"])
-        return res
-    elif service and not webhook:
-        t = j2(service=True)
-        res = t.render_j2template(template=templat, kwargs=kwargs["kwargs"])
-        return res
-    elif webhook:
-        t = j2(webhk=True)
-        res = t.render_j2template(template=templat, kwargs=kwargs["kwargs"])
-        return res
+def render_j2template(templat, template_type=False, **kwargs):
+    t = j2(j2_type=template_type)
+    res = t.render_j2template(template=templat, kwargs=kwargs["kwargs"])
+    return res

@@ -23,7 +23,7 @@ class webhook_runner:
             job_data["webhook_args"] = self.webhook_args
             whook_data = job_data
             if self.webhook_j2_name:
-                res = render_j2template(self.webhook_j2_name, webhook=True, kwargs=job_data)
+                res = render_j2template(self.webhook_j2_name, template_type="webhook", kwargs=job_data)
                 whook_data = json.loads(res["data"]["task_result"]["template_render_result"])
             res = run_whook(payload=whook_data)
             return res

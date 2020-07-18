@@ -44,31 +44,97 @@ async def delete_j2_template(template_remove: model_template_remove):
     pass
 
 #j2 routes
-@router.get("/j2template")
-async def get_j2_templates():
+
+# get template list
+@router.get("/j2template/config/")
+async def get_config_j2_templates():
   try:
-    r = routes["j2gettemplates"]()
+    r = routes["j2gettemplates"](template_type="config")
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
-@router.get("/j2template/{tmpname}")
-async def get_j2_template(tmpname: str):
+@router.get("/j2template/service/")
+async def get_service_j2_templates():
   try:
-      r = routes["j2gettemplate"](tmpname)
+    r = routes["j2gettemplates"](template_type="service")
+    resp = jsonable_encoder(r)
+    return resp
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
+    pass
+
+@router.get("/j2template/webhook/")
+async def get_webhook_j2_templates():
+  try:
+    r = routes["j2gettemplates"](template_type="webhook")
+    resp = jsonable_encoder(r)
+    return resp
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
+    pass
+
+#view contents of a template
+@router.get("/j2template/config/{tmpname}")
+async def get_j2_template_specific_config(tmpname: str):
+  try:
+      r = routes["j2gettemplate"](tmpname, template_type="config")
       resp = jsonable_encoder(r)
       return resp, 200
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
 
-@router.post("/j2template/render/{tmpname}", status_code=201)
-async def add_j2_template(tmpname: str, data: dict):
+@router.get("/j2template/service/{tmpname}")
+async def get_j2_template_specific_service(tmpname: str):
+  try:
+      r = routes["j2gettemplate"](tmpname, template_type="service")
+      resp = jsonable_encoder(r)
+      return resp, 200
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
+    pass
+
+@router.get("/j2template/webhook/{tmpname}")
+async def get_j2_template_specific_webhook(tmpname: str):
+  try:
+      r = routes["j2gettemplate"](tmpname, template_type="webhook")
+      resp = jsonable_encoder(r)
+      return resp, 200
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
+    pass
+
+#render j2 templates
+@router.post("/j2template/render/config/{tmpname}", status_code=201)
+async def render_j2_template_config(tmpname: str, data: dict):
   try:
     req_data = data
-    r = routes["render_j2template"](tmpname, kwargs=req_data)
+    r = routes["render_j2template"](tmpname, template_type="config", kwargs=req_data)
+    resp = jsonable_encoder(r)
+    return resp
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
+    pass
+
+@router.post("/j2template/render/service/{tmpname}", status_code=201)
+async def render_j2_template_service(tmpname: str, data: dict):
+  try:
+    req_data = data
+    r = routes["render_j2template"](tmpname, template_type="service", kwargs=req_data)
+    resp = jsonable_encoder(r)
+    return resp
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=str(e).split('\n'))
+    pass
+
+@router.post("/j2template/render/webhook/{tmpname}", status_code=201)
+async def render_j2_template_webhook(tmpname: str, data: dict):
+  try:
+    req_data = data
+    r = routes["render_j2template"](tmpname, template_type="webhook", kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:
