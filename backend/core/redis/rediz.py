@@ -11,6 +11,8 @@ from netpalm_pinned_worker import pinned_worker_constructor
 from backend.core.routes import routes
 from backend.core.confload.confload import config
 
+from backend.core.models.task import model_response
+
 class rediz:
 
     def __init__(self):
@@ -58,12 +60,16 @@ class rediz:
 
     def create_queue_worker(self, qname):
         try:
+            meta_template = {
+                "errors": [],
+                "result": ""
+            }
             result = self.base_connection.get(self.networked_queuedb)
             tmpdb = json.loads(result)
             tmpdb[qname] = True
             jsresult = json.dumps(tmpdb)
             self.base_connection.set(self.networked_queuedb, jsresult)
-            self.base_q.enqueue_call(func=pinned_worker_constructor, args=(qname,), ttl=self.ttl)
+            self.base_q.enqueue_call(func=pinned_worker_constructor, args=(qname,), meta=meta_template, ttl=self.ttl)
             self.local_queuedb[qname] = {}
             self.local_queuedb[qname]["queue"] = Queue(qname, connection=self.base_connection)
             return self.local_queuedb[qname]["queue"]
@@ -80,17 +86,13 @@ class rediz:
 
     def sendtask(self, q, exe, **kwargs):
         try:
-            task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl, kwargs=kwargs["kwargs"], timeout=self.timeout)
-            resultdata = {
-                    "status": "success",
-                    "data": {
-                        "task_id": task.get_id(),
-                        "created_on": task.created_at,
-                        "task_queue": q,
-                        "task_status": task.get_status(),
-                        "task_result": task.result
-                    }
+            meta_template = {
+                "errors": [],
+                "result": ""
             }
+            task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl, kwargs=kwargs["kwargs"], meta=meta_template, timeout=self.timeout)
+            r = model_response(status="success",data={"task_id":task.get_id(),"created_on":task.created_at.strftime("%m/%d/%Y, %H:%M:%S"),"task_queue":q,"task_status":task.get_status(),"task_result": task.result, "task_errors":task.meta["errors"]})
+            resultdata = r.dict()
             return resultdata
         except Exception as e:
             return e
@@ -115,16 +117,8 @@ class rediz:
     def fetchtask(self, task_id):
         try:
             task = Job.fetch(task_id, connection=self.base_connection)
-            response_object = {
-                "status": "success",
-                "data": {
-                    "task_id": task.get_id(),
-                    "created_on": task.created_at,
-                    "task_queue": task.description,
-                    "task_status": task.get_status(),
-                    "task_result": task.result,
-                }
-            }
+            r = model_response(status="success",data={"task_id":task.get_id(),"created_on":task.created_at.strftime("%m/%d/%Y, %H:%M:%S"),"task_queue":task.description,"task_status":task.get_status(),"task_result": task.result, "task_errors":task.meta["errors"]})
+            response_object = r.dict()
             return response_object
         except Exception as e:
             return e
@@ -151,14 +145,14 @@ class rediz:
                     return False
             #multi host lookup
             elif not q:
-                for i in self.local_queuedb:
-                    task = self.local_queuedb[i]["queue"].get_job_ids()
                 response_object = {
                     "status": "success",
                     "data": {
-                        "task_id": task
+                        "task_id": []
                     }
                 }
+                for i in self.local_queuedb:
+                    response_object["data"]["task_id"].append(self.local_queuedb[i]["queue"].get_job_ids())
                 return response_object
         except Exception as e:
             return e
@@ -193,13 +187,8 @@ class rediz:
                     for job in task:
                         try:
                             jobstatus = Job.fetch(job, connection=self.base_connection)
-                            jobdata = {
-                            "task_id": jobstatus.get_id(),
-                            "created_on": jobstatus.created_at,
-                            "task_status": jobstatus.get_status(),
-                            "task_queue": jobstatus.description,
-                            "task_result": jobstatus.result,
-                            }
+                            r = model_response(status="success",data={"task_id":jobstatus.get_id(),"created_on":jobstatus.created_at.strftime("%m/%d/%Y, %H:%M:%S"),"task_queue":jobstatus.description,"task_status":jobstatus.get_status(),"task_result": jobstatus.result, "task_errors":jobstatus.meta["errors"]})
+                            jobdata = r.dict()
                             response_object["data"]["task_id"].append(jobdata)
                         except Exception as e:
                             return e

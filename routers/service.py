@@ -17,7 +17,8 @@ router = APIRouter()
 def execute_service(servicename: str, service: model_service):
   try:
     req_data = service.dict()
-    r = routes["render_service"](servicename, kwargs=req_data)
+    req_data["netpalm_service_name"] = servicename
+    r = reds.execute_task(method="render_service",kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
   except Exception as e:

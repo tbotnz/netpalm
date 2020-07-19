@@ -1,5 +1,6 @@
 {
     "api_key": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+    "netpalm_container_name": "netpalm-controller",
     "api_key_name" : "x-api-key",
     "cookie_domain" : "netpalm.local",
     "listen_port": 9000,

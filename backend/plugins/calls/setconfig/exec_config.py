@@ -6,14 +6,17 @@ from backend.plugins.drivers.restconf.restconf import restconf
 from backend.plugins.utilities.jinja2.j2 import render_j2template
 
 from backend.plugins.utilities.webhook.webhook import exec_webhook_func
+
 from backend.core.meta.rediz_meta import prepare_netpalm_payload
+from backend.core.meta.rediz_meta import write_meta_error
 
 def exec_config(**kwargs):
     lib = kwargs.get("library", False)
     config = kwargs.get("config", False)
     j2conf =  kwargs.get("j2config", False)
     webhook = kwargs.get("webhook", False)
-
+    result = False
+    
     if j2conf:
         j2confargs = j2conf.get("args")
         try:
@@ -21,10 +24,9 @@ def exec_config(**kwargs):
             config = res["data"]["task_result"]["template_render_result"]
         except Exception as e:
             config = False
-            return str(e)
+            write_meta_error(str(e))
 
     try:
-        result = False
         if lib == "netmiko":
             netmik = netmko(**kwargs)
             sesh = netmik.connect()
@@ -46,10 +48,13 @@ def exec_config(**kwargs):
             result = rcc.config(sesh)
             rcc.logout(sesh)
     except Exception as e:
-        result = str(e)
+        write_meta_error(str(e))
 
-    if webhook:
-        current_jobdata = prepare_netpalm_payload(job_result=result)
-        exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
-        
+    try:
+        if webhook:
+            current_jobdata = prepare_netpalm_payload(job_result=result)
+            exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
+    except Exception as e:
+        write_meta_error(str(e))
+            
     return result

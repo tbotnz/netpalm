@@ -1,5 +1,7 @@
 import napalm
 
+from backend.core.meta.rediz_meta import write_meta_error
+
 class naplm:
 
     def __init__(self, **kwargs):
@@ -16,7 +18,7 @@ class naplm:
             napalmses = driver(**self.connection_args)
             return napalmses
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
 
     def sendcommand(self, session=False, command=False):
         try:
@@ -31,7 +33,7 @@ class naplm:
                     result[c] = response[c].split("\n")
             return result
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
 
     def config(self, session=False, command=False, dry_run=False):
         try:
@@ -52,11 +54,11 @@ class naplm:
             result["changes"] = diff.split("\n")
             return result
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
 
     def logout(self, session):
         try:
             response = session.close()
             return response
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))

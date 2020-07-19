@@ -1,6 +1,8 @@
 import requests
 import json
 
+from backend.core.meta.rediz_meta import write_meta_error
+
 class restconf:
 
     def __init__(self, **kwargs):
@@ -30,7 +32,7 @@ class restconf:
                 del self.connection_args["headers"]
             return True
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
 
     def sendcommand(self, session=False, command=False):
         try:
@@ -48,7 +50,7 @@ class restconf:
             result[url]["result"] = res
             return result
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
 
     def config(self, session=False, command=False):
         try:
@@ -56,20 +58,22 @@ class restconf:
             url = self.transport+"://"+self.host+":"+str(self.port)+self.kwarg["uri"]
             if hasattr(requests, str(self.action)):
                 response = getattr(requests, str(self.action))(url, auth=(self.username, self.password), data=json.dumps(self.payload), params=self.params, headers=self.headers, **self.connection_args)
-            try:
-                res = json.loads(response.text)
-            except Exception:
-                res = ""
-                pass
-            result[url] = {}
-            result[url]["status_code"] = response.status_code
-            result[url]["result"] = res
-            return result
+                try:
+                    res = json.loads(response.text)
+                except Exception:
+                    res = ""
+                    pass
+                result[url] = {}
+                result[url]["status_code"] = response.status_code
+                result[url]["result"] = res
+                return result
+            else:
+                raise Exception(self.action + " not found in requests") 
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
 
     def logout(self, session):
         try:
             return True
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
