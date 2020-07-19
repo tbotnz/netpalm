@@ -6,13 +6,15 @@ import jsonschema
 from backend.plugins.utilities.jinja2.j2 import render_j2template
 from backend.core.confload.confload import config
 
+from backend.core.meta.rediz_meta import write_meta_error
+
 import time
 
 class service:
     
     def __init__(self):
         self.api_key = config().api_key
-        self.listen_ip = config().listen_ip
+        self.netpalm_container_name = config().netpalm_container_name
         self.listen_port = config().listen_port
         self.self_api_call_timeout = config().self_api_call_timeout
         self.operation_mapping = { 'create': 'setconfig', 'delete': 'setconfig', 'retrieve': 'getconfig' }
@@ -104,7 +106,7 @@ class service:
             jsonschema.validate(instance=data,schema=self.service_schema)
             return data
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
 
     def execute_api_call(self,oper,payload):
         try:
@@ -113,41 +115,43 @@ class service:
             'x-api-key': self.api_key,
             'Content-Type': 'application/json'
             }
-            if self.listen_ip == "0.0.0.0":
-                ip = "127.0.0.1"
-            else:
-                ip = self.listen_ip
 
-            res = requests.post("http://"+ip+":"+str(self.listen_port)+"/"+oper, data=payload, timeout=self.self_api_call_timeout, headers=headers)
+            res = requests.post("http://"+self.netpalm_container_name+":"+str(self.listen_port)+"/"+oper, data=payload, timeout=self.self_api_call_timeout, headers=headers)
             if res.status_code == 201:
                 return res.json()
+            else:
+                write_meta_error("error calling self api response " + str(res.status_code))
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
 
     def execute_service(self,service, **kwargs):
         #loop through to the node layer
         kwarg = kwargs.get('kwargs', False)
         operation = kwarg.get("operation")
         args = kwarg.get("args")
-        returrn_res = {
-                "data": [],
-                "status": "success"
-                }
+        returrn_res = []
         for host in service:
             posted_operation = kwarg.get("operation", False)
             for operation in host["supported_methods"]:
                 if operation["operation"] == posted_operation:
                     res = self.execute_api_call(oper=self.operation_mapping[posted_operation],payload=json.dumps(operation["payload"]))
                     time.sleep(1)
-                    returrn_res["data"].append({
+                    returrn_res.append({
                             "host": operation["payload"]["connection_args"]["host"],
                             "operation": posted_operation,
                             "data": res
                     })
         return returrn_res
 
-def render_service(templat, **kwargs):
-    s = service()
-    res = s.validate_template(template_name=templat, kwargs=kwargs["kwargs"])
-    exeservice = s.execute_service(service=res, kwargs=kwargs["kwargs"])
+def render_service(**kwargs):
+    templat = kwargs.get("netpalm_service_name")
+    exeservice = False
+    
+    try:
+        s = service()
+        res = s.validate_template(template_name=templat, kwargs=kwargs)
+        exeservice = s.execute_service(service=res, kwargs=kwargs)
+    except Exception as e:
+        write_meta_error(str(e))
+
     return exeservice

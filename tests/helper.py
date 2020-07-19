@@ -12,7 +12,7 @@ class netpalm_testhelper:
         self.port = data["listen_port"]
         self.headers = {'Content-type': 'application/json', 'Accept': 'text/plain', 'x-api-key': self.apikey}
         # test devices go here
-        self.test_device_ios_cli = "10.0.2.25"
+        self.test_device_ios_cli = "10.0.2.28"
         self.test_device_netconf = "10.0.2.39"
         self.test_device_restconf = "ios-xe-mgmt-latest.cisco.com"
 
@@ -45,11 +45,10 @@ class netpalm_testhelper:
         except Exception as e:
             return e
 
-    def post_and_check_many(self, url, payload):
+    def check_many(self, payload):
         try:
-            r = requests.post('http://'+self.ip+':'+str(self.port)+url, json=payload, headers=self.headers)
             result = []
-            for task in r.json()["data"]:
+            for task in payload:
                 res = self.poll_task(task["data"]["data"]["task_id"])
                 result.append(res)
             return result

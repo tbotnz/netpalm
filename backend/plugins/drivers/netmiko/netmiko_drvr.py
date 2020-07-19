@@ -1,6 +1,8 @@
 from netmiko import ConnectHandler
 import json
 
+from backend.core.meta.rediz_meta import write_meta_error
+
 class netmko:
 
     def __init__(self, **kwargs):
@@ -12,7 +14,7 @@ class netmko:
             netmikoses = ConnectHandler(**self.connection_args)
             return netmikoses
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
 
     def sendcommand(self, session=False, command=False):
         try:
@@ -28,7 +30,7 @@ class netmko:
                         result[commands] = response.split("\n")
             return result
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
 
     def config(self, session=False, command=False):
         try:
@@ -44,11 +46,11 @@ class netmko:
             result["changes"] = response.split("\n")
             return result
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
 
     def logout(self, session):
         try:
             response = session.disconnect()
             return response
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))

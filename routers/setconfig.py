@@ -5,12 +5,12 @@ from fastapi.security.api_key import APIKeyQuery, APIKeyCookie, APIKeyHeader, AP
 from backend.core.redis import reds
 
 #load models
-from backend.core.models.models import model_setconfig, model_response
+from backend.core.models.models import model_setconfig
 from backend.core.models.netmiko import model_netmiko_setconfig
 from backend.core.models.napalm import model_napalm_setconfig
 from backend.core.models.ncclient import model_ncclient_setconfig
 from backend.core.models.restconf import model_restconf
-
+from backend.core.models.task import model_response
 
 router = APIRouter()
 

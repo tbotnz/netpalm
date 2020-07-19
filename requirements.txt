@@ -5,7 +5,7 @@ napalm
 ncclient
 requests
 redis
-rq
+rq==1.4.3
 xmltodict
 jinja2
 jinja2schema

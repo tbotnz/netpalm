@@ -3,6 +3,8 @@ from lxml import etree
 import xmltodict
 import json
 
+from backend.core.meta.rediz_meta import write_meta_error
+
 class ncclien:
 
     def __init__(self, **kwargs):
@@ -18,7 +20,7 @@ class ncclien:
             conn = manager.connect(**self.connection_args)
             return conn
         except Exception as e:
-            return e
+            write_meta_error(str(e))
 
     def getconfig(self, session=False, command=False):
         try:
@@ -35,14 +37,14 @@ class ncclien:
                     if respdict:
                         result["get_config"] = respdict
                     else:
-                        raise Exception("no response")
+                        write_meta_error("no response")
                 else:
                     result["get_config"] = response
             else:
-                raise Exception("args are required")
+                write_meta_error("args are required")
             return result
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
 
     def editconfig(self, session=False, dry_run=False):
         try:
@@ -56,14 +58,14 @@ class ncclien:
                 if response:
                     result["edit_config"] = response
             else:
-                raise Exception("args are required")
+                write_meta_error("args are required")
             return result
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))
 
     def logout(self, session):
         try:
             response = session.close_session()
             return response
         except Exception as e:
-            return str(e)
+            write_meta_error(str(e))

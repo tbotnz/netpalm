@@ -16,7 +16,8 @@ def test_prepare_vlan_service_environment():
         },
         "queue_strategy": "fifo"
     }
-    res = helper.post_and_check_many('/service/vlan_service',pl)
+    reslist = helper.post_and_check('/service/vlan_service',pl)
+    res = helper.check_many(reslist)
     if res:
         assert True
         
@@ -31,7 +32,8 @@ def test_create_vlan_service():
         },
         "queue_strategy": "fifo"
     }
-    res = helper.post_and_check_many('/service/vlan_service',pl)
+    reslist = helper.post_and_check('/service/vlan_service',pl)
+    res = helper.check_many(reslist)
     if "+int vlan 99" in res[0]["changes"][0] and "+int vlan 99" in res[1]["changes"][0]:
         assert True
     else:
@@ -48,7 +50,8 @@ def test_retrieve_vlan_service():
         },
         "queue_strategy": "fifo"
     }
-    res = helper.post_and_check_many('/service/vlan_service',pl)
+    reslist = helper.post_and_check('/service/vlan_service',pl)
+    res = helper.check_many(reslist)
     if res[0]["show int vlan 99"][0]["interface"] == "Vlan99" and res[1]["show int vlan 99"][0]["interface"] == "Vlan99":
         assert True
     else:
@@ -65,7 +68,8 @@ def test_delete_vlan_service():
         },
         "queue_strategy": "fifo"
     }
-    res = helper.post_and_check_many('/service/vlan_service',pl)
+    reslist = helper.post_and_check('/service/vlan_service',pl)
+    res = helper.check_many(reslist)
     if "-no int vlan 99" in res[0]["changes"][0] and "-no int vlan 99" in res[1]["changes"][0]:
         assert True
     else:
