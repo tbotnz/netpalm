@@ -1,15 +1,11 @@
-fastapi
-uvicorn
 netmiko
 napalm
 ncclient
 requests
 redis
-rq==1.4.3
+rq
 xmltodict
 jinja2
 jinja2schema
 jsonschema
 genie
-gunicorn
-pytest

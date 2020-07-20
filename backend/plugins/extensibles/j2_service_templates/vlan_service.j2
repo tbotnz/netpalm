@@ -1,0 +1,95 @@
+{# DEMO NETPALM SERVICE#}
+{# CREATES VLANS ON MULTIPLE HOSTS #}
+{#
+!!!! EXAMPLE PAYLOAD TO SEND IN TO SERVICE API AS BELOW
+{
+	"operation": "create",
+	"args":{
+		"hosts":["10.0.2.25","10.0.2.23"],
+		"username":"admin",
+		"password":"admin"
+	}
+}
+or 
+{
+	"operation": "retrieve",
+	"args":{
+		"hosts":["10.0.2.25","10.0.2.23"],
+		"username":"admin",
+		"password":"admin"
+	}
+}
+or
+{
+	"operation": "delete",
+	"args":{
+		"hosts":["10.0.2.25","10.0.2.23"],
+		"username":"admin",
+		"password":"admin"
+	}
+}
+#}
+[
+  {% for host in hosts %}
+  {
+    "supported_methods": [
+      {
+        "operation": "create",
+        "payload": {
+          "library": "napalm",
+          "connection_args": {
+            "device_type": "cisco_ios",
+            "host": "{{host}}",
+            "username": "{{username}}",
+            "password": "{{password}}"
+          },
+        "j2config": {
+    	    "template":"cisco_ios_create_vlans",
+    	    "args":{
+    		    "vlans": [99]
+    	    }
+        }
+      }
+      },
+      {
+        "operation": "retrieve",
+        "payload": {
+          "library": "netmiko",
+          "connection_args": {
+            "device_type": "cisco_ios",
+            "host": "{{host}}",
+            "username": "{{username}}",
+            "password": "{{password}}"
+          },
+        "command": "show int vlan 99",
+        "args":{
+            "use_textfsm":true
+        }
+        }
+      },
+      {
+        "operation": "delete",
+        "payload": {
+          "library": "napalm",
+          "connection_args": {
+            "device_type": "cisco_ios",
+            "host": "{{host}}",
+            "username": "{{username}}",
+            "password": "{{password}}"
+          },
+        "j2config": {
+    	    "template":"cisco_ios_remove_vlans",
+    	    "args":{
+    		    "vlans": [99]
+    	    }
+        }
+      }
+      }
+    ]
+  }{% if not loop.last %},{% endif %}{# THIS IS REQUIRED TO CONSTRUCT THE DATA CORRECTLY #}
+  {% endfor -%}
+]
+
+
+
+

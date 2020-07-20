@@ -1,0 +1,23 @@
+{# EXAMPLE OF USING A j2 to transform a webhook payload shown below
+{
+	"status": "success",
+	"data": {
+		"task_id": "4f93000e-153d-40fa-a1dc-a2b7ba4cc00f",
+		"created_on": "07/16/2020, 09:55:40",
+		"task_queue": "fifo",
+		"task_status": "finished",
+		"task_result": {
+			"show run | i hostname": [
+				"hostname with_great_power_comes_great"
+			]
+		}
+	},
+	"webhook_args": {
+		"insert": "something useful"
+	}
+}
+#}
+{
+    "task_id": "{{ data["task_id"] }}",
+	"task_status": "{{ data["task_status"] }}"
+}

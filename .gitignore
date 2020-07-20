@@ -1,1 +1,3 @@
+backend/plugins/ntc-templates/
+*.pyc
 backend/plugins/ntc-templates
