@@ -1,9 +1,10 @@
-from typing import Optional, Set, Any, Dict
+from typing import Optional, Set, Any, Dict, List
 import typing
 from pydantic import BaseModel
 
 from backend.core.models.models import model_j2config
 from backend.core.models.models import model_webhook
+from backend.core.models.models import model_generic_pre_post_check
 
 class napalm_optional_connection_args(BaseModel):
     fortios_vdom: Optional[str] = None
@@ -47,6 +48,8 @@ class model_napalm_setconfig(BaseModel):
     j2config: Optional[model_j2config] = None
     webhook: Optional[model_webhook] = None
     queue_strategy: Optional[str] = None
+    pre_checks: Optional[List[model_generic_pre_post_check]] = None
+    post_checks: Optional[List[model_generic_pre_post_check]] = None
 
     class Config:
         schema_extra = {

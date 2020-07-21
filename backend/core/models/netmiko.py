@@ -1,9 +1,10 @@
-from typing import Optional, Set, Any, Dict
+from typing import Optional, Set, Any, Dict, List
 import typing
 from pydantic import BaseModel
 
 from backend.core.models.models import model_j2config
 from backend.core.models.models import model_webhook
+from backend.core.models.models import model_generic_pre_post_check
 
 class netmiko_send_config_args(BaseModel):
     command_string: Optional[str] = None
@@ -50,7 +51,9 @@ class model_netmiko_setconfig(BaseModel):
     j2config: Optional[model_j2config] = None
     webhook: Optional[model_webhook] = None
     queue_strategy: Optional[str] = None
-
+    pre_checks: Optional[List[model_generic_pre_post_check]] = None
+    post_checks: Optional[List[model_generic_pre_post_check]] = None
+    
     class Config:
         schema_extra = {
             "example": {
