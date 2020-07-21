@@ -36,11 +36,33 @@ class netpalm_testhelper:
         except Exception as e:
             return False
 
+    def poll_task_errors(self, taskid):
+        try:
+            task_complete = False
+            result = False
+            while task_complete == False:
+                task_res = self.check_task(taskid)
+                if task_res["data"]["task_status"] == "finished":
+                    result = task_res["data"]["task_errors"]
+                    task_complete = True
+            return result
+        except Exception as e:
+            return False
+
     def post_and_check(self, url, payload):
         try:
             r = requests.post('http://'+self.ip+':'+str(self.port)+url, json=payload, headers=self.headers)
             task = r.json()["data"]["task_id"]
             result = self.poll_task(task)
+            return result
+        except Exception as e:
+            return e
+
+    def post_and_check_errors(self, url, payload):
+        try:
+            r = requests.post('http://'+self.ip+':'+str(self.port)+url, json=payload, headers=self.headers)
+            task = r.json()["data"]["task_id"]
+            result = self.poll_task_errors(task)
             return result
         except Exception as e:
             return e
