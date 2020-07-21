@@ -1,0 +1,1996 @@
+{
+	"info": {
+		"_postman_id": "20f910ea-33bb-4bf5-9f45-b944a542b5d3",
+		"name": "netpalm",
+		"description": "netpalm is a ReST API into your dusty old network devices, netpalm makes it easy to push and pull network state from your apps. netpalm can abstract and render structured data both inbound and outbound to your network devices native telnet, SSH, NETCONF or RESTCONF interface. netpalm leverages popular napalm, netmiko, ncclient and requests library's for network device communication, these powerful libs supprt a vast number of vendors and OS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "pulling state",
+			"item": [
+				{
+					"name": "getconfig napalm",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.24\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": \"show run | i hostname\",\r\n    \"queue_strategy\": \"pinned\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/getconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"getconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getconfig example with webhook",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.23\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": \"show run | i hostname\",\r\n\t\"webhook\": {\r\n        \"name\" : \"default_webhook\",\r\n        \"args\" : {\r\n            \"insert\":\"something useful\"\r\n        }\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/getconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"getconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getconfig example with j2webhook",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.23\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": \"show run | i hostname\",\r\n\t\"webhook\": {\r\n        \"name\" : \"default_webhook\",\r\n        \"args\" : {\r\n            \"insert\":\"something useful\"\r\n        },\r\n        \"j2template\":\"example\"\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/getconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"getconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getconfig napalm with napalm getter",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.23\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": \"get_facts\",\r\n    \"queue_strategy\": \"pinned\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/getconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"getconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getconfig napalm - multiple",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.23\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"library\": \"napalm\",\r\n    \"command\": [\"show run | i hostname\", \"show ip int brief\"],\r\n    \"webhook\": true,\r\n    \"queue_strategy\": \"fifo\"\r\n}      "
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/getconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"getconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getconfig netmiko",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\", \"timeout\":5\r\n    },\r\n    \"command\": \"show run | i hostname\",\r\n    \"queue_strategy\": \"pinned\"\r\n}      "
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/getconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"getconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getconfig netmiko - with args",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": \"show ip int brief\",\r\n    \"args\":{\r\n    \t\"use_textfsm\":true\r\n    },\r\n    \"queue_strategy\": \"pinned\"\r\n}      "
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/getconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"getconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getconfig netmiko - multiple",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"command\": [\"show run | i hostname\", \"show ip int brief\"],\r\n    \"queue_strategy\": \"fifo\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/getconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"getconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getconfig ncclient",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"ncclient\",\r\n    \"connection_args\":{\r\n\t\t\"host\":\"10.0.2.39\", \"username\":\"admin\", \"password\":\"admin\", \"port\":830, \"hostkey_verify\":false\r\n    },\r\n    \"args\":{\r\n    \t\"source\":\"running\",\r\n    \t\"filter\":\"<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>\"\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}      "
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/getconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"getconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getconfig ncclient - renderjson",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"ncclient\",\r\n    \"connection_args\":{\r\n\t\t\"host\":\"10.0.2.39\", \"username\":\"admin\", \"password\":\"admin\", \"port\":830, \"hostkey_verify\":false\r\n    },\r\n    \"args\":{\r\n    \t\"source\":\"running\",\r\n    \t\"filter\":\"<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>\",\r\n    \t\"render_json\":true\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}      "
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/getconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"getconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getconfig restconf get",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"restconf\",\r\n    \"connection_args\":{\r\n    \t\"host\":\"ios-xe-mgmt-latest.cisco.com\", \"port\":9443, \"username\":\"developer\", \"password\":\"C1sco12345\", \"verify\":false, \"timeout\":10, \"transport\":\"https\", \"headers\":{\r\n    \t\t\"Content-Type\": \"application/yang-data+json\", \"Accept\": \"application/yang-data+json\"\r\n    \t}\r\n    },\r\n    \"args\":{\r\n    \t\"uri\":\"/restconf/data/Cisco-IOS-XE-native:native/interface/\",\r\n        \"action\":\"get\"\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}      "
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/getconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"getconfig"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "pushing state",
+			"item": [
+				{
+					"name": "setconfig napalm - multiple",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"config\": [\"hostname cats\", \"no ip domain lookup\"],\r\n    \"queue_strategy\": \"fifo\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig napalm",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"config\": \"hostnam cat\",\r\n    \"queue_strategy\": \"pinned\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig napalm with pre check",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"config\": \"hostname cat\",\r\n    \"queue_strategy\": \"fifo\",\r\n    \"pre_checks\": [\r\n        {\r\n            \"match_type\": \"include\",\r\n            \"get_config_args\": {\r\n                \"command\":\"show run | i hostname\"\r\n            },\r\n            \"match_str\": [\r\n                \"hostname dog\"\r\n                ]\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig napalm with pre check and post check",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"config\": \"hostname cat\",\r\n    \"queue_strategy\": \"fifo\",\r\n    \"pre_checks\": [\r\n        {\r\n            \"match_type\": \"include\",\r\n            \"get_config_args\": {\r\n                \"command\":\"show run | i hostname\"\r\n            },\r\n            \"match_str\": [\r\n                \"hostname cat\"\r\n            ]\r\n        }\r\n    ],\r\n    \"post_checks\": [\r\n        {\r\n            \"match_type\": \"include\",\r\n            \"get_config_args\": {\r\n                \"command\":\"show run | i hostname\"\r\n            },\r\n            \"match_str\": [\r\n                \"hostname dog\"\r\n            ]\r\n        }        \r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig napalm j2",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"ios-xe-mgmt-latest.cisco.com\", \"username\":\"developer\", \"password\":\"C1sco12345\", \"optional_args\": {\"port\":8181}\r\n    },\r\n    \"j2config\": {\r\n    \t\"template\":\"test\",\r\n    \t\"args\":{\r\n    \t\t\"vlans\": [\"5\",\"3\",\"2\"]\r\n    \t}\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig dryrun napalm j2",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"napalm\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"j2config\": {\r\n    \t\"template\":\"test\",\r\n    \t\"args\":{\r\n    \t\t\"vlans\": [\"1\",\"2\",\"3\"]\r\n    \t}\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig netmiko",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"config\": [\"hostname cat\"],\r\n    \"queue_strategy\": \"pinned\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig netmiko with pre and post check",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"config\": [\"hostname poo\"],\r\n    \"queue_strategy\": \"pinned\",\r\n    \"pre_checks\": [\r\n        {\r\n            \"match_type\": \"include\",\r\n            \"get_config_args\": {\r\n                \"command\":\"show run | i hostname\"\r\n            },\r\n            \"match_str\": [\r\n                \"hostname cat\"\r\n            ]\r\n        }\r\n    ],\r\n    \"post_checks\": [\r\n        {\r\n            \"match_type\": \"include\",\r\n            \"get_config_args\": {\r\n                \"command\":\"show run | i hostname\"\r\n            },\r\n            \"match_str\": [\r\n                \"hostname cat\"\r\n            ]\r\n        }        \r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig example with webhook",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"config\": [\"hostname cat\"],\r\n\t\"webhook\": {\r\n        \"name\" : \"default_webhook\"\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig example with j2 webhook",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"config\": [\"hostname cat\"],\r\n\t\"webhook\": {\r\n        \"name\" : \"default_webhook\",\r\n        \"args\" : {\r\n            \"insert\":\"something useful\"\r\n        },\r\n        \"j2template\":\"example\"\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig netmiko - multiple",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.33\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"config\": [\"hostname yeti\", \"hostname bufoon\"],\r\n    \"queue_strategy\": \"fifo\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig netmiko j2",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"library\": \"netmiko\",\r\n    \"connection_args\":{\r\n    \t\"device_type\":\"cisco_ios\", \"host\":\"10.0.2.31\", \"username\":\"admin\", \"password\":\"admin\"\r\n    },\r\n    \"j2config\": {\r\n    \t\"template\":\"test\",\r\n    \t\"args\":{\r\n    \t\t\"vlans\": [\"1\",\"2\",\"3\"]\r\n    \t}\r\n    },\r\n\t\"queue_strategy\": \"fifo\"\r\n\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig ncclient",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"ncclient\",\r\n    \"connection_args\":{\r\n\t\t\"host\":\"10.0.2.39\", \"username\":\"admin\", \"password\":\"admin\", \"port\":830, \"hostkey_verify\":false\r\n    },\r\n    \"args\":{\r\n    \t\"target\":\"running\",\r\n    \t\"config\":\"<nc:config xmlns:nc='urn:ietf:params:xml:ns:netconf:base:1.0'><configure xmlns='http://www.cisco.com/nxos:1.0:vlan_mgr_cli'><__XML__MODE__exec_configure><interface><ethernet><interface>helloworld</interface><__XML__MODE_if-ethernet-switch><switchport><trunk><allowed><vlan><add><__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans><add-vlans>99</add-vlans></__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans></add></vlan></allowed></trunk></switchport></__XML__MODE_if-ethernet-switch></ethernet></interface></__XML__MODE__exec_configure></configure></nc:config>\"\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}      "
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig restconf patch",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"restconf\",\r\n    \"connection_args\":{\r\n    \t\"host\":\"ios-xe-mgmt-latest.cisco.com\", \"port\":9443, \"username\":\"developer\", \"password\":\"C1sco12345\", \"verify\":false, \"timeout\":10, \"transport\":\"https\", \"headers\":{\r\n    \t\t\"Content-Type\": \"application/yang-data+json\", \"Accept\": \"application/yang-data+json\"\r\n    \t}\r\n    },\r\n    \"args\":{\r\n    \t\"uri\":\"/restconf/data/Cisco-IOS-XE-native:native/interface/BDI=4001\",\r\n      \"action\":\"patch\",\r\n      \"payload\": {\r\n        \"Cisco-IOS-XE-native:BDI\":{\r\n          \"name\":\"4001\",\r\n          \"description\": \"netpalm - namechange\"\r\n        }\r\n      }\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}      "
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig restconf delete",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"restconf\",\r\n    \"connection_args\":{\r\n    \t\"host\":\"ios-xe-mgmt-latest.cisco.com\", \"port\":9443, \"username\":\"developer\", \"password\":\"C1sco12345\", \"verify\":false, \"timeout\":10, \"transport\":\"https\", \"headers\":{\r\n    \t\t\"Content-Type\": \"application/yang-data+json\", \"Accept\": \"application/yang-data+json\"\r\n    \t}\r\n    },\r\n    \"args\":{\r\n    \t\"uri\":\"/restconf/data/Cisco-IOS-XE-native:native/interface/BDI=4001\",\r\n        \"action\":\"delete\"\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}      "
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig restconf post",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"restconf\",\r\n    \"connection_args\":{\r\n    \t\"host\":\"ios-xe-mgmt-latest.cisco.com\", \"port\":9443, \"username\":\"developer\", \"password\":\"C1sco12345\", \"verify\":false, \"timeout\":10, \"transport\":\"https\", \"headers\":{\r\n    \t\t\"Content-Type\": \"application/yang-data+json\", \"Accept\": \"application/yang-data+json\"\r\n    \t}\r\n    },\r\n    \"args\":{\r\n    \t\"uri\":\"/restconf/data/Cisco-IOS-XE-native:native/interface/\",\r\n      \"action\":\"post\",\r\n      \"payload\": {\r\n        \"Cisco-IOS-XE-native:BDI\":{\r\n          \"name\":\"4001\",\r\n          \"description\": \"netpalm\"\r\n        }\r\n      }\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}      "
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setconfig restconf put",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"library\": \"restconf\",\r\n    \"connection_args\":{\r\n    \t\"host\":\"10.0.2.40\", \"port\":80, \"username\":\"admin\", \"password\":\"admin\", \"verify\":false, \"timeout\":10, \"transport\":\"http\", \"headers\":{\r\n    \t\t\"Content-Type\": \"application/vnd.yang.data+json\", \"Accept\": \"application/vnd.yang.data+json\"\r\n    \t}\r\n    },\r\n    \"args\":{\r\n    \t\"uri\":\"/restconf/api/config/native/interface/BDI/\",\r\n    \t\"action\":\"put\",\r\n    \t\"payload\":{\r\n\t\t\t\t\"ned:BDI\": {\r\n                \"description\": \"cat\",\r\n                \"ip\": {\r\n                  \"no-address\": {\r\n                    \"address\": false\r\n                  }\r\n                },\r\n                \"mop\": {\r\n                  \"enabled\": false\r\n                },\r\n                \"name\": \"1\"\r\n            }\r\n\t\t}\r\n    },\r\n    \"queue_strategy\": \"fifo\"\r\n}      "
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/setconfig",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"setconfig"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "running scripts",
+			"item": [
+				{
+					"name": "exec script",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"script\":\"hello_world\",\r\n\t\"args\":{\r\n\t\t\"hello\":\"world\"\r\n\t},\r\n\t\"queue_strategy\": \"fifo\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/script",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"script"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "exec script with webhook",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"script\":\"hello_world\",\r\n\t\"args\":{\r\n\t\t\"hello\":\"world\"\r\n\t},\r\n\t\"webhook\": {},\r\n\t\"queue_strategy\": \"fifo\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/script",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"script"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "template management",
+			"item": [
+				{
+					"name": "remove txtfsm template",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"template\":\"cisco_ios_show_cef_events.template\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/template",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"template"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get txtfsm templates",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/template",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"template"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add txtfsm template",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"key\":\"\",\r\n    \"driver\":\"cisco_ios\",\r\n    \"command\": \"show cef events\"\r\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/template",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"template"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get j2 service templates",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/j2template/service/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"j2template",
+								"service",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get j2 config templates",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/j2template/config/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"j2template",
+								"config",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get j2 webhook templates",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/j2template/webhook/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"j2template",
+								"webhook",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get j2 service template model",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/j2template/service/vlan_service",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"j2template",
+								"service",
+								"vlan_service"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get j2 config template model",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/j2template/config/test",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"j2template",
+								"config",
+								"test"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get j2 webhook template model",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/j2template/webhook/example",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"j2template",
+								"webhook",
+								"example"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "j2 render service template",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"operation\": \"create\",\n\t\"args\":{\n\t\t\"hosts\":[\"10.0.2.25\",\"10.0.2.23\"],\n\t\t\"username\":\"admin\",\n\t\t\"password\":\"admin\"\n\t},\n\t\"queue_strategy\": \"fifo\"\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/j2template/render/service/vlan_service",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"j2template",
+								"render",
+								"service",
+								"vlan_service"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "j2 render config template",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"vlans\": [\"1\",\"2\",\"3\"]\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/j2template/render/config/test",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"j2template",
+								"render",
+								"config",
+								"test"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "j2 render webhook template",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"success\",\n    \"data\": {\n        \"task_id\": \"1d6fcd41-ee38-4baf-9b78-63300576d413\",\n        \"created_on\": \"2020-07-17T11:48:40.381728\",\n        \"task_queue\": \"fifo\",\n        \"task_status\": \"finished\",\n        \"task_result\": {\n            \"show run | i hostname\": [\n                \"hostname with_great_power_comes_great\"\n            ]\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/j2template/render/webhook/example",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"j2template",
+								"render",
+								"webhook",
+								"example"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "task management",
+			"item": [
+				{
+					"name": "taskqueue- specific device (verbose)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "127.0.0.1:9000/taskqueue/10.0.2.33",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"taskqueue",
+								"10.0.2.33"
+							]
+						},
+						"description": "127.0.0.1:9000/getconfig/task/host/10.0.2.33"
+					},
+					"response": []
+				},
+				{
+					"name": "taskqueue",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "127.0.0.1:9000/taskqueue/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"taskqueue",
+								""
+							]
+						},
+						"description": "127.0.0.1:9000/getconfig/task/host/10.0.2.33"
+					},
+					"response": []
+				},
+				{
+					"name": "task",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/task/9cfc76f8-e294-4b19-b97a-712f1d089d08",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"task",
+								"9cfc76f8-e294-4b19-b97a-712f1d089d08"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "service management",
+			"item": [
+				{
+					"name": "service - retrieve",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"operation\": \"retrieve\",\n\t\"args\":{\n\t\t\"hosts\":[\"10.0.2.25\",\"10.0.2.23\"],\n\t\t\"username\":\"admin\",\n\t\t\"password\":\"admin\"\n\t},\n\t\"queue_strategy\": \"fifo\"\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/service/vlan_service",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"service",
+								"vlan_service"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "service - delete",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"operation\": \"delete\",\n\t\"args\":{\n\t\t\"hosts\":[\"10.0.2.25\",\"10.0.2.23\"],\n\t\t\"username\":\"admin\",\n\t\t\"password\":\"admin\"\n\t},\n\t\"queue_strategy\": \"fifo\"\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/service/vlan_service",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"service",
+								"vlan_service"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "service - create",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"operation\": \"create\",\n\t\"args\":{\n\t\t\"hosts\":[\"10.0.2.25\",\"10.0.2.23\"],\n\t\t\"username\":\"admin\",\n\t\t\"password\":\"admin\"\n\t},\n\t\"queue_strategy\": \"fifo\"\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:9000/service/vlan_service",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9000",
+							"path": [
+								"service",
+								"vlan_service"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "acb9d885-8b1a-43c3-a8cb-a4d5f716ddec",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "ed502ad6-9082-41b7-a86a-4e83afece6eb",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "1be55272-f599-4940-b35e-31b6bd7c8df0",
+			"key": "device_password",
+			"value": "admin"
+		},
+		{
+			"id": "edf73c69-5ce4-4782-adcc-fec0d3292314",
+			"key": "device_ip_address",
+			"value": "10.0.2.33"
+		},
+		{
+			"id": "2a223e99-7125-43ec-9d2e-9e723ba76eac",
+			"key": "apikey",
+			"value": "2a84465a-cf38-46b2-9d86-b84Q7d57f288"
+		},
+		{
+			"id": "471950db-3823-47b6-90fb-709e4bb707a7",
+			"key": "device_username",
+			"value": "admin"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
