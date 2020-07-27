@@ -20,7 +20,7 @@ netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 - Execute ANY python script as async via the ReST API and includes passing in of parameters
 - Supports on the fly changes to async queue strategy for a device ( either per device pinned queues or pooled queues )
 - OpenAPI / SwaggerUI docs inbuilt via the default route
-- Large [online](https://documenter.getpostman.com/view/2391814/SzYbxcQx?version=latest) postman collection of examples
+- Large [online](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) postman collection of examples
 - Horizontal container based scale out architecture supported by each component
 - Automatically generates a JSON schema for any Jinja2 Template
 - Can render NETCONF XML responses into JSON on the fly
@@ -62,7 +62,7 @@ netpalm is integrated into http://textfsm.nornir.tech so you can ingest your tem
 
 ### API documentation
 
-netpalm comes with a [postman collection](https://documenter.getpostman.com/view/2391814/SzYbxcQx?version=latest) and an OpenAPI based API with swagger ui
+netpalm comes with a [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) and an OpenAPI based API with swagger ui
 ![netpalm swagger](/images/oapi.png)
 
 ## container installation
