@@ -4,7 +4,7 @@ RUN git clone https://github.com/networktocode/ntc-templates.git
 RUN mv ntc-templates ntc_templates
 RUN pip3 install --upgrade pip
 ADD requirements.txt /code/
-RUN pip3 install -r /code/requirements.txt
+RUN pip3 install -r /code/worker_requirements.txt
 ADD . /code
 WORKDIR /code
 RUN ln -sf /usr/local/lib/python3.8/site-packages/ntc_templates/templates/ backend/plugins/extensibles/ntc-templates
