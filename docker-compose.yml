@@ -8,6 +8,7 @@ services:
             dockerfile: ./netpalm_controller_dockerfile
         environment:
             - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+            - NETPALM_CONFIG=config.json
         ports:
             - "9000:9000"
         networks:
@@ -19,6 +20,7 @@ services:
             dockerfile: ./netpalm_pinned_worker_dockerfile
         environment:
             - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+            - NETPALM_CONFIG=config.json
         depends_on:
             - netpalm-controller
         networks:
@@ -30,6 +32,7 @@ services:
             dockerfile: ./netpalm_fifo_worker_dockerfile
         environment:
             - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+            - NETPALM_CONFIG=config.json
         depends_on:
             - netpalm-controller
         networks:
