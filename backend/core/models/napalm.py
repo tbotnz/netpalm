@@ -1,11 +1,25 @@
 from typing import Optional, Set, Any, Dict, List
+from enum import Enum, IntEnum
+
 import typing
 from pydantic import BaseModel
 
 from backend.core.models.models import model_j2config
 from backend.core.models.models import model_webhook
 from backend.core.models.models import model_generic_pre_post_check
+from backend.core.models.models import queue_strat
 
+class lib_opts_napalm(str, Enum):
+    napalm = "napalm"
+
+class napalm_device_type(str, Enum):
+    cisco_ios = "cisco_ios"
+    cisco_xr = "iosxr"
+    nxos = "nxos"
+    cisco_nxos_ssh = "nxos_ssh"
+    arista_eos = "eos"
+    juniper = "junos"
+    
 class napalm_optional_connection_args(BaseModel):
     fortios_vdom: Optional[str] = None
     port: Optional[int] = None
@@ -16,18 +30,18 @@ class napalm_optional_connection_args(BaseModel):
     nxos_protocol: Optional[str] = None
 
 class napalm_connection_args(BaseModel):
-    device_type = str
-    optional_args = dict
-    host = str
-    username = str
-    password = str
+    device_type: napalm_device_type
+    optional_args: Optional[napalm_optional_connection_args] = None
+    host: str
+    username: str
+    password: str
 
 class model_napalm_getconfig(BaseModel):
-    library: str
+    library: lib_opts_napalm
     connection_args: napalm_connection_args
     command: Any
     webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[str] = None
+    queue_strategy: Optional[queue_strat] = None
 
     class Config:
         schema_extra = {
@@ -42,12 +56,12 @@ class model_napalm_getconfig(BaseModel):
         }
 
 class model_napalm_setconfig(BaseModel):
-    library: str
+    library: lib_opts_napalm
     connection_args: napalm_connection_args
     config: Optional[Any] = None
     j2config: Optional[model_j2config] = None
     webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[str] = None
+    queue_strategy: Optional[queue_strat] = None
     pre_checks: Optional[List[model_generic_pre_post_check]] = None
     post_checks: Optional[List[model_generic_pre_post_check]] = None
 

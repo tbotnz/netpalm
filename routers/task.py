@@ -4,10 +4,12 @@ from fastapi.security.api_key import APIKeyQuery, APIKeyCookie, APIKeyHeader, AP
 
 from backend.core.redis import reds
 
+from backend.core.models.task import model_response
+
 router = APIRouter()
 
 # get specific task 
-@router.get("/task/{task_id}")
+@router.get("/task/{task_id}", response_model=model_response)
 def get_task(task_id: str):
   try:
     r = reds.fetchtask(task_id=task_id)

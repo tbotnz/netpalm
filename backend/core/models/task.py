@@ -1,6 +1,20 @@
 
 from typing import Optional, Set, Any, Dict
+from enum import Enum, IntEnum
+
 from pydantic import BaseModel
+
+class task_response(str, Enum):
+    success="success"
+    error="error"
+
+class task_status(str, Enum):
+    queued="queued"
+    finished="finished"
+    failed="failed"
+    started="started"
+    deferred="deferred"
+    scheduled="scheduled"
 
 class model_task_meta(BaseModel):
     result: str
@@ -10,12 +24,12 @@ class model_task_response(BaseModel):
     task_id: str
     created_on: str
     task_queue: str
-    task_status: str
+    task_status: task_status
     task_result: Any
     task_errors: list
 
 class model_response(BaseModel):
-    status: str
+    status: task_response
     data: model_task_response
 
     class Config:
@@ -32,3 +46,7 @@ class model_response(BaseModel):
                 }
             }
         }
+
+class model_response_basic(BaseModel):
+    status: task_response
+    data: dict

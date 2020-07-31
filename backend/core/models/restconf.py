@@ -1,9 +1,22 @@
 from typing import Optional, Set, Any, Dict
+from enum import Enum, IntEnum
+
 import typing
 from pydantic import BaseModel
 
 from backend.core.models.models import model_j2config
 from backend.core.models.models import model_webhook
+from backend.core.models.models import queue_strat
+
+class lib_opts_restconf(str, Enum):
+    restconf = "restconf"
+
+class supported_options(str, Enum):
+    get = "get"
+    post = "post"
+    patch = "patch"
+    put = "put"
+    delete = "delete"
 
 class model_restconf_connection_args(BaseModel):
     host: str
@@ -16,15 +29,15 @@ class model_restconf_connection_args(BaseModel):
 
 class model_restconf_payload(BaseModel):
     uri: str
-    action: str
+    action: supported_options
     payload: Optional[dict] = None
 
 class model_restconf(BaseModel):
-    library: str
+    library: lib_opts_restconf
     connection_args: model_restconf_connection_args
     args: model_restconf_payload
     webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[str] = None
+    queue_strategy: Optional[queue_strat] = None
 
     class Config:
         schema_extra = {

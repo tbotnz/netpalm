@@ -1,9 +1,14 @@
 from typing import Optional, Set, Any, Dict
+from enum import Enum, IntEnum
 import typing
 from pydantic import BaseModel
 
 from backend.core.models.models import model_j2config
 from backend.core.models.models import model_webhook
+from backend.core.models.models import queue_strat
+
+class lib_opts_ncclient(str, Enum):
+    ncclient = "ncclient"
 
 class ncclient_send_config_args(BaseModel):
     target: str
@@ -22,11 +27,11 @@ class model_ncclient_connection_args(BaseModel):
     hostkey_verify: bool
 
 class model_ncclient_setconfig(BaseModel):
-    library: str
+    library: lib_opts_ncclient
     connection_args: model_ncclient_connection_args
     args: ncclient_send_config_args
     webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[str] = None
+    queue_strategy: Optional[queue_strat] = None
 
     class Config:
         schema_extra = {
@@ -44,11 +49,11 @@ class model_ncclient_setconfig(BaseModel):
         }
 
 class model_ncclient_getconfig(BaseModel):
-    library: str
+    library: lib_opts_ncclient
     connection_args: model_ncclient_connection_args
     args: ncclient_get_config_args
     webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[str] = None
+    queue_strategy: Optional[queue_strat] = None
 
     class Config:
         schema_extra = {

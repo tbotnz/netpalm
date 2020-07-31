@@ -11,7 +11,7 @@ from backend.core.models.task import model_response
 
 router = APIRouter()
 
-@router.post("/script", status_code=201)
+@router.post("/script", response_model=model_response, status_code=201)
 def execute_script(script: model_script):
   try:
     req_data = script.dict()
