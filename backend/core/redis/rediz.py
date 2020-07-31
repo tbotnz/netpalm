@@ -91,8 +91,7 @@ class rediz:
                 "result": ""
             }
             task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl, kwargs=kwargs["kwargs"], meta=meta_template, timeout=self.timeout)
-            r = model_response(status="success",data={"task_id":task.get_id(),"created_on":task.created_at.strftime("%m/%d/%Y, %H:%M:%S"),"task_queue":q,"task_status":task.get_status(),"task_result": task.result, "task_errors":task.meta["errors"]})
-            resultdata = r.dict()
+            resultdata = model_response(status="success",data={"task_id":task.get_id(),"created_on":task.created_at.strftime("%m/%d/%Y, %H:%M:%S"),"task_queue":q,"task_status":task.get_status(),"task_result": task.result, "task_errors":task.meta["errors"]}).dict()
             return resultdata
         except Exception as e:
             return e
@@ -117,8 +116,7 @@ class rediz:
     def fetchtask(self, task_id):
         try:
             task = Job.fetch(task_id, connection=self.base_connection)
-            r = model_response(status="success",data={"task_id":task.get_id(),"created_on":task.created_at.strftime("%m/%d/%Y, %H:%M:%S"),"task_queue":task.description,"task_status":task.get_status(),"task_result": task.result, "task_errors":task.meta["errors"]})
-            response_object = r.dict()
+            response_object = model_response(status="success",data={"task_id":task.get_id(),"created_on":task.created_at.strftime("%m/%d/%Y, %H:%M:%S"),"task_queue":task.description,"task_status":task.get_status(),"task_result": task.result, "task_errors":task.meta["errors"]}).dict()
             return response_object
         except Exception as e:
             return e
@@ -187,8 +185,7 @@ class rediz:
                     for job in task:
                         try:
                             jobstatus = Job.fetch(job, connection=self.base_connection)
-                            r = model_response(status="success",data={"task_id":jobstatus.get_id(),"created_on":jobstatus.created_at.strftime("%m/%d/%Y, %H:%M:%S"),"task_queue":jobstatus.description,"task_status":jobstatus.get_status(),"task_result": jobstatus.result, "task_errors":jobstatus.meta["errors"]})
-                            jobdata = r.dict()
+                            jobdata = model_response(status="success",data={"task_id":jobstatus.get_id(),"created_on":jobstatus.created_at.strftime("%m/%d/%Y, %H:%M:%S"),"task_queue":jobstatus.description,"task_status":jobstatus.get_status(),"task_result": jobstatus.result, "task_errors":jobstatus.meta["errors"]}).dict()
                             response_object["data"]["task_id"].append(jobdata)
                         except Exception as e:
                             return e

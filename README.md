@@ -8,7 +8,7 @@ netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 ## netpalm features
 
 - Speaks ReST & JSON to your app and CLI over SSH or Telnet or NETCONF/RESTCONF to your network devices
-- In built multi-level abstraction interface for service modeling of Create, Retrieve, Delete methods
+- Built in multi-level abstraction interface for service modeling of Create, Retrieve, Delete methods
 - Ability to write your own [service templates](https://github.com/tbotnz/netpalm/tree/master/backend/plugins/extensibles/j2_service_templates)
 - Supports pre and post checks accross CLI devices, config only deployed on pre check pass 
 - Per device async task queuing (Ensure you dont overload your VTY's) or Pooled async processes
