@@ -124,6 +124,11 @@ edit the config.json file too set params as required
 }
 ```
 
+### public cloud instance
+There is a public instance of netpalm available below 
+- https://netpalm.tech/
+- API key = 2a84465a-cf38-46b2-9d86-b84Q7d57f288
+
 ### useful netpalm resources
 
 netpalm getting started blog:
