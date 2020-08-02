@@ -12,13 +12,14 @@ class netpalm_testhelper:
         self.port = data["listen_port"]
         self.headers = {'Content-type': 'application/json', 'Accept': 'text/plain', 'x-api-key': self.apikey}
         # test devices go here
-        self.test_device_ios_cli = "10.0.2.28"
+        self.test_device_ios_cli = "10.0.2.33"
         self.test_device_netconf = "10.0.2.39"
         self.test_device_restconf = "ios-xe-mgmt-latest.cisco.com"
+        self.http_timeout=5
 
     def check_task(self, taskid):
         try:
-            r = requests.get('http://'+self.ip+':'+str(self.port)+'/task/'+taskid,headers=self.headers)
+            r = requests.get('http://'+self.ip+':'+str(self.port)+'/task/'+taskid,headers=self.headers, timeout=self.http_timeout)
             return r.json()
         except Exception as e:
             return False
@@ -51,7 +52,7 @@ class netpalm_testhelper:
 
     def post_and_check(self, url, payload):
         try:
-            r = requests.post('http://'+self.ip+':'+str(self.port)+url, json=payload, headers=self.headers)
+            r = requests.post('http://'+self.ip+':'+str(self.port)+url, json=payload, headers=self.headers, timeout=self.http_timeout)
             task = r.json()["data"]["task_id"]
             result = self.poll_task(task)
             return result
@@ -60,7 +61,7 @@ class netpalm_testhelper:
 
     def post_and_check_errors(self, url, payload):
         try:
-            r = requests.post('http://'+self.ip+':'+str(self.port)+url, json=payload, headers=self.headers)
+            r = requests.post('http://'+self.ip+':'+str(self.port)+url, json=payload, headers=self.headers, timeout=self.http_timeout)
             task = r.json()["data"]["task_id"]
             result = self.poll_task_errors(task)
             return result

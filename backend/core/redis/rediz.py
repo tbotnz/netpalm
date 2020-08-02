@@ -1,10 +1,16 @@
 from redis import Redis
 import redis
+
 from rq import Queue, Connection, Worker
 from rq.job import Job
-import json
-from multiprocessing import Process
 from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegistry
+
+import json
+
+import datetime
+
+from multiprocessing import Process
+
 
 from netpalm_pinned_worker import pinned_worker_constructor
 
@@ -58,12 +64,19 @@ class rediz:
         except Exception as e:
             return e
 
+    def get_redis_meta_template(self):
+        meta_template = {
+            "errors": [],
+            "enqueued_elapsed_seconds": None,
+            "started_elapsed_seconds": None,
+            "total_elapsed_seconds": None,
+            "result": ""
+        }
+        return meta_template
+
     def create_queue_worker(self, qname):
         try:
-            meta_template = {
-                "errors": [],
-                "result": ""
-            }
+            meta_template = self.get_redis_meta_template()
             result = self.base_connection.get(self.networked_queuedb)
             tmpdb = json.loads(result)
             tmpdb[qname] = True
@@ -84,14 +97,59 @@ class rediz:
         except Exception as e:
             return e
 
+    def render_task_response(self, task_job):
+        created_at = str(task_job.created_at)
+        enqueued_at = str(task_job.enqueued_at)
+        started_at = str(task_job.started_at)
+        ended_at = str(task_job.ended_at)
+
+        current_time = datetime.datetime.utcnow()
+        created_parsed_time = datetime.datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S.%f')
+
+        #if enqueued but not started calculate time
+        if enqueued_at != "None" and enqueued_at and started_at == "None":
+            parsed_time = datetime.datetime.strptime(enqueued_at, '%Y-%m-%d %H:%M:%S.%f')
+            task_job.meta["enqueued_elapsed_seconds"] = (current_time - parsed_time).seconds
+            task_job.save()
+
+        #if created but not finished calculate time
+        if ended_at != "None" and ended_at:
+            parsed_time = datetime.datetime.strptime(ended_at, '%Y-%m-%d %H:%M:%S.%f')
+            task_job.meta["total_elapsed_seconds"] = (parsed_time - created_parsed_time).seconds
+            task_job.save()
+        elif ended_at == "None":
+            task_job.meta["total_elapsed_seconds"] = (current_time - created_parsed_time).seconds
+            task_job.save()                     
+
+        #clean up vars for response
+        created_at = None if created_at == "None" else created_at
+        enqueued_at = None if enqueued_at == "None" else enqueued_at
+        started_at = None if started_at == "None" else started_at
+        ended_at = None if ended_at == "None" else ended_at
+
+        resultdata = None
+        resultdata = model_response(status="success",data={
+            "task_id":task_job.get_id(),
+            "created_on":created_at,
+            "task_queue":task_job.description,
+            "task_meta":{
+                "enqueued_at":enqueued_at,
+                "started_at":started_at,
+                "ended_at": ended_at,
+                "enqueued_elapsed_seconds": task_job.meta["enqueued_elapsed_seconds"],
+                "total_elapsed_seconds": task_job.meta["total_elapsed_seconds"]
+                },
+                "task_status":task_job.get_status(),
+                "task_result": task_job.result,
+                "task_errors":task_job.meta["errors"]
+                }).dict()
+        return resultdata
+
     def sendtask(self, q, exe, **kwargs):
         try:
-            meta_template = {
-                "errors": [],
-                "result": ""
-            }
+            meta_template = self.get_redis_meta_template()
             task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl, kwargs=kwargs["kwargs"], meta=meta_template, timeout=self.timeout)
-            resultdata = model_response(status="success",data={"task_id":task.get_id(),"created_on":task.created_at.strftime("%m/%d/%Y, %H:%M:%S"),"task_queue":q,"task_status":task.get_status(),"task_result": task.result, "task_errors":task.meta["errors"]}).dict()
+            resultdata = self.render_task_response(task)
             return resultdata
         except Exception as e:
             return e
@@ -116,7 +174,7 @@ class rediz:
     def fetchtask(self, task_id):
         try:
             task = Job.fetch(task_id, connection=self.base_connection)
-            response_object = model_response(status="success",data={"task_id":task.get_id(),"created_on":task.created_at.strftime("%m/%d/%Y, %H:%M:%S"),"task_queue":task.description,"task_status":task.get_status(),"task_result": task.result, "task_errors":task.meta["errors"]}).dict()
+            response_object = self.render_task_response(task)
             return response_object
         except Exception as e:
             return e
@@ -185,7 +243,7 @@ class rediz:
                     for job in task:
                         try:
                             jobstatus = Job.fetch(job, connection=self.base_connection)
-                            jobdata = model_response(status="success",data={"task_id":jobstatus.get_id(),"created_on":jobstatus.created_at.strftime("%m/%d/%Y, %H:%M:%S"),"task_queue":jobstatus.description,"task_status":jobstatus.get_status(),"task_result": jobstatus.result, "task_errors":jobstatus.meta["errors"]}).dict()
+                            jobdata = self.render_task_response(jobstatus)
                             response_object["data"]["task_id"].append(jobdata)
                         except Exception as e:
                             return e
