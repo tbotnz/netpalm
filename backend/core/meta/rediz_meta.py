@@ -15,7 +15,7 @@ def write_meta_error(data):
 def prepare_netpalm_payload(job_result={}):
     try:
         job = get_current_job()
-        resultdata = model_response(status="success",data={"task_id":job.id,"created_on":job.created_at.strftime("%m/%d/%Y, %H:%M:%S"),"task_queue":job.description,"task_status":"finished","task_result": job_result, "task_errors":job.meta["errors"]}).dict()
+        resultdata = model_response(status="success",data={"task_id":job.id,"created_on":job.created_at.strftime("%Y-%m-%d %H:%M:%S.%f"),"task_queue":job.description,"task_status":"finished","task_result": job_result, "task_errors":job.meta["errors"]}).dict()
         return resultdata
 
     except Exception as e:
