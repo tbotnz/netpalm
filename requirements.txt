@@ -13,3 +13,4 @@ jsonschema
 genie
 gunicorn
 pytest
+aiofiles
