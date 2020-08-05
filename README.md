@@ -1,4 +1,4 @@
-![netpalm_log](/images/netpalm.png)
+![netpalm_log](/images/static/netpalm.png)
 
 ## why netpalm?
 
@@ -32,38 +32,38 @@ netpalm acts as a ReST broker for NAPALM, Netmiko, NCCLIENT or a Python Script.
 It uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
 You make an API call to netpalm and it will establish a queue to your device and start sending configuration
 
-![netpalm concept](/images/arch.png)
+![netpalm concept](/images/static/arch.png)
 
 ## using netpalm examples
 
 ### getconfig method
 
-![netpalm eg1](/images/netpalm_eg_1.png)
+![netpalm eg1](/images/static/netpalm_eg_1.png)
 
 #### check response
 
-![netpalm eg2](/images/netpalm_eg_2.png)
+![netpalm eg2](/images/static/netpalm_eg_2.png)
 
 ### getconfig method with textfsm arg
 
 netpalm also supports all arguments for the transport libs, simply pass them in as below
 
-![netpalm eg3](/images/netpalm_eg_3.png)
+![netpalm eg3](/images/static/netpalm_eg_3.png)
 
 #### check response
 
-![netpalm eg4](/images/netpalm_eg_4.png)
+![netpalm eg4](/images/static/netpalm_eg_4.png)
 
 ### rapid template development and deployment
 
 netpalm is integrated into http://textfsm.nornir.tech so you can ingest your templates with ease
 
-![netpalm auto ingest](/images/netpalm_ingest.gif)
+![netpalm auto ingest](/images/static/netpalm_ingest.gif)
 
 ### API documentation
 
 netpalm comes with a [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) and an OpenAPI based API with swagger ui
-![netpalm swagger](/images/oapi.png)
+![netpalm swagger](/images/static/oapi.png)
 
 ## container installation
 
