@@ -17,7 +17,7 @@ class j2:
         if j2_type == "webhook":
             self.jinja_template_dir = config().webhook_jinja2_templates
         self.file_loader = FileSystemLoader(self.jinja_template_dir)
-        self.env = Environment(loader=self.file_loader)
+        self.env = Environment(loader=self.file_loader, lstrip_blocks=True, trim_blocks=True)
 
     def path_hierarchy(self, path):
         try:

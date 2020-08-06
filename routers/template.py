@@ -17,7 +17,7 @@ async def get_j2_template():
   try:
     r = routes["gettemplate"]()
     resp = jsonable_encoder(r)
-    return resp, 200
+    return resp
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
@@ -83,7 +83,7 @@ async def get_j2_template_specific_config(tmpname: str):
   try:
       r = routes["j2gettemplate"](tmpname, template_type="config")
       resp = jsonable_encoder(r)
-      return resp, 200
+      return resp
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
@@ -93,7 +93,7 @@ async def get_j2_template_specific_service(tmpname: str):
   try:
       r = routes["j2gettemplate"](tmpname, template_type="service")
       resp = jsonable_encoder(r)
-      return resp, 200
+      return resp
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
@@ -103,7 +103,7 @@ async def get_j2_template_specific_webhook(tmpname: str):
   try:
       r = routes["j2gettemplate"](tmpname, template_type="webhook")
       resp = jsonable_encoder(r)
-      return resp, 200
+      return resp
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e).split('\n'))
     pass
