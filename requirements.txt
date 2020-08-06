@@ -13,4 +13,5 @@ jsonschema
 genie
 gunicorn
 pytest
+pytest-timeout
 aiofiles

@@ -8195,7 +8195,7 @@ div.info {
 .swagger-ui .opblock {
   margin: 0 0 15px;
   border: 1px solid #000;
-  border-radius: 4px;
+  border-radius: 1px;
   box-shadow: 0 0 3px rgba(0, 0, 0, .19)
 }
 
@@ -8268,11 +8268,11 @@ div.info {
   min-width: 80px;
   padding: 6px 15px;
   text-align: center;
-  border-radius: 3px;
+  border-radius: 1px;
   background: #000;
   text-shadow: 0 1px 0 rgba(0, 0, 0, .1);
   font-family: sans-serif;
-  color: #fff
+  color: #2f3030
 }
 
 .swagger-ui .opblock .opblock-summary-operation-id,
@@ -8927,7 +8927,7 @@ div.info {
   padding: 5px 23px;
   transition: all .3s;
   border: 2px solid grey;
-  border-radius: 4px;
+  border-radius: 1px;
   background: transparent;
   box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
   font-family: sans-serif;
@@ -9602,7 +9602,7 @@ div.info {
 .swagger-ui .model-title {
   font-size: 16px;
   font-family: sans-serif;
-  color: #505050
+  color: #fff
 }
 
 .swagger-ui .model-title img {
