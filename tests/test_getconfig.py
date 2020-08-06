@@ -110,7 +110,7 @@ def test_getconfig_ncclient():
     pl = {
         "library": "ncclient",
         "connection_args":{
-            "host":helper.test_device_netconf, "username":"admin", "password":"admin", "port":830, "hostkey_verify":False
+            "host":helper.test_device_netconf, "username":"admin", "password":"admin", "timeout":10, "port":830, "hostkey_verify":False
         },
         "args":{
             "source":"running",
