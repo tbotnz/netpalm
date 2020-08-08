@@ -13,6 +13,7 @@
     "redis_key": "Red1zp4ww0rd_",
     "redis_core_q": "process",
     "redis_fifo_q": "fifo",
+    "redis_broadcast_q": "broadcast",
     "redis_queue_store": "netpalm_queue_store",
     "pinned_process_per_node": 50,
     "fifo_process_per_node": 10,

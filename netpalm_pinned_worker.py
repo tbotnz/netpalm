@@ -4,6 +4,7 @@ from redis import Redis
 from rq import Queue, Connection, Worker
 
 from backend.core.confload.confload import config
+from netpalm_worker_common import start_broadcast_listener_process
 
 config.setup_logging()
 
@@ -16,6 +17,7 @@ def processworkerprocess():
 
 # used to create a queue for establish processes
 def processworker():
+    start_broadcast_listener_process()
     try:
         with Connection(Redis(host=config().redis_server, port=config().redis_port, password=config().redis_key)):
             q = Queue(config().redis_core_q)

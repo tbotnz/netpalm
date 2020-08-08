@@ -10,6 +10,7 @@ try:
 except AttributeError:
     yaml_loader = yaml.SafeLoader
 
+
 log = logging.getLogger(__name__)
 DEFAULT_FILENAME = "config.json"
 
@@ -34,6 +35,7 @@ class Config:
         self.redis_key = data["redis_key"]
         self.redis_core_q = data["redis_core_q"]
         self.redis_fifo_q = data["redis_fifo_q"]
+        self.redis_broadcast_q = data["redis_broadcast_q"]
         self.redis_queue_store = data["redis_queue_store"]
         self.fifo_process_per_node = data["fifo_process_per_node"]
         self.pinned_process_per_node = data["pinned_process_per_node"]
