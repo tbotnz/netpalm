@@ -6,6 +6,7 @@ from multiprocessing.context import Process
 from redis import Redis
 
 from backend.core.confload.confload import config
+from backend.plugins.utilities.textfsm.template import Template
 
 log = logging.getLogger(__name__)
 
@@ -13,6 +14,42 @@ log = logging.getLogger(__name__)
 def handle_ping(**kwargs):
     #  Nothing to actually do here but dump to console
     log.info(f'GOT PING!')
+
+
+def handle_add_template(**kwargs):
+    log.debug(f'handle_add_template(): got {kwargs}')
+    template = Template(kwargs=kwargs)
+    result = template.addtemplate()
+    status = result['status']
+    if status == 'error':
+        log.error(f'Failed to add template {template.kwarg} with error: {result["data"]}')
+        return
+
+    log.info(f'Result: {result["data"]}')
+
+
+def handle_get_template(**kwargs):
+    log.debug(f'handle_get_template(): got {kwargs}')
+    template = Template(kwargs=kwargs)
+    result = template.gettemplate()
+    status = result['status']
+    if status == 'error':
+        log.error(f'Failed to get templates {template.kwarg} with error: {result["data"]}')
+        return
+
+    log.info(f'Result: {result["data"]}')
+
+
+def handle_delete_template(**kwargs):
+    log.debug(f'handle_delete_template(): got {kwargs}')
+    template = Template(kwargs=kwargs)
+    result = template.removetemplate()
+    status = result['status']
+    if status == 'error':
+        log.error(f'Failed to delete template {template.kwarg} with error: {result["data"]}')
+        return
+
+    log.info(f'Result: {result["data"]}')
 
 
 def handle_broadcast_message(broadcast_msg: typing.Dict):
@@ -35,6 +72,9 @@ def handle_broadcast_message(broadcast_msg: typing.Dict):
 
     handlers = {
         'ping': handle_ping,
+        'add_textfsm_template': handle_add_template,
+        'get_textfsm_template': handle_get_template,
+        'delete_textfsm_template': handle_delete_template
     }
     msg_type = data['type']
     if msg_type not in handlers:

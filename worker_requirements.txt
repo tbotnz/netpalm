@@ -10,3 +10,4 @@ jinja2schema
 jsonschema
 genie
 pydantic
+pyyaml
