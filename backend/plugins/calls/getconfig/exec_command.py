@@ -1,15 +1,18 @@
-from backend.plugins.drivers.netmiko.netmiko_drvr import netmko
-from backend.plugins.drivers.napalm.napalm_drvr import naplm
-from backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
-from backend.plugins.drivers.restconf.restconf import restconf
-
-from backend.plugins.utilities.webhook.webhook import exec_webhook_func
+import logging
 
 from backend.core.meta.rediz_meta import prepare_netpalm_payload
 from backend.core.meta.rediz_meta import write_meta_error
+from backend.plugins.drivers.napalm.napalm_drvr import naplm
+from backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
+from backend.plugins.drivers.netmiko.netmiko_drvr import netmko
+from backend.plugins.drivers.restconf.restconf import restconf
+from backend.plugins.utilities.webhook.webhook import exec_webhook_func
+
+log = logging.getLogger(__name__)
 
 
 def exec_command(**kwargs):
+    log.debug(f'called w/ {kwargs}')
     lib = kwargs.get("library", False)
     command = kwargs.get("command", False)
     webhook = kwargs.get("webhook", False)

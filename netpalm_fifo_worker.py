@@ -1,15 +1,16 @@
-from redis import Redis
-import redis
-from rq import Queue, Connection, Worker
-from rq.job import Job
-import json
 from multiprocessing import Process
+
+from redis import Redis
+from rq import Queue, Connection, Worker
 
 from backend.core.confload.confload import config
 
+config.setup_logging()
+
+
 def fifo_worker(queue):
     try:
-        with Connection(Redis(host=config().redis_server,port=config().redis_port,password=config().redis_key)):
+        with Connection(Redis(host=config().redis_server, port=config().redis_port, password=config().redis_key)):
             q = Queue(queue)
             worker = Worker(q)
             worker.work()
