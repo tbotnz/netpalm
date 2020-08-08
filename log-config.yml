@@ -11,23 +11,28 @@ handlers:
     formatter: simple
     stream: ext://sys.stdout
 loggers:
-  urllib3:
-    level: WARN
-  asyncio:
-    level: INFO
-  backend:
-    level: INFO
   netmiko:
     level: WARN
   paramiko:
     level: WARN
-  rq.worker:
-    level: WARN
-  rq:
-    level: WARN
+  #  rq.worker:  # setting these levels appears to have no effect :(
+  #    level: WARN
+  #  rq:
+  #    level: WARN
+  netpalm_worker_common:
+    level: INFO
+  netpalm_worker_pinned:
+    level: INFO
+  netpalm_worker_fifo:
+    level: INFO
+  backend:
+    level: INFO
+  routers:
+    level: INFO
+
 
 root:
-  level: DEBUG
+  #  level: DEBUG
   handlers: [console]
 
 disable_existing_loggers: False
