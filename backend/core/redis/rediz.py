@@ -1,29 +1,25 @@
-from redis import Redis
-import redis
+import datetime
+import json
+import logging
 
-from rq import Queue, Connection, Worker
+from redis import Redis
+from rq import Queue
 from rq.job import Job
 from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegistry
 
-import json
-
-import datetime
-
-from multiprocessing import Process
-
-
+from backend.core.confload.confload import config
+from backend.core.models.task import model_response
+from backend.core.routes import routes
 from netpalm_pinned_worker import pinned_worker_constructor
 
-from backend.core.routes import routes
-from backend.core.confload.confload import config
+log = logging.getLogger(__name__)
 
-from backend.core.models.task import model_response
 
 class rediz:
 
     def __init__(self):
 
-        #globals
+        # globals
         self.server = config().redis_server
         self.port = config().redis_port
         self.key = config().redis_key
@@ -119,7 +115,7 @@ class rediz:
             task_job.save()
         elif ended_at == "None":
             task_job.meta["total_elapsed_seconds"] = (current_time - created_parsed_time).seconds
-            task_job.save()                     
+            task_job.save()
 
         #clean up vars for response
         created_at = None if created_at == "None" else created_at
@@ -273,5 +269,16 @@ class rediz:
             registry = FailedJobRegistry(q, connection=self.base_connection)
             response_object = registry.get_job_ids()
             return response_object
+        except Exception as e:
+            return e
+
+    def send_broadcast(self, msg: str):
+        log.info(f'sending broadcast: {msg}')
+        try:
+            self.base_connection.publish(config.redis_broadcast_q, msg)
+            return {
+                'result': 'Message Sent'
+            }
+
         except Exception as e:
             return e
