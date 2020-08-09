@@ -20,19 +20,19 @@ class rediz:
     def __init__(self):
 
         # globals
-        self.server = config().redis_server
-        self.port = config().redis_port
-        self.key = config().redis_key
-        self.ttl = config().redis_task_ttl
-        self.timeout = config().redis_task_timeout
+        self.server = config.redis_server
+        self.port = config.redis_port
+        self.key = config.redis_key
+        self.ttl = config.redis_task_ttl
+        self.timeout = config.redis_task_timeout
         self.routes = routes.routes
-        self.core_q = config().redis_core_q
+        self.core_q = config.redis_core_q
         self.base_connection = Redis(host=self.server, port=self.port, password=self.key)
         self.base_q = Queue(self.core_q, connection=self.base_connection)
-        self.networked_queuedb = config().redis_queue_store
+        self.networked_queuedb = config.redis_queue_store
         self.local_queuedb = {}
-        self.local_queuedb[config().redis_fifo_q] = {}
-        self.local_queuedb[config().redis_fifo_q]["queue"] = Queue(config().redis_fifo_q, connection=self.base_connection)
+        self.local_queuedb[config.redis_fifo_q] = {}
+        self.local_queuedb[config.redis_fifo_q]["queue"] = Queue(config.redis_fifo_q, connection=self.base_connection)
         net_db_exists = self.base_connection.get(self.networked_queuedb)
         if not net_db_exists:
             nulldb = json.dumps({"netpalm-db":"queue-val"})
@@ -99,29 +99,36 @@ class rediz:
         started_at = str(task_job.started_at)
         ended_at = str(task_job.ended_at)
 
-        current_time = datetime.datetime.utcnow()
-        created_parsed_time = datetime.datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S.%f')
+        try:
 
-        #if enqueued but not started calculate time
-        if enqueued_at != "None" and enqueued_at and started_at == "None":
-            parsed_time = datetime.datetime.strptime(enqueued_at, '%Y-%m-%d %H:%M:%S.%f')
-            task_job.meta["enqueued_elapsed_seconds"] = (current_time - parsed_time).seconds
-            task_job.save()
+            current_time = datetime.datetime.utcnow()
+            created_parsed_time = datetime.datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S.%f')
+            
+            #if enqueued but not started calculate time
+            if enqueued_at != "None" and enqueued_at and started_at == "None":
+                parsed_time = datetime.datetime.strptime(enqueued_at, '%Y-%m-%d %H:%M:%S.%f')
+                task_job.meta["enqueued_elapsed_seconds"] = (current_time - parsed_time).seconds
+                task_job.save()
 
-        #if created but not finished calculate time
-        if ended_at != "None" and ended_at:
-            parsed_time = datetime.datetime.strptime(ended_at, '%Y-%m-%d %H:%M:%S.%f')
-            task_job.meta["total_elapsed_seconds"] = (parsed_time - created_parsed_time).seconds
-            task_job.save()
-        elif ended_at == "None":
-            task_job.meta["total_elapsed_seconds"] = (current_time - created_parsed_time).seconds
-            task_job.save()
+            #if created but not finished calculate time
+            if ended_at != "None" and ended_at:
+                parsed_time = datetime.datetime.strptime(ended_at, '%Y-%m-%d %H:%M:%S.%f')
+                task_job.meta["total_elapsed_seconds"] = (parsed_time - created_parsed_time).seconds
+                task_job.save()
 
-        #clean up vars for response
-        created_at = None if created_at == "None" else created_at
-        enqueued_at = None if enqueued_at == "None" else enqueued_at
-        started_at = None if started_at == "None" else started_at
-        ended_at = None if ended_at == "None" else ended_at
+            elif ended_at == "None":
+                task_job.meta["total_elapsed_seconds"] = (current_time - created_parsed_time).seconds
+                task_job.save()
+
+            #clean up vars for response
+            created_at = None if created_at == "None" else created_at
+            enqueued_at = None if enqueued_at == "None" else enqueued_at
+            started_at = None if started_at == "None" else started_at
+            ended_at = None if ended_at == "None" else ended_at
+
+        except Exception as e:
+            log.error(f'render_task_response : {str(e)}')
+            pass
 
         resultdata = None
         resultdata = model_response(status="success",data={
@@ -162,12 +169,13 @@ class rediz:
                 self.check_and_create_q_w(hst=host)
                 r = self.sendtask(q=host,exe=method,kwargs=kw)
             else:
-                r = self.sendtask(q=config().redis_fifo_q,exe=method,kwargs=kw)
+                r = self.sendtask(q=config.redis_fifo_q,exe=method,kwargs=kw)
             return r
         except Exception as e:
             return e
 
     def fetchtask(self, task_id):
+        log.info(f'fetching task: {task_id}')
         try:
             task = Job.fetch(task_id, connection=self.base_connection)
             response_object = self.render_task_response(task)
@@ -210,6 +218,7 @@ class rediz:
             return e
 
     def getjobliststatus(self, q):
+        log.info(f'getting jobs and status: {q}')
         try:
             if q:
                 self.getqueue(q)
@@ -249,6 +258,7 @@ class rediz:
             return e
 
     def getstartedjobs(self, q):
+        log.info(f'getting started jobs: {q}')
         try:
             registry = StartedJobRegistry(q, connection=self.base_connection)
             response_object = registry.get_job_ids()
@@ -257,6 +267,7 @@ class rediz:
             return e
 
     def getfinishedjobs(self, q):
+        log.info(f'getting finished jobs: {q}')
         try:
             registry = FinishedJobRegistry(q, connection=self.base_connection)
             response_object = registry.get_job_ids()
@@ -265,6 +276,7 @@ class rediz:
             return e
 
     def getfailedjobs(self, q):
+        log.info(f'getting failed jobs: {q}')
         try:
             registry = FailedJobRegistry(q, connection=self.base_connection)
             response_object = registry.get_job_ids()
