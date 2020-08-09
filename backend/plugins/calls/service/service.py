@@ -13,10 +13,10 @@ import time
 class service:
     
     def __init__(self):
-        self.api_key = config().api_key
-        self.netpalm_container_name = config().netpalm_container_name
-        self.listen_port = config().listen_port
-        self.self_api_call_timeout = config().self_api_call_timeout
+        self.api_key = config.api_key
+        self.netpalm_container_name = config.netpalm_container_name
+        self.listen_port = config.listen_port
+        self.self_api_call_timeout = config.self_api_call_timeout
         self.operation_mapping = { 'create': 'setconfig', 'delete': 'setconfig', 'retrieve': 'getconfig' }
         self.service_schema = service = {
         "$schema": "http://json-schema.org/draft-07/schema",

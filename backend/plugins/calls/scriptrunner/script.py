@@ -10,7 +10,7 @@ import importlib
 class script_kiddy:
     
     def __init__(self, **kwargs):
-        self.scrp_path = config().custom_scripts
+        self.scrp_path = config.custom_scripts
         self.kwarg = kwargs.get('kwargs', False)
         self.arg = self.kwarg.get('args', False)
         self.script = self.kwarg.get('script', False)

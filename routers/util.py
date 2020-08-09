@@ -16,8 +16,8 @@ router = APIRouter()
 @router.get("/logout")
 async def route_logout_and_remove_cookie():
     response = RedirectResponse(url="/")
-    response.delete_cookie(config().api_key_name, domain=config().cookie_domain)
-    response.delete_cookie("Authorization", domain=config().cookie_domain)
+    response.delete_cookie(config.api_key_name, domain=config.cookie_domain)
+    response.delete_cookie("Authorization", domain=config.cookie_domain)
     return response
 
 

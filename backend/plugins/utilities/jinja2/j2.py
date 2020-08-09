@@ -11,11 +11,11 @@ class j2:
     def __init__(self, j2_type=False, **kwargs):
         self.kwarg = kwargs.get('kwargs', False)
         if j2_type == "config":
-            self.jinja_template_dir = config().jinja2_config_templates
+            self.jinja_template_dir = config.jinja2_config_templates
         elif j2_type == "service":
-            self.jinja_template_dir = config().jinja2_service_templates
+            self.jinja_template_dir = config.jinja2_service_templates
         if j2_type == "webhook":
-            self.jinja_template_dir = config().webhook_jinja2_templates
+            self.jinja_template_dir = config.webhook_jinja2_templates
         self.file_loader = FileSystemLoader(self.jinja_template_dir)
         self.env = Environment(loader=self.file_loader, lstrip_blocks=True, trim_blocks=True)
 

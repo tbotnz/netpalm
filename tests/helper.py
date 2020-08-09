@@ -19,6 +19,7 @@ class netpalm_testhelper:
 
     def check_task(self, taskid):
         try:
+            time.sleep(0.5)
             r = requests.get('http://'+self.ip+':'+str(self.port)+'/task/'+taskid,headers=self.headers, timeout=self.http_timeout)
             return r.json()
         except Exception as e:

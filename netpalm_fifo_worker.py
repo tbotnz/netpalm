@@ -11,7 +11,7 @@ config.setup_logging()
 
 def fifo_worker(queue):
     try:
-        with Connection(Redis(host=config().redis_server, port=config().redis_port, password=config().redis_key)):
+        with Connection(Redis(host=config.redis_server, port=config.redis_port, password=config.redis_key)):
             q = Queue(queue)
             worker = Worker(q)
             worker.work()
@@ -20,8 +20,8 @@ def fifo_worker(queue):
 
 def fifo_worker_constructor(queue):
     start_broadcast_listener_process()
-    for i in range(config().fifo_process_per_node):
+    for i in range(config.fifo_process_per_node):
         p = Process(target=fifo_worker, args=(queue,))
         p.start()
 
-fifo_worker_constructor(config().redis_fifo_q)
+fifo_worker_constructor(config.redis_fifo_q)

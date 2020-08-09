@@ -8,11 +8,11 @@ import json
 class webhook_runner:
     
     def __init__(self, whook_payload):
-        self.webhook_dir_path = config().custom_webhooks
+        self.webhook_dir_path = config.custom_webhooks
         self.webhook_raw_name = whook_payload.get("name")
         self.webhook_args = whook_payload.get("args", False)
         if not self.webhook_raw_name:
-            self.webhook_name = config().default_webhook_name
+            self.webhook_name = config.default_webhook_name
         self.webhook_name = self.webhook_dir_path.replace("/",".") + self.webhook_raw_name
         self.webhook_j2_name = whook_payload.get("j2template")
 
