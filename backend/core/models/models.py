@@ -3,11 +3,6 @@ import typing
 from pydantic import BaseModel
 from enum import Enum, IntEnum
 
-class service_lifecycle(str, Enum):
-    create = "create"
-    retrieve = "retrieve"
-    delete = "delete"
-
 class queue_strat(str, Enum):
     fifo = "fifo"
     pinned = "pinned"
@@ -152,23 +147,3 @@ class model_template_add(BaseModel):
 class model_template_remove(BaseModel):
     template: str
 
-class model_service(BaseModel):
-    operation: service_lifecycle
-    args: dict
-    queue_strategy: Optional[queue_strat] = None
-
-    class Config:
-        schema_extra = {
-            "example": {
-            "operation": "retrieve",
-            "args": {
-                "hosts": [
-                    "10.0.2.25",
-                    "10.0.2.23"
-                ],
-                "username": "device_username",
-                "password": "device_password"
-            },
-            "queue_strategy": "fifo"
-        }
-        }

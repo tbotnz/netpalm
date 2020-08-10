@@ -6,6 +6,7 @@ from redis import Redis
 from rq import Queue
 from rq.job import Job
 from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegistry
+from starlette.routing import NoMatchFound
 
 from backend.core.confload.confload import config
 from backend.core.models.task import model_response
@@ -179,6 +180,15 @@ class rediz:
         try:
             task = Job.fetch(task_id, connection=self.base_connection)
             response_object = self.render_task_response(task)
+            status = response_object["data"]["task_status"]
+            if "task_id" in str(response_object["data"]["task_result"]):
+                for j in range(len(response_object["data"]["task_result"])):
+                    tempres = Job.fetch(response_object["data"]["task_result"][j]["data"]["data"]["task_id"], connection=self.base_connection)
+                    temprespobj = self.render_task_response(tempres)
+                    if status != "started" or status != "queued":
+                        if temprespobj["data"]["task_status"] == "started":
+                            response_object["data"]["task_status"] = temprespobj["data"]["task_status"]
+                    response_object["data"]["task_result"][j]["data"].update(temprespobj)
             return response_object
         except Exception as e:
             return e

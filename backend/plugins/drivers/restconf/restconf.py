@@ -32,7 +32,7 @@ class restconf:
                 del self.connection_args["headers"]
             return True
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     def sendcommand(self, session=False, command=False):
         try:
@@ -50,7 +50,7 @@ class restconf:
             result[url]["result"] = res
             return result
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     def config(self, session=False, command=False):
         try:
@@ -70,10 +70,10 @@ class restconf:
             else:
                 raise Exception(self.action + " not found in requests") 
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     def logout(self, session):
         try:
             return True
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")

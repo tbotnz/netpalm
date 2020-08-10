@@ -29,7 +29,7 @@ def exec_config(**kwargs):
             config = res["data"]["task_result"]["template_render_result"]
         except Exception as e:
             config = False
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     if not pre_checks and not post_checks:
         try:
@@ -54,7 +54,7 @@ def exec_config(**kwargs):
                 result = rcc.config(sesh)
                 rcc.logout(sesh)
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     else:
         try:
@@ -123,13 +123,13 @@ def exec_config(**kwargs):
                 result = rcc.config(sesh)
                 rcc.logout(sesh)
         except Exception as e:
-            write_meta_error(str(e))        
+            write_meta_error(f"{e}")        
 
     try:
         if webhook:
             current_jobdata = prepare_netpalm_payload(job_result=result)
             exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
     except Exception as e:
-        write_meta_error(str(e))
+        write_meta_error(f"{e}")
             
     return result

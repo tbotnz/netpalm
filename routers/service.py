@@ -6,7 +6,7 @@ from fastapi.security.api_key import APIKeyQuery, APIKeyCookie, APIKeyHeader, AP
 from backend.core.redis import reds
 
 #load models
-from backend.core.models.models import model_service
+from backend.core.models.service import model_service
 from backend.core.models.task import model_response
 
 #load routes
