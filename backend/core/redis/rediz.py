@@ -26,6 +26,7 @@ class rediz:
         self.key = config.redis_key
         self.ttl = config.redis_task_ttl
         self.timeout = config.redis_task_timeout
+        self.task_result_ttl = config.redis_task_result_ttl
         self.routes = routes.routes
         self.core_q = config.redis_core_q
         self.base_connection = Redis(host=self.server, port=self.port, password=self.key)
@@ -79,7 +80,8 @@ class rediz:
             tmpdb[qname] = True
             jsresult = json.dumps(tmpdb)
             self.base_connection.set(self.networked_queuedb, jsresult)
-            self.base_q.enqueue_call(func=pinned_worker_constructor, args=(qname,), meta=meta_template, ttl=self.ttl)
+            self.base_q.enqueue_call(func=pinned_worker_constructor, args=(qname,), meta=meta_template,
+                                     ttl=self.ttl, result_ttl=self.task_result_ttl)
             self.local_queuedb[qname] = {}
             self.local_queuedb[qname]["queue"] = Queue(qname, connection=self.base_connection)
             return self.local_queuedb[qname]["queue"]
@@ -104,7 +106,7 @@ class rediz:
 
             current_time = datetime.datetime.utcnow()
             created_parsed_time = datetime.datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S.%f')
-            
+
             #if enqueued but not started calculate time
             if enqueued_at != "None" and enqueued_at and started_at == "None":
                 parsed_time = datetime.datetime.strptime(enqueued_at, '%Y-%m-%d %H:%M:%S.%f')
@@ -152,7 +154,9 @@ class rediz:
     def sendtask(self, q, exe, **kwargs):
         try:
             meta_template = self.get_redis_meta_template()
-            task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl, kwargs=kwargs["kwargs"], meta=meta_template, timeout=self.timeout)
+            task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl,
+                                                               result_ttl=self.task_result_ttl, kwargs=kwargs["kwargs"],
+                                                               meta=meta_template, timeout=self.timeout)
             resultdata = self.render_task_response(task)
             return resultdata
         except Exception as e:

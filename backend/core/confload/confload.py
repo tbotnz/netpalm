@@ -30,6 +30,7 @@ class Config:
         self.api_key_name = data["api_key_name"]
         self.cookie_domain = data["cookie_domain"]
         self.redis_task_ttl = data["redis_task_ttl"]
+        self.redis_task_result_ttl = data["redis_task_result_ttl"]
         self.redis_server = data["redis_server"]
         self.redis_port = data["redis_port"]
         self.redis_key = data["redis_key"]

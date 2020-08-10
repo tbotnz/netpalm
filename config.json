@@ -8,6 +8,7 @@
     "gunicorn_workers": 3,
     "redis_task_ttl": 500,
     "redis_task_timeout": 500,
+    "redis_task_result_ttl": 500,
     "redis_server": "redis",
     "redis_port": 6379,
     "redis_key": "Red1zp4ww0rd_",
