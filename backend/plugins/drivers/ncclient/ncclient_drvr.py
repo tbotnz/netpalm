@@ -20,7 +20,7 @@ class ncclien:
             conn = manager.connect(**self.connection_args)
             return conn
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     def getconfig(self, session=False, command=False):
         try:
@@ -44,7 +44,7 @@ class ncclien:
                 write_meta_error("args are required")
             return result
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     def editconfig(self, session=False, dry_run=False):
         try:
@@ -61,11 +61,11 @@ class ncclien:
                 write_meta_error("args are required")
             return result
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     def logout(self, session):
         try:
             response = session.close_session()
             return response
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")

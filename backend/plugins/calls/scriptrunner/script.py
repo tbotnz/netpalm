@@ -33,13 +33,13 @@ def script_exec(**kwargs):
         scrip = script_kiddy(kwargs=kwargs)
         result = scrip.s_exec()
     except Exception as e:
-        write_meta_error(str(e))
+        write_meta_error(f"{e}")
 
     try:
         if webhook:
             current_jobdata = prepare_netpalm_payload(job_result=result)
             exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
     except Exception as e:
-        write_meta_error(str(e))
+        write_meta_error(f"{e}")
                 
     return result

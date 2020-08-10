@@ -46,7 +46,7 @@ def exec_command(**kwargs):
             result = rc.sendcommand(sesh)
             rc.logout(sesh)
     except Exception as e:
-        write_meta_error(str(e))
+        write_meta_error(f"{e}")
 
     try:
         if webhook:
@@ -54,6 +54,6 @@ def exec_command(**kwargs):
             exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
             
     except Exception as e:
-        write_meta_error(str(e))
+        write_meta_error(f"{e}")
         
     return result

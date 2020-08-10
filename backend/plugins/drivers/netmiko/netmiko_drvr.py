@@ -14,7 +14,7 @@ class netmko:
             netmikoses = ConnectHandler(**self.connection_args)
             return netmikoses
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     def sendcommand(self, session=False, command=False):
         try:
@@ -30,7 +30,7 @@ class netmko:
                         result[commands] = response.split("\n")
             return result
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     def config(self, session=False, command=False):
         try:
@@ -46,11 +46,11 @@ class netmko:
             result["changes"] = response.split("\n")
             return result
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     def logout(self, session):
         try:
             response = session.disconnect()
             return response
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")

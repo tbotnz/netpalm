@@ -18,7 +18,7 @@ class naplm:
             napalmses = driver(**self.connection_args)
             return napalmses
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     def sendcommand(self, session=False, command=False):
         try:
@@ -33,7 +33,7 @@ class naplm:
                     result[c] = response[c].split("\n")
             return result
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     def config(self, session=False, command=False, dry_run=False):
         try:
@@ -54,11 +54,11 @@ class naplm:
             result["changes"] = diff.split("\n")
             return result
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     def logout(self, session):
         try:
             response = session.close()
             return response
         except Exception as e:
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")

@@ -21,7 +21,7 @@ def dryrun(**kwargs):
             config = res["data"]["task_result"]["template_render_result"]
         except Exception as e:
             config = False
-            write_meta_error(str(e))
+            write_meta_error(f"{e}")
 
     try:
         result = {}
@@ -36,13 +36,13 @@ def dryrun(**kwargs):
             result = ncc.editconfig(session=sesh,dry_run=True)
             ncc.logout(sesh)
     except Exception as e:
-        write_meta_error(str(e))
+        write_meta_error(f"{e}")
 
     try:
         if webhook:
             current_jobdata = prepare_netpalm_payload(job_result=result)
             exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
     except Exception as e:
-        write_meta_error(str(e))
+        write_meta_error(f"{e}")
                 
     return result
