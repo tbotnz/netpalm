@@ -67,10 +67,10 @@ def exec_config(**kwargs):
                         pre_check_result = netmik.sendcommand(sesh,[command])
                         for matchstr in precheck["match_str"]:
                             if precheck["match_type"] == "include" and matchstr not in str(pre_check_result):
-                                write_meta_error("PreCheck Failed: " + matchstr + " not found in " + str(pre_check_result))
+                                write_meta_error(f"PreCheck Failed: {matchstr} not found in {pre_check_result}")
                                 pre_check_ok = False
                             if precheck["match_type"] == "exclude" and matchstr in str(pre_check_result):
-                                write_meta_error("PreCheck Failed: " + matchstr + " found in " + str(pre_check_result))
+                                write_meta_error(f"PreCheck Failed: {matchstr} found in {pre_check_result}")
                                 pre_check_ok = False
                 if pre_check_ok:
                     result = netmik.config(sesh,config)
@@ -80,9 +80,9 @@ def exec_config(**kwargs):
                             post_check_result = netmik.sendcommand(sesh,[command])
                             for matchstr in postcheck["match_str"]:
                                 if postcheck["match_type"] == "include" and matchstr not in str(post_check_result):
-                                    write_meta_error("PostCheck Failed: " + matchstr + " not found in " + str(post_check_result))
+                                    write_meta_error(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
                                 if postcheck["match_type"] == "exclude" and matchstr in str(post_check_result):
-                                    write_meta_error("PostCheck Failed: " + matchstr + " found in " + str(post_check_result))
+                                    write_meta_error(f"PostCheck Failed: {matchstr} found in {post_check_result}")
                 netmik.logout(sesh)
 
             elif lib == "napalm":
@@ -94,10 +94,10 @@ def exec_config(**kwargs):
                         pre_check_result = napl.sendcommand(sesh,[command])
                         for matchstr in precheck["match_str"]:
                             if precheck["match_type"] == "include" and matchstr not in str(pre_check_result):
-                                write_meta_error("PreCheck Failed: " + matchstr + " not found in " + str(pre_check_result))
+                                write_meta_error(f"PreCheck Failed: {matchstr} not found in {pre_check_result}")
                                 pre_check_ok = False
                             if precheck["match_type"] == "exclude" and matchstr in str(pre_check_result):
-                                write_meta_error("PreCheck Failed: " + matchstr + " found in " + str(pre_check_result))
+                                write_meta_error(f"PreCheck Failed: {matchstr} found in {pre_check_result}")
                                 pre_check_ok = False
                 if pre_check_ok:
                     result = napl.config(sesh,config)
@@ -107,9 +107,9 @@ def exec_config(**kwargs):
                             post_check_result = napl.sendcommand(sesh,[command])
                             for matchstr in postcheck["match_str"]:
                                 if postcheck["match_type"] == "include" and matchstr not in str(post_check_result):
-                                    write_meta_error("PostCheck Error" + matchstr + " not found in " + str(post_check_result))
+                                    write_meta_error(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
                                 if postcheck["match_type"] == "exclude" and matchstr in str(post_check_result):
-                                    write_meta_error("PostCheck Error" + matchstr + " found in " + str(post_check_result))
+                                    write_meta_error(f"PostCheck Failed: {matchstr} found in {post_check_result}")
                 napl.logout(sesh)
 
             elif lib == "ncclient":

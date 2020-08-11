@@ -16,6 +16,8 @@ def exec_command(**kwargs):
     lib = kwargs.get("library", False)
     command = kwargs.get("command", False)
     webhook = kwargs.get("webhook", False)
+    post_checks = kwargs.get("post_checks", False)
+
     result = False
 
     if type(command) == str:
@@ -23,30 +25,78 @@ def exec_command(**kwargs):
     else:
         commandlst = command
 
-    try:
-        result = {}
-        if lib == "netmiko":
-            netmik = netmko(**kwargs)
-            sesh = netmik.connect()
-            result = netmik.sendcommand(sesh,commandlst)
-            netmik.logout(sesh)
-        elif lib == "napalm":
-            napl = naplm(**kwargs)
-            sesh = napl.connect()
-            result = napl.sendcommand(sesh,commandlst)
-            napl.logout(sesh)
-        elif lib == "ncclient":
-            ncc = ncclien(**kwargs)
-            sesh = ncc.connect()
-            result = ncc.getconfig(sesh)
-            ncc.logout(sesh)
-        elif lib == "restconf":
-            rc = restconf(**kwargs)
-            sesh = rc.connect()
-            result = rc.sendcommand(sesh)
-            rc.logout(sesh)
-    except Exception as e:
-        write_meta_error(f"{e}")
+
+    if not post_checks:
+        try:
+            result = {}
+            if lib == "netmiko":
+                netmik = netmko(**kwargs)
+                sesh = netmik.connect()
+                result = netmik.sendcommand(sesh,commandlst)
+                netmik.logout(sesh)
+            elif lib == "napalm":
+                napl = naplm(**kwargs)
+                sesh = napl.connect()
+                result = napl.sendcommand(sesh,commandlst)
+                napl.logout(sesh)
+            elif lib == "ncclient":
+                ncc = ncclien(**kwargs)
+                sesh = ncc.connect()
+                result = ncc.getconfig(sesh)
+                ncc.logout(sesh)
+            elif lib == "restconf":
+                rc = restconf(**kwargs)
+                sesh = rc.connect()
+                result = rc.sendcommand(sesh)
+                rc.logout(sesh)
+        except Exception as e:
+            write_meta_error(f"{e}")
+
+    else:
+        try:
+            result = {}
+            if lib == "netmiko":
+                netmik = netmko(**kwargs)
+                sesh = netmik.connect()
+                if commandlst:
+                    result = netmik.sendcommand(sesh,commandlst)
+                if post_checks:
+                    for postcheck in post_checks:
+                        command = postcheck["get_config_args"]["command"]
+                        post_check_result = netmik.sendcommand(sesh,[command])
+                        for matchstr in postcheck["match_str"]:
+                            if postcheck["match_type"] == "include" and matchstr not in str(post_check_result):
+                                write_meta_error(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
+                            if postcheck["match_type"] == "exclude" and matchstr in str(post_check_result):
+                                write_meta_error(f"PostCheck Failed: {matchstr} found in {post_check_result}")
+                netmik.logout(sesh)
+            elif lib == "napalm":
+                napl = naplm(**kwargs)
+                sesh = napl.connect()
+                if commandlst:
+                    result = napl.sendcommand(sesh,commandlst)
+                if post_checks:
+                    for postcheck in post_checks:
+                        command = postcheck["get_config_args"]["command"]
+                        post_check_result = napl.sendcommand(sesh,[command])
+                        for matchstr in postcheck["match_str"]:
+                            if postcheck["match_type"] == "include" and matchstr not in str(post_check_result):
+                                write_meta_error(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
+                            if postcheck["match_type"] == "exclude" and matchstr in str(post_check_result):
+                                write_meta_error(f"PostCheck Failed: {matchstr} found in {post_check_result}")
+                napl.logout(sesh)
+            elif lib == "ncclient":
+                ncc = ncclien(**kwargs)
+                sesh = ncc.connect()
+                result = ncc.getconfig(sesh)
+                ncc.logout(sesh)
+            elif lib == "restconf":
+                rc = restconf(**kwargs)
+                sesh = rc.connect()
+                result = rc.sendcommand(sesh)
+                rc.logout(sesh)            
+        except Exception as e:
+            write_meta_error(f"{e}")
 
     try:
         if webhook:

@@ -17,10 +17,13 @@ class check_enum(str, Enum):
     include = "include"
     exclude = "exclude"
 
+class get_config_args(BaseModel):
+    command: str
+
 class model_generic_pre_post_check(BaseModel):
     match_type: check_enum
     match_str: list
-    get_config_args: dict
+    get_config_args: get_config_args
 
 class model_webhook(BaseModel):
     name: Optional[str] = None
@@ -120,6 +123,7 @@ class model_getconfig(BaseModel):
     args: Optional[dict] = None
     webhook: Optional[model_webhook] = None
     queue_strategy: Optional[queue_strat] = None
+    post_checks: Optional[List[model_generic_pre_post_check]] = None
 
     class Config:
         schema_extra = {

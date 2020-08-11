@@ -6,7 +6,6 @@ from redis import Redis
 from rq import Queue
 from rq.job import Job
 from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegistry
-from starlette.routing import NoMatchFound
 
 from backend.core.confload.confload import config
 from backend.core.models.task import model_response
@@ -179,20 +178,39 @@ class rediz:
         except Exception as e:
             return e
 
+    def fetchsubtask(self, parent_task_object):
+        try:
+            status = parent_task_object["data"]["task_status"]
+            log.info(f'fetching subtask: {parent_task_object["data"]["task_id"]}')
+            task_errors = []
+            for j in range(len(parent_task_object["data"]["task_result"])):
+                tempres = Job.fetch(parent_task_object["data"]["task_result"][j]["data"]["data"]["task_id"], connection=self.base_connection)
+                temprespobj = self.render_task_response(tempres)
+                if status != "started" or status != "queued":
+                    if temprespobj["data"]["task_status"] == "started":
+                        parent_task_object["data"]["task_status"] = temprespobj["data"]["task_status"]
+                if len(temprespobj["data"]["task_errors"]) >= 1:
+                    task_errors.append({
+                        parent_task_object["data"]["task_result"][j]["host"]:{
+                            "task_id":parent_task_object["data"]["task_result"][j]["data"]["data"]["task_id"],
+                            "task_errors":temprespobj["data"]["task_errors"]
+                        }
+                        })
+                parent_task_object["data"]["task_result"][j]["data"].update(temprespobj)
+            if len(task_errors) >= 1:
+                parent_task_object["data"]["task_errors"] = task_errors
+            return parent_task_object
+
+        except Exception as e:
+            return e
+
     def fetchtask(self, task_id):
         log.info(f'fetching task: {task_id}')
         try:
             task = Job.fetch(task_id, connection=self.base_connection)
             response_object = self.render_task_response(task)
-            status = response_object["data"]["task_status"]
-            if "task_id" in str(response_object["data"]["task_result"]):
-                for j in range(len(response_object["data"]["task_result"])):
-                    tempres = Job.fetch(response_object["data"]["task_result"][j]["data"]["data"]["task_id"], connection=self.base_connection)
-                    temprespobj = self.render_task_response(tempres)
-                    if status != "started" or status != "queued":
-                        if temprespobj["data"]["task_status"] == "started":
-                            response_object["data"]["task_status"] = temprespobj["data"]["task_status"]
-                    response_object["data"]["task_result"][j]["data"].update(temprespobj)
+            if "task_id" in str(response_object["data"]["task_result"]) and "operation" in str(response_object["data"]["task_result"]):
+                response_object = self.fetchsubtask(parent_task_object=response_object)
             return response_object
         except Exception as e:
             return e

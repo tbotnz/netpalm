@@ -23,7 +23,6 @@ class service:
     def validate_template(self, template_name, **kwargs):
         try:
             kwarg = kwargs.get('kwargs', False)
-            operation = kwarg.get("operation")
             args = kwarg.get("args")
             rendered_template = render_j2template(templat=template_name, template_type="service", kwargs=args)
             data = json.loads(rendered_template["data"]["task_result"]["template_render_result"])
@@ -52,7 +51,6 @@ class service:
         #loop through to the node layer
         kwarg = kwargs.get('kwargs', False)
         operation = kwarg.get("operation")
-        args = kwarg.get("args")
         returrn_res = []
         for host in service:
             posted_operation = kwarg.get("operation", False)
