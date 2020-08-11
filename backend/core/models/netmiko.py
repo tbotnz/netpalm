@@ -72,7 +72,8 @@ class model_netmiko_getconfig(BaseModel):
     args: Optional[netmiko_send_config_args] = None
     webhook: Optional[model_webhook] = None
     queue_strategy: Optional[queue_strat] = None
-
+    post_checks: Optional[List[model_generic_pre_post_check]] = None
+    
     class Config:
         schema_extra = {
             "example": {

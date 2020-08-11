@@ -42,7 +42,8 @@ class model_napalm_getconfig(BaseModel):
     command: Any
     webhook: Optional[model_webhook] = None
     queue_strategy: Optional[queue_strat] = None
-
+    post_checks: Optional[List[model_generic_pre_post_check]] = None
+    
     class Config:
         schema_extra = {
             "example": {

@@ -23,6 +23,62 @@ def test_getconfig_prepare_environment():
         assert False
 
 @pytest.mark.getconfig
+def test_getconfig_napalm_post_check():
+    pl = {
+        "library": "napalm",
+        "connection_args": {
+            "device_type": "cisco_ios",
+            "host": helper.test_device_ios_cli,
+            "username": "admin",
+            "password": "admin",
+            "timeout": 5
+        },
+        "command": "show run | i hostname",
+        "queue_strategy": "pinned",
+        "post_checks": [
+            {
+                "match_type": "include",
+                "get_config_args": {
+                    "command": "show run | i hostname"
+                },
+                "match_str": [
+                    "hostname "+r
+                ]
+            }
+        ]
+    }
+    res = helper.post_and_check_errors('/getconfig',pl)
+    assert len(res) == 0
+
+@pytest.mark.getconfig
+def test_getconfig_netmiko_post_check():
+    pl = {
+        "library": "napalm",
+        "connection_args": {
+            "device_type": "cisco_ios",
+            "host": helper.test_device_ios_cli,
+            "username": "admin",
+            "password": "admin",
+            "timeout": 5
+        },
+        "command": "show run | i hostname",
+        "queue_strategy": "pinned",
+        "post_checks": [
+            {
+                "match_type": "include",
+                "get_config_args": {
+                    "command": "show run | i hostname"
+                },
+                "match_str": [
+                    "hostname "+r
+                ]
+            }
+        ]
+    }
+    res = helper.post_and_check_errors('/getconfig',pl)
+    assert len(res) == 0
+
+@pytest.mark.getconfig
 def test_getconfig_napalm():
     pl = {
         "library": "napalm",
