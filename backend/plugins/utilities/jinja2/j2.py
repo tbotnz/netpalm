@@ -19,42 +19,6 @@ class j2:
         self.file_loader = FileSystemLoader(self.jinja_template_dir)
         self.env = Environment(loader=self.file_loader, lstrip_blocks=True, trim_blocks=True)
 
-    def path_hierarchy(self, path):
-        try:
-            files = []
-            fileresult = []
-            for r, d, f in os.walk(path):
-                for file in f:
-                    file.strip(path)
-                    files.append(os.path.join(r, file))
-            if len(files) > 0:
-                for f in files:
-                    if '.j2' in f:
-                        ftmpfile = f.replace('.j2', '')
-                        fileresult.append(ftmpfile.replace(path, ''))
-            resultdata = {
-                    'status': 'success',
-                    'data': {
-                        "task_result": {
-                            "templates":fileresult
-                        }
-                    }
-            }
-            return resultdata
-        except Exception as e:
-            return str(e)
-
-    def gettemplates(self):
-        try:
-            res = self.path_hierarchy(self.jinja_template_dir)
-            return res
-        except Exception as e:
-            resultdata = {
-                    'status': 'error',
-                    'data': str(e)
-            }
-            return resultdata
-
     def opentemplate(self,template):
         try:
             with open(template) as f:
@@ -107,11 +71,6 @@ class j2:
             return resultdata
         except Exception as e:
             return e
-
-def j2gettemplates(template_type=False):
-    t = j2(j2_type=template_type)
-    res = t.gettemplates()
-    return res
 
 def j2gettemplate(tmplate, template_type=False):
     t = j2(j2_type=template_type)

@@ -144,10 +144,13 @@ class model_getconfig(BaseModel):
         }
 
 class model_template_add(BaseModel):
-    key: str
-    driver: str
-    command: str
+    key: str = None
+    driver: str  = None
+    command: str  = None
 
 class model_template_remove(BaseModel):
-    template: str
+    template: str  = None
 
+class model_general_error(BaseModel):
+    status: str  = None
+    data: dict  = None
