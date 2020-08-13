@@ -72,8 +72,12 @@ def cacheable_model(f):
 
         req_data = model.dict()
         cache_config = req_data.get("cache", {})
-        if cacheable := cache_config.get("enabled"):
-            cache_key = cache_key_from_req_data(req_data)
+        cache_key = cache_key_from_req_data(req_data)
+
+        if poison := cache_config.get("poison"):
+            reds.clear_cache_for_host(cache_key)
+
+        if cacheable := cache_config.get("enabled") and not poison:
             if cache_result := reds.cache.get(cache_key):
                 return cache_result
 
@@ -84,7 +88,6 @@ def cacheable_model(f):
                 cache_kwargs = {"timeout": ttl}
             else:
                 cache_kwargs = {}
-            # noinspection PyUnboundLocalVariable
             reds.cache.set(cache_key, result, **cache_kwargs)
 
         return result

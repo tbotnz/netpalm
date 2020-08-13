@@ -32,7 +32,6 @@ class ClearableCache(RedisCache):
 
 
 class DisabledCache:
-
     @staticmethod
     def always_return_none(*args, **kwargs):
         return None
