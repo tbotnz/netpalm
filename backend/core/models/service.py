@@ -21,12 +21,7 @@ class model_service(BaseModel):
             "example": {
             "operation": "retrieve",
             "args": {
-                "hosts": [
-                    "10.0.2.25",
-                    "10.0.2.23"
-                ],
-                "username": "device_username",
-                "password": "device_password"
+                "your_payload_goes": "here"
             },
             "queue_strategy": "fifo"
         }
