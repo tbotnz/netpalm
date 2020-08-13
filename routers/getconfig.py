@@ -1,21 +1,27 @@
-from fastapi import APIRouter, HTTPException, Depends
+import logging
+
+from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.security.api_key import APIKeyQuery, APIKeyCookie, APIKeyHeader, APIKey
 
 from backend.core.redis import reds
 
-#load models
+# load models
 from backend.core.models.models import model_getconfig
 from backend.core.models.netmiko import model_netmiko_getconfig
 from backend.core.models.napalm import model_napalm_getconfig
 from backend.core.models.ncclient import model_ncclient_getconfig
 from backend.core.models.restconf import model_restconf
 from backend.core.models.task import model_response
+from routers.route_utils import cacheable_model
 
+log = logging.getLogger(__name__)
 router = APIRouter()
+
 
 #read config
 @router.post("/getconfig", response_model=model_response, status_code=201)
+@cacheable_model
 def get_config(getcfg: model_getconfig):
 	try:
 		req_data = getcfg.dict()
@@ -24,6 +30,7 @@ def get_config(getcfg: model_getconfig):
 		return resp
 	except Exception as e:
 		raise HTTPException(status_code=500, detail=str(e).split('\n'))
+
 
 #read config
 @router.post("/getconfig/netmiko", response_model=model_response, status_code=201)

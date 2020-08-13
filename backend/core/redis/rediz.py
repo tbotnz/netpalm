@@ -6,8 +6,9 @@ from redis import Redis
 from rq import Queue
 from rq.job import Job
 from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegistry
+from cachelib import RedisCache
 
-from backend.core.confload.confload import config
+from backend.core.confload.confload import config, Config
 from backend.core.models.task import model_response
 from backend.core.routes import routes
 from netpalm_pinned_worker import pinned_worker_constructor
@@ -15,9 +16,35 @@ from netpalm_pinned_worker import pinned_worker_constructor
 log = logging.getLogger(__name__)
 
 
-class rediz:
+class ClearableCache(RedisCache):
+    def clear_keys(self, key_pattern: str):
+        if not key_pattern:
+            raise ValueError(f'no key_pattern provided!')
 
-    def __init__(self):
+        status = False
+        prefix = f"{self.key_prefix}{key_pattern}"
+        # redis docs say using "keys" is bad for production, but this is how cachelib does it
+        keys = self._client.keys(prefix + "*")
+        if keys:
+            status = self._client.delete(*keys)
+
+        return status
+
+
+class DisabledCache:
+
+    @staticmethod
+    def always_return_none(*args, **kwargs):
+        return None
+
+    def __getattr__(self, item):
+        return self.always_return_none
+
+
+class Rediz:
+    cache: ClearableCache  # type hint for IDE's pleasure only
+
+    def __init__(self, config: Config = config):
 
         # globals
         self.server = config.redis_server
@@ -36,8 +63,22 @@ class rediz:
         self.local_queuedb[config.redis_fifo_q]["queue"] = Queue(config.redis_fifo_q, connection=self.base_connection)
         net_db_exists = self.base_connection.get(self.networked_queuedb)
         if not net_db_exists:
-            nulldb = json.dumps({"netpalm-db":"queue-val"})
+            nulldb = json.dumps({"netpalm-db": "queue-val"})
             self.base_connection.set(self.networked_queuedb, nulldb)
+        self.cache_enabled = config.redis_cache_enabled
+        self.cache_timeout = config.redis_cache_default_timeout
+        # we MUST have a prefix, else ".clear()" will drop ALL keys in redis (including those used for the queues).
+        self.key_prefix = str(config.redis_cache_key_prefix).strip()
+        if not self.key_prefix:
+            self.key_prefix = "NOPREFIX"
+        if self.cache_enabled:
+            log.info(f'Enabling cache!')
+            self.cache = ClearableCache(self.base_connection, default_timeout=self.cache_timeout,
+                                        key_prefix=self.key_prefix)
+        else:
+            log.info(f'Disabling cache!')
+            # noinspection PyTypeChecker
+            self.cache = DisabledCache()
 
     def getqueue(self, host):
         #checks a centralised db / queue exists and creates a empty db if one does not exist
@@ -326,3 +367,11 @@ class rediz:
 
         except Exception as e:
             return e
+
+    def clear_cache_for_host(self, cache_key: str):
+        if not cache_key.count(':') >= 2:
+            log.error(f"{cache_key=} doesn't seem to be a valid cache key!")
+        host_port = cache_key.split(":")[:2]  # first 2 segments
+        modified_cache_key = ":".join(host_port)
+        log.info(f'deleting {modified_cache_key=}')
+        return self.cache.clear_keys(modified_cache_key)

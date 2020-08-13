@@ -108,13 +108,29 @@ class model_script(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-            "script": "hello_world",
-            "args": {
-                "hello": "world"
-            },
-            "queue_strategy": "fifo"
+                "script": "hello_world",
+                "args": {
+                    "hello": "world"
+                },
+                "queue_strategy": "fifo"
+            }
         }
+
+
+class model_cache_config(BaseModel):
+    enabled: bool = False
+    ttl: Optional[int] = None
+    poison: Optional[bool] = False
+
+    class Config:
+        schema_extra = {
+            'example': {
+                'enabled': True,
+                'ttl': 300,
+                'poison': False
+            }
         }
+
 
 class model_getconfig(BaseModel):
     library: lib_opts_all
@@ -124,24 +140,31 @@ class model_getconfig(BaseModel):
     webhook: Optional[model_webhook] = None
     queue_strategy: Optional[queue_strat] = None
     post_checks: Optional[List[model_generic_pre_post_check]] = None
+    cache: Optional[model_cache_config] = {}
 
     class Config:
         schema_extra = {
             "example": {
-            "library": "netmiko",
-            "connection_args": {
-                "device_type": "cisco_ios",
-                "host": "10.0.2.33",
-                "username": "device_username",
-                "password": "device_password"
-            },
-            "command": "show ip int brief",
-            "args": {
-                "use_textfsm": True
-            },
-            "queue_strategy": "pinned"
+                "library": "netmiko",
+                "connection_args": {
+                    "device_type": "cisco_ios",
+                    "host": "10.0.2.33",
+                    "username": "device_username",
+                    "password": "device_password"
+                },
+                "command": "show ip int brief",
+                "args": {
+                    "use_textfsm": True
+                },
+                "queue_strategy": "pinned",
+                "cache": {
+                    "enabled": True,
+                    "ttl": 300,
+                    "poison": False
+                }
+            }
         }
-        }
+
 
 class model_template_add(BaseModel):
     key: str = None

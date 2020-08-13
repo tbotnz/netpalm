@@ -49,4 +49,5 @@ def pinned_worker_constructor(queue):
     p = Process(target=pinned_worker, args=(queue,))
     p.start()
 
-processworkerprocess()
+if __name__ == '__main__':
+    processworkerprocess()

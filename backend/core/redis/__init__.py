@@ -1,3 +1,3 @@
-from backend.core.redis.rediz import rediz
+from backend.core.redis.rediz import Rediz
 
-reds = rediz()
+reds = Rediz()
