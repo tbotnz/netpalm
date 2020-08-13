@@ -17,14 +17,17 @@ log = logging.getLogger(__name__)
 
 
 class ClearableCache(RedisCache):
+    def keys(self, key_pattern: str = ""):
+        prefix = f"{self.key_prefix}{key_pattern}*"
+        keys = self._client.keys(prefix)
+        return keys
+
     def clear_keys(self, key_pattern: str):
         if not key_pattern:
             raise ValueError(f"no key_pattern provided!")
 
         status = False
-        prefix = f"{self.key_prefix}{key_pattern}"
-        # redis docs say using "keys" is bad for production, but this is how cachelib does it
-        keys = self._client.keys(prefix + "*")
+        keys = self.keys(key_pattern)
         if keys:
             status = self._client.delete(*keys)
 

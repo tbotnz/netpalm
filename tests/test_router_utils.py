@@ -20,7 +20,7 @@ if not ACTUAL_CONFIG_PATH.exists():
 os.environ["NETPALM_CONFIG"] = str(ACTUAL_CONFIG_PATH)
 
 from backend.core.confload import confload
-from routers.route_utils import cacheable_model, http_error_handler, cache_key_from_req_data, clear_host_cache
+from routers.route_utils import cacheable_model, http_error_handler, cache_key_from_req_data, poison_host_cache
 from backend.core.models.models import model_getconfig
 from backend.core.redis import rediz
 
@@ -194,8 +194,8 @@ def test_cacheable_model(clean_cache_redis_helper: rediz.Rediz):
     assert foo_get(model) != first_result
 
 
-def test_clear_host_cache(clean_cache_redis_helper: rediz.Rediz):
-    @clear_host_cache
+def test_poison_host_cache(clean_cache_redis_helper: rediz.Rediz):
+    @poison_host_cache
     def foo_set(*args, **kwargs):
         return
 

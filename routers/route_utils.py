@@ -43,7 +43,7 @@ def cache_key_from_req_data(req_data: dict) -> str:
     return cache_key
 
 
-def clear_host_cache(f):
+def poison_host_cache(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         model = [

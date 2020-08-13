@@ -2,7 +2,7 @@ import json
 import logging
 from typing import Optional
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Path
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import RedirectResponse
 
@@ -47,6 +47,49 @@ def flush_cache(fail: Optional[bool] = Query(False, title="Fail", description="F
     rslt = {
         "cleared_records": int(reds.cache.clear())
     }
-    log.error(f"flush got this result: {rslt} from {fail}")
-    response = jsonable_encoder(rslt)
+    log.info(f"flush got this result: {rslt}")
+    return rslt
+
+
+# utility route - flush cache for single device
+@router.delete("/cache/{cache_key}")
+@http_error_handler
+def flush_cache_device(
+        cache_key: str = Path(...,
+                              title="The cache key to invalidate",
+                              description="must be of form host_or_ip:port:command_or_*")
+):
+    log.info(f"Flushing Cache for {cache_key}")
+    rslt = {
+        "cleared_records": int(reds.clear_cache_for_host(cache_key=cache_key))
+    }
+    log.info(f"flush got this result: {rslt}")
+    return rslt
+
+
+@router.get("/cache")
+@http_error_handler
+def get_cache():
+    log.info(f"Getting cache info")
+    keys = reds.cache.keys()
+    rslt = {
+        "cache": keys,
+        "size": len(keys)
+    }
+    return rslt
+
+
+@router.get("/cache/{cache_key}")
+@http_error_handler
+def get_cache_item(
+        cache_key: str = Path(...,
+                              title="The cache key to retrieve",
+                              description="may include prefix, rest of the key must be complete")
+):
+    log.info(f"Getting cache info for {cache_key}")
+    prefix = reds.cache.key_prefix
+    cache_key = cache_key.replace(prefix, "")  # no way to stop cache from adding this right now, so ensure no duplicate
+    rslt = {
+        cache_key: reds.cache.get(cache_key)
+    }
     return rslt
