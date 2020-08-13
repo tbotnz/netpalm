@@ -57,17 +57,17 @@ class Config:
         self.default_webhook_headers = data["default_webhook_headers"]
         self.custom_webhooks = data["custom_webhooks"]
         self.webhook_jinja2_templates = data["webhook_jinja2_templates"]
-        self.log_config_filename = data['log_config_filename']
+        self.log_config_filename = data["log_config_filename"]
 
         def envvar_as_bool(var):
-            if var.upper() in ['TRUE', 'YES']:
+            if var.upper() in ["TRUE", "YES"]:
                 return True
-            if var.upper() in ['FALSE', 'NO']:
+            if var.upper() in ["FALSE", "NO"]:
                 return False
             return var
 
         for key in self.__dict__:  # Check for environment variables
-            envvar_key = f'NETPALM_{key.upper()}'
+            envvar_key = f"NETPALM_{key.upper()}"
             if value := os.getenv(envvar_key):
                 setattr(self, key, envvar_as_bool(value))
 
@@ -76,16 +76,16 @@ class Config:
             log_config_dict = yaml.load(infil, Loader=yaml_loader)
 
         if max_debug:
-            for handler in log_config_dict['handlers'].values():
-                handler['level'] = 'DEBUG'
+            for handler in log_config_dict["handlers"].values():
+                handler["level"] = "DEBUG"
 
-            for logger in log_config_dict['loggers'].values():
-                logger['level'] = 'DEBUG'
+            for logger in log_config_dict["loggers"].values():
+                logger["level"] = "DEBUG"
 
-            log_config_dict['root']['level'] = 'DEBUG'
+            log_config_dict["root"]["level"] = "DEBUG"
 
         logging.config.dictConfig(log_config_dict)
-        log.info(f'Logging setup @ {__name__}')
+        log.info(f"Logging setup @ {__name__}")
 
     def __call__(self):
         return self
@@ -93,7 +93,7 @@ class Config:
 
 # this indirection helps w/ testing, also compatibility with existing code that uses `config().attribute`
 def initialize_config():
-    return Config(os.getenv('NETPALM_CONFIG'))
+    return Config(os.getenv("NETPALM_CONFIG"))
 
 
 config = initialize_config()

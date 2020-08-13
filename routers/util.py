@@ -26,10 +26,10 @@ async def route_logout_and_remove_cookie():
 # utility route - ping workers
 @router.get("/worker-ping")
 async def ping():
-    log.info(f'SENDING PING')
+    log.info(f"SENDING PING")
     worker_message = {
-        'type': 'ping',
-        'kwargs': {}
+        "type": "ping",
+        "kwargs": {}
     }
     rslt = reds.send_broadcast(json.dumps(worker_message))
     # rslt = reds.send_broadcast("PING")  # only way to see "response" is look at logs
@@ -40,13 +40,13 @@ async def ping():
 # utility route - flush cache
 @router.delete("/cache")
 @http_error_handler
-def flush_cache(fail: Optional[bool] = Query(False, title='Fail', description='Fail on purpose')):
+def flush_cache(fail: Optional[bool] = Query(False, title="Fail", description="Fail on purpose")):
     if fail:
-        raise RuntimeError(f'Failing on Purpose')
+        raise RuntimeError(f"Failing on Purpose")
     log.info(f"Flushing Cache")
     rslt = {
         "cleared_records": int(reds.cache.clear())
     }
-    log.error(f'flush got this result: {rslt} from {fail}')
+    log.error(f"flush got this result: {rslt} from {fail}")
     response = jsonable_encoder(rslt)
     return rslt

@@ -16,47 +16,49 @@ router = APIRouter()
 # textfsm template routes
 @router.get("/template", response_model=model_response_basic)
 async def get_textfsm_template():
-	try:
-		r = routes["gettemplate"]()
-		worker_message = {
-		'type': 'get_textfsm_template',
-		'kwargs': {}
-		}
-		reds.send_broadcast(json.dumps(worker_message))
-		resp = jsonable_encoder(r)
-		return resp
-	except Exception as e:
-		raise HTTPException(status_code=500, detail=str(e).split('\n'))
+  try:
+    r = routes["gettemplate"]()
+    worker_message = {
+      "type": "get_textfsm_template",
+      "kwargs": {}
+    }
+    reds.send_broadcast(json.dumps(worker_message))
+    resp = jsonable_encoder(r)
+    return resp
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=str(e).split("\n"))
+
 
 @router.post("/template", response_model=model_response_basic, status_code=201)
 async def add_textfsm_template(template_add: model_template_add):
-	try:
-		req_data = template_add.dict()
-		r = routes["addtemplate"](kwargs=req_data)
-		resp = jsonable_encoder(r)
-		worker_message = {
-		'type': 'add_textfsm_template',
-		'kwargs': req_data
-		}
-		reds.send_broadcast(json.dumps(worker_message))
-		return resp
-	except Exception as e:
-		raise HTTPException(status_code=500, detail=str(e).split('\n'))
+  try:
+    req_data = template_add.dict()
+    r = routes["addtemplate"](kwargs=req_data)
+    resp = jsonable_encoder(r)
+    worker_message = {
+      "type": "add_textfsm_template",
+      "kwargs": req_data
+    }
+    reds.send_broadcast(json.dumps(worker_message))
+    return resp
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=str(e).split("\n"))
+
 
 @router.delete("/template", status_code=204)
 async def delete_textfsm_template(template_remove: model_template_remove):
-	try:
-		req_data = template_remove.dict()
-		r = routes["removetemplate"](kwargs=req_data)
-		resp = jsonable_encoder(r)
-		worker_message = {
-		'type': 'delete_textfsm_template',
-		'kwargs': req_data
-		}
-		reds.send_broadcast(json.dumps(worker_message))
-		return resp
-	except Exception as e:
-		raise HTTPException(status_code=500, detail=str(e).split('\n'))
+  try:
+    req_data = template_remove.dict()
+    r = routes["removetemplate"](kwargs=req_data)
+    resp = jsonable_encoder(r)
+    worker_message = {
+      "type": "delete_textfsm_template",
+      "kwargs": req_data
+    }
+    reds.send_broadcast(json.dumps(worker_message))
+    return resp
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
 #j2 routes
 
@@ -68,7 +70,7 @@ async def get_config_j2_templates():
 		resp = jsonable_encoder(r)
 		return resp
 	except Exception as e:
-		raise HTTPException(status_code=500, detail=str(e).split('\n'))
+		raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
 @router.get("/j2template/service/", response_model=model_response_basic)
 async def get_service_j2_templates():

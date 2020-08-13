@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 class ClearableCache(RedisCache):
     def clear_keys(self, key_pattern: str):
         if not key_pattern:
-            raise ValueError(f'no key_pattern provided!')
+            raise ValueError(f"no key_pattern provided!")
 
         status = False
         prefix = f"{self.key_prefix}{key_pattern}"
@@ -71,11 +71,11 @@ class Rediz:
         if not self.key_prefix:
             self.key_prefix = "NOPREFIX"
         if self.cache_enabled:
-            log.info(f'Enabling cache!')
+            log.info(f"Enabling cache!")
             self.cache = ClearableCache(self.base_connection, default_timeout=self.cache_timeout,
                                         key_prefix=self.key_prefix)
         else:
-            log.info(f'Disabling cache!')
+            log.info(f"Disabling cache!")
             # noinspection PyTypeChecker
             self.cache = DisabledCache()
 
@@ -144,17 +144,17 @@ class Rediz:
         try:
 
             current_time = datetime.datetime.utcnow()
-            created_parsed_time = datetime.datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S.%f')
+            created_parsed_time = datetime.datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S.%f")
 
             #if enqueued but not started calculate time
             if enqueued_at != "None" and enqueued_at and started_at == "None":
-                parsed_time = datetime.datetime.strptime(enqueued_at, '%Y-%m-%d %H:%M:%S.%f')
+                parsed_time = datetime.datetime.strptime(enqueued_at, "%Y-%m-%d %H:%M:%S.%f")
                 task_job.meta["enqueued_elapsed_seconds"] = (current_time - parsed_time).seconds
                 task_job.save()
 
             #if created but not finished calculate time
             if ended_at != "None" and ended_at:
-                parsed_time = datetime.datetime.strptime(ended_at, '%Y-%m-%d %H:%M:%S.%f')
+                parsed_time = datetime.datetime.strptime(ended_at, "%Y-%m-%d %H:%M:%S.%f")
                 task_job.meta["total_elapsed_seconds"] = (parsed_time - created_parsed_time).seconds
                 task_job.save()
 
@@ -169,7 +169,7 @@ class Rediz:
             ended_at = None if ended_at == "None" else ended_at
 
         except Exception as e:
-            log.error(f'render_task_response : {str(e)}')
+            log.error(f"render_task_response : {str(e)}")
             pass
 
         resultdata = None
@@ -245,7 +245,7 @@ class Rediz:
             return e
 
     def fetchtask(self, task_id):
-        log.info(f'fetching task: {task_id}')
+        log.info(f"fetching task: {task_id}")
         try:
             task = Job.fetch(task_id, connection=self.base_connection)
             response_object = self.render_task_response(task)
@@ -290,7 +290,7 @@ class Rediz:
             return e
 
     def getjobliststatus(self, q):
-        log.info(f'getting jobs and status: {q}')
+        log.info(f"getting jobs and status: {q}")
         try:
             if q:
                 self.getqueue(q)
@@ -330,7 +330,7 @@ class Rediz:
             return e
 
     def getstartedjobs(self, q):
-        log.info(f'getting started jobs: {q}')
+        log.info(f"getting started jobs: {q}")
         try:
             registry = StartedJobRegistry(q, connection=self.base_connection)
             response_object = registry.get_job_ids()
@@ -339,7 +339,7 @@ class Rediz:
             return e
 
     def getfinishedjobs(self, q):
-        log.info(f'getting finished jobs: {q}')
+        log.info(f"getting finished jobs: {q}")
         try:
             registry = FinishedJobRegistry(q, connection=self.base_connection)
             response_object = registry.get_job_ids()
@@ -348,7 +348,7 @@ class Rediz:
             return e
 
     def getfailedjobs(self, q):
-        log.info(f'getting failed jobs: {q}')
+        log.info(f"getting failed jobs: {q}")
         try:
             registry = FailedJobRegistry(q, connection=self.base_connection)
             response_object = registry.get_job_ids()
@@ -357,20 +357,20 @@ class Rediz:
             return e
 
     def send_broadcast(self, msg: str):
-        log.info(f'sending broadcast: {msg}')
+        log.info(f"sending broadcast: {msg}")
         try:
             self.base_connection.publish(config.redis_broadcast_q, msg)
             return {
-                'result': 'Message Sent'
+                "result": "Message Sent"
             }
 
         except Exception as e:
             return e
 
     def clear_cache_for_host(self, cache_key: str):
-        if not cache_key.count(':') >= 2:
+        if not cache_key.count(":") >= 2:
             log.error(f"{cache_key=} doesn't seem to be a valid cache key!")
         host_port = cache_key.split(":")[:2]  # first 2 segments
         modified_cache_key = ":".join(host_port)
-        log.info(f'deleting {modified_cache_key=}')
+        log.info(f"deleting {modified_cache_key=}")
         return self.cache.clear_keys(modified_cache_key)
