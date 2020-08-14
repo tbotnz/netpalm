@@ -23,9 +23,20 @@ class snmp_service_model(BaseModel):
         # add an example payload under the "example" dict 
         schema_extra = {
             "example": {
-                "operation": "create",
-                "args":{
-                    "hosts":["10.0.2.25","10.0.2.23"],
-                }
+                "operation": "retrieve",
+                "args": {
+                    "hosts": [
+                        "10.0.2.25",
+                        "10.0.2.23",
+                        "10.0.2.21"
+                    ],
+                    "username": "{{device_username}}",
+                    "password": "{{device_password}}",
+                    "snmp_community": "test_community",
+                    "snmp_location": "test_location",
+                    "snmp_contact": "test_contact"
+
+                },
+                "queue_strategy": "fifo"
             }
         }
