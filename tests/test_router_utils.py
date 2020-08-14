@@ -1,3 +1,4 @@
+import logging
 import os
 import typing
 from copy import deepcopy
@@ -8,6 +9,7 @@ import pytest
 from fastapi import HTTPException
 
 pytestmark = pytest.mark.nolab
+log = logging.getLogger(__name__)
 
 # CONFIG_FILENAME = "./config.json"
 # ACTUAL_CONFIG_PATH = Path(CONFIG_FILENAME).absolute()
@@ -112,6 +114,7 @@ def test_http_error_handler_raises():
         foo()
 
     foo = http_error_handler(foo)
+    log.error(f"\nA small traceback following this message is expected")
     with pytest.raises(HTTPException):
         foo()
 

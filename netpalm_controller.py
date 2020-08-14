@@ -37,7 +37,7 @@ app.include_router(public.router)
 @app.get("/swaggerfile", tags=["swagger file"], include_in_schema=False)
 async def get_open_api_endpoint():
     response = JSONResponse(
-        get_openapi(title="netpalm", version=0.4, routes=app.routes)
+        get_openapi(title="netpalm", version="0.4", routes=app.routes)
     )
     return response
 
