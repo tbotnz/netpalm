@@ -50,5 +50,3 @@ async def get_documentation():
         swagger_css_url="/static/css/swagger-ui.css",
         )
     return response
-
-os.system("ln -sf /usr/local/lib/python3.8/site-packages/ntc_templates/templates/ backend/plugins/extensibles/ntc-templates")

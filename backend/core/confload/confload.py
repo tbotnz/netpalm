@@ -2,6 +2,7 @@ import json
 import logging
 import logging.config
 import os
+from pathlib import Path
 
 import yaml
 
@@ -16,7 +17,7 @@ DEFAULT_FILENAME = "config.json"
 
 
 class Config:
-    def __init__(self, config_filename=None):
+    def __init__(self, config_filename=None, search_tfsm=True):
         if config_filename is None:
             config_filename = DEFAULT_FILENAME
 
@@ -70,6 +71,10 @@ class Config:
             envvar_key = f"NETPALM_{key.upper()}"
             if value := os.getenv(envvar_key):
                 setattr(self, key, envvar_as_bool(value))
+        # this is AFTER the envvar loop on purpose.  Everything down here overrides envvars
+        self.config_filename = config_filename
+        if search_tfsm:
+            self.txtfsm_index_file = self.find_actual_tfsm_path()
 
     def setup_logging(self, max_debug=False):
         with open(self.log_config_filename) as infil:
@@ -87,13 +92,31 @@ class Config:
         logging.config.dictConfig(log_config_dict)
         log.info(f"Logging setup @ {__name__}")
 
+    @property
+    def project_root(self):
+        config_file_path = Path(self.config_filename).absolute()
+        return str(config_file_path.parent)
+
+    def find_actual_tfsm_path(self):
+        potentials = [
+            'backend/plugins/extensibles/ntc-templates/index',
+            '/code/backend/plugins/extensibles/ntc-templates/index',
+            '/usr/local/lib/python3.8/site-packages/ntc_templates/templates/index'
+        ]
+        potentials.insert(0, self.txtfsm_index_file)
+        for potential in potentials:
+
+            if Path(potential).exists():
+                return potential
+        raise FileNotFoundError(f"Can't find TextFSM Index file in any of {potentials}")
+
     def __call__(self):
         return self
 
 
 # this indirection helps w/ testing, also compatibility with existing code that uses `config().attribute`
-def initialize_config():
-    return Config(os.getenv("NETPALM_CONFIG"))
+def initialize_config(search_tfsm: bool = True):
+    return Config(os.getenv("NETPALM_CONFIG"), search_tfsm=search_tfsm)
 
 
 config = initialize_config()
