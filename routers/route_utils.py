@@ -1,10 +1,13 @@
 """netpalm/routers/utils.py  Utility functions/classes for API routers"""
+import hashlib
+from copy import deepcopy
 from functools import wraps
 from itertools import chain
 import logging
 
 from fastapi import HTTPException
 from pydantic import BaseModel
+from enum import Enum
 
 from backend.core.redis import reds
 
@@ -31,15 +34,83 @@ def cache_key_from_model(model: BaseModel) -> str:
     return cache_key_from_req_data(req_data)
 
 
-def cache_key_from_req_data(req_data: dict) -> str:
-    connection_args = req_data.get('connection_args', {})
-    library_args = req_data.get('args', {})
-    host = connection_args.get('host')
-    port = connection_args.get('port')
-    command = req_data.get('command')
-    use_tfsm = library_args.get('use_textfsm', False)
+def serialized_for_hash(obj) -> str:
+    """Serialize obj while attempting to guarantee consistent ordering"""
 
-    cache_key = f'{host}:{port}:{command}:tfsm={use_tfsm}'
+    if isinstance(obj, BaseModel):
+        return serialized_for_hash(obj.dict())
+
+    if isinstance(obj, Enum):
+        return serialized_for_hash(obj.value)
+
+    if not isinstance(obj, (list, dict, set, tuple)):
+        if hasattr(obj, "__len__"):
+            if not isinstance(obj, str):
+                # this is some kind of container and we should handle it recursively but we don't know how
+                log.error(f"attempting to serialize {obj!r} but it's {type=}.  Defaulting to generic repr."
+                          f"This might result in bad cache performance")
+                return repr(obj)
+
+        return repr(obj)  # this catches str, int, etc... also custom classes
+
+    # we're left w/ containers we know need recursion
+
+    if isinstance(obj, dict):
+        item_pairs = [
+            f"{repr(key)}: {serialized_for_hash(value)}"
+            for key, value in obj.items()
+        ]
+        items_string = ", ".join(sorted(item_pairs))
+
+        return f"{{{items_string}}}"
+
+    if isinstance(obj, set):
+        sorted_items = list(sorted(serialized_for_hash(item) for item in obj))
+        items_string = ", ".join(sorted_items)
+        return f"{{{items_string}}}"
+
+    if isinstance(obj, (list, tuple)):
+        T = type(obj)
+        new_obj = T(serialized_for_hash(item).strip("'") for item in obj)
+        return repr(new_obj)
+
+    raise NotImplementedError(f"Somehow {obj!r} broke this function")
+
+
+def cache_key_from_req_data(req_data: dict, unsafe_logging: bool = False) -> str:
+    """WARNING: unsafe_logging=True can dump plaintext passwords into logs!"""
+
+    connection_args = req_data.get("connection_args", {})
+    library_args = req_data.get("args", {})
+    host = connection_args.get("host")
+    port = connection_args.get("port")
+    command = req_data.get("command")
+    if command is None:
+        for subkey in ["uri", "filter"]:
+            if (value := library_args.get(subkey)) is not None:
+                command = value
+                break
+
+    req_data = deepcopy(req_data)
+    for key in ["cache", "queue_strategy"]:
+        try:
+            req_data.pop(key)
+        except KeyError:
+            pass
+
+    if unsafe_logging:
+        log.info(f"attempting to hash {req_data!r}")
+
+    cache_key = serialized_for_hash(req_data)
+    if unsafe_logging:
+        log.info(f"got: {cache_key!r}")
+
+    m = hashlib.sha256()
+    m.update(cache_key.encode("utf-8"))
+    hash = m.hexdigest()
+    log.info(f"hashed key: {hash}")
+
+    cache_key = f'{host}:{port}:{command}:{hash}'
     return cache_key
 
 

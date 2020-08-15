@@ -1,5 +1,6 @@
 import os
 import typing
+from copy import deepcopy
 from pathlib import Path
 from random import randint
 
@@ -20,7 +21,8 @@ if not ACTUAL_CONFIG_PATH.exists():
 os.environ["NETPALM_CONFIG"] = str(ACTUAL_CONFIG_PATH)
 
 from backend.core.confload import confload
-from routers.route_utils import cacheable_model, http_error_handler, cache_key_from_req_data, poison_host_cache
+from routers.route_utils import cacheable_model, http_error_handler, cache_key_from_req_data, poison_host_cache, \
+    serialized_for_hash
 from backend.core.models.models import model_getconfig
 from backend.core.redis import rediz
 
@@ -36,7 +38,8 @@ cache_key_data = [
             "use_textfsm": True
         },
         "command": "show ip int bri",
-        "expected_cache_key": "foo.com:200:show ip int bri:tfsm=True"
+        "expected_cache_key": "foo.com:200:show ip int bri:"
+                              "c724034119d4c50b0ab84caa66a4505bc4793d04dac443abb4255ee605b11469"
     },
     {
         "connection_args": {
@@ -47,14 +50,52 @@ cache_key_data = [
             "use_textfsm": False
         },
         "command": "show ip int bri",
-        "expected_cache_key": "foo.com:200:show ip int bri:tfsm=False"
+        "expected_cache_key": "foo.com:200:show ip int bri:"
+                              "af9bafc9f56fc2898ec690990588600558615a6b93c40171708a660ece14d929"
     },
     {
         "connection_args": {
             "host": "foo.com"
         },
         "command": "show ip int bri",
-        "expected_cache_key": "foo.com:None:show ip int bri:tfsm=False"
+        "expected_cache_key": "foo.com:None:show ip int bri:"
+                              "4f86e603dd721d1a93d78a058ed49c07fa04a222b5409f7d27cfcd3e76e4d665"
+    },
+    {
+        "library": "ncclient",
+        "connection_args": {
+            "host": "10.0.2.39",
+            "username": "REAL USERNAME",
+            "password": "REAL PASSWORD",
+            "port": 830,
+            "hostkey_verify": False
+        },
+        "args": {
+            "source": "running",
+            "filter": "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'>"
+                      "</System></filter>"
+        },
+        "queue_strategy": "fifo",
+        "expected_cache_key": "10.0.2.39:830:<filter type='subtree'>"
+                              "<System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>:"
+                              "f2cdfc252eec75496ee9817d5f1efe1ca1df43f259b11864daf5d3b639ef70d5"
+    },
+    {
+        "connection_args": {
+            "device_type": "cisco_ios",
+            "host": "10.0.2.23",
+            "username": "{{device_username}}",
+            "password": "{{device_password}}"
+        },
+        "library": "napalm",
+        "command": [
+            "show run | i hostname",
+            "show ip int brief"
+        ],
+        "webhook": True,
+        "queue_strategy": "fifo",
+        "expected_cache_key": "10.0.2.23:None:['show run | i hostname', 'show ip int brief']:"
+                              "cb5b0659cf349cf8cb49960ead9ba75adf216af4e1422d46f1c6ad64b8675ef8"
     }
 ]
 
@@ -62,7 +103,7 @@ cache_key_data = [
 @pytest.mark.parametrize("req_data", cache_key_data)
 def test_cache_key_is_correct(req_data: typing.Dict):
     expected = req_data.pop("expected_cache_key")
-    assert cache_key_from_req_data(req_data) == expected
+    assert cache_key_from_req_data(req_data, unsafe_logging=True) == expected
 
 
 def test_http_error_handler_raises():
@@ -227,3 +268,68 @@ def test_poison_host_cache(clean_cache_redis_helper: rediz.Rediz):
     different_model = model.copy(update={"command": "something else entirely"})
     foo_set(different_model)  # should invalidate cache
     assert foo_get(model) != first_result
+
+
+def test_auth_influences_cache(clean_cache_redis_helper: rediz.Rediz):
+    @cacheable_model
+    def foo_get(*args, **kwargs):
+        return randint(1, 10 ** 30)
+
+    no_creds_dict = {
+        "library": "netmiko",
+        "connection_args": {
+            "host": "foo.com",
+            "port": "200"
+        },
+        "args": {
+            "use_textfsm": True
+        },
+        "command": "show ip int bri",
+        "cache": {
+            "enabled": True,
+            "ttl": 300,
+            "poison": False
+        }
+    }
+
+    bob_creds = ("bob", "hunter2")
+    alice_creds = ("alice", "*******")
+
+    username, password = bob_creds
+    full_creds_dict = deepcopy(no_creds_dict)
+    full_creds_dict["connection_args"].update({
+        "username": username,
+        "password": password
+    })
+    partial_creds_dict = deepcopy(no_creds_dict)
+    partial_creds_dict["connection_args"].update({
+        "username": username
+    })
+
+    username, password = alice_creds
+    wrong_creds_dict = deepcopy(no_creds_dict)
+    wrong_creds_dict["connection_args"].update({
+        "username": username,
+        "password": password
+    })
+
+    full_creds_model = model_getconfig(**full_creds_dict)
+    full_creds_results = foo_get(full_creds_model)
+    assert foo_get(full_creds_model) == full_creds_results  # cache is actually working
+
+    assert foo_get(model_getconfig(**no_creds_dict)) != full_creds_results
+    assert foo_get(model_getconfig(**partial_creds_dict)) != full_creds_results
+    assert foo_get(model_getconfig(**wrong_creds_dict)) != full_creds_results
+
+
+@pytest.mark.parametrize(("obj", "expected_result"), [
+    ("a", "'a'"),
+    (["a", "c", "b"], "['a', 'c', 'b']"),  # don't re-order lists or tuples
+    ({1, 2, 99, 22}, "{1, 2, 22, 99}"),  # DO re-order sets
+    ({"a": "a", "b": "100", "acd": "c", "A": 900},  # DO re-order dictionaries
+     "{'A': 900, 'a': 'a', 'acd': 'c', 'b': '100'}"),
+    ({"A": 900, "a": "a", "b": "100", "acd": "c"},  # DO re-order dictionaries
+     "{'A': 900, 'a': 'a', 'acd': 'c', 'b': '100'}"),
+])
+def test_seralized_for_hash(obj, expected_result: str):
+    assert serialized_for_hash(obj) == expected_result
