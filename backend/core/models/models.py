@@ -136,10 +136,10 @@ class model_getconfig(BaseModel):
     library: lib_opts_all
     connection_args: dict
     command: Any
-    args: Optional[dict] = None
-    webhook: Optional[model_webhook] = None
+    args: Optional[dict] = {}
+    webhook: Optional[model_webhook] = {}
     queue_strategy: Optional[queue_strat] = None
-    post_checks: Optional[List[model_generic_pre_post_check]] = None
+    post_checks: Optional[List[model_generic_pre_post_check]] = []
     cache: Optional[model_cache_config] = {}
 
     class Config:

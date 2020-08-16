@@ -80,8 +80,8 @@ def serialized_for_hash(obj) -> str:
 def cache_key_from_req_data(req_data: dict, unsafe_logging: bool = False) -> str:
     """WARNING: unsafe_logging=True can dump plaintext passwords into logs!"""
 
-    connection_args = req_data.get("connection_args", {})
-    library_args = req_data.get("args", {})
+    connection_args = req_data["connection_args"]
+    library_args = req_data.get("args", {})  # still necessary because maybe not all models will have an 'args' key
     host = connection_args.get("host")
     port = connection_args.get("port")
     command = req_data.get("command")

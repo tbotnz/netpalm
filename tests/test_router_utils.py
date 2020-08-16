@@ -333,3 +333,29 @@ def test_auth_influences_cache(clean_cache_redis_helper: rediz.Rediz):
 ])
 def test_seralized_for_hash(obj, expected_result: str):
     assert serialized_for_hash(obj) == expected_result
+
+
+def test_model_default_value_behavior():
+    data_dict = {
+        "library": "netmiko",
+        "connection_args": {
+            "host": "foo.com",
+            "port": "200"
+        },
+        # "args": {
+        #     "use_textfsm": True
+        # },
+        "command": "show ip int bri",
+        "cache": {
+            "enabled": True,
+            "ttl": 300,
+            "poison": False
+        }
+    }
+    m = model_getconfig(**data_dict)
+    m.args['foo'] = 'asdf'
+    assert m.args == {"foo": "asdf"}
+
+    b = model_getconfig(**data_dict)
+    assert b.args == {}
+    assert b.dict()['args'] == {}
