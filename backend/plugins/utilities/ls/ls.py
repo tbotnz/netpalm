@@ -35,10 +35,11 @@ class ls:
                 for f in files:
                     if "__init__" not in f:
                         if "__pycache__" not in f:
-                            if self.strip:
-                                if self.strip in f:
-                                    ftmpfile = f.replace(self.strip, '')
-                                    fileresult.append(ftmpfile.replace(path, ''))
+                            if "_model.py" not in f:
+                                if self.strip:
+                                    if self.strip in f:
+                                        ftmpfile = f.replace(self.strip, '')
+                                        fileresult.append(ftmpfile.replace(path, ''))
             resultdata = ResponseBasic(status="success", data={"task_result": {"templates": fileresult}}).dict()
             return resultdata
         except Exception as e:
