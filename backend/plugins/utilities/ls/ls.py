@@ -1,11 +1,11 @@
-import os
 import logging
+import os
 
 from backend.core.confload.confload import config
-from backend.core.models.task import model_response_basic
-from backend.core.models.models import model_general_error
+from backend.core.models.task import ResponseBasic
 
 log = logging.getLogger(__name__)
+
 
 class ls:
 
@@ -38,8 +38,8 @@ class ls:
                             if self.strip:
                                 if self.strip in f:
                                     ftmpfile = f.replace(self.strip, '')
-                                    fileresult.append(ftmpfile.replace(path, ''))                    
-            resultdata = model_response_basic(status="success",data={"task_result":{"templates":fileresult}}).dict()
+                                    fileresult.append(ftmpfile.replace(path, ''))
+            resultdata = ResponseBasic(status="success", data={"task_result": {"templates": fileresult}}).dict()
             return resultdata
         except Exception as e:
             return str(e)

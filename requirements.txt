@@ -16,3 +16,4 @@ pytest
 pytest-timeout
 aiofiles
 pyyaml
+cachelib

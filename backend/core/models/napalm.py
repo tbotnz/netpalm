@@ -1,26 +1,24 @@
-from typing import Optional, Set, Any, Dict, List
-from enum import Enum, IntEnum
+from enum import Enum
+from typing import Optional, Any, List
 
-import typing
 from pydantic import BaseModel
 
-from backend.core.models.models import model_j2config
-from backend.core.models.models import model_webhook
-from backend.core.models.models import model_generic_pre_post_check
-from backend.core.models.models import queue_strat
+from backend.core.models.models import GenericPrePostCheck
+from backend.core.models.models import J2Config, CacheConfig
+from backend.core.models.models import QueueStrategy
+from backend.core.models.models import Webhook
 
-class lib_opts_napalm(str, Enum):
-    napalm = "napalm"
 
-class napalm_device_type(str, Enum):
+class NapalmDeviceType(str, Enum):
     cisco_ios = "cisco_ios"
     cisco_xr = "iosxr"
     nxos = "nxos"
     cisco_nxos_ssh = "nxos_ssh"
     arista_eos = "eos"
     juniper = "junos"
-    
-class napalm_optional_connection_args(BaseModel):
+
+
+class NapalmConnectionOptionalArgs(BaseModel):
     fortios_vdom: Optional[str] = None
     port: Optional[int] = None
     config_lock: Optional[bool] = None
@@ -29,49 +27,56 @@ class napalm_optional_connection_args(BaseModel):
     global_delay_factor: Optional[int] = None
     nxos_protocol: Optional[str] = None
 
-class napalm_connection_args(BaseModel):
-    device_type: napalm_device_type
-    optional_args: Optional[napalm_optional_connection_args] = None
+
+class NapalmConnectionArgs(BaseModel):
+    device_type: NapalmDeviceType
+    optional_args: Optional[NapalmConnectionOptionalArgs] = None
     host: str
     username: str
     password: str
 
-class model_napalm_getconfig(BaseModel):
-    library: lib_opts_napalm
-    connection_args: napalm_connection_args
+
+class NapalmGetConfig(BaseModel):
+    connection_args: NapalmConnectionArgs
     command: Any
-    webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[queue_strat] = None
-    post_checks: Optional[List[model_generic_pre_post_check]] = None
-    
+    webhook: Optional[Webhook] = None
+    queue_strategy: Optional[QueueStrategy] = None
+    post_checks: Optional[List[GenericPrePostCheck]] = None
+    cache: Optional[CacheConfig] = {}
+
     class Config:
         schema_extra = {
             "example": {
                 "library": "napalm",
-                "connection_args":{
-                    "device_type":"cisco_ios", "host":"10.0.2.23", "username":"admin", "password":"admin"
+                "connection_args": {
+                    "device_type": "cisco_ios", "host": "10.0.2.23", "username": "admin", "password": "admin"
                 },
                 "command": "get_facts",
-                "queue_strategy": "fifo"
+                "queue_strategy": "fifo",
+                "cache": {
+                    "enabled": True,
+                    "ttl": 300,
+                    "poison": False
+                }
             }
         }
 
-class model_napalm_setconfig(BaseModel):
-    library: lib_opts_napalm
-    connection_args: napalm_connection_args
+
+class NapalmSetConfig(BaseModel):
+    connection_args: NapalmConnectionArgs
     config: Optional[Any] = None
-    j2config: Optional[model_j2config] = None
-    webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[queue_strat] = None
-    pre_checks: Optional[List[model_generic_pre_post_check]] = None
-    post_checks: Optional[List[model_generic_pre_post_check]] = None
+    j2config: Optional[J2Config] = None
+    webhook: Optional[Webhook] = None
+    queue_strategy: Optional[QueueStrategy] = None
+    pre_checks: Optional[List[GenericPrePostCheck]] = None
+    post_checks: Optional[List[GenericPrePostCheck]] = None
 
     class Config:
         schema_extra = {
             "example": {
                 "library": "napalm",
-                "connection_args":{
-                    "device_type":"cisco_ios", "host":"10.0.2.33", "username":"admin", "password":"admin"
+                "connection_args": {
+                    "device_type": "cisco_ios", "host": "10.0.2.33", "username": "admin", "password": "admin"
                 },
                 "config": "hostnam cat",
                 "queue_strategy": "fifo"

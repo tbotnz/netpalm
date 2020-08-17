@@ -18,7 +18,7 @@ from backend.core.security.get_api_key import get_api_key
 #load views
 from routers import getconfig, setconfig, task, template, script, service, util, public
 
-config.setup_logging()
+config.setup_logging(max_debug=True)
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 

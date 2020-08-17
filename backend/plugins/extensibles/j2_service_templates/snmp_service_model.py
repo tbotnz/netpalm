@@ -1,8 +1,10 @@
-from pydantic import BaseModel
-from typing import Dict, FrozenSet, List, Optional, Sequence, Set, Tuple, Union
+from typing import Optional
 
+from pydantic import BaseModel
+
+from backend.core.models.models import QueueStrategy
 from backend.core.models.service import service_lifecycle
-from backend.core.models.models import queue_strat
+
 
 class snmp_service_model_args(BaseModel):
     # your model goes here!
@@ -17,7 +19,7 @@ class snmp_service_model(BaseModel):
     # this class MUST match the filename & the filename must be formatted $servicetemplatename_model.py
     operation: service_lifecycle
     args: snmp_service_model_args
-    queue_strategy: Optional[queue_strat] = None
+    queue_strategy: Optional[QueueStrategy] = None
 
     class Config:
         # add an example payload under the "example" dict 

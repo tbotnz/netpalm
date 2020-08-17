@@ -1,9 +1,10 @@
-from typing import Optional, Set, Any, Dict, List
-import typing
-from pydantic import BaseModel
 from enum import Enum
+from typing import Optional, List
 
-from backend.core.models.models import queue_strat
+from pydantic import BaseModel
+
+from backend.core.models.models import QueueStrategy
+
 
 class service_lifecycle(str, Enum):
     create = "create"
@@ -11,10 +12,11 @@ class service_lifecycle(str, Enum):
     delete = "delete"
     script = "script"
 
+
 class model_service(BaseModel):
     operation: service_lifecycle
     args: dict
-    queue_strategy: Optional[queue_strat] = None
+    queue_strategy: Optional[QueueStrategy] = None
 
     class Config:
         schema_extra = {

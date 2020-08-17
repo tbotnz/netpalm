@@ -2,22 +2,51 @@ import datetime
 import json
 import logging
 
+from cachelib import RedisCache
 from redis import Redis
 from rq import Queue
 from rq.job import Job
 from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegistry
 
-from backend.core.confload.confload import config
-from backend.core.models.task import model_response
+from backend.core.confload.confload import config, Config
+from backend.core.models.task import Response
 from backend.core.routes import routes
 from netpalm_pinned_worker import pinned_worker_constructor
 
 log = logging.getLogger(__name__)
 
 
-class rediz:
+class ClearableCache(RedisCache):
+    def keys(self, key_pattern: str = ""):
+        prefix = f"{self.key_prefix}{key_pattern}*"
+        keys = self._client.keys(prefix)
+        return keys
 
-    def __init__(self):
+    def clear_keys(self, key_pattern: str):
+        if not key_pattern:
+            raise ValueError(f"no key_pattern provided!")
+
+        status = False
+        keys = self.keys(key_pattern)
+        if keys:
+            status = self._client.delete(*keys)
+
+        return status
+
+
+class DisabledCache:
+    @staticmethod
+    def always_return_none(*args, **kwargs):
+        return None
+
+    def __getattr__(self, item):
+        return self.always_return_none
+
+
+class Rediz:
+    cache: ClearableCache  # type hint for IDE's pleasure only
+
+    def __init__(self, config: Config = config):
 
         # globals
         self.server = config.redis_server
@@ -36,8 +65,22 @@ class rediz:
         self.local_queuedb[config.redis_fifo_q]["queue"] = Queue(config.redis_fifo_q, connection=self.base_connection)
         net_db_exists = self.base_connection.get(self.networked_queuedb)
         if not net_db_exists:
-            nulldb = json.dumps({"netpalm-db":"queue-val"})
+            nulldb = json.dumps({"netpalm-db": "queue-val"})
             self.base_connection.set(self.networked_queuedb, nulldb)
+        self.cache_enabled = config.redis_cache_enabled
+        self.cache_timeout = config.redis_cache_default_timeout
+        # we MUST have a prefix, else ".clear()" will drop ALL keys in redis (including those used for the queues).
+        self.key_prefix = str(config.redis_cache_key_prefix).strip()
+        if not self.key_prefix:
+            self.key_prefix = "NOPREFIX"
+        if self.cache_enabled:
+            log.info(f"Enabling cache!")
+            self.cache = ClearableCache(self.base_connection, default_timeout=self.cache_timeout,
+                                        key_prefix=self.key_prefix)
+        else:
+            log.info(f"Disabling cache!")
+            # noinspection PyTypeChecker
+            self.cache = DisabledCache()
 
     def getqueue(self, host):
         #checks a centralised db / queue exists and creates a empty db if one does not exist
@@ -104,17 +147,17 @@ class rediz:
         try:
 
             current_time = datetime.datetime.utcnow()
-            created_parsed_time = datetime.datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S.%f')
+            created_parsed_time = datetime.datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S.%f")
 
             #if enqueued but not started calculate time
             if enqueued_at != "None" and enqueued_at and started_at == "None":
-                parsed_time = datetime.datetime.strptime(enqueued_at, '%Y-%m-%d %H:%M:%S.%f')
+                parsed_time = datetime.datetime.strptime(enqueued_at, "%Y-%m-%d %H:%M:%S.%f")
                 task_job.meta["enqueued_elapsed_seconds"] = (current_time - parsed_time).seconds
                 task_job.save()
 
             #if created but not finished calculate time
             if ended_at != "None" and ended_at:
-                parsed_time = datetime.datetime.strptime(ended_at, '%Y-%m-%d %H:%M:%S.%f')
+                parsed_time = datetime.datetime.strptime(ended_at, "%Y-%m-%d %H:%M:%S.%f")
                 task_job.meta["total_elapsed_seconds"] = (parsed_time - created_parsed_time).seconds
                 task_job.save()
 
@@ -129,25 +172,25 @@ class rediz:
             ended_at = None if ended_at == "None" else ended_at
 
         except Exception as e:
-            log.error(f'render_task_response : {str(e)}')
+            log.error(f"render_task_response : {str(e)}")
             pass
 
         resultdata = None
-        resultdata = model_response(status="success",data={
-            "task_id":task_job.get_id(),
-            "created_on":created_at,
-            "task_queue":task_job.description,
-            "task_meta":{
-                "enqueued_at":enqueued_at,
-                "started_at":started_at,
+        resultdata = Response(status="success", data={
+            "task_id": task_job.get_id(),
+            "created_on": created_at,
+            "task_queue": task_job.description,
+            "task_meta": {
+                "enqueued_at": enqueued_at,
+                "started_at": started_at,
                 "ended_at": ended_at,
                 "enqueued_elapsed_seconds": task_job.meta["enqueued_elapsed_seconds"],
                 "total_elapsed_seconds": task_job.meta["total_elapsed_seconds"]
-                },
-                "task_status":task_job.get_status(),
-                "task_result": task_job.result,
-                "task_errors":task_job.meta["errors"]
-                }).dict()
+            },
+            "task_status": task_job.get_status(),
+            "task_result": task_job.result,
+            "task_errors": task_job.meta["errors"]
+        }).dict()
         return resultdata
 
     def sendtask(self, q, exe, **kwargs):
@@ -205,7 +248,7 @@ class rediz:
             return e
 
     def fetchtask(self, task_id):
-        log.info(f'fetching task: {task_id}')
+        log.info(f"fetching task: {task_id}")
         try:
             task = Job.fetch(task_id, connection=self.base_connection)
             response_object = self.render_task_response(task)
@@ -250,7 +293,7 @@ class rediz:
             return e
 
     def getjobliststatus(self, q):
-        log.info(f'getting jobs and status: {q}')
+        log.info(f"getting jobs and status: {q}")
         try:
             if q:
                 self.getqueue(q)
@@ -290,7 +333,7 @@ class rediz:
             return e
 
     def getstartedjobs(self, q):
-        log.info(f'getting started jobs: {q}')
+        log.info(f"getting started jobs: {q}")
         try:
             registry = StartedJobRegistry(q, connection=self.base_connection)
             response_object = registry.get_job_ids()
@@ -299,7 +342,7 @@ class rediz:
             return e
 
     def getfinishedjobs(self, q):
-        log.info(f'getting finished jobs: {q}')
+        log.info(f"getting finished jobs: {q}")
         try:
             registry = FinishedJobRegistry(q, connection=self.base_connection)
             response_object = registry.get_job_ids()
@@ -308,7 +351,7 @@ class rediz:
             return e
 
     def getfailedjobs(self, q):
-        log.info(f'getting failed jobs: {q}')
+        log.info(f"getting failed jobs: {q}")
         try:
             registry = FailedJobRegistry(q, connection=self.base_connection)
             response_object = registry.get_job_ids()
@@ -317,12 +360,20 @@ class rediz:
             return e
 
     def send_broadcast(self, msg: str):
-        log.info(f'sending broadcast: {msg}')
+        log.info(f"sending broadcast: {msg}")
         try:
             self.base_connection.publish(config.redis_broadcast_q, msg)
             return {
-                'result': 'Message Sent'
+                "result": "Message Sent"
             }
 
         except Exception as e:
             return e
+
+    def clear_cache_for_host(self, cache_key: str):
+        if not cache_key.count(":") >= 2:
+            log.error(f"{cache_key=} doesn't seem to be a valid cache key!")
+        host_port = cache_key.split(":")[:2]  # first 2 segments
+        modified_cache_key = ":".join(host_port)
+        log.info(f"deleting {modified_cache_key=}")
+        return self.cache.clear_keys(modified_cache_key)
