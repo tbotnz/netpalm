@@ -4,7 +4,7 @@ from typing import Dict, FrozenSet, List, Optional, Sequence, Set, Tuple, Union
 from backend.core.models.service import service_lifecycle
 from backend.core.models.models import queue_strat
 
-class interface_model_args(BaseModel):
+class netmiko_retrieve_data_model_args(BaseModel):
     # your model goes here!
     hosts: list
     username: str
@@ -12,10 +12,10 @@ class interface_model_args(BaseModel):
     driver: str
     command: str
 
-class interface_model(BaseModel):
+class netmiko_retrieve_data_model(BaseModel):
     # this class MUST match the filename & the filename must be formatted $servicetemplatename_model.py
     operation: service_lifecycle
-    args: interface_model_args
+    args: netmiko_retrieve_data_model_args
     queue_strategy: Optional[queue_strat] = None
 
     class Config:
