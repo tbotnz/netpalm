@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from fastapi.encoders import jsonable_encoder
 
 # load models
-from backend.core.models.models import SetConfig
+from backend.core.models.generic_models import SetConfig
 from backend.core.models.napalm import NapalmSetConfig
 from backend.core.models.ncclient import NcclientSetConfig
 from backend.core.models.netmiko import NetmikoSetConfig

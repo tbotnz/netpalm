@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from backend.core.models.models import QueueStrategy
+from backend.core.models.base_models import QueueStrategy
 from backend.core.models.service import service_lifecycle
 
 

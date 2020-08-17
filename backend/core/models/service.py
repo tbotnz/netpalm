@@ -3,7 +3,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
-from backend.core.models.models import QueueStrategy
+from backend.core.models.base_models import QueueStrategy
 
 
 class service_lifecycle(str, Enum):

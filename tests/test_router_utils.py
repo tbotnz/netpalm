@@ -23,7 +23,7 @@ os.environ["NETPALM_CONFIG"] = str(ACTUAL_CONFIG_PATH)
 from backend.core.confload import confload
 from routers.route_utils import cacheable_model, http_error_handler, cache_key_from_req_data, poison_host_cache, \
     serialized_for_hash
-from backend.core.models.models import GetConfig
+from backend.core.models.generic_models import GetConfig
 from backend.core.redis import rediz
 
 confload.initialize_config()

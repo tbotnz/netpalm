@@ -2,10 +2,8 @@ from typing import Optional, Any, List
 
 from pydantic import BaseModel
 
-from backend.core.models.models import GenericPrePostCheck
-from backend.core.models.models import J2Config, CacheConfig
-from backend.core.models.models import QueueStrategy
-from backend.core.models.models import Webhook
+from backend.core.models.base_models import Webhook, J2Config, CacheConfig, GenericPrePostCheck, QueueStrategy, \
+    BaseConnectionArgs
 
 
 class NetmikoSendConfigArgs(BaseModel):
@@ -23,7 +21,7 @@ class NetmikoSendConfigArgs(BaseModel):
     cmd_verify: Optional[bool] = None
 
 
-class NetmikoConnectionArgs(BaseModel):
+class NetmikoConnectionArgs(BaseConnectionArgs):
     ip: Optional[str] = None
     host: Optional[str] = None
     username: str

@@ -3,10 +3,8 @@ from typing import Optional, Any, List
 
 from pydantic import BaseModel
 
-from backend.core.models.models import GenericPrePostCheck
-from backend.core.models.models import J2Config, CacheConfig
-from backend.core.models.models import QueueStrategy
-from backend.core.models.models import Webhook
+from backend.core.models.base_models import Webhook, J2Config, CacheConfig, GenericPrePostCheck, QueueStrategy, \
+    BaseConnectionArgs
 
 
 class NapalmDeviceType(str, Enum):
@@ -28,12 +26,9 @@ class NapalmConnectionOptionalArgs(BaseModel):
     nxos_protocol: Optional[str] = None
 
 
-class NapalmConnectionArgs(BaseModel):
+class NapalmConnectionArgs(BaseConnectionArgs):
     device_type: NapalmDeviceType
     optional_args: Optional[NapalmConnectionOptionalArgs] = None
-    host: str
-    username: str
-    password: str
 
 
 class NapalmGetConfig(BaseModel):

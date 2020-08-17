@@ -3,9 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from backend.core.models.models import CacheConfig
-from backend.core.models.models import QueueStrategy
-from backend.core.models.models import Webhook
+from backend.core.models.base_models import Webhook, CacheConfig, QueueStrategy
 
 
 class SupportedOptions(str, Enum):

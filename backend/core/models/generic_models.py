@@ -1,45 +1,9 @@
-from enum import Enum
 from typing import Optional, Any, List
 
 from pydantic import BaseModel
 
-
-class QueueStrategy(str, Enum):
-    fifo = "fifo"
-    pinned = "pinned"
-
-
-class LibraryName(str, Enum):
-    napalm = "napalm"
-    ncclient = "ncclient"
-    restconf = "restconf"
-    netmiko = "netmiko"
-
-
-class CheckEnum(str, Enum):
-    include = "include"
-    exclude = "exclude"
-
-
-class GetConfigArgs(BaseModel):
-    command: str
-
-
-class GenericPrePostCheck(BaseModel):
-    match_type: CheckEnum
-    match_str: list
-    get_config_args: GetConfigArgs
-
-
-class Webhook(BaseModel):
-    name: Optional[str] = None
-    args: Optional[dict] = None
-    j2template: Optional[str] = None
-
-
-class J2Config(BaseModel):
-    template: str
-    args: dict
+from backend.core.models.base_models import Webhook, J2Config, CacheConfig, GenericPrePostCheck, LibraryName, \
+    QueueStrategy
 
 
 class SetConfigArgs(BaseModel):
@@ -126,21 +90,6 @@ class Script(BaseModel):
         }
 
 
-class CacheConfig(BaseModel):
-    enabled: bool = False
-    ttl: Optional[int] = None
-    poison: Optional[bool] = False
-
-    class Config:
-        schema_extra = {
-            'example': {
-                'enabled': True,
-                'ttl': 300,
-                'poison': False
-            }
-        }
-
-
 class GetConfig(BaseModel):
     library: LibraryName
     connection_args: dict
@@ -173,18 +122,3 @@ class GetConfig(BaseModel):
                 }
             }
         }
-
-
-class TemplateAdd(BaseModel):
-    key: str = None
-    driver: str = None
-    command: str = None
-
-
-class TemplateRemove(BaseModel):
-    template: str = None
-
-
-class GeneralError(BaseModel):
-    status: str = None
-    data: dict = None

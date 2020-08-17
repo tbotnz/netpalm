@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from backend.core.confload.confload import config
 
 # load models
-from backend.core.models.models import Script
+from backend.core.models.generic_models import Script
 from backend.core.models.task import Response
 from backend.core.models.task import ResponseBasic
 from backend.core.redis import reds
