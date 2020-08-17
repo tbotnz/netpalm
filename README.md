@@ -100,7 +100,7 @@ netpalm containers can be scaled out/in as required, define how many containers 
 docker-compose scale netpalm-controller=1 netpalm-worker-pinned=2 netpalm-worker-fifo=3
 ```
 
-## Caching
+## caching
 * Supports the following per-request configuration (`/getconfig` routes only for now)
     * permit the result of this request to be cached (default: false), and permit this request to return cached data
     * hold the cache for 30 seconds (default: 300.  Should not be set above `redis_task_result_ttl` which defaults to 500)
