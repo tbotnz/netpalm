@@ -14,6 +14,7 @@ netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 - Per device async task queuing (Ensure you dont overload your VTY's) or Pooled async processes
 - Large amount of supported multivendor devices ( cheers to the netmiko & napalm & ncclient lads )
 - TextFSM for parsing/structuring device data (includes [ntc-templates](https://github.com/networktocode/ntc-templates))
+- Genie support for parsing device data
 - Jinja2 for model driven deployments of config onto devices accross [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko) and ncclient
 - Automated download and installation of TextFSM templates from http://textfsm.nornir.tech online TextFSM development tool
 - ReST based Webhook w/ args & the ability for you to BYO webhooks
@@ -30,16 +31,15 @@ netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 ## concepts
 
 netpalm acts as a ReST broker for NAPALM, Netmiko, NCCLIENT or a Python Script.
-It uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
+netpalm uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
 You make an API call to netpalm and it will establish a queue to your device and start sending configuration
 
 ![netpalm concept](/static/images/arch.png)
 
 ## basic netpalm example
 
-whilst we can show you examples for days we reccomend checking the online [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) to get a feel for what can be done
-
-we also host a [public instance](https://netpalm.tech) have a look at the swagger ui
+Whilst we can show you examples for days we reccomend checking the online [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) to get a feel for what can be done.
+We also host a [public instance](https://netpalm.tech) have a look at the swagger ui
 
 ### getconfig method
 
