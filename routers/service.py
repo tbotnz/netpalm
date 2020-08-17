@@ -5,17 +5,18 @@ from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
 
 from backend.core.confload.confload import config
+
 # load models
 from backend.core.models.service import model_service
 from backend.core.models.task import Response
 from backend.core.redis import reds
+
 # load routes
 from backend.core.routes.routes import routes
 
 router = APIRouter()
 
 log = logging.getLogger(__name__)
-
 
 @router.post("/service/{servicename}", response_model=Response, status_code=201)
 def execute_service(servicename: str, service: model_service):
