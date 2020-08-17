@@ -1,16 +1,13 @@
-from typing import Optional, Set, Any, Dict, List
-from enum import Enum, IntEnum
+from enum import Enum
+from typing import Optional, Any, List
 
-import typing
 from pydantic import BaseModel
 
-from backend.core.models.models import model_j2config
-from backend.core.models.models import model_webhook
 from backend.core.models.models import model_generic_pre_post_check
+from backend.core.models.models import model_j2config, model_cache_config
+from backend.core.models.models import model_webhook
 from backend.core.models.models import queue_strat
 
-class lib_opts_napalm(str, Enum):
-    napalm = "napalm"
 
 class napalm_device_type(str, Enum):
     cisco_ios = "cisco_ios"
@@ -37,27 +34,31 @@ class napalm_connection_args(BaseModel):
     password: str
 
 class model_napalm_getconfig(BaseModel):
-    library: lib_opts_napalm
     connection_args: napalm_connection_args
     command: Any
     webhook: Optional[model_webhook] = None
     queue_strategy: Optional[queue_strat] = None
     post_checks: Optional[List[model_generic_pre_post_check]] = None
+    cache: Optional[model_cache_config] = {}
     
     class Config:
         schema_extra = {
             "example": {
                 "library": "napalm",
-                "connection_args":{
-                    "device_type":"cisco_ios", "host":"10.0.2.23", "username":"admin", "password":"admin"
+                "connection_args": {
+                    "device_type": "cisco_ios", "host": "10.0.2.23", "username": "admin", "password": "admin"
                 },
                 "command": "get_facts",
-                "queue_strategy": "fifo"
+                "queue_strategy": "fifo",
+                "cache": {
+                    "enabled": True,
+                    "ttl": 300,
+                    "poison": False
+                }
             }
         }
 
 class model_napalm_setconfig(BaseModel):
-    library: lib_opts_napalm
     connection_args: napalm_connection_args
     config: Optional[Any] = None
     j2config: Optional[model_j2config] = None

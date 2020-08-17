@@ -166,10 +166,10 @@ def cacheable_model(f):
     return wrapper
 
 
-def http_cache(f):
+def error_handle_w_cache(f):
     @wraps(f)
-    @cacheable_model
     @http_error_handler
+    @cacheable_model
     def wrapper(*args, **kwargs):
         return f(*args, **kwargs)
 

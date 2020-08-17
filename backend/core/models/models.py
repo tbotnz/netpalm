@@ -1,11 +1,13 @@
-from typing import Optional, Set, Any, Dict, List
-import typing
+from enum import Enum
+from typing import Optional, Any, List
+
 from pydantic import BaseModel
-from enum import Enum, IntEnum
+
 
 class queue_strat(str, Enum):
     fifo = "fifo"
     pinned = "pinned"
+
 
 class lib_opts_all(str, Enum):
     napalm = "napalm"

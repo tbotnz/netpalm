@@ -49,6 +49,8 @@ def exec_command(**kwargs):
                 sesh = rc.connect()
                 result = rc.sendcommand(sesh)
                 rc.logout(sesh)
+            else:
+                raise NotImplementedError(f"unknown 'library' parameter {lib}")
         except Exception as e:
             write_meta_error(f"{e}")
 

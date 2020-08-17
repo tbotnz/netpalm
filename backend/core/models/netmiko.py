@@ -1,16 +1,12 @@
-from typing import Optional, Set, Any, Dict, List
-from enum import Enum, IntEnum
+from typing import Optional, Any, List
 
-import typing
 from pydantic import BaseModel
 
-from backend.core.models.models import model_j2config
-from backend.core.models.models import model_webhook
 from backend.core.models.models import model_generic_pre_post_check
+from backend.core.models.models import model_j2config, model_cache_config
+from backend.core.models.models import model_webhook
 from backend.core.models.models import queue_strat
 
-class lib_opts_netmiko(str, Enum):
-    netmiko = "netmiko"
 
 class netmiko_send_config_args(BaseModel):
     command_string: Optional[str] = None
@@ -32,7 +28,7 @@ class netmiko_base_connection_args(BaseModel):
     username: str
     password: str
     secret: Optional[str] = None
-    port: int
+    port: Optional[int] = 22
     device_type: str
     verbose: Optional[bool] = None
     global_delay_factor: Optional[int] = None
@@ -66,31 +62,35 @@ class netmiko_base_connection_args(BaseModel):
     auto_connect: Optional[bool] = None
 
 class model_netmiko_getconfig(BaseModel):
-    library: lib_opts_netmiko
     connection_args: netmiko_base_connection_args
     command: Optional[Any] = None
     args: Optional[netmiko_send_config_args] = None
     webhook: Optional[model_webhook] = None
     queue_strategy: Optional[queue_strat] = None
     post_checks: Optional[List[model_generic_pre_post_check]] = None
+    cache: Optional[model_cache_config] = {}
     
     class Config:
         schema_extra = {
             "example": {
                 "library": "netmiko",
-                "connection_args":{
-                    "device_type":"cisco_ios", "host":"10.0.2.33", "username":"admin", "password":"admin"
+                "connection_args": {
+                    "device_type": "cisco_ios", "host": "10.0.2.33", "username": "admin", "password": "admin"
                 },
                 "command": "show ip int brief",
-                "args":{
-                    "use_textfsm":True
+                "args": {
+                    "use_textfsm": True
                 },
-                "queue_strategy": "fifo"  
+                "queue_strategy": "fifo",
+                "cache": {
+                    "enabled": True,
+                    "ttl": 300,
+                    "poison": False
+                }
             }
         }
 
 class model_netmiko_setconfig(BaseModel):
-    library: lib_opts_netmiko
     connection_args: dict
     config: Optional[Any] = None
     args: Optional[netmiko_send_config_args] = None
