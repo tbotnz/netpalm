@@ -96,7 +96,7 @@ class NetmikoGetConfig(BaseModel):
 class NetmikoSetConfig(BaseModel):
     connection_args: dict
     config: Optional[Any] = None
-    args: Optional[NetmikoSendConfigArgs] = None
+    args: Optional[NetmikoSendConfigArgs] = {}
     j2config: Optional[J2Config] = None
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
