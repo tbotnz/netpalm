@@ -9,7 +9,7 @@ from backend.core.models.netmiko import NetmikoSetConfig
 from backend.core.models.restconf import Restconf
 from backend.core.models.task import Response
 from backend.core.redis import reds
-from routers.route_utils import http_error_handler
+from routers.route_utils import http_error_handler, poison_host_cache
 
 router = APIRouter()
 
@@ -26,6 +26,7 @@ def _set_config(setcfg: SetConfig, library: str = None):
 # deploy a configuration
 @router.post("/setconfig", response_model=Response, status_code=201)
 @http_error_handler
+@poison_host_cache
 def set_config(setcfg: SetConfig):
     return _set_config(setcfg)
 
@@ -43,6 +44,7 @@ def set_config_dry_run(setcfg: SetConfig):
 # deploy a configuration
 @router.post("/setconfig/netmiko", response_model=Response, status_code=201)
 @http_error_handler
+@poison_host_cache
 def set_config_netmiko(setcfg: NetmikoSetConfig):
     return _set_config(setcfg, library="netmiko")
 
@@ -50,6 +52,7 @@ def set_config_netmiko(setcfg: NetmikoSetConfig):
 # deploy a configuration
 @router.post("/setconfig/napalm", response_model=Response, status_code=201)
 @http_error_handler
+@poison_host_cache
 def set_config_napalm(setcfg: NapalmSetConfig):
     return _set_config(setcfg, library="napalm")
 
@@ -57,6 +60,7 @@ def set_config_napalm(setcfg: NapalmSetConfig):
 # deploy a configuration
 @router.post("/setconfig/ncclient", response_model=Response, status_code=201)
 @http_error_handler
+@poison_host_cache
 def set_config_ncclient(setcfg: NcclientSetConfig):
     return _set_config(setcfg, library="ncclient")
 
@@ -64,5 +68,6 @@ def set_config_ncclient(setcfg: NcclientSetConfig):
 # deploy a configuration
 @router.post("/setconfig/restconf", response_model=Response, status_code=201)
 @http_error_handler
+@poison_host_cache
 def set_config_restconf(setcfg: Restconf):
     return _set_config(setcfg, library="restconf")
