@@ -1,10 +1,10 @@
 {#
 !!!! EXAMPLE PAYLOAD AS BELOW
 {
-	"operation": "retrieve",
-	"args":{
-		"hosts":["10.0.2.25","10.0.2.23"],
-	}
+  "operation": "retrieve",
+  "args":{
+    "hosts":["10.0.2.25","10.0.2.23"],
+  }
 }
 !!!! ANY PAYLOAD CAN BE ADDED TO THE ARGS DICT, THESE ARE THEN AVAILABLE IN THE J2 TEMPLATE AS BELOW
 #}
@@ -15,17 +15,17 @@
       {
         "operation": "retrieve",
         "payload": {
-					"library": "netmiko",
-					"connection_args": {
-						"device_type": "{{driver}}",
-						"host": "{{host}}",
-						"username": "{{username}}",
-						"password": "{{password}}",
-					},
-					"command": "{{command}}",
-					"args":{
-						"use_textfsm": "true"
-					}
+          "library": "netmiko",
+          "connection_args": {
+            "device_type": "{{driver}}",
+            "host": "{{host}}",
+            "username": "{{username}}",
+            "password": "{{password}}",
+          },
+          "command": "{{command}}",
+          "args":{
+            "use_textfsm": "true"
+          }
         }
       }
     ]
