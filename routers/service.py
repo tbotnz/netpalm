@@ -1,27 +1,23 @@
-
-import logging
 import importlib
+import logging
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
-from fastapi.security.api_key import APIKeyQuery, APIKeyCookie, APIKeyHeader, APIKey
-
-from backend.core.redis import reds
-
-#load models
-from backend.core.models.service import model_service
-from backend.core.models.task import model_response
-
-#load routes
-from backend.core.routes.routes import routes
 
 from backend.core.confload.confload import config
+# load models
+from backend.core.models.service import model_service
+from backend.core.models.task import Response
+from backend.core.redis import reds
+# load routes
+from backend.core.routes.routes import routes
 
 router = APIRouter()
 
 log = logging.getLogger(__name__)
 
-@router.post("/service/{servicename}", response_model=model_response, status_code=201)
+
+@router.post("/service/{servicename}", response_model=Response, status_code=201)
 def execute_service(servicename: str, service: model_service):
     try:
         req_data = service.dict()
@@ -45,7 +41,7 @@ for servicename in r["data"]["task_result"]["templates"]:
         model = model_service
 
 
-    @router.post(f"/service/v1/{servicename}", response_model=model_response, status_code=201)
+    @router.post(f"/service/v1/{servicename}", response_model=Response, status_code=201)
     def execute_service(servicename: str, service: model):
         try:
             req_data = service.dict()

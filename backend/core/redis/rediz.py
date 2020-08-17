@@ -2,14 +2,14 @@ import datetime
 import json
 import logging
 
+from cachelib import RedisCache
 from redis import Redis
 from rq import Queue
 from rq.job import Job
 from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegistry
-from cachelib import RedisCache
 
 from backend.core.confload.confload import config, Config
-from backend.core.models.task import model_response
+from backend.core.models.task import Response
 from backend.core.routes import routes
 from netpalm_pinned_worker import pinned_worker_constructor
 
@@ -176,21 +176,21 @@ class Rediz:
             pass
 
         resultdata = None
-        resultdata = model_response(status="success",data={
-            "task_id":task_job.get_id(),
-            "created_on":created_at,
-            "task_queue":task_job.description,
-            "task_meta":{
-                "enqueued_at":enqueued_at,
-                "started_at":started_at,
+        resultdata = Response(status="success", data={
+            "task_id": task_job.get_id(),
+            "created_on": created_at,
+            "task_queue": task_job.description,
+            "task_meta": {
+                "enqueued_at": enqueued_at,
+                "started_at": started_at,
                 "ended_at": ended_at,
                 "enqueued_elapsed_seconds": task_job.meta["enqueued_elapsed_seconds"],
                 "total_elapsed_seconds": task_job.meta["total_elapsed_seconds"]
-                },
-                "task_status":task_job.get_status(),
-                "task_result": task_job.result,
-                "task_errors":task_job.meta["errors"]
-                }).dict()
+            },
+            "task_status": task_job.get_status(),
+            "task_result": task_job.result,
+            "task_errors": task_job.meta["errors"]
+        }).dict()
         return resultdata
 
     def sendtask(self, q, exe, **kwargs):

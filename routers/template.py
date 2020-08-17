@@ -4,8 +4,8 @@ from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
 
 # load models
-from backend.core.models.models import model_template_remove, model_template_add
-from backend.core.models.task import model_response_basic
+from backend.core.models.models import TemplateRemove, TemplateAdd
+from backend.core.models.task import ResponseBasic
 from backend.core.redis import reds
 # load routes
 from backend.core.routes.routes import routes
@@ -14,7 +14,7 @@ router = APIRouter()
 
 
 # textfsm template routes
-@router.get("/template", response_model=model_response_basic)
+@router.get("/template", response_model=ResponseBasic)
 async def get_textfsm_template():
     try:
         r = routes["gettemplate"]()
@@ -29,8 +29,8 @@ async def get_textfsm_template():
         raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
 
-@router.post("/template", response_model=model_response_basic, status_code=201)
-async def add_textfsm_template(template_add: model_template_add):
+@router.post("/template", response_model=ResponseBasic, status_code=201)
+async def add_textfsm_template(template_add: TemplateAdd):
     try:
         req_data = template_add.dict()
         r = routes["addtemplate"](kwargs=req_data)
@@ -46,7 +46,7 @@ async def add_textfsm_template(template_add: model_template_add):
 
 
 @router.delete("/template", status_code=204)
-async def delete_textfsm_template(template_remove: model_template_remove):
+async def delete_textfsm_template(template_remove: TemplateRemove):
     try:
         req_data = template_remove.dict()
         r = routes["removetemplate"](kwargs=req_data)
@@ -63,7 +63,7 @@ async def delete_textfsm_template(template_remove: model_template_remove):
 #j2 routes
 
 # get template list
-@router.get("/j2template/config/", response_model=model_response_basic)
+@router.get("/j2template/config/", response_model=ResponseBasic)
 async def get_config_j2_templates():
     try:
         r = routes["ls"](fldr="config")
@@ -73,7 +73,7 @@ async def get_config_j2_templates():
         raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
 
-@router.get("/j2template/service/", response_model=model_response_basic)
+@router.get("/j2template/service/", response_model=ResponseBasic)
 async def get_service_j2_templates():
     try:
         r = routes["ls"](fldr="service")
@@ -83,7 +83,7 @@ async def get_service_j2_templates():
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
 
-@router.get("/j2template/webhook/", response_model=model_response_basic)
+@router.get("/j2template/webhook/", response_model=ResponseBasic)
 async def get_webhook_j2_templates():
     try:
         r = routes["ls"](fldr="webhook")
@@ -93,7 +93,7 @@ async def get_webhook_j2_templates():
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
 #view contents of a template
-@router.get("/j2template/config/{tmpname}", response_model=model_response_basic)
+@router.get("/j2template/config/{tmpname}", response_model=ResponseBasic)
 async def get_j2_template_specific_config(tmpname: str):
     try:
         r = routes["j2gettemplate"](tmpname, template_type="config")
@@ -103,7 +103,7 @@ async def get_j2_template_specific_config(tmpname: str):
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
 
-@router.get("/j2template/service/{tmpname}", response_model=model_response_basic)
+@router.get("/j2template/service/{tmpname}", response_model=ResponseBasic)
 async def get_j2_template_specific_service(tmpname: str):
     try:
         r = routes["j2gettemplate"](tmpname, template_type="service")
@@ -113,7 +113,7 @@ async def get_j2_template_specific_service(tmpname: str):
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
 
-@router.get("/j2template/webhook/{tmpname}", response_model=model_response_basic)
+@router.get("/j2template/webhook/{tmpname}", response_model=ResponseBasic)
 async def get_j2_template_specific_webhook(tmpname: str):
     try:
         r = routes["j2gettemplate"](tmpname, template_type="webhook")
@@ -123,7 +123,7 @@ async def get_j2_template_specific_webhook(tmpname: str):
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
 #render j2 templates
-@router.post("/j2template/render/config/{tmpname}", response_model=model_response_basic, status_code=201)
+@router.post("/j2template/render/config/{tmpname}", response_model=ResponseBasic, status_code=201)
 async def render_j2_template_config(tmpname: str, data: dict):
     try:
         req_data = data
@@ -134,7 +134,7 @@ async def render_j2_template_config(tmpname: str, data: dict):
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
 
-@router.post("/j2template/render/service/{tmpname}", response_model=model_response_basic, status_code=201)
+@router.post("/j2template/render/service/{tmpname}", response_model=ResponseBasic, status_code=201)
 async def render_j2_template_service(tmpname: str, data: dict):
     try:
         req_data = data
@@ -145,7 +145,7 @@ async def render_j2_template_service(tmpname: str, data: dict):
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
 
-@router.post("/j2template/render/webhook/{tmpname}", response_model=model_response_basic, status_code=201)
+@router.post("/j2template/render/webhook/{tmpname}", response_model=ResponseBasic, status_code=201)
 async def render_j2_template_webhook(tmpname: str, data: dict):
     try:
         req_data = data

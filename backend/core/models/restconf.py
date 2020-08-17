@@ -3,19 +3,20 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from backend.core.models.models import model_cache_config
-from backend.core.models.models import model_webhook
-from backend.core.models.models import queue_strat
+from backend.core.models.models import CacheConfig
+from backend.core.models.models import QueueStrategy
+from backend.core.models.models import Webhook
 
 
-class supported_options(str, Enum):
+class SupportedOptions(str, Enum):
     get = "get"
     post = "post"
     patch = "patch"
     put = "put"
     delete = "delete"
 
-class model_restconf_connection_args(BaseModel):
+
+class RestconfConnectionArgs(BaseModel):
     host: str
     username: str
     password: str
@@ -24,17 +25,19 @@ class model_restconf_connection_args(BaseModel):
     transport: str
     headers: dict
 
-class model_restconf_payload(BaseModel):
+
+class RestconfPayload(BaseModel):
     uri: str
-    action: supported_options
+    action: SupportedOptions
     payload: Optional[dict] = None
 
-class model_restconf(BaseModel):
-    connection_args: model_restconf_connection_args
-    args: model_restconf_payload
-    webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[queue_strat] = None
-    cache: Optional[model_cache_config] = {}
+
+class Restconf(BaseModel):
+    connection_args: RestconfConnectionArgs
+    args: RestconfPayload
+    webhook: Optional[Webhook] = None
+    queue_strategy: Optional[QueueStrategy] = None
+    cache: Optional[CacheConfig] = {}
 
     class Config:
         schema_extra = {

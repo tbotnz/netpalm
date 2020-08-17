@@ -2,32 +2,35 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from backend.core.models.models import model_cache_config
-from backend.core.models.models import model_webhook
-from backend.core.models.models import queue_strat
+from backend.core.models.models import CacheConfig
+from backend.core.models.models import QueueStrategy
+from backend.core.models.models import Webhook
 
 
-class ncclient_send_config_args(BaseModel):
+class NcclientSendConfigArgs(BaseModel):
     target: str
     config: str
 
-class ncclient_get_config_args(BaseModel):
+
+class NcclientGetConfigArgs(BaseModel):
     source: str
     filter: Optional[str] = None
-    render_json:Optional[bool] = None
+    render_json: Optional[bool] = None
 
-class model_ncclient_connection_args(BaseModel):
+
+class NcclientConnection(BaseModel):
     host: str
     username: str
     password: str
     port: int
     hostkey_verify: bool
 
-class model_ncclient_setconfig(BaseModel):
-    connection_args: model_ncclient_connection_args
-    args: ncclient_send_config_args
-    webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[queue_strat] = None
+
+class NcclientSetConfig(BaseModel):
+    connection_args: NcclientConnection
+    args: NcclientSendConfigArgs
+    webhook: Optional[Webhook] = None
+    queue_strategy: Optional[QueueStrategy] = None
 
     class Config:
         schema_extra = {
@@ -44,12 +47,13 @@ class model_ncclient_setconfig(BaseModel):
             }
         }
 
-class model_ncclient_getconfig(BaseModel):
-    connection_args: model_ncclient_connection_args
-    args: ncclient_get_config_args
-    webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[queue_strat] = None
-    cache: Optional[model_cache_config] = {}
+
+class NcclientGetConfig(BaseModel):
+    connection_args: NcclientConnection
+    args: NcclientGetConfigArgs
+    webhook: Optional[Webhook] = None
+    queue_strategy: Optional[QueueStrategy] = None
+    cache: Optional[CacheConfig] = {}
 
     class Config:
         schema_extra = {

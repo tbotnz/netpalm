@@ -23,7 +23,7 @@ os.environ["NETPALM_CONFIG"] = str(ACTUAL_CONFIG_PATH)
 from backend.core.confload import confload
 from routers.route_utils import cacheable_model, http_error_handler, cache_key_from_req_data, poison_host_cache, \
     serialized_for_hash
-from backend.core.models.models import model_getconfig
+from backend.core.models.models import GetConfig
 from backend.core.redis import rediz
 
 confload.initialize_config()
@@ -219,14 +219,14 @@ def test_cacheable_model(clean_cache_redis_helper: rediz.Rediz):
         "poison": False
     }
 
-    model = model_getconfig(**data_dict)  # base case
+    model = GetConfig(**data_dict)  # base case
     assert foo_get(model) != foo_get(model)
 
     foo_get = cacheable_model(foo_get)  # no cache config specified
     assert foo_get(model) != foo_get(model)
 
     data_dict["cache"] = cache_config
-    model = model_getconfig(**data_dict)
+    model = GetConfig(**data_dict)
 
     first_result = foo_get(model)  # cache enabled
     assert foo_get(model) == first_result
@@ -261,7 +261,7 @@ def test_poison_host_cache(clean_cache_redis_helper: rediz.Rediz):
         }
     }
 
-    model = model_getconfig(**data_dict)  # base case
+    model = GetConfig(**data_dict)  # base case
     first_result = foo_get(model)
     assert foo_get(model) == first_result  # cache is working
 
@@ -313,13 +313,13 @@ def test_auth_influences_cache(clean_cache_redis_helper: rediz.Rediz):
         "password": password
     })
 
-    full_creds_model = model_getconfig(**full_creds_dict)
+    full_creds_model = GetConfig(**full_creds_dict)
     full_creds_results = foo_get(full_creds_model)
     assert foo_get(full_creds_model) == full_creds_results  # cache is actually working
 
-    assert foo_get(model_getconfig(**no_creds_dict)) != full_creds_results
-    assert foo_get(model_getconfig(**partial_creds_dict)) != full_creds_results
-    assert foo_get(model_getconfig(**wrong_creds_dict)) != full_creds_results
+    assert foo_get(GetConfig(**no_creds_dict)) != full_creds_results
+    assert foo_get(GetConfig(**partial_creds_dict)) != full_creds_results
+    assert foo_get(GetConfig(**wrong_creds_dict)) != full_creds_results
 
 
 @pytest.mark.parametrize(("obj", "expected_result"), [
@@ -352,10 +352,10 @@ def test_model_default_value_behavior():
             "poison": False
         }
     }
-    m = model_getconfig(**data_dict)
+    m = GetConfig(**data_dict)
     m.args['foo'] = 'asdf'
     assert m.args == {"foo": "asdf"}
 
-    b = model_getconfig(**data_dict)
+    b = GetConfig(**data_dict)
     assert b.args == {}
     assert b.dict()['args'] == {}
