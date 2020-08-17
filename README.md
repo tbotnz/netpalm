@@ -9,7 +9,7 @@ netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 
 - Speaks ReST & JSON to your app and CLI over SSH or Telnet or NETCONF/RESTCONF to your network devices
 - Built in multi-level abstraction interface for service modeling of Create, Retrieve, Delete methods
-- Ability to write your own [service templates](https://github.com/tbotnz/netpalm/tree/master/backend/plugins/extensibles/j2_service_templates)
+- Ability to write your own [service models and templates](https://github.com/tbotnz/netpalm/tree/master/backend/plugins/extensibles/j2_service_templates) which are self documenting to Open API 3.0 when a model is used
 - Supports pre and post checks accross CLI devices, config only deployed on pre check pass 
 - Per device async task queuing (Ensure you dont overload your VTY's) or Pooled async processes
 - Large amount of supported multivendor devices ( cheers to the netmiko & napalm & ncclient lads )
@@ -20,6 +20,7 @@ netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 - Execute ANY python script as async via the ReST API and includes passing in of parameters
 - Supports on the fly changes to async queue strategy for a device ( either per device pinned queues or pooled queues )
 - OpenAPI / SwaggerUI docs inbuilt via the default route
+- Configurable caching meaning netpalm does not have to keep asking your device the things over and over again
 - Large [online](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) postman collection of examples
 - Horizontal container based scale out architecture supported by each component
 - Automatically generates a JSON schema for any Jinja2 Template
@@ -34,17 +35,13 @@ You make an API call to netpalm and it will establish a queue to your device and
 
 ![netpalm concept](/static/images/arch.png)
 
-## using netpalm examples
+## basic netpalm example
+
+whilst we can show you examples for days we reccomend checking the online [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) to get a feel for what can be done
+
+we also host a [public instance](https://netpalm.tech) have a look at the swagger ui
 
 ### getconfig method
-
-![netpalm eg1](/static/images/netpalm_eg_1.png)
-
-#### check response
-
-![netpalm eg2](/static/images/netpalm_eg_2.png)
-
-### getconfig method with textfsm arg
 
 netpalm also supports all arguments for the transport libs, simply pass them in as below
 
@@ -53,6 +50,14 @@ netpalm also supports all arguments for the transport libs, simply pass them in 
 #### check response
 
 ![netpalm eg4](/static/images/netpalm_eg_4.png)
+
+### service templates in action
+
+netpalm supports model driven service templates, these self render an OpenAPI 3 interface and provide abstraction and orchestration of tasks accross many devices using the get/setconfig or script methods.
+
+The below example demonstrates basic SNMP state orchestration accross multiple devices for create, retrieve, delete 
+
+![netpalm auto ingest](/static/images/np_service.gif)
 
 ### rapid template development and deployment
 
@@ -136,10 +141,12 @@ netpalm getting started blog:
 - [netpalm Intro Part 2](https://blog.wimwauters.com/networkprogrammability/2020-04-15_netpalm_introduction_part2/)
 - [netpalm Intro Part 3](https://blog.wimwauters.com/networkprogrammability/2020-04-17_netpalm_introduction_part3/)
 
-### netpalm slack channel
+netpalm in the network collective podcast:
+- https://networkcollective.com/2020/08/ntc-netpalm/
+
+### netpalm support
+
+we maintain an active community on the networktocode slack channel
 
 #netpalm on networktocode.slack.com
 
-### license
-
-All code belongs to that of its respective owners
