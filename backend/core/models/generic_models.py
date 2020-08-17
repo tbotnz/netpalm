@@ -1,9 +1,10 @@
-from typing import Optional, Any, List
+from typing import Optional, Any
 
 from pydantic import BaseModel
+from pydantic.main import BaseModel
 
-from backend.core.models.base_models import Webhook, J2Config, CacheConfig, GenericPrePostCheck, LibraryName, \
-    QueueStrategy
+from backend.core.models.base_models import Webhook, LibraryName, \
+    QueueStrategy, BaseGetConfig, BaseSetConfig
 
 
 class SetConfigArgs(BaseModel):
@@ -14,16 +15,9 @@ class SetConfigArgs(BaseModel):
     action: Optional[str] = None
 
 
-class SetConfig(BaseModel):
+class GenericSetConfig(BaseSetConfig):
     library: LibraryName
-    connection_args: dict
-    config: Optional[Any] = None
-    j2config: Optional[J2Config] = None
     args: Optional[SetConfigArgs] = {}
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    pre_checks: Optional[List[GenericPrePostCheck]] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = None
 
     class Config:
         schema_extra = {
@@ -45,30 +39,30 @@ class SetConfig(BaseModel):
                         ]
                     }
                 },
-            "queue_strategy": "fifo",
-            "pre_checks": [
-                {
-                    "match_type": "include",
-                    "get_config_args": {
-                        "command": "show run | i hostname"
-                    },
-                    "match_str": [
-                        "hostname cat"
-                    ]
-                }
-            ],
-            "post_checks": [
-                {
-                    "match_type": "include",
-                    "get_config_args": {
-                        "command": "show run | i hostname"
-                    },
-                    "match_str": [
-                        "hostname dog"
-                    ]
-                }
-            ]
-        }
+                "queue_strategy": "fifo",
+                "pre_checks": [
+                    {
+                        "match_type": "include",
+                        "get_config_args": {
+                            "command": "show run | i hostname"
+                        },
+                        "match_str": [
+                            "hostname cat"
+                        ]
+                    }
+                ],
+                "post_checks": [
+                    {
+                        "match_type": "include",
+                        "get_config_args": {
+                            "command": "show run | i hostname"
+                        },
+                        "match_str": [
+                            "hostname dog"
+                        ]
+                    }
+                ]
+            }
         }
 
 
@@ -90,15 +84,9 @@ class Script(BaseModel):
         }
 
 
-class GetConfig(BaseModel):
+class GenericGetConfig(BaseGetConfig):
     library: LibraryName
-    connection_args: dict
-    command: Any
     args: Optional[dict] = {}
-    webhook: Optional[Webhook] = {}
-    queue_strategy: Optional[QueueStrategy] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = []
-    cache: Optional[CacheConfig] = {}
 
     class Config:
         schema_extra = {
@@ -122,3 +110,13 @@ class GetConfig(BaseModel):
                 }
             }
         }
+
+
+class TemplateAdd(BaseModel):
+    key: str = None
+    driver: str = None
+    command: str = None
+
+
+class TemplateRemove(BaseModel):
+    template: str = None

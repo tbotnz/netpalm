@@ -1,10 +1,9 @@
 from enum import Enum
-from typing import Optional, Any, List
+from typing import Optional
 
 from pydantic import BaseModel
 
-from backend.core.models.base_models import Webhook, J2Config, CacheConfig, GenericPrePostCheck, QueueStrategy, \
-    BaseConnectionArgs
+from backend.core.models.base_models import BaseConnectionArgs, BaseGetConfig, BaseSetConfig
 
 
 class NapalmDeviceType(str, Enum):
@@ -31,14 +30,7 @@ class NapalmConnectionArgs(BaseConnectionArgs):
     optional_args: Optional[NapalmConnectionOptionalArgs] = None
 
 
-class NapalmGetConfig(BaseModel):
-    connection_args: NapalmConnectionArgs
-    command: Any
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = None
-    cache: Optional[CacheConfig] = {}
-
+class NapalmGetConfig(BaseGetConfig):
     class Config:
         schema_extra = {
             "example": {
@@ -57,15 +49,7 @@ class NapalmGetConfig(BaseModel):
         }
 
 
-class NapalmSetConfig(BaseModel):
-    connection_args: NapalmConnectionArgs
-    config: Optional[Any] = None
-    j2config: Optional[J2Config] = None
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    pre_checks: Optional[List[GenericPrePostCheck]] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = None
-
+class NapalmSetConfig(BaseSetConfig):
     class Config:
         schema_extra = {
             "example": {

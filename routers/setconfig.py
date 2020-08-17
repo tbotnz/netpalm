@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from fastapi.encoders import jsonable_encoder
 
 # load models
-from backend.core.models.generic_models import SetConfig
+from backend.core.models.generic_models import GenericSetConfig
 from backend.core.models.napalm import NapalmSetConfig
 from backend.core.models.ncclient import NcclientSetConfig
 from backend.core.models.netmiko import NetmikoSetConfig
@@ -14,7 +14,7 @@ from routers.route_utils import http_error_handler, poison_host_cache
 router = APIRouter()
 
 
-def _set_config(setcfg: SetConfig, library: str = None):
+def _set_config(setcfg: GenericSetConfig, library: str = None):
     req_data = setcfg.dict()
     if library is not None:
         req_data["library"] = library
@@ -27,14 +27,14 @@ def _set_config(setcfg: SetConfig, library: str = None):
 @router.post("/setconfig", response_model=Response, status_code=201)
 @http_error_handler
 @poison_host_cache
-def set_config(setcfg: SetConfig):
+def set_config(setcfg: GenericSetConfig):
     return _set_config(setcfg)
 
 
 # dry run a configuration
 @router.post("/setconfig/dry-run", response_model=Response, status_code=201)
 @http_error_handler
-def set_config_dry_run(setcfg: SetConfig):
+def set_config_dry_run(setcfg: GenericSetConfig):
     req_data = setcfg.dict()
     r = reds.execute_task(method="dryrun", kwargs=req_data)
     resp = jsonable_encoder(r)

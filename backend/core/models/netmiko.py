@@ -1,9 +1,8 @@
-from typing import Optional, Any, List
+from typing import Optional
 
 from pydantic import BaseModel
 
-from backend.core.models.base_models import Webhook, J2Config, CacheConfig, GenericPrePostCheck, QueueStrategy, \
-    BaseConnectionArgs
+from backend.core.models.base_models import BaseConnectionArgs, BaseGetConfig, BaseSetConfig
 
 
 class NetmikoSendConfigArgs(BaseModel):
@@ -23,11 +22,7 @@ class NetmikoSendConfigArgs(BaseModel):
 
 class NetmikoConnectionArgs(BaseConnectionArgs):
     ip: Optional[str] = None
-    host: Optional[str] = None
-    username: str
-    password: str
     secret: Optional[str] = None
-    port: Optional[int] = 22
     device_type: str
     verbose: Optional[bool] = None
     global_delay_factor: Optional[int] = None
@@ -61,14 +56,8 @@ class NetmikoConnectionArgs(BaseConnectionArgs):
     auto_connect: Optional[bool] = None
 
 
-class NetmikoGetConfig(BaseModel):
-    connection_args: NetmikoConnectionArgs
-    command: Optional[Any] = None
+class NetmikoGetConfig(BaseGetConfig):
     args: Optional[NetmikoSendConfigArgs] = None
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = None
-    cache: Optional[CacheConfig] = {}
 
     class Config:
         schema_extra = {
@@ -91,15 +80,8 @@ class NetmikoGetConfig(BaseModel):
         }
 
 
-class NetmikoSetConfig(BaseModel):
-    connection_args: dict
-    config: Optional[Any] = None
+class NetmikoSetConfig(BaseSetConfig):
     args: Optional[NetmikoSendConfigArgs] = {}
-    j2config: Optional[J2Config] = None
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    pre_checks: Optional[List[GenericPrePostCheck]] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = None
 
     class Config:
         schema_extra = {

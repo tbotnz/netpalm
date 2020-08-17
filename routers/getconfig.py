@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi.encoders import jsonable_encoder
 
 # load models
-from backend.core.models.generic_models import GetConfig
+from backend.core.models.generic_models import GenericGetConfig
 from backend.core.models.napalm import NapalmGetConfig
 from backend.core.models.ncclient import NcclientGetConfig
 from backend.core.models.netmiko import NetmikoGetConfig
@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 router = APIRouter()
 
 
-def _get_config(getcfg: GetConfig, library: str = None):
+def _get_config(getcfg: GenericGetConfig, library: str = None):
     req_data = getcfg.dict()
     if library is not None:
         req_data["library"] = library
@@ -29,7 +29,7 @@ def _get_config(getcfg: GetConfig, library: str = None):
 # read config
 @router.post("/getconfig", response_model=Response, status_code=201)
 @error_handle_w_cache
-def get_config(getcfg: GetConfig):
+def get_config(getcfg: GenericGetConfig):
     return _get_config(getcfg)
 
 

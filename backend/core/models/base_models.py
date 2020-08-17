@@ -1,17 +1,7 @@
 from enum import Enum
-from typing import Optional
+from typing import Optional, Any, List
 
 from pydantic import BaseModel
-
-
-class TemplateAdd(BaseModel):
-    key: str = None
-    driver: str = None
-    command: str = None
-
-
-class TemplateRemove(BaseModel):
-    template: str = None
 
 
 class GeneralError(BaseModel):
@@ -77,3 +67,22 @@ class BaseConnectionArgs(BaseModel):
     username: str
     password: str
     port: Optional[int]
+
+
+class BaseGetConfig(BaseModel):
+    connection_args: BaseConnectionArgs
+    command: Any
+    webhook: Optional[Webhook] = {}
+    queue_strategy: Optional[QueueStrategy] = None
+    post_checks: Optional[List[GenericPrePostCheck]] = []
+    cache: Optional[CacheConfig] = {}
+
+
+class BaseSetConfig(BaseModel):
+    connection_args: BaseConnectionArgs
+    config: Optional[Any] = None
+    j2config: Optional[J2Config] = {}
+    webhook: Optional[Webhook] = {}
+    queue_strategy: Optional[QueueStrategy] = None
+    pre_checks: Optional[List[GenericPrePostCheck]] = []
+    post_checks: Optional[List[GenericPrePostCheck]] = []

@@ -2,12 +2,20 @@ import napalm
 
 from backend.core.meta.rediz_meta import write_meta_error
 
+
 class naplm:
 
-    def __init__(self, **kwargs):
-        self.connection_args = kwargs.get("connection_args", False)
-        #convert the netmiko naming format to the native napalm format
-        driver_lookup = {"arista_eos":"eos","juniper":"junos","cisco_xr":"iosxr", "nxos":"nxos", "cisco_nxos_ssh":"nxos_ssh", "cisco_ios":"ios"}
+    def __init__(self, connection_args: dict):
+        self.connection_args = connection_args
+        optional_args = connection_args.setdefault("optional_args", {})
+        if "port" in connection_args:  # valid port in connection_args overwrites invalid result in optional_args
+            port = connection_args.pop("port")
+            if not optional_args.get("port"):
+                optional_args["port"] = port
+
+        # convert the netmiko naming format to the native napalm format
+        driver_lookup = {"arista_eos": "eos", "juniper": "junos", "cisco_xr": "iosxr", "nxos": "nxos",
+                         "cisco_nxos_ssh": "nxos_ssh", "cisco_ios": "ios"}
         self.driver = driver_lookup[self.connection_args.get("device_type", False)]
         self.connection_args["hostname"] = self.connection_args.pop("host")
         del self.connection_args["device_type"]

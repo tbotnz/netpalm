@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
 
 # load models
-from backend.core.models.base_models import TemplateAdd, TemplateRemove
+from backend.core.models.generic_models import TemplateAdd, TemplateRemove
 from backend.core.models.task import ResponseBasic
 from backend.core.redis import reds
 # load routes
