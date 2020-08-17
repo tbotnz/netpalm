@@ -2,20 +2,6 @@
 {#
 !!!! EXAMPLE PAYLOAD AS BELOW
 {
-	"operation": "create",
-	"args":{
-		"hosts":["10.0.2.25","10.0.2.23"],
-	}
-}
-or
-{
-	"operation": "delete",
-	"args":{
-		"hosts":["10.0.2.25","10.0.2.23"],
-	}
-}
-or
-{
 	"operation": "retrieve",
 	"args":{
 		"hosts":["10.0.2.25","10.0.2.23"],
@@ -28,14 +14,6 @@ or
   {
     "supported_methods": [
       {
-        "operation": "create",
-        "payload": {
-          {#
-          insert the payload of a getconfig API CALL
-          #}
-      }
-      },
-      {
         "operation": "retrieve",
         "payload": {
 					"library": "netmiko",
@@ -43,21 +21,13 @@ or
 						"device_type": "{{driver}}",
 						"host": "{{host}}",
 						"username": "{{username}}",
-						"password": "{{password}}"
+						"password": "{{password}}",
 					},
 					"command": "{{command}}",
 					"args":{
 						"use_textfsm": "true"
 					}
         }
-      },
-      {
-        "operation": "delete",
-        "payload": {
-          {#
-          insert the payload of a setconfig API CALL
-          #}
-      }
       }
     ]
   }{% if not loop.last %},{% endif %}{# THIS IS REQUIRED TO CONSTRUCT THE DATA CORRECTLY #}

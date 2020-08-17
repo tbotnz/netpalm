@@ -11,9 +11,11 @@ services:
             - NETPALM_CONFIG=/code/config.json
             - NETPALM_LOG_CONFIG_FILENAME=/code/log-config.yml
         ports:
-            - "9000:9000"
+            - "9001:9000"
         networks:
             - "netpalm-network"
+        volumes:
+            - ./backend/plugins/extensibles:/code/backend/plugins/extensibles
         depends_on:
             - redis
 
@@ -26,7 +28,13 @@ services:
           - NETPALM_CONFIG=/code/config.json
           - NETPALM_LOG_CONFIG_FILENAME=/code/log-config.yml
         depends_on:
+<<<<<<< Updated upstream
           - redis
+=======
+            - netpalm-controller
+        volumes:
+            - ./backend/plugins/extensibles:/code/backend/plugins/extensibles
+>>>>>>> Stashed changes
         networks:
         - "netpalm-network"
 
@@ -39,7 +47,13 @@ services:
           - NETPALM_CONFIG=/code/config.json
           - NETPALM_LOG_CONFIG_FILENAME=/code/log-config.yml
         depends_on:
+<<<<<<< Updated upstream
           - redis
+=======
+            - netpalm-controller
+        volumes:
+            - ./backend/plugins/extensibles:/code/backend/plugins/extensibles
+>>>>>>> Stashed changes
         networks:
         - "netpalm-network"
 

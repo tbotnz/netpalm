@@ -27,6 +27,8 @@ class interface_model(BaseModel):
                     "hosts":["10.0.2.25","10.0.2.23"],
                     "username": "{{device_username}}",
                     "password": "{{device_password}}",
+                    "driver":   "{{driver}}",
+                    "command":  "{{command}}",
                 }
             }
         }
