@@ -11,3 +11,4 @@ jsonschema
 genie
 pydantic
 pyyaml
+cachelib

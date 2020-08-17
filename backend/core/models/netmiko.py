@@ -1,18 +1,14 @@
-from typing import Optional, Set, Any, Dict, List
-from enum import Enum, IntEnum
+from typing import Optional, Any, List
 
-import typing
 from pydantic import BaseModel
 
-from backend.core.models.models import model_j2config
-from backend.core.models.models import model_webhook
-from backend.core.models.models import model_generic_pre_post_check
-from backend.core.models.models import queue_strat
+from backend.core.models.models import GenericPrePostCheck
+from backend.core.models.models import J2Config, CacheConfig
+from backend.core.models.models import QueueStrategy
+from backend.core.models.models import Webhook
 
-class lib_opts_netmiko(str, Enum):
-    netmiko = "netmiko"
 
-class netmiko_send_config_args(BaseModel):
+class NetmikoSendConfigArgs(BaseModel):
     command_string: Optional[str] = None
     expect_string: Optional[str] = None
     delay_factor: Optional[int] = None
@@ -26,13 +22,14 @@ class netmiko_send_config_args(BaseModel):
     use_genie: Optional[bool] = None
     cmd_verify: Optional[bool] = None
 
-class netmiko_base_connection_args(BaseModel):
+
+class NetmikoConnectionArgs(BaseModel):
     ip: Optional[str] = None
     host: Optional[str] = None
     username: str
     password: str
     secret: Optional[str] = None
-    port: int
+    port: Optional[int] = 22
     device_type: str
     verbose: Optional[bool] = None
     global_delay_factor: Optional[int] = None
@@ -58,56 +55,62 @@ class netmiko_base_connection_args(BaseModel):
     serial_settings: Optional[str] = None
     fast_cli: Optional[bool] = None
     session_log: Optional[str] = None
-    session_log_record_writes=False
+    session_log_record_writes = False
     session_log_file_mode: Optional[str] = None
     allow_auto_change: Optional[bool] = None
     encoding: Optional[str] = None
     sock: Optional[bool] = None
     auto_connect: Optional[bool] = None
 
-class model_netmiko_getconfig(BaseModel):
-    library: lib_opts_netmiko
-    connection_args: netmiko_base_connection_args
+
+class NetmikoGetConfig(BaseModel):
+    connection_args: NetmikoConnectionArgs
     command: Optional[Any] = None
-    args: Optional[netmiko_send_config_args] = None
-    webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[queue_strat] = None
-    post_checks: Optional[List[model_generic_pre_post_check]] = None
-    
+    args: Optional[NetmikoSendConfigArgs] = None
+    webhook: Optional[Webhook] = None
+    queue_strategy: Optional[QueueStrategy] = None
+    post_checks: Optional[List[GenericPrePostCheck]] = None
+    cache: Optional[CacheConfig] = {}
+
     class Config:
         schema_extra = {
             "example": {
                 "library": "netmiko",
-                "connection_args":{
-                    "device_type":"cisco_ios", "host":"10.0.2.33", "username":"admin", "password":"admin"
+                "connection_args": {
+                    "device_type": "cisco_ios", "host": "10.0.2.33", "username": "admin", "password": "admin"
                 },
                 "command": "show ip int brief",
-                "args":{
-                    "use_textfsm":True
+                "args": {
+                    "use_textfsm": True
                 },
-                "queue_strategy": "fifo"  
+                "queue_strategy": "fifo",
+                "cache": {
+                    "enabled": True,
+                    "ttl": 300,
+                    "poison": False
+                }
             }
         }
 
-class model_netmiko_setconfig(BaseModel):
-    library: lib_opts_netmiko
+
+class NetmikoSetConfig(BaseModel):
     connection_args: dict
     config: Optional[Any] = None
-    args: Optional[netmiko_send_config_args] = None
-    j2config: Optional[model_j2config] = None
-    webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[queue_strat] = None
-    pre_checks: Optional[List[model_generic_pre_post_check]] = None
-    post_checks: Optional[List[model_generic_pre_post_check]] = None
-    
+    args: Optional[NetmikoSendConfigArgs] = None
+    j2config: Optional[J2Config] = None
+    webhook: Optional[Webhook] = None
+    queue_strategy: Optional[QueueStrategy] = None
+    pre_checks: Optional[List[GenericPrePostCheck]] = None
+    post_checks: Optional[List[GenericPrePostCheck]] = None
+
     class Config:
         schema_extra = {
             "example": {
-            "library": "netmiko",
-            "connection_args":{
-                "device_type":"cisco_ios", "host":"10.0.2.33", "username":"admin", "password":"admin"
-            },
-            "config": ["hostname cat"],
-            "queue_strategy": "pinned"
+                "library": "netmiko",
+                "connection_args": {
+                    "device_type": "cisco_ios", "host": "10.0.2.33", "username": "admin", "password": "admin"
+                },
+                "config": ["hostname cat"],
+                "queue_strategy": "pinned"
             }
         }

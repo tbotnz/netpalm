@@ -1,77 +1,86 @@
-from typing import Optional, Set, Any, Dict, List
-import typing
-from pydantic import BaseModel
-from enum import Enum, IntEnum
+from enum import Enum
+from typing import Optional, Any, List
 
-class queue_strat(str, Enum):
+from pydantic import BaseModel
+
+
+class QueueStrategy(str, Enum):
     fifo = "fifo"
     pinned = "pinned"
 
-class lib_opts_all(str, Enum):
+
+class LibraryName(str, Enum):
     napalm = "napalm"
     ncclient = "ncclient"
     restconf = "restconf"
     netmiko = "netmiko"
 
-class check_enum(str, Enum):
+
+class CheckEnum(str, Enum):
     include = "include"
     exclude = "exclude"
 
-class get_config_args(BaseModel):
+
+class GetConfigArgs(BaseModel):
     command: str
 
-class model_generic_pre_post_check(BaseModel):
-    match_type: check_enum
-    match_str: list
-    get_config_args: get_config_args
 
-class model_webhook(BaseModel):
+class GenericPrePostCheck(BaseModel):
+    match_type: CheckEnum
+    match_str: list
+    get_config_args: GetConfigArgs
+
+
+class Webhook(BaseModel):
     name: Optional[str] = None
     args: Optional[dict] = None
     j2template: Optional[str] = None
 
-class model_j2config(BaseModel):
+
+class J2Config(BaseModel):
     template: str
     args: dict
 
-class model_setconfig_args(BaseModel):
+
+class SetConfigArgs(BaseModel):
     payload: Optional[Any] = None
     target: Optional[str] = None
     config: Optional[str] = None
     uri: Optional[str] = None
     action: Optional[str] = None
 
-class model_setconfig(BaseModel):
-    library: lib_opts_all
+
+class SetConfig(BaseModel):
+    library: LibraryName
     connection_args: dict
     config: Optional[Any] = None
-    j2config: Optional[model_j2config] = None
-    args: Optional[model_setconfig_args] = None
-    webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[queue_strat] = None
-    pre_checks: Optional[List[model_generic_pre_post_check]] = None
-    post_checks: Optional[List[model_generic_pre_post_check]] = None
+    j2config: Optional[J2Config] = None
+    args: Optional[SetConfigArgs] = None
+    webhook: Optional[Webhook] = None
+    queue_strategy: Optional[QueueStrategy] = None
+    pre_checks: Optional[List[GenericPrePostCheck]] = None
+    post_checks: Optional[List[GenericPrePostCheck]] = None
 
     class Config:
         schema_extra = {
             "example": {
-            "library": "napalm",
-            "connection_args": {
-                "device_type": "cisco_ios",
-                "host": "10.0.2.33",
-                "username": "device_username",
-                "password": "device_password"
-            },
+                "library": "napalm",
+                "connection_args": {
+                    "device_type": "cisco_ios",
+                    "host": "10.0.2.33",
+                    "username": "device_username",
+                    "password": "device_password"
+                },
                 "j2config": {
-                "template": "test",
-                "args": {
-                    "vlans": [
-                        "5",
-                        "3",
-                        "2"
-                    ]
-                }
-            },
+                    "template": "test",
+                    "args": {
+                        "vlans": [
+                            "5",
+                            "3",
+                            "2"
+                        ]
+                    }
+                },
             "queue_strategy": "fifo",
             "pre_checks": [
                 {
@@ -99,58 +108,83 @@ class model_setconfig(BaseModel):
         }
 
 
-class model_script(BaseModel):
+class Script(BaseModel):
     script: str
     args: Optional[dict] = None
-    webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[queue_strat] = None
+    webhook: Optional[Webhook] = None
+    queue_strategy: Optional[QueueStrategy] = None
 
     class Config:
         schema_extra = {
             "example": {
-            "script": "hello_world",
-            "args": {
-                "hello": "world"
-            },
-            "queue_strategy": "fifo"
-        }
+                "script": "hello_world",
+                "args": {
+                    "hello": "world"
+                },
+                "queue_strategy": "fifo"
+            }
         }
 
-class model_getconfig(BaseModel):
-    library: lib_opts_all
+
+class CacheConfig(BaseModel):
+    enabled: bool = False
+    ttl: Optional[int] = None
+    poison: Optional[bool] = False
+
+    class Config:
+        schema_extra = {
+            'example': {
+                'enabled': True,
+                'ttl': 300,
+                'poison': False
+            }
+        }
+
+
+class GetConfig(BaseModel):
+    library: LibraryName
     connection_args: dict
     command: Any
-    args: Optional[dict] = None
-    webhook: Optional[model_webhook] = None
-    queue_strategy: Optional[queue_strat] = None
-    post_checks: Optional[List[model_generic_pre_post_check]] = None
+    args: Optional[dict] = {}
+    webhook: Optional[Webhook] = {}
+    queue_strategy: Optional[QueueStrategy] = None
+    post_checks: Optional[List[GenericPrePostCheck]] = []
+    cache: Optional[CacheConfig] = {}
 
     class Config:
         schema_extra = {
             "example": {
-            "library": "netmiko",
-            "connection_args": {
-                "device_type": "cisco_ios",
-                "host": "10.0.2.33",
-                "username": "device_username",
-                "password": "device_password"
-            },
-            "command": "show ip int brief",
-            "args": {
-                "use_textfsm": True
-            },
-            "queue_strategy": "pinned"
-        }
+                "library": "netmiko",
+                "connection_args": {
+                    "device_type": "cisco_ios",
+                    "host": "10.0.2.33",
+                    "username": "device_username",
+                    "password": "device_password"
+                },
+                "command": "show ip int brief",
+                "args": {
+                    "use_textfsm": True
+                },
+                "queue_strategy": "pinned",
+                "cache": {
+                    "enabled": True,
+                    "ttl": 300,
+                    "poison": False
+                }
+            }
         }
 
-class model_template_add(BaseModel):
+
+class TemplateAdd(BaseModel):
     key: str = None
-    driver: str  = None
-    command: str  = None
+    driver: str = None
+    command: str = None
 
-class model_template_remove(BaseModel):
-    template: str  = None
 
-class model_general_error(BaseModel):
-    status: str  = None
-    data: dict  = None
+class TemplateRemove(BaseModel):
+    template: str = None
+
+
+class GeneralError(BaseModel):
+    status: str = None
+    data: dict = None
