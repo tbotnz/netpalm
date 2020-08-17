@@ -126,6 +126,9 @@ docker-compose scale netpalm-controller=1 netpalm-worker-pinned=2 netpalm-worker
     * changes to cache configuration (e.g. changing the TTL, etc)
     * `fifo` vs `pinned` queueing strategy
 
+* Any call to any `/setconfig` route for a given host:port will poison ALL cache entries for that host:port
+    * Except `/setconfig/dry-run` of course 
+
 #### configuring netpalm
 
 edit the config.json file too set params as required
