@@ -1,32 +1,19 @@
 import logging
-import os
 import typing
 from copy import deepcopy
-from pathlib import Path
 from random import randint
 
 import pytest
 from fastapi import HTTPException
 
-pytestmark = pytest.mark.nolab
-log = logging.getLogger(__name__)
-
-# CONFIG_FILENAME = "./config.json"
-# ACTUAL_CONFIG_PATH = Path(CONFIG_FILENAME).absolute()
-#
-# if not ACTUAL_CONFIG_PATH.exists():
-#     ACTUAL_CONFIG_PATH = ACTUAL_CONFIG_PATH.parent.parent / CONFIG_FILENAME  # try ../config.json
-#     if not ACTUAL_CONFIG_PATH.exists():
-#         raise FileNotFoundError(f"Can't run router utils tests without finding config.json, "
-#                                 f"tried looking in {ACTUAL_CONFIG_PATH}")
-#
-# os.environ["NETPALM_CONFIG"] = str(ACTUAL_CONFIG_PATH)
-
 from backend.core.confload import confload
-from routers.route_utils import cacheable_model, http_error_handler, cache_key_from_req_data, poison_host_cache, \
-    serialized_for_hash
 from backend.core.models.models import GetConfig
 from backend.core.redis import rediz
+from routers.route_utils import cacheable_model, http_error_handler, cache_key_from_req_data, poison_host_cache, \
+    serialized_for_hash
+
+pytestmark = pytest.mark.nolab
+log = logging.getLogger(__name__)
 
 cache_key_data = [
     {
