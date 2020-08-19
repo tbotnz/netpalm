@@ -1,0 +1,53 @@
+version: "3.7"
+
+services:
+
+    netpalm-controller:
+        build:
+            context: .
+            dockerfile: ./netpalm_controller_dockerfile
+        environment:
+            - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+            - NETPALM_CONFIG=config.json
+        ports:
+            - "9000:9000"
+        networks:
+            - "netpalm-network"
+        depends_on:
+            - redis
+
+    netpalm-worker-pinned:
+        build:
+            context: .
+            dockerfile: ./netpalm_pinned_worker_dockerfile
+        environment:
+            - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+            - NETPALM_CONFIG=config.json
+        depends_on:
+            - netpalm-controller
+        networks:
+        - "netpalm-network"
+
+    netpalm-worker-fifo:
+        build:
+            context: .
+            dockerfile: ./netpalm_fifo_worker_dockerfile
+        environment:
+            - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+            - NETPALM_CONFIG=config.json
+        depends_on:
+            - netpalm-controller
+        networks:
+        - "netpalm-network"
+
+    redis:
+        image: redis
+        command: redis-server --requirepass Red1zp4ww0rd_
+
+        networks:
+        - "netpalm-network"
+
+networks:
+
+  netpalm-network:
+    name: "netpalm-network"
