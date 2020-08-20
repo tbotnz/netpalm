@@ -40,3 +40,15 @@ def test_netpalm_config_value_precedence(monkeypatch):
     envvar_config = confload.Config(ACTUAL_CONFIG_PATH)
     assert file_config.redis_key == envvar_config.redis_key
     assert envvar_config.redis_server == '123.COM'
+
+
+def test_tfsm_search(monkeypatch):
+    monkeypatch.setenv("NETPALM_TXTFSM_INDEX_FILE", "backend/plugins/extensibles/DOESNOTEXIT/index")
+    config = confload.initialize_config(search_tfsm=False)
+    config.setup_logging(max_debug=True)
+    index_file_path = Path(config.txtfsm_index_file).absolute()
+    assert not index_file_path.exists()
+
+    config = confload.initialize_config()  # search_tfsm must default to True
+    index_file_path = Path(config.txtfsm_index_file).absolute()
+    assert index_file_path.exists()

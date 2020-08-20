@@ -1,4 +1,5 @@
 import json
+import logging
 
 from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -10,6 +11,7 @@ from backend.core.redis import reds
 # load routes
 from backend.core.routes.routes import routes
 
+log = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -33,7 +35,8 @@ async def get_textfsm_template():
 async def add_textfsm_template(template_add: TemplateAdd):
     try:
         req_data = template_add.dict()
-        r = routes["addtemplate"](kwargs=req_data)
+        log.debug(req_data)
+        r = routes["addtemplate"](**req_data)
         resp = jsonable_encoder(r)
         worker_message = {
             "type": "add_textfsm_template",
@@ -49,7 +52,7 @@ async def add_textfsm_template(template_add: TemplateAdd):
 async def delete_textfsm_template(template_remove: TemplateRemove):
     try:
         req_data = template_remove.dict()
-        r = routes["removetemplate"](kwargs=req_data)
+        r = routes["removetemplate"](**req_data)
         resp = jsonable_encoder(r)
         worker_message = {
             "type": "delete_textfsm_template",
