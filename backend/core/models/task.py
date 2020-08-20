@@ -76,3 +76,13 @@ class Response(BaseModel):
 class ResponseBasic(BaseModel):
     status: TaskResponseEnum
     data: dict
+
+class WorkerResponse(BaseModel):
+    hostname: Optional[Any] = None
+    pid: str
+    name: Optional[Any] = None
+    last_heartbeat: Optional[Any] = None
+    birth_date: Optional[Any] = None
+    successful_job_count: Optional[Any] = None
+    failed_job_count: Optional[Any] = None
+    total_working_time: Optional[Any] = None

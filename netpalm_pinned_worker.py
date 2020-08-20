@@ -1,5 +1,6 @@
 import logging
 from multiprocessing import Process
+import uuid
 
 from redis import Redis
 from rq import Queue, Connection, Worker
@@ -30,7 +31,9 @@ def processworker():
         try:
             with Connection(Redis(host=config.redis_server, port=config.redis_port, password=config.redis_key)):
                 q = Queue(config.redis_core_q)
-                worker = Worker(q)
+                u_uid = uuid.uuid4()
+                worker_name = f"{config.redis_core_q}_{u_uid}"
+                worker = Worker(q, name=worker_name)
                 worker.work()
         except Exception as e:
             return e
@@ -40,7 +43,9 @@ def pinned_worker(queue):
     try:
         with Connection(Redis(host=config.redis_server,port=config.redis_port,password=config.redis_key)):
             q = Queue(queue)
-            worker = Worker(q)
+            u_uid = uuid.uuid4()
+            worker_name = f"{queue}_{u_uid}"
+            worker = Worker(q, name=worker_name)
             worker.work()
     except Exception as e:
         return e

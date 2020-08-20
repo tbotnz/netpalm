@@ -1,7 +1,9 @@
+from typing import List
+
 from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
 
-from backend.core.models.task import Response
+from backend.core.models.task import Response, WorkerResponse
 from backend.core.redis import reds
 
 router = APIRouter()
@@ -31,6 +33,16 @@ def get_task_list():
 def get_host_task_list(host: str):
     try:
         r = reds.getjobliststatus(q=host)
+        resp = jsonable_encoder(r)
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split('\n'))
+
+#get all running workers
+@router.get("/workers/", response_model=List[WorkerResponse])
+def get_workers():
+    try:
+        r = reds.get_workers()
         resp = jsonable_encoder(r)
         return resp
     except Exception as e:

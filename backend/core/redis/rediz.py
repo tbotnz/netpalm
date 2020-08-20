@@ -4,12 +4,13 @@ import logging
 
 from cachelib import RedisCache
 from redis import Redis
-from rq import Queue
+from rq import Queue, Worker
+from rq import queue
 from rq.job import Job
 from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegistry
 
 from backend.core.confload.confload import config, Config
-from backend.core.models.task import Response
+from backend.core.models.task import Response, WorkerResponse
 from backend.core.routes import routes
 from netpalm_pinned_worker import pinned_worker_constructor
 
@@ -82,22 +83,43 @@ class Rediz:
             # noinspection PyTypeChecker
             self.cache = DisabledCache()
 
+    def check_worker_is_alive(self, q):
+        """
+        checks if a worker exists on a given queue
+        """
+        try:
+            queue = Queue(q)
+            workers = Worker.all(connection=self.base_connection, queue=queue)
+            if len(workers) >= 1:
+                return True
+        except Exception as e:
+            log.error(f"check_worker_is_alive: {e}")
+            return False
+
     def getqueue(self, host):
+        """
+        checks whether a queue exists and worker exists
+        accross the controller, redis and worker node 
+        """
         #checks a centralised db / queue exists and creates a empty db if one does not exist
         try:
-            #check the db store for something
+            #check the redis db store for a queue
             result = self.base_connection.get(self.networked_queuedb)
             if result:
                 jsresult = json.loads(result)
                 res = jsresult.get(host, False)
-                #check if the local controller queue db is out of sync with the networked db
                 if res:
-                    q_exists_in_local_db = self.local_queuedb.get(host, False)
-                    if not q_exists_in_local_db:
-                        self.local_queuedb[host] = {}
-                        self.local_queuedb[host]["queue"] = Queue(host, connection=self.base_connection)
-                    return True
-                elif not res:
+                    #check the worker is running
+                    if self.check_worker_is_alive(host):
+                        q_exists_in_local_db = self.local_queuedb.get(host, False)
+                        #check if the local controller queue db is out of sync with the networked db
+                        if not q_exists_in_local_db:
+                            self.local_queuedb[host] = {}
+                            self.local_queuedb[host]["queue"] = Queue(host, connection=self.base_connection)
+                        return True
+                    else:
+                        return False
+                else:
                     return False
             else:
                 return False
@@ -116,6 +138,7 @@ class Rediz:
 
     def create_queue_worker(self, qname):
         try:
+            log.info(f"create_queue_worker: creating queue and worker {qname}")
             meta_template = self.get_redis_meta_template()
             result = self.base_connection.get(self.networked_queuedb)
             tmpdb = json.loads(result)
@@ -377,3 +400,31 @@ class Rediz:
         modified_cache_key = ":".join(host_port)
         log.info(f"deleting {modified_cache_key=}")
         return self.cache.clear_keys(modified_cache_key)
+
+    def get_workers(self):
+        """
+        returns stats about all running rq workers
+
+        """
+        try:
+            workers = Worker.all(connection=self.base_connection)
+            result = []
+            for w in workers:
+                w_bd = str(w.birth_date)
+                w_lhb = str(w.last_heartbeat)
+                birth_d = datetime.datetime.strptime(w_bd, "%Y-%m-%d %H:%M:%S.%f")
+                last_hb = datetime.datetime.strptime(w_lhb, "%Y-%m-%d %H:%M:%S.%f")
+                result.append(WorkerResponse(
+                    hostname=w.hostname,
+                    pid=w.pid,
+                    name=w.name,
+                    last_heartbeat=last_hb,
+                    birth_date=birth_d,
+                    successful_job_count=w.successful_job_count,
+                    failed_job_count=w.failed_job_count,
+                    total_working_time=w.total_working_time
+                ).dict())
+            return result
+        except Exception as e:
+            log.error(f"get_workers: {e}")
+            return e
