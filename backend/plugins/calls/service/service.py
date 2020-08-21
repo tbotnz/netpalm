@@ -57,7 +57,6 @@ class service:
             for operation in host["supported_methods"]:
                 if operation["operation"] == posted_operation:
                     res = self.execute_api_call(oper=self.operation_mapping[posted_operation],payload=json.dumps(operation["payload"]))
-                    time.sleep(1)
                     returrn_res.append({
                             "host": operation["payload"]["connection_args"]["host"],
                             "operation": posted_operation,
