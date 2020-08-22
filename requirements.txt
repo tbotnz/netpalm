@@ -17,3 +17,4 @@ pytest-timeout
 aiofiles
 pyyaml
 cachelib
+python-redis-lock

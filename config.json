@@ -19,6 +19,7 @@
     "redis_cache_enabled": true,
     "redis_cache_default_timeout": 300,
     "redis_cache_key_prefix": "NETPALM_RESULT_CACHE",
+    "redis_update_log": "netpalm_extensibles_update_log",
     "pinned_process_per_node": 50,
     "fifo_process_per_node": 10,
     "txtfsm_index_file": "backend/plugins/extensibles/ntc-templates/index",

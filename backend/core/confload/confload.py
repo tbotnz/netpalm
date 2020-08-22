@@ -42,6 +42,7 @@ class Config:
         self.redis_cache_enabled = data["redis_cache_enabled"]
         self.redis_cache_default_timeout = data["redis_cache_default_timeout"]
         self.redis_cache_key_prefix = data["redis_cache_key_prefix"]
+        self.redis_update_log = data["redis_update_log"]
         self.fifo_process_per_node = data["fifo_process_per_node"]
         self.pinned_process_per_node = data["pinned_process_per_node"]
         self.redis_task_timeout = data["redis_task_timeout"]

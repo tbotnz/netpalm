@@ -1,11 +1,14 @@
 import datetime
 import json
 import logging
+from enum import Enum
+from typing import Literal, Union, Dict
 
+import redis_lock
 from cachelib import RedisCache
+from pydantic import BaseModel
 from redis import Redis
 from rq import Queue, Worker
-from rq import queue
 from rq.job import Job
 from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegistry
 
@@ -42,6 +45,97 @@ class DisabledCache:
 
     def __getattr__(self, item):
         return self.always_return_none
+
+
+class ExtnUpdateLogType(str, Enum):
+    tfsm_pull = "TFSM_PULL"
+    init = "INITIALIZE"
+
+
+class ExtnUpdateTFSMPull(BaseModel):
+    key: str
+    driver: str
+    command: str
+
+
+class ExtnUpdateInit(BaseModel):
+    init: Literal[True]  # only here to stop model from greedily matching literally any input
+
+
+extn_update_types = {
+    ExtnUpdateLogType.tfsm_pull: ExtnUpdateTFSMPull,
+    ExtnUpdateLogType.init: ExtnUpdateInit
+}
+
+
+class ExtnUpdateLogEntry(BaseModel):
+    seq: int
+    type: ExtnUpdateLogType
+    data: Union[ExtnUpdateTFSMPull, ExtnUpdateInit]
+
+
+class ExtnUpdateLog:
+    """Class for managing the Extensibles Update Log"""
+
+    def __init__(self, base_connection: Redis, log_name: str, create=True):
+        self.base_connection = base_connection
+        self.log_name = log_name
+        self.lock = redis_lock.Lock(base_connection, config.redis_update_log,
+                                    expire=30, auto_renewal=True)  # lock should only expire if a process dies
+        self.initialize_record = {
+            "seq": 0,
+            "type": ExtnUpdateLogType.init,
+            "data": {"init": True}
+        }
+        if create:
+            self.create(strict=False)
+
+    def clear(self):
+        with self.lock:
+            return self.base_connection.delete(self.log_name)
+
+    def create(self, strict=False):
+
+        if value := self.exists:
+            if strict:
+                raise ValueError("Update log already exists!")
+            return value
+
+        return self.add(self.initialize_record)
+
+    @property
+    def exists(self):
+        return bool(len(self))
+
+    def add(self, item: Union[Dict, ExtnUpdateLogEntry]):
+        with self.lock:
+            if not isinstance(item, ExtnUpdateLogEntry):
+                item = ExtnUpdateLogEntry(**item)  # validate item fits model
+
+            if item.type is ExtnUpdateLogType.init and self.exists:
+                raise ValueError("Tried to add another Initialization Record!")
+
+            item_json = item.json()  # generate json
+            return self.base_connection.rpush(self.log_name, item_json)
+
+    def get(self, index: int) -> ExtnUpdateLogEntry:
+        item_json = self.base_connection.lindex(self.log_name, index)
+        if item_json is None:
+            raise IndexError(f"index {index} out of range")
+        return ExtnUpdateLogEntry.parse_raw(item_json)
+
+    def __len__(self):
+        return self.base_connection.llen(self.log_name)
+
+    def __getitem__(self, index: Union[slice, int]):
+        o_index = index
+        if isinstance(index, slice):
+            return [self[i] for i in range(*index.indices(len(self)))]
+
+        if isinstance(index, int):
+            return self.get(index)
+
+        raise TypeError(f"indices must be integers or slices, not {type(index)}.")
 
 
 class Rediz:
@@ -82,6 +176,7 @@ class Rediz:
             log.info(f"Disabling cache!")
             # noinspection PyTypeChecker
             self.cache = DisabledCache()
+        self.extn_update_log = ExtnUpdateLog(self.base_connection, config.redis_update_log)
 
     def check_worker_is_alive(self, q):
         """
