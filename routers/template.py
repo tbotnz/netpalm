@@ -1,14 +1,16 @@
 import logging
+from typing import Union
 
 from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
 
 # load models
-from backend.core.models.models import TemplateRemove, TemplateAdd
+from backend.core.models.models import TemplateRemove, TemplateAdd, TFSMPushTemplateModel
 from backend.core.models.task import ResponseBasic
 from backend.core.models.transaction_log import TransactionLogEntryType
 # load routes
 from backend.core.routes.routes import routes
+from backend.plugins.utilities.textfsm.template import FSMTemplate
 from routers.route_utils import HttpErrorHandler, add_transaction_log_entry
 
 log = logging.getLogger(__name__)
@@ -18,19 +20,39 @@ router = APIRouter()
 # textfsm template routes
 @router.get("/template", response_model=ResponseBasic)
 @HttpErrorHandler()
-async def get_textfsm_template():
-    r = routes["gettemplate"]()
+async def list_textfsm_templates():
+    r = routes["listtemplates"]()
+    resp = jsonable_encoder(r)
+    return resp
+
+
+# view contents of a template
+@router.get("/template/{tmpname}", response_model=ResponseBasic)
+@HttpErrorHandler()
+async def get_textfsm_template(tmpname: str):
+    r = routes["gettemplate"](template=tmpname)
     resp = jsonable_encoder(r)
     return resp
 
 
 @router.post("/template", response_model=ResponseBasic, status_code=201)
 @HttpErrorHandler()
-async def add_textfsm_template(template_add: TemplateAdd):
+async def add_textfsm_template(template_add: Union[TemplateAdd, TFSMPushTemplateModel]):
     req_data = template_add.dict()
     log.debug(req_data)
-    resp = routes["addtemplate"](**req_data)
-    add_transaction_log_entry(entry_type=TransactionLogEntryType.tfsm_pull, data=req_data)
+    if isinstance(template_add, TemplateAdd):
+        entry_type = TransactionLogEntryType.tfsm_pull
+        log.debug(f"{entry_type=}")
+        template_obj = FSMTemplate(**req_data)
+        template_text = template_obj.fetch_template()
+        req_data["template_text"] = template_text
+        req_data.pop("key")
+
+    entry_type = TransactionLogEntryType.tfsm_push
+    log.debug(f"{entry_type=}")
+    resp = routes["pushtemplate"](**req_data)
+
+    add_transaction_log_entry(entry_type=entry_type, data=req_data)
     return resp
 
 

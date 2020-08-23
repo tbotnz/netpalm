@@ -9,7 +9,7 @@ from redis import Redis
 from backend.core.confload.confload import config
 from backend.core.models.transaction_log import TransactionLogEntryModel, TransactionLogEntryType
 from backend.core.redis import reds, Rediz
-from backend.plugins.utilities.textfsm.template import gettemplate, addtemplate, removetemplate
+from backend.plugins.utilities.textfsm.template import listtemplates, addtemplate, removetemplate, pushtemplate
 
 log = logging.getLogger(__name__)
 #
@@ -48,7 +48,8 @@ class UpdateLogProcessor:
             TransactionLogEntryType.init: lambda **x: True,  # nothing to do
             TransactionLogEntryType.echo: handle_ping,
             TransactionLogEntryType.tfsm_pull: handle_add_template,
-            TransactionLogEntryType.tfsm_delete: handle_delete_template
+            TransactionLogEntryType.tfsm_delete: handle_delete_template,
+            TransactionLogEntryType.tfsm_push: handle_push_template
         }
 
         handler = handlers[entry.type]
@@ -83,9 +84,20 @@ def handle_add_template(**kwargs):
     log.info(f"Result: {result['data']}")
 
 
+def handle_push_template(**kwargs):
+    log.debug(f"handle_push_template(): got {kwargs}")
+    result = pushtemplate(**kwargs)
+    status = result["status"]
+    if status == "error":
+        log.error(f"Failed to push template {kwargs} with error: {result['data']}")
+        return
+
+    log.info(f"Result: {result['data']}")
+
+
 def handle_get_template(**kwargs):
     log.debug(f"handle_get_template(): got {kwargs}")
-    result = gettemplate(**kwargs)
+    result = listtemplates(**kwargs)
     status = result["status"]
     if status == "error":
         log.error(f"Failed to get templates {kwargs} with error: {result['data']}")

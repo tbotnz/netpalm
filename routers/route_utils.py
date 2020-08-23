@@ -208,6 +208,7 @@ def error_handle_w_cache(f):
 
 
 def add_transaction_log_entry(entry_type: TransactionLogEntryType, data: Dict):
+    log.debug(f"Adding {entry_type}: {data}")
     item_dict = {
         "type": entry_type,
         "data": data
