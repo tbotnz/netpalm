@@ -1,14 +1,70 @@
 import json
 import logging.config
+import multiprocessing
 import typing
 from multiprocessing.context import Process
 
 from redis import Redis
 
 from backend.core.confload.confload import config
+from backend.core.models.transaction_log import TransactionLogEntryModel, TransactionLogEntryType
+from backend.core.redis import reds, Rediz
 from backend.plugins.utilities.textfsm.template import gettemplate, addtemplate, removetemplate
 
 log = logging.getLogger(__name__)
+#
+update_log_lock = multiprocessing.Lock()
+
+
+class UpdateLogProcessor:
+    def __init__(self, reds: Rediz):  # quotes to avoid import issues
+        self.lock = update_log_lock  # Purpose of this lock is to stop multiple processes (ex. gunicorn workers)
+        # from processing the update log at once
+        self.log = reds.extn_update_log
+        self.last_seq_number = -1  # last sequence number handled.  -1 == not initialized
+
+    def _get_lock(self):
+        return self.lock.acquire(block=False)
+
+    def _release_lock(self):
+        return self.lock.release()
+
+    def process_log(self, **kwargs):
+        log.info(f"Processing update transaction log")
+        rslt = 0
+        with self.lock:
+            log.info(f"Got lock for transaction log processing")
+            new_entries = self.log[self.last_seq_number + 1:]
+            for entry in new_entries:
+                self.process_entry(entry)
+            rslt = len(new_entries)
+        return rslt
+
+    def process_entry(self, entry: TransactionLogEntryModel):
+        if (self.last_seq_number != entry.seq - 1):
+            raise RuntimeError(f"Can't process {entry.seq} after {self.last_seq_number}!")
+
+        handlers = {
+            TransactionLogEntryType.init: lambda **x: True,  # nothing to do
+            TransactionLogEntryType.echo: handle_ping,
+            TransactionLogEntryType.tfsm_pull: handle_add_template,
+            TransactionLogEntryType.tfsm_delete: handle_delete_template
+        }
+
+        handler = handlers[entry.type]
+        try:
+            result = handler(**dict(entry.data))
+        except KeyError:
+            raise NotImplementedError(f"Can't handle {entry.type=}")
+        self.last_seq_number = entry.seq
+        return result
+
+
+update_log_processor = UpdateLogProcessor(reds)
+
+
+def handle_echo(msg: str):
+    log.info(f"Echoing msg: {msg}")
 
 
 def handle_ping(**kwargs):
@@ -40,6 +96,12 @@ def handle_get_template(**kwargs):
 
 def handle_delete_template(**kwargs):
     log.debug(f"handle_delete_template(): got {kwargs}")
+    try:  # normalize key names
+        fsm_template = kwargs.pop("fsm_template")
+        kwargs["template"] = fsm_template
+    except KeyError:
+        pass
+
     result = removetemplate(**kwargs)
     status = result["status"]
     if status == "error":
@@ -49,7 +111,7 @@ def handle_delete_template(**kwargs):
     log.info(f'Result: {result["data"]}')
 
 
-def handle_broadcast_message(broadcast_msg: typing.Dict):
+def handle_broadcast_message(broadcast_msg: typing.Dict, base_connection: Redis):
     try:
         msg_bytes = broadcast_msg["data"]
         data = msg_bytes.decode()
@@ -69,9 +131,7 @@ def handle_broadcast_message(broadcast_msg: typing.Dict):
 
     handlers = {
         "ping": handle_ping,
-        "add_textfsm_template": handle_add_template,
-        "get_textfsm_template": handle_get_template,
-        "delete_textfsm_template": handle_delete_template
+        "process_update_log": update_log_processor.process_log,
     }
     msg_type = data["type"]
     if msg_type not in handlers:
@@ -84,6 +144,9 @@ def handle_broadcast_message(broadcast_msg: typing.Dict):
 
 def broadcast_queue_worker(queue_name):
     try:
+        log.info(f"Before listening for broadcasts, first check the log")
+        update_log_processor.process_log()
+
         redis = Redis(host=config.redis_server,
                       port=config.redis_port,
                       password=config.redis_key)
@@ -93,7 +156,7 @@ def broadcast_queue_worker(queue_name):
         log.info("Listening for broadcasts")
         for broadcast_msg in pubsub.listen():
             try:
-                handle_broadcast_message(broadcast_msg)
+                handle_broadcast_message(broadcast_msg, redis)
             except Exception as e:
                 log.exception("Error in broadcast queue handler")
 

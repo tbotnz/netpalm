@@ -9,7 +9,7 @@ pytestmark = pytest.mark.nolab
 
 from backend.core.confload import confload
 from backend.core.redis import reds
-from backend.core.redis.rediz import ExtnUpdateLog, ExtnUpdateLogType, ExtnUpdateLogEntry
+from backend.core.redis.rediz import ExtnUpdateLog, TransactionLogEntryType, TransactionLogEntryModel
 
 
 @pytest.fixture(scope="function")
@@ -25,14 +25,16 @@ def test_extensible_update_lock_behavior():
 
     with lock:  # should work
         assert lock.locked()
+
         with pytest.raises(redis_lock.AlreadyAcquired):
-            with lock:  # should fail
+            with lock:
                 pass
+
         with pytest.raises(redis_lock.AlreadyAcquired):
             lock.acquire()
 
         new_lock = redis_lock.Lock(reds.base_connection, config.redis_update_log)
-        assert not new_lock.acquire(blocking=False)
+        assert not new_lock.acquire(blocking=False)  # proving 'acquire' fails with a new instance
 
 
 def test_extensible_update_log_creation(clean_log):
@@ -44,7 +46,7 @@ def test_extensible_update_log_creation(clean_log):
     new_log_obj = ExtnUpdateLog(reds.base_connection, reds.extn_update_log.log_name)
     assert new_log_obj.exists
 
-    assert new_log_obj.get(-1).type is ExtnUpdateLogType.init
+    assert new_log_obj.get(-1).type is TransactionLogEntryType.init
 
 
 def test_extensible_update_log_add_fetch(clean_log):
@@ -52,7 +54,7 @@ def test_extensible_update_log_add_fetch(clean_log):
     reds.extn_update_log.create(strict=True)
 
     item_1_dict = {
-        "type": ExtnUpdateLogType.tfsm_pull,
+        "type": TransactionLogEntryType.tfsm_pull,
         "data": {
             "key": "123_432",
             "driver": "dell_force10",
@@ -60,32 +62,27 @@ def test_extensible_update_log_add_fetch(clean_log):
         }
     }
     item_2_dict = {
-        "type": ExtnUpdateLogType.tfsm_pull,
+        "type": TransactionLogEntryType.tfsm_pull,
         "data": {
             "key": "999_876",
             "driver": "cisco_ios",
             "command": "show version"
         }
     }
-    item_3_dict = {
-        "type": ExtnUpdateLogType.init,
+    init_dict = {
+        "type": TransactionLogEntryType.init,
         "data": {
             "init": True
         }
     }
-    item_dicts = [item_1_dict, item_2_dict, item_3_dict]
-    items = [ExtnUpdateLogEntry(seq=index, **item_dict)
+    item_dicts = [item_1_dict, item_2_dict]
+    items = [TransactionLogEntryModel(seq=index, **item_dict)
              for index, item_dict in enumerate(item_dicts, start=1)]
 
     pprint(items)
 
-    with pytest.raises(ValueError):  # there can be only 1 init records are only valid at very start
-        extn_update_log.add(items[-1])
-    with pytest.raises(ValueError):
-        extn_update_log.add(items[-1].dict())
-
-    del item_dicts[2]
-    del items[2]  # get rid of item_3
+    with pytest.raises(ValueError):  # init records are only valid at very start
+        extn_update_log.add(init_dict)
 
     assert (start_len := len(extn_update_log)) == 1  # should only have the init record now
 
@@ -107,3 +104,36 @@ def test_extensible_update_log_add_fetch(clean_log):
 
     for item in extn_update_log:
         print(item)  # proves the we can iterate over the log like a list
+
+
+def test_update_log_processor(clean_log):
+    from netpalm_worker_common import UpdateLogProcessor, update_log_processor
+    up = update_log_processor
+    additional_up = UpdateLogProcessor(reds)
+
+    echo_dict = {
+        "type": TransactionLogEntryType.echo,
+        "data": {
+            "msg": "echo? ?   ECHO!!"
+        }
+    }
+    assert up._get_lock()
+    assert not additional_up._get_lock()
+    up._release_lock()
+
+    extn_update_log = reds.extn_update_log
+    extn_update_log.create(strict=True)
+
+    assert up.last_seq_number is -1
+
+    assert up.process_log() == 1
+
+    assert up.last_seq_number == 0
+
+    for item in [echo_dict] * 3:
+        extn_update_log.add(item)
+
+    assert len(extn_update_log) == 4
+
+    assert up.process_log() == 3
+    assert up.last_seq_number == 3

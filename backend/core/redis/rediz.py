@@ -1,12 +1,10 @@
 import datetime
 import json
 import logging
-from enum import Enum
-from typing import Literal, Union, Dict
+from typing import Union, Dict, List
 
 import redis_lock
 from cachelib import RedisCache
-from pydantic import BaseModel
 from redis import Redis
 from rq import Queue, Worker
 from rq.job import Job
@@ -14,8 +12,8 @@ from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegist
 
 from backend.core.confload.confload import config, Config
 from backend.core.models.task import Response, WorkerResponse
+from backend.core.models.transaction_log import TransactionLogEntryModel, TransactionLogEntryType
 from backend.core.routes import routes
-from netpalm_pinned_worker import pinned_worker_constructor
 
 log = logging.getLogger(__name__)
 
@@ -47,44 +45,17 @@ class DisabledCache:
         return self.always_return_none
 
 
-class ExtnUpdateLogType(str, Enum):
-    tfsm_pull = "TFSM_PULL"
-    init = "INITIALIZE"
-
-
-class ExtnUpdateTFSMPull(BaseModel):
-    key: str
-    driver: str
-    command: str
-
-
-class ExtnUpdateInit(BaseModel):
-    init: Literal[True]  # only here to stop model from greedily matching literally any input
-
-
-extn_update_types = {
-    ExtnUpdateLogType.tfsm_pull: ExtnUpdateTFSMPull,
-    ExtnUpdateLogType.init: ExtnUpdateInit
-}
-
-
-class ExtnUpdateLogEntry(BaseModel):
-    seq: int
-    type: ExtnUpdateLogType
-    data: Union[ExtnUpdateTFSMPull, ExtnUpdateInit]
-
-
 class ExtnUpdateLog:
     """Class for managing the Extensibles Update Log"""
 
     def __init__(self, base_connection: Redis, log_name: str, create=True):
         self.base_connection = base_connection
         self.log_name = log_name
+        # scope of this lock is to prevent more than one controller from changing log at once
         self.lock = redis_lock.Lock(base_connection, config.redis_update_log,
                                     expire=30, auto_renewal=True)  # lock should only expire if a process dies
         self.initialize_record = {
-            "seq": 0,
-            "type": ExtnUpdateLogType.init,
+            "type": TransactionLogEntryType.init,
             "data": {"init": True}
         }
         if create:
@@ -107,29 +78,33 @@ class ExtnUpdateLog:
     def exists(self):
         return bool(len(self))
 
-    def add(self, item: Union[Dict, ExtnUpdateLogEntry]):
+    def add(self, item: Union[Dict, TransactionLogEntryModel]):
         with self.lock:
-            if not isinstance(item, ExtnUpdateLogEntry):
-                item = ExtnUpdateLogEntry(**item)  # validate item fits model
+            next_seq = len(self)
+            if not isinstance(item, TransactionLogEntryModel):
+                item["seq"] = next_seq
+                item = TransactionLogEntryModel(**item)  # validate item fits model
+            elif item.seq != next_seq:
+                raise RuntimeError(f"Invalid next seq specified!  Expected {next_seq}, got {item.seq}")
 
-            if item.type is ExtnUpdateLogType.init and self.exists:
+            if item.type is TransactionLogEntryType.init and self.exists:
                 raise ValueError("Tried to add another Initialization Record!")
 
             item_json = item.json()  # generate json
             return self.base_connection.rpush(self.log_name, item_json)
 
-    def get(self, index: int) -> ExtnUpdateLogEntry:
+    def get(self, index: int) -> TransactionLogEntryModel:
         item_json = self.base_connection.lindex(self.log_name, index)
         if item_json is None:
             raise IndexError(f"index {index} out of range")
-        return ExtnUpdateLogEntry.parse_raw(item_json)
+        return TransactionLogEntryModel.parse_raw(item_json)
 
     def __len__(self):
         return self.base_connection.llen(self.log_name)
 
-    def __getitem__(self, index: Union[slice, int]):
+    def __getitem__(self, index: Union[slice, int]) -> Union[TransactionLogEntryModel, List[TransactionLogEntryModel]]:
         o_index = index
-        if isinstance(index, slice):
+        if isinstance(index, slice):  # Adapted from https://stackoverflow.com/a/9951672/4875534
             return [self[i] for i in range(*index.indices(len(self)))]
 
         if isinstance(index, int):
@@ -232,6 +207,7 @@ class Rediz:
         return meta_template
 
     def create_queue_worker(self, qname):
+        from netpalm_pinned_worker import pinned_worker_constructor
         try:
             log.info(f"create_queue_worker: creating queue and worker {qname}")
             meta_template = self.get_redis_meta_template()

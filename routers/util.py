@@ -9,7 +9,7 @@ from starlette.responses import RedirectResponse
 # load config
 from backend.core.confload.confload import config
 from backend.core.redis import reds
-from routers.route_utils import http_error_handler
+from routers.route_utils import HttpErrorHandler
 
 log = logging.getLogger(__name__)
 router = APIRouter()
@@ -39,7 +39,7 @@ async def ping():
 
 # utility route - flush cache
 @router.delete("/cache")
-@http_error_handler
+@HttpErrorHandler()
 def flush_cache(fail: Optional[bool] = Query(False, title="Fail", description="Fail on purpose")):
     if fail:
         raise RuntimeError(f"Failing on Purpose")
@@ -53,7 +53,7 @@ def flush_cache(fail: Optional[bool] = Query(False, title="Fail", description="F
 
 # utility route - flush cache for single device
 @router.delete("/cache/{cache_key}")
-@http_error_handler
+@HttpErrorHandler()
 def flush_cache_device(
         cache_key: str = Path(...,
                               title="The cache key to invalidate",
@@ -68,7 +68,7 @@ def flush_cache_device(
 
 
 @router.get("/cache")
-@http_error_handler
+@HttpErrorHandler()
 def get_cache():
     log.info(f"Getting cache info")
     keys = reds.cache.keys()
@@ -80,7 +80,7 @@ def get_cache():
 
 
 @router.get("/cache/{cache_key}")
-@http_error_handler
+@HttpErrorHandler()
 def get_cache_item(
         cache_key: str = Path(...,
                               title="The cache key to retrieve",

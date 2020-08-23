@@ -18,3 +18,4 @@ aiofiles
 pyyaml
 cachelib
 python-redis-lock
+filelock
