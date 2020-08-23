@@ -1,4 +1,3 @@
-import json
 import logging
 
 from fastapi import APIRouter, HTTPException
@@ -8,7 +7,6 @@ from fastapi.encoders import jsonable_encoder
 from backend.core.models.models import TemplateRemove, TemplateAdd
 from backend.core.models.task import ResponseBasic
 from backend.core.models.transaction_log import TransactionLogEntryType
-from backend.core.redis import reds
 # load routes
 from backend.core.routes.routes import routes
 from routers.route_utils import HttpErrorHandler, add_transaction_log_entry
@@ -19,18 +17,11 @@ router = APIRouter()
 
 # textfsm template routes
 @router.get("/template", response_model=ResponseBasic)
+@HttpErrorHandler()
 async def get_textfsm_template():
-    try:
-        r = routes["gettemplate"]()
-        worker_message = {
-            "type": "get_textfsm_template",
-            "kwargs": {}
-        }
-        reds.send_broadcast(json.dumps(worker_message))
-        resp = jsonable_encoder(r)
-        return resp
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e).split("\n"))
+    r = routes["gettemplate"]()
+    resp = jsonable_encoder(r)
+    return resp
 
 
 @router.post("/template", response_model=ResponseBasic, status_code=201)
