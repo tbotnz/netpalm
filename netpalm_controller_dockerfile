@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.8
 WORKDIR /usr/local/lib/python3.8/site-packages
 RUN apt-get update
 RUN apt-get install -y git
