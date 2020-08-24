@@ -17,6 +17,27 @@ class FSMTemplate:
         self.kwargs = kwargs
         self.indexfile = config.txtfsm_index_file
 
+    def get_template(self):
+        base_path = config.txtfsm_index_file.replace("index", "")
+        template_filename = self.kwargs["template"]
+        file_path = base_path + template_filename
+        # try:
+        with open(file_path) as infil:  # deliberately letting errors propagate right now
+            template_text = infil.read()
+        # except FileNotFoundError:
+        #     log.warning(f"Tried to delete {file_path} but it wasn't there!  Cleaning index anyway")
+        #
+        result_data = {
+            "status": "success",
+            "data": {
+                "task_result": {
+                    "template": template_filename,
+                    "template_text": template_text
+                }
+            }
+        }
+        return result_data
+
     def get_template_list(self):
         res = defaultdict(list)  # defaultdict doesn't require initialization
 
@@ -38,17 +59,26 @@ class FSMTemplate:
         }
         return result_data
 
-    def add_template(self):
-        # prepare args
+    def fetch_template(self):
         download_filename = self.kwargs["key"].split("_")[0]
+
+        # get template text
+        template_url = f"{config.txtfsm_template_server}/static/fsms/{download_filename}.txt"
+        template_text = get(template_url, timeout=10).text
+        return template_text
+
+    def add_template(self):
+        self.kwargs["template_text"] = self.fetch_template()
+        return self.push_template()
+
+    def push_template(self):
+        # prepare args
         command = self.kwargs["command"].replace(" ", "_")
         template_filename = f"{self.kwargs['driver']}_{command}.template"
         base_path = config.txtfsm_index_file.replace("index", "")
         template_path = base_path + template_filename
 
-        # get and write
-        template_url = f"{config.txtfsm_template_server}/static/fsms/{download_filename}.txt"
-        template_text = get(template_url, timeout=10).text
+        template_text = self.kwargs["template_text"]
         with open(template_path, "w") as file:
             file.write(template_text)
 
@@ -139,9 +169,16 @@ def return_errors(f):
 
 
 @return_errors
-def gettemplate():
+def listtemplates():
     t = FSMTemplate()
     res = t.get_template_list()
+    return res
+
+
+@return_errors
+def gettemplate(**kwargs):
+    t = FSMTemplate(**kwargs)
+    res = t.get_template()
     return res
 
 
@@ -149,6 +186,13 @@ def gettemplate():
 def addtemplate(**kwargs):
     t = FSMTemplate(**kwargs)
     res = t.add_template()
+    return res
+
+
+@return_errors
+def pushtemplate(**kwargs):
+    t = FSMTemplate(**kwargs)
+    res = t.push_template()
     return res
 
 

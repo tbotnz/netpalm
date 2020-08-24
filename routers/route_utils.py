@@ -1,32 +1,59 @@
 """netpalm/routers/utils.py  Utility functions/classes for API routers"""
+import asyncio
 import hashlib
+import json
+import logging
+from contextlib import contextmanager
 from copy import deepcopy
+from enum import Enum
 from functools import wraps
 from itertools import chain
-import logging
+from typing import Dict
 
 from fastapi import HTTPException
 from pydantic import BaseModel
-from enum import Enum
 
+from backend.core.models.transaction_log import TransactionLogEntryType
 from backend.core.redis import reds
 
 log = logging.getLogger(__name__)
 
 
-def http_error_handler(f):
-    """catch all errors, log and raise an HTTPException"""
+class SyncAsyncDecoratorFactory:
+    """Courtesy of StackOverflow & Github user https://gist.github.com/anatoly-kussul
+    https://gist.github.com/anatoly-kussul/f2d7444443399e51e2f83a76f112364d/ff1f94b1bd07741ce209cc61832f920adb49aedf"""
 
-    @wraps(f)
-    def wrapper(*args, **kwargs):
+    @contextmanager
+    def wrapper(self, func, *args, **kwargs):
+        yield
+
+    def __call__(self, func):
+        @wraps(func)
+        def sync_wrapper(*args, **kwargs):
+            with self.wrapper(func, *args, **kwargs):
+                return func(*args, **kwargs)
+
+        @wraps(func)
+        async def async_wrapper(*args, **kwargs):
+            with self.wrapper(func, *args, **kwargs):
+                return await func(*args, **kwargs)
+
+        if asyncio.iscoroutinefunction(func):
+            return async_wrapper
+        else:
+            return sync_wrapper
+
+
+class HttpErrorHandler(SyncAsyncDecoratorFactory):
+    @contextmanager
+    def wrapper(self, *args, **kwargs):
         try:
-            log.debug(f'calling {f.__name__}')
-            return f(*args, **kwargs)
+            yield
+        except asyncio.CancelledError:
+            raise
         except Exception as e:
-            log.exception(f"{e}")
+            log.exception(f"Error Log: {e}")
             raise HTTPException(status_code=500, detail=str(e).split("\n"))
-
-    return wrapper
 
 
 def cache_key_from_model(model: BaseModel) -> str:
@@ -115,6 +142,7 @@ def cache_key_from_req_data(req_data: dict, unsafe_logging: bool = False) -> str
 
 
 def poison_host_cache(f):
+    """THIS IS PROBABLY NOT ASYNC SAFE YET"""
     @wraps(f)
     def wrapper(*args, **kwargs):
         model = [
@@ -131,7 +159,8 @@ def poison_host_cache(f):
 
 
 def cacheable_model(f):
-    """Cache results according to global and per-request cache config.
+    """THIS IS PROBABLY NOT ASYNC SAFE YET
+    Cache results according to global and per-request cache config.
     ONLY APPLICABLE TO ROUTES WITH DEFINED MODELS THAT INCLUDE CACHE CONFIG"""
 
     @wraps(f)
@@ -167,10 +196,26 @@ def cacheable_model(f):
 
 
 def error_handle_w_cache(f):
+    """THIS IS PROBABLY NOT ASYNC SAFE YET"""
+
     @wraps(f)
-    @http_error_handler
+    @HttpErrorHandler()
     @cacheable_model
     def wrapper(*args, **kwargs):
         return f(*args, **kwargs)
 
     return wrapper
+
+
+def add_transaction_log_entry(entry_type: TransactionLogEntryType, data: Dict):
+    log.debug(f"Adding {entry_type}: {data}")
+    item_dict = {
+        "type": entry_type,
+        "data": data
+    }
+    reds.extn_update_log.add(item_dict)
+    worker_message = {
+        "type": "process_update_log",
+        "kwargs": {}
+    }
+    reds.send_broadcast(json.dumps(worker_message))

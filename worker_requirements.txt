@@ -12,3 +12,5 @@ genie
 pydantic
 pyyaml
 cachelib
+python-redis-lock
+filelock

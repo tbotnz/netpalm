@@ -9,7 +9,7 @@ from fastapi import HTTPException
 from backend.core.confload import confload
 from backend.core.models.models import GetConfig
 from backend.core.redis import rediz
-from routers.route_utils import cacheable_model, http_error_handler, cache_key_from_req_data, poison_host_cache, \
+from routers.route_utils import cacheable_model, HttpErrorHandler, cache_key_from_req_data, poison_host_cache, \
     serialized_for_hash
 
 pytestmark = pytest.mark.nolab
@@ -100,7 +100,7 @@ def test_http_error_handler_raises():
     with pytest.raises(RuntimeError):
         foo()
 
-    foo = http_error_handler(foo)
+    foo = HttpErrorHandler()(foo)
     log.error(f"\nA small traceback following this message is expected")
     with pytest.raises(HTTPException):
         foo()

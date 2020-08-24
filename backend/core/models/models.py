@@ -175,10 +175,16 @@ class GetConfig(BaseModel):
         }
 
 
+class TFSMPushTemplateModel(BaseModel):
+    driver: str
+    command: str
+    template_text: str
+
+
 class TemplateAdd(BaseModel):
-    key: str = None
-    driver: str = None
-    command: str = None
+    key: str
+    driver: str
+    command: str
 
 
 class TemplateRemove(BaseModel):

@@ -1,18 +1,19 @@
 import datetime
 import json
 import logging
+from typing import Union, Dict, List
 
+import redis_lock
 from cachelib import RedisCache
 from redis import Redis
 from rq import Queue, Worker
-from rq import queue
 from rq.job import Job
 from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegistry
 
 from backend.core.confload.confload import config, Config
 from backend.core.models.task import Response, WorkerResponse
+from backend.core.models.transaction_log import TransactionLogEntryModel, TransactionLogEntryType
 from backend.core.routes import routes
-from netpalm_pinned_worker import pinned_worker_constructor
 
 log = logging.getLogger(__name__)
 
@@ -42,6 +43,74 @@ class DisabledCache:
 
     def __getattr__(self, item):
         return self.always_return_none
+
+
+class ExtnUpdateLog:
+    """Class for managing the Extensibles Update Log"""
+
+    def __init__(self, base_connection: Redis, log_name: str, create=True):
+        self.base_connection = base_connection
+        self.log_name = log_name
+        # scope of this lock is to prevent more than one controller from changing log at once
+        self.lock = redis_lock.Lock(base_connection, config.redis_update_log,
+                                    expire=30, auto_renewal=True)  # lock should only expire if a process dies
+        self.initialize_record = {
+            "type": TransactionLogEntryType.init,
+            "data": {"init": True}
+        }
+        if create:
+            self.create(strict=False)
+
+    def clear(self):
+        with self.lock:
+            return self.base_connection.delete(self.log_name)
+
+    def create(self, strict=False):
+
+        if value := self.exists:
+            if strict:
+                raise ValueError("Update log already exists!")
+            return value
+
+        return self.add(self.initialize_record)
+
+    @property
+    def exists(self):
+        return bool(len(self))
+
+    def add(self, item: Union[Dict, TransactionLogEntryModel]):
+        with self.lock:
+            next_seq = len(self)
+            if not isinstance(item, TransactionLogEntryModel):
+                item["seq"] = next_seq
+                item = TransactionLogEntryModel(**item)  # validate item fits model
+            elif item.seq != next_seq:
+                raise RuntimeError(f"Invalid next seq specified!  Expected {next_seq}, got {item.seq}")
+
+            if item.type is TransactionLogEntryType.init and self.exists:
+                raise ValueError("Tried to add another Initialization Record!")
+
+            item_json = item.json()  # generate json
+            return self.base_connection.rpush(self.log_name, item_json)
+
+    def get(self, index: int) -> TransactionLogEntryModel:
+        item_json = self.base_connection.lindex(self.log_name, index)
+        if item_json is None:
+            raise IndexError(f"index {index} out of range")
+        return TransactionLogEntryModel.parse_raw(item_json)
+
+    def __len__(self):
+        return self.base_connection.llen(self.log_name)
+
+    def __getitem__(self, index: Union[slice, int]) -> Union[TransactionLogEntryModel, List[TransactionLogEntryModel]]:
+        o_index = index
+        if isinstance(index, slice):  # Adapted from https://stackoverflow.com/a/9951672/4875534
+            return [self[i] for i in range(*index.indices(len(self)))]
+
+        if isinstance(index, int):
+            return self.get(index)
+
+        raise TypeError(f"indices must be integers or slices, not {type(index)}.")
 
 
 class Rediz:
@@ -82,6 +151,7 @@ class Rediz:
             log.info(f"Disabling cache!")
             # noinspection PyTypeChecker
             self.cache = DisabledCache()
+        self.extn_update_log = ExtnUpdateLog(self.base_connection, config.redis_update_log)
 
     def check_worker_is_alive(self, q):
         """
@@ -137,6 +207,7 @@ class Rediz:
         return meta_template
 
     def create_queue_worker(self, qname):
+        from netpalm_pinned_worker import pinned_worker_constructor
         try:
             log.info(f"create_queue_worker: creating queue and worker {qname}")
             meta_template = self.get_redis_meta_template()
