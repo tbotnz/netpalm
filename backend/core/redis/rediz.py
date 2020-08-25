@@ -127,7 +127,16 @@ class Rediz:
         self.task_result_ttl = config.redis_task_result_ttl
         self.routes = routes.routes
         self.core_q = config.redis_core_q
-        self.base_connection = Redis(host=self.server, port=self.port, password=self.key)
+        # config check if TLS required
+        if config.redis_tls_enabled:
+            self.base_connection = Redis(host=self.server, port=self.port, password=self.key,
+                                        ssl=True,
+                                        ssl_cert_reqs='required',
+                                        ssl_keyfile=config.redis_tls_key_file,
+                                        ssl_certfile=config.redis_tls_cert_file,
+                                        ssl_ca_certs=config.redis_tls_ca_cert_file)
+        else:
+            self.base_connection = Redis(host=self.server, port=self.port, password=self.key)
         self.base_q = Queue(self.core_q, connection=self.base_connection)
         self.networked_queuedb = config.redis_queue_store
         self.local_queuedb = {}

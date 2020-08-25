@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 pytestmark = pytest.mark.nolab
 
-CONFIG_FILENAME = "./config.json"
+CONFIG_FILENAME = "config.json"
 ACTUAL_CONFIG_PATH = Path(CONFIG_FILENAME).absolute()
 
 if not ACTUAL_CONFIG_PATH.exists():

@@ -43,6 +43,10 @@ class Config:
         self.redis_cache_default_timeout = data["redis_cache_default_timeout"]
         self.redis_cache_key_prefix = data["redis_cache_key_prefix"]
         self.redis_update_log = data["redis_update_log"]
+        self.redis_tls_cert_file = data["redis_tls_cert_file"]
+        self.redis_tls_key_file = data["redis_tls_key_file"]
+        self.redis_tls_ca_cert_file = data["redis_tls_ca_cert_file"]
+        self.redis_tls_enabled = data["redis_tls_enabled"]
         self.fifo_process_per_node = data["fifo_process_per_node"]
         self.pinned_process_per_node = data["pinned_process_per_node"]
         self.redis_task_timeout = data["redis_task_timeout"]
@@ -60,6 +64,16 @@ class Config:
         self.custom_webhooks = data["custom_webhooks"]
         self.webhook_jinja2_templates = data["webhook_jinja2_templates"]
         self.log_config_filename = data["log_config_filename"]
+
+        #load tls
+        try:
+            log.info(f"confload: opening TLS files")
+            tls_files = [self.redis_tls_cert_file, self.redis_tls_key_file, self.redis_tls_ca_cert_file]
+            for tlsf in tls_files:
+                with open(tlsf) as f:
+                    tlsf = f
+        except FileNotFoundError:
+            log.info(f"confload: error opening TLS files")
 
         def envvar_as_bool(var):
             if var.upper() in ["TRUE", "YES"]:
@@ -91,7 +105,7 @@ class Config:
             log_config_dict["root"]["level"] = "DEBUG"
 
         logging.config.dictConfig(log_config_dict)
-        log.info(f"Logging setup @ {__name__}")
+        log.info(f"confload: Logging setup @ {__name__}")
 
     @property
     def project_root(self):
@@ -109,7 +123,7 @@ class Config:
 
             if Path(potential).exists():
                 return potential
-        raise FileNotFoundError(f"Can't find TextFSM Index file in any of {potentials}")
+        raise FileNotFoundError(f"confload: Can't find TextFSM Index file in any of {potentials}")
 
     def __call__(self):
         return self
