@@ -102,6 +102,7 @@ class NetmikoSetConfig(BaseModel):
     queue_strategy: Optional[QueueStrategy] = None
     pre_checks: Optional[List[GenericPrePostCheck]] = None
     post_checks: Optional[List[GenericPrePostCheck]] = None
+    enable_mode: bool = False
 
     class Config:
         schema_extra = {

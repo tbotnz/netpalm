@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter
 from fastapi.encoders import jsonable_encoder
 
@@ -11,6 +13,7 @@ from backend.core.models.task import Response
 from backend.core.redis import reds
 from routers.route_utils import HttpErrorHandler, poison_host_cache
 
+log = logging.getLogger(__name__)
 router = APIRouter()
 
 

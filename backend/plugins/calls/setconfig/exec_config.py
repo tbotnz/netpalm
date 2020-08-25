@@ -1,15 +1,11 @@
-from napalm.base.mock import raise_exception
-from backend.plugins.drivers.netmiko.netmiko_drvr import netmko
+from backend.core.meta.rediz_meta import write_meta_error, prepare_netpalm_payload
 from backend.plugins.drivers.napalm.napalm_drvr import naplm
 from backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
+from backend.plugins.drivers.netmiko.netmiko_drvr import netmko
 from backend.plugins.drivers.restconf.restconf import restconf
-
 from backend.plugins.utilities.jinja2.j2 import render_j2template
-
 from backend.plugins.utilities.webhook.webhook import exec_webhook_func
 
-from backend.core.meta.rediz_meta import prepare_netpalm_payload
-from backend.core.meta.rediz_meta import write_meta_error
 
 def exec_config(**kwargs):
     lib = kwargs.get("library", False)
@@ -18,6 +14,7 @@ def exec_config(**kwargs):
     webhook = kwargs.get("webhook", False)
     pre_checks = kwargs.get("pre_checks", False)
     post_checks = kwargs.get("post_checks", False)
+    enable_mode = kwargs.get("enable_mode", False)
 
     result = False
     pre_check_ok = True
@@ -36,7 +33,7 @@ def exec_config(**kwargs):
             if lib == "netmiko":
                 netmik = netmko(**kwargs)
                 sesh = netmik.connect()
-                result = netmik.config(sesh,config)
+                result = netmik.config(sesh, config, enable_mode)
                 netmik.logout(sesh)
             elif lib == "napalm":
                 napl = naplm(**kwargs)
@@ -73,7 +70,7 @@ def exec_config(**kwargs):
                                 write_meta_error(f"PreCheck Failed: {matchstr} found in {pre_check_result}")
                                 pre_check_ok = False
                 if pre_check_ok:
-                    result = netmik.config(sesh,config)
+                    result = netmik.config(sesh, config, enable_mode)
                     if post_checks:
                         for postcheck in post_checks:
                             command = postcheck["get_config_args"]["command"]
