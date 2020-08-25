@@ -16,6 +16,7 @@ services:
           - "netpalm-network"
       depends_on:
           - redis
+      restart: always
 
     netpalm-worker-pinned:
       build:
@@ -29,6 +30,7 @@ services:
         - redis
       networks:
       - "netpalm-network"
+      restart: always
 
     netpalm-worker-fifo:
       build:
@@ -42,6 +44,7 @@ services:
         - redis
       networks:
       - "netpalm-network"
+      restart: always
 
     redis:
       build:
@@ -49,6 +52,7 @@ services:
         dockerfile: ./netpalm_redis_dockerfile
       networks:
       - "netpalm-network"
+      restart: always
 
 networks:
 
