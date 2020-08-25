@@ -1,9 +1,11 @@
-import logging
 import json
-import requests
+import logging
 import time
 
+import requests
+
 log = logging.getLogger(__name__)
+
 
 class netpalm_testhelper:
 
@@ -32,7 +34,7 @@ class netpalm_testhelper:
 
     def check_task(self, taskid):
         try:
-            time.sleep(0.1)
+            time.sleep(0.5)
             return self.get(f"task/{taskid}",)
         except Exception as e:
             return False
@@ -47,6 +49,7 @@ class netpalm_testhelper:
                     result = task_res["data"]["task_result"]
                     task_complete = True
                 # time.sleep(0.1)
+            log.error(f'got {task_res}')
             return result
         except Exception as e:
             return False

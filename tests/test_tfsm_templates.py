@@ -74,8 +74,8 @@ def test_add_template():
 def test_del_template():
     test_template = {
         "driver": "dell_force10",
-        "command": "sh[[ow]] vl[[an]]",
-        "template_name": "dell_force10_show_vlan.textfsm"
+        "command": "show mac-address-table",
+        "template_name": "dell_force10_show_mac-address-table.template"
     }
     test_template["template"] = test_template["template_name"]
     template_obj = FSMTemplate(**test_template)
