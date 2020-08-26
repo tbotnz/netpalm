@@ -216,7 +216,7 @@ class Rediz:
         return meta_template
 
     def create_queue_worker(self, qname):
-        from netpalm_pinned_worker import pinned_worker_constructor
+        from netpalm.netpalm_pinned_worker import pinned_worker_constructor
         try:
             log.info(f"create_queue_worker: creating queue and worker {qname}")
             meta_template = self.get_redis_meta_template()
@@ -234,12 +234,9 @@ class Rediz:
             return e
 
     def check_and_create_q_w(self, hst):
-        try:
-            qexists = self.getqueue(hst)
-            if not qexists:
-                self.create_queue_worker(hst)
-        except Exception as e:
-            return e
+        qexists = self.getqueue(hst)
+        if not qexists:
+            self.create_queue_worker(hst)
 
     def render_task_response(self, task_job):
         created_at = str(task_job.created_at)
@@ -297,32 +294,26 @@ class Rediz:
         return resultdata
 
     def sendtask(self, q, exe, **kwargs):
-        try:
-            meta_template = self.get_redis_meta_template()
-            task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl,
-                                                               result_ttl=self.task_result_ttl, kwargs=kwargs["kwargs"],
-                                                               meta=meta_template, timeout=self.timeout)
-            resultdata = self.render_task_response(task)
-            return resultdata
-        except Exception as e:
-            return e
+        meta_template = self.get_redis_meta_template()
+        task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl,
+                                                           result_ttl=self.task_result_ttl, kwargs=kwargs["kwargs"],
+                                                           meta=meta_template, timeout=self.timeout)
+        resultdata = self.render_task_response(task)
+        return resultdata
 
     def execute_task(self, method, **kwargs):
-        try:
-            kw = kwargs.get("kwargs", False)
-            connectionargs = kw.get("connection_args", False)
-            host = False
-            if connectionargs:
-                host = kw["connection_args"].get("host", False)
-            queue_strategy = kw.get("queue_strategy", False)
-            if queue_strategy == "pinned":
-                self.check_and_create_q_w(hst=host)
-                r = self.sendtask(q=host,exe=method,kwargs=kw)
-            else:
-                r = self.sendtask(q=config.redis_fifo_q,exe=method,kwargs=kw)
-            return r
-        except Exception as e:
-            return e
+        kw = kwargs.get("kwargs", False)
+        connectionargs = kw.get("connection_args", False)
+        host = False
+        if connectionargs:
+            host = kw["connection_args"].get("host", False)
+        queue_strategy = kw.get("queue_strategy", False)
+        if queue_strategy == "pinned":
+            self.check_and_create_q_w(hst=host)
+            r = self.sendtask(q=host, exe=method, kwargs=kw)
+        else:
+            r = self.sendtask(q=config.redis_fifo_q, exe=method, kwargs=kw)
+        return r
 
     def fetchsubtask(self, parent_task_object):
         try:

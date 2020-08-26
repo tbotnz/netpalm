@@ -52,8 +52,14 @@ class HttpErrorHandler(SyncAsyncDecoratorFactory):
         except asyncio.CancelledError:
             raise
         except Exception as e:
-            log.exception(f"Error Log: {e}")
-            raise HTTPException(status_code=500, detail=str(e).split("\n"))
+            import traceback
+            log.exception(f"HttpErrorHandler Log: {e}")
+            detail = {
+                "Error": f"{e!r}",
+                "Traceback": traceback.format_exc().splitlines()
+            }
+            raise HTTPException(status_code=500, detail=detail)
+            # raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
 
 def cache_key_from_model(model: BaseModel) -> str:
@@ -202,6 +208,7 @@ def error_handle_w_cache(f):
     @HttpErrorHandler()
     @cacheable_model
     def wrapper(*args, **kwargs):
+        log.info(f"{args=}, {kwargs=}")
         return f(*args, **kwargs)
 
     return wrapper

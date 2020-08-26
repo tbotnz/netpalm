@@ -1,7 +1,7 @@
 import importlib
 import logging
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from fastapi.encoders import jsonable_encoder
 
 from netpalm.backend.core.confload.confload import config
@@ -11,6 +11,7 @@ from netpalm.backend.core.models.task import Response
 from netpalm.backend.core.models.task import ResponseBasic
 from netpalm.backend.core.redis import reds
 from netpalm.backend.core.routes.routes import routes
+from netpalm.routers.route_utils import HttpErrorHandler
 
 router = APIRouter()
 
@@ -18,24 +19,20 @@ log = logging.getLogger(__name__)
 
 # get template list
 @router.get("/script", response_model=ResponseBasic)
+@HttpErrorHandler
 async def get_script_list():
-    try:
-        r = routes["ls"](fldr="script")
-        resp = jsonable_encoder(r)
-        return resp
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e).split('\n'))
+    r = routes["ls"](fldr="script")
+    resp = jsonable_encoder(r)
+    return resp
 
 
 @router.post("/script", response_model=Response, status_code=201)
+@HttpErrorHandler
 def execute_script(script: Script):
-    try:
-        req_data = script.dict()
-        r = reds.execute_task(method="script", kwargs=req_data)
-        resp = jsonable_encoder(r)
-        return resp
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e).split('\n'))
+    req_data = script.dict()
+    r = reds.execute_task(method="script", kwargs=req_data)
+    resp = jsonable_encoder(r)
+    return resp
 
 r = routes["ls"](fldr="script")
 for script in r["data"]["task_result"]["templates"]:
@@ -51,11 +48,9 @@ for script in r["data"]["task_result"]["templates"]:
 
 
     @router.post(f"/script/v1/{script}", response_model=Response, status_code=201)
+    @HttpErrorHandler
     def execute_script(script: model):
-        try:
-            req_data = script.dict()
-            r = reds.execute_task(method="script", kwargs=req_data)
-            resp = jsonable_encoder(r)
-            return resp
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e).split('\n'))
+        req_data = script.dict()
+        r = reds.execute_task(method="script", kwargs=req_data)
+        resp = jsonable_encoder(r)
+        return resp
