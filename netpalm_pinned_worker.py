@@ -29,7 +29,16 @@ def processworker():
     if not we_are_controller():
         start_broadcast_listener_process()
         try:
-            with Connection(Redis(host=config.redis_server, port=config.redis_port, password=config.redis_key)):
+            if config.redis_tls_enabled:
+                base_connection = Redis(host=config.redis_server, port=config.redis_port, password=config.redis_key,
+                                        ssl=True,
+                                        ssl_cert_reqs='required',
+                                        ssl_keyfile=config.redis_tls_key_file,
+                                        ssl_certfile=config.redis_tls_cert_file,
+                                        ssl_ca_certs=config.redis_tls_ca_cert_file)
+            else:
+                base_connection = Redis(host=config.redis_server, port=config.redis_port, password=config.redis_key)
+            with Connection(base_connection):
                 q = Queue(config.redis_core_q)
                 u_uid = uuid.uuid4()
                 worker_name = f"{config.redis_core_q}_{u_uid}"
@@ -41,7 +50,16 @@ def processworker():
 
 def pinned_worker(queue):
     try:
-        with Connection(Redis(host=config.redis_server,port=config.redis_port,password=config.redis_key)):
+        if config.redis_tls_enabled:
+            base_connection = Redis(host=config.redis_server, port=config.redis_port, password=config.redis_key,
+                                        ssl=True,
+                                        ssl_cert_reqs='required',
+                                        ssl_keyfile=config.redis_tls_key_file,
+                                        ssl_certfile=config.redis_tls_cert_file,
+                                        ssl_ca_certs=config.redis_tls_ca_cert_file)
+        else:
+            base_connection = Redis(host=config.redis_server, port=config.redis_port, password=config.redis_key)
+        with Connection(base_connection):
             q = Queue(queue)
             u_uid = uuid.uuid4()
             worker_name = f"{queue}_{u_uid}"

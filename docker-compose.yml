@@ -3,52 +3,56 @@ version: "3.7"
 services:
 
     netpalm-controller:
-        build:
-            context: .
-            dockerfile: ./netpalm_controller_dockerfile
-        environment:
-            - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
-            - NETPALM_CONFIG=/code/config.json
-            - NETPALM_LOG_CONFIG_FILENAME=/code/log-config.yml
-        ports:
-            - "9000:9000"
-        networks:
-            - "netpalm-network"
-        depends_on:
-            - redis
+      build:
+          context: .
+          dockerfile: ./netpalm_controller_dockerfile
+      environment:
+          - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+          - NETPALM_CONFIG=/code/config.json
+          - NETPALM_LOG_CONFIG_FILENAME=/code/log-config.yml
+      ports:
+          - "9000:9000"
+      networks:
+          - "netpalm-network"
+      depends_on:
+          - redis
+      restart: always
 
     netpalm-worker-pinned:
-        build:
-            context: .
-            dockerfile: ./netpalm_pinned_worker_dockerfile
-        environment:
-          - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
-          - NETPALM_CONFIG=/code/config.json
-          - NETPALM_LOG_CONFIG_FILENAME=/code/log-config.yml
-        depends_on:
-          - redis
-        networks:
-        - "netpalm-network"
+      build:
+          context: .
+          dockerfile: ./netpalm_pinned_worker_dockerfile
+      environment:
+        - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+        - NETPALM_CONFIG=/code/config.json
+        - NETPALM_LOG_CONFIG_FILENAME=/code/log-config.yml
+      depends_on:
+        - redis
+      networks:
+      - "netpalm-network"
+      restart: always
 
     netpalm-worker-fifo:
-        build:
-            context: .
-            dockerfile: ./netpalm_fifo_worker_dockerfile
-        environment:
-          - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
-          - NETPALM_CONFIG=/code/config.json
-          - NETPALM_LOG_CONFIG_FILENAME=/code/log-config.yml
-        depends_on:
-          - redis
-        networks:
-        - "netpalm-network"
+      build:
+          context: .
+          dockerfile: ./netpalm_fifo_worker_dockerfile
+      environment:
+        - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+        - NETPALM_CONFIG=/code/config.json
+        - NETPALM_LOG_CONFIG_FILENAME=/code/log-config.yml
+      depends_on:
+        - redis
+      networks:
+      - "netpalm-network"
+      restart: always
 
     redis:
-        image: redis
-        command: redis-server --requirepass Red1zp4ww0rd_
-
-        networks:
-        - "netpalm-network"
+      build:
+        context: .
+        dockerfile: ./netpalm_redis_dockerfile
+      networks:
+      - "netpalm-network"
+      restart: always
 
 networks:
 
