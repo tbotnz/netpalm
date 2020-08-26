@@ -4,8 +4,8 @@ import pytest
 
 pytestmark = pytest.mark.nolab
 
-from backend.core.confload import confload
-from backend.plugins.utilities.textfsm.template import FSMTemplate
+from netpalm.backend.core.confload import confload
+from netpalm.backend.plugins.utilities.textfsm.template import FSMTemplate
 
 
 def test_template_object():

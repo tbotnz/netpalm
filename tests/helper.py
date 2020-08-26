@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 class netpalm_testhelper:
 
     def __init__(self):
-        with open("config.json") as json_file:
+        with open("config/config.json") as json_file:
             data = json.load(json_file)
         self.apikey = data["api_key"]
         self.ip = data["listen_ip"]

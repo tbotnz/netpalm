@@ -3,13 +3,13 @@ from pprint import pprint
 import pytest
 import redis_lock
 
-from backend.core.confload.confload import config
+from netpalm.backend.core.confload.confload import config
 
 pytestmark = pytest.mark.nolab
 
-from backend.core.confload import confload
-from backend.core.redis import reds
-from backend.core.redis.rediz import ExtnUpdateLog, TransactionLogEntryType, TransactionLogEntryModel
+from netpalm.backend.core.confload import confload
+from netpalm.backend.core.redis import reds
+from netpalm.backend.core.redis.rediz import ExtnUpdateLog, TransactionLogEntryType, TransactionLogEntryModel
 
 
 @pytest.fixture(scope="function")
@@ -107,7 +107,7 @@ def test_extensible_update_log_add_fetch(clean_log):
 
 
 def test_update_log_processor(clean_log):
-    from netpalm_worker_common import UpdateLogProcessor, update_log_processor
+    from netpalm.netpalm_worker_common import UpdateLogProcessor, update_log_processor
     up = update_log_processor
     additional_up = UpdateLogProcessor(reds)
 

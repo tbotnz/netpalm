@@ -5,11 +5,11 @@ services:
     netpalm-controller:
       build:
           context: .
-          dockerfile: ./netpalm_controller_dockerfile
+          dockerfile: ./dockerfiles/netpalm_controller_dockerfile
       environment:
           - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
-          - NETPALM_CONFIG=/code/config.json
-          - NETPALM_LOG_CONFIG_FILENAME=/code/log-config.yml
+          - NETPALM_CONFIG=/code/config/config.json
+          - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
       ports:
           - "9000:9000"
       networks:
@@ -21,11 +21,11 @@ services:
     netpalm-worker-pinned:
       build:
           context: .
-          dockerfile: ./netpalm_pinned_worker_dockerfile
+          dockerfile: ./dockerfiles/netpalm_pinned_worker_dockerfile
       environment:
         - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
-        - NETPALM_CONFIG=/code/config.json
-        - NETPALM_LOG_CONFIG_FILENAME=/code/log-config.yml
+        - NETPALM_CONFIG=/code/config/config.json
+        - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
       depends_on:
         - redis
       networks:
@@ -35,11 +35,11 @@ services:
     netpalm-worker-fifo:
       build:
           context: .
-          dockerfile: ./netpalm_fifo_worker_dockerfile
+          dockerfile: ./dockerfiles/netpalm_fifo_worker_dockerfile
       environment:
         - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
-        - NETPALM_CONFIG=/code/config.json
-        - NETPALM_LOG_CONFIG_FILENAME=/code/log-config.yml
+        - NETPALM_CONFIG=/code/config/config.json
+        - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
       depends_on:
         - redis
       networks:
@@ -49,7 +49,7 @@ services:
     redis:
       build:
         context: .
-        dockerfile: ./netpalm_redis_dockerfile
+        dockerfile: ./dockerfiles/netpalm_redis_dockerfile
       networks:
       - "netpalm-network"
       restart: always
