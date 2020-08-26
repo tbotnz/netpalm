@@ -86,7 +86,7 @@ def test_getconfig_netmiko_post_check():
 
 
 @pytest.mark.getconfig
-@pytest.mark.cisgo_alternate
+@pytest.mark.cisgoalternate
 def test_getconfig_napalm():
     pl = {
         "library": "napalm",
@@ -104,7 +104,7 @@ def test_getconfig_napalm():
 
 
 @pytest.mark.getconfig
-@pytest.mark.cisgo_alternate
+@pytest.mark.cisgoalternate
 def test_getconfig_napalm_getter():
     pl = {
         "library": "napalm",
@@ -118,7 +118,7 @@ def test_getconfig_napalm_getter():
 
 
 @pytest.mark.getconfig
-@pytest.mark.cisgo_alternate
+@pytest.mark.cisgoalternate
 def test_getconfig_napalm_multiple():
     pl = {
         "connection_args":{
@@ -132,7 +132,7 @@ def test_getconfig_napalm_multiple():
 
 
 @pytest.mark.getconfig
-@pytest.mark.cisgo_alternate
+@pytest.mark.cisgoalternate
 def test_getconfig_netmiko():
     pl = {
         "library": "netmiko",
@@ -150,7 +150,7 @@ def test_getconfig_netmiko():
 
 
 @pytest.mark.getconfig
-@pytest.mark.cisgo_alternate
+@pytest.mark.cisgoalternate
 def test_getconfig_netmiko_with_textfsm():
     pl = {
         "library": "netmiko",
@@ -167,7 +167,7 @@ def test_getconfig_netmiko_with_textfsm():
 
 
 @pytest.mark.getconfig
-@pytest.mark.cisgo_alternate
+@pytest.mark.cisgoalternate
 def test_getconfig_netmiko_multiple():
     pl = {
         "library": "netmiko",

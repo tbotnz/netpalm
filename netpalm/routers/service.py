@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 
 
 @router.post("/service/{servicename}", response_model=Response, status_code=201)
-@HttpErrorHandler
+@HttpErrorHandler()
 def execute_service(servicename: str, service: model_service):
     req_data = service.dict()
     req_data["netpalm_service_name"] = servicename
@@ -41,7 +41,7 @@ for servicename in r["data"]["task_result"]["templates"]:
 
 
     @router.post(f"/service/v1/{servicename}", response_model=Response, status_code=201)
-    @HttpErrorHandler
+    @HttpErrorHandler()
     def execute_service(service: model):
         req_data = service.dict()
         req_data["netpalm_service_name"] = servicename

@@ -282,7 +282,7 @@ def test_setconfig_napalm_dry_run():
 
 
 @pytest.mark.setconfig
-@pytest.mark.cisgo_alternate
+@pytest.mark.cisgoalternate
 def test_setconfig_netmiko():
     pl = {
         "library": "netmiko",
@@ -300,7 +300,7 @@ def test_setconfig_netmiko():
 
 
 @pytest.mark.setconfig
-@pytest.mark.cisgo_alternate
+@pytest.mark.cisgoalternate
 def test_setconfig_netmiko_multiple():
     pl = {
         "library": "netmiko",
@@ -315,7 +315,7 @@ def test_setconfig_netmiko_multiple():
 
 
 @pytest.mark.setconfig
-@pytest.mark.cisgo_alternate
+@pytest.mark.cisgoalternate
 def test_setconfig_netmiko_j2():
     pl = {
         "library": "netmiko",

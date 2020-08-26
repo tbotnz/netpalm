@@ -1,4 +1,4 @@
-![netpalm_log](/static/images/netpalm.png)
+![netpalm_log](/netpalm/static/images/netpalm.png)
 
 ## why netpalm?
 
@@ -34,7 +34,7 @@ netpalm acts as a ReST broker for NAPALM, Netmiko, NCCLIENT or a Python Script.
 netpalm uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
 You make an API call to netpalm and it will establish a queue to your device and start sending configuration
 
-![netpalm concept](/static/images/arch.png)
+![netpalm concept](/netpalm/static/images/arch.png)
 
 ## basic netpalm example
 
@@ -45,11 +45,11 @@ We also host a [public instance](https://netpalm.tech) have a look at the swagge
 
 netpalm also supports all arguments for the transport libs, simply pass them in as below
 
-![netpalm eg3](/static/images/netpalm_eg_3.png)
+![netpalm eg3](/netpalm/static/images/netpalm_eg_3.png)
 
 #### check response
 
-![netpalm eg4](/static/images/netpalm_eg_4.png)
+![netpalm eg4](/netpalm/static/images/netpalm_eg_4.png)
 
 ### service templates in action
 
@@ -57,18 +57,18 @@ netpalm supports model driven service templates, these self render an OpenAPI 3 
 
 The below example demonstrates basic SNMP state orchestration accross multiple devices for create, retrieve, delete 
 
-![netpalm auto ingest](/static/images/np_service.gif)
+![netpalm auto ingest](/netpalm/static/images/np_service.gif)
 
 ### rapid template development and deployment
 
 netpalm is integrated into http://textfsm.nornir.tech so you can ingest your templates with ease
 
-![netpalm auto ingest](/static/images/netpalm_ingest.gif)
+![netpalm auto ingest](/netpalm/static/images/netpalm_ingest.gif)
 
 ### API documentation
 
 netpalm comes with a [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) and an OpenAPI based API with swagger ui
-![netpalm swagger](/static/images/oapi.png)
+![netpalm swagger](/netpalm/static/images/oapi.png)
 
 ## container installation
 
@@ -181,4 +181,4 @@ we maintain an active community on the networktocode slack channel
 
 
 # Contributing
-Check out the [Developer Readme](/README-Development.md) in this repo for more info!
+Check out the [Contributing Doc](/CONTRIBUTING.md) in this repo for more info!

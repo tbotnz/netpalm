@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 
 # get template list
 @router.get("/script", response_model=ResponseBasic)
-@HttpErrorHandler
+@HttpErrorHandler()
 async def get_script_list():
     r = routes["ls"](fldr="script")
     resp = jsonable_encoder(r)
@@ -27,7 +27,7 @@ async def get_script_list():
 
 
 @router.post("/script", response_model=Response, status_code=201)
-@HttpErrorHandler
+@HttpErrorHandler()
 def execute_script(script: Script):
     req_data = script.dict()
     r = reds.execute_task(method="script", kwargs=req_data)
@@ -48,7 +48,7 @@ for script in r["data"]["task_result"]["templates"]:
 
 
     @router.post(f"/script/v1/{script}", response_model=Response, status_code=201)
-    @HttpErrorHandler
+    @HttpErrorHandler()
     def execute_script(script: model):
         req_data = script.dict()
         r = reds.execute_task(method="script", kwargs=req_data)
