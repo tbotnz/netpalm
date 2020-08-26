@@ -2,17 +2,18 @@ version: "3.7"
 
 services:
 
-    netpalm-controller:
+    controller:
         build:
             context: .
             dockerfile: ./netpalm_controller_dockerfile
+
         command: gunicorn -c gunicorn.conf.py netpalm_controller:app
         environment:
             - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
             - NETPALM_CONFIG=/code/config.json
             - NETPALM_LOG_CONFIG_FILENAME=/code/log-config.yml
-        #        volumes:
-        #            - .:/code
+#        volumes:
+#            - .:/code
         ports:
             - "9000:9000"
         networks:
@@ -21,7 +22,7 @@ services:
             - redis
             - cisgo
 
-    netpalm-second-ctrlr:  # using --scale doesn't work on controllers because they all want to own port 9000
+    second-ctrlr:  # using --scale doesn't work on controllers because they all want to own port 9000
         image: netpalm_netpalm-controller
         command: gunicorn -c gunicorn.conf.py netpalm_controller:app
         environment:
@@ -37,7 +38,7 @@ services:
         depends_on:
             - redis
 
-    netpalm-worker-pinned:
+    worker-pinned:
         image: netpalm_netpalm-controller
         command: python3 netpalm_pinned_worker.py
         environment:
@@ -49,7 +50,7 @@ services:
         networks:
             - "netpalm-network"
 
-    netpalm-worker-fifo:
+    worker-fifo:
         image: netpalm_netpalm-controller
         command: python3 netpalm_fifo_worker.py
         environment:
