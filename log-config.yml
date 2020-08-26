@@ -12,23 +12,23 @@ handlers:
     stream: ext://sys.stdout
 loggers:
   netmiko:
-    level: WARN
+    level: DEBUG
   paramiko:
-    level: WARN
+    level: DEBUG
   #  rq.worker:  # setting these levels appears to have no effect :(
   #    level: WARN
   #  rq:
   #    level: WARN
   netpalm_worker_common:
-    level: INFO
+    level: DEBUG
   netpalm_worker_pinned:
-    level: INFO
+    level: DEBUG
   netpalm_worker_fifo:
-    level: INFO
+    level: DEBUG
   backend:
-    level: INFO
+    level: DEBUG
   routers:
-    level: INFO
+    level: DEBUG
 
 
 root:

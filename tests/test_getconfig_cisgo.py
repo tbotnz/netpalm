@@ -18,30 +18,50 @@ def cisgo_port_number():
 cisgo_port_number = cisgo_port_number()
 
 
-def netmiko_connection_args():
-    return {
-        "device_type": "cisco_ios",
-        "host": helper.test_device_cisgo,
-        "port": next(cisgo_port_number),
-        "username": "admin",
-        "password": "admin",
-        "fast_cli": True,
-        "default_enter": "\r\n"
-    }
+class CisgoHelper:
+    def __init__(self):
+        self.hostname = "cisgo"
+        self.port_number = next(cisgo_port_number)
+        self.clean()
 
-
-def napalm_connection_args():
-    return {
-        "device_type": "cisco_ios",
-        "host": helper.test_device_cisgo,
-        "username": "admin",
-        "password": "admin",
-        "optional_args": {
-            "port": next(cisgo_port_number),
-            "fast_cli": True,
-            "default_enter": "\r\n"
+    def clean(self):
+        pl = {
+            "library": "netmiko",
+            "connection_args": self.netmiko_connection_args,
+            "command": "reset state"
         }
-    }
+        result = helper.post_and_check('/getconfig', pl)
+
+    @property
+    def netmiko_connection_args(self):
+        return {
+            "device_type": "cisco_ios",
+            "host": self.hostname,
+            "port": self.port_number,
+            "username": "admin",
+            "password": "admin",
+            "fast_cli": True,
+            "default_enter": "\r\n",
+        }
+
+    @property
+    def napalm_connection_args(self):
+        return {
+            "device_type": "cisco_ios",
+            "host": self.hostname,
+            "username": "admin",
+            "password": "admin",
+            "optional_args": {
+                "port": self.port_number,
+                "fast_cli": True,
+                "default_enter": "\r\n"
+            }
+        }
+
+
+@pytest.fixture(scope="module")
+def cisgo_helper():
+    return CisgoHelper()
 
 
 def hostname_from_config(config_lines: Union[List[str], str]) -> str:
@@ -64,10 +84,10 @@ def hostname_from_config(config_lines: Union[List[str], str]) -> str:
 
 @pytest.mark.getconfig
 @pytest.mark.cisgo
-def test_getconfig_netmiko():
+def test_getconfig_netmiko(cisgo_helper: CisgoHelper):
     pl = {
         "library": "netmiko",
-        "connection_args": netmiko_connection_args(),
+        "connection_args": cisgo_helper.netmiko_connection_args,
         "command": "show running-config"
     }
     res = helper.post_and_check('/getconfig', pl)
@@ -76,10 +96,10 @@ def test_getconfig_netmiko():
 
 @pytest.mark.getconfig
 @pytest.mark.cisgo
-def test_getconfig_netmiko_with_textfsm():
+def test_getconfig_netmiko_with_textfsm(cisgo_helper: CisgoHelper):
     pl = {
         "library": "netmiko",
-        "connection_args": netmiko_connection_args(),
+        "connection_args": cisgo_helper.netmiko_connection_args,
         "command": "show ip interface brief",
         "args": {
             "use_textfsm": True
@@ -91,10 +111,10 @@ def test_getconfig_netmiko_with_textfsm():
 
 @pytest.mark.getconfig
 @pytest.mark.cisgo
-def test_getconfig_netmiko_multiple():
+def test_getconfig_netmiko_multiple(cisgo_helper: CisgoHelper):
     pl = {
         "library": "netmiko",
-        "connection_args": netmiko_connection_args(),
+        "connection_args": cisgo_helper.netmiko_connection_args,
         "command": ["show running-config", "show ip interface brief"]
     }
     res = helper.post_and_check('/getconfig', pl)
@@ -104,9 +124,9 @@ def test_getconfig_netmiko_multiple():
 
 @pytest.mark.getconfig
 @pytest.mark.cisgo
-def test_getconfig_napalm_multiple():
+def test_getconfig_napalm_multiple(cisgo_helper: CisgoHelper):
     pl = {
-        "connection_args": napalm_connection_args(),
+        "connection_args": cisgo_helper.napalm_connection_args,
         "library": "napalm",
         "command": ["show running-config", "show ip interface brief"]
     }
@@ -118,10 +138,10 @@ def test_getconfig_napalm_multiple():
 
 @pytest.mark.getconfig
 @pytest.mark.cisgo
-def test_getconfig_napalm_getter():
+def test_getconfig_napalm_getter(cisgo_helper: CisgoHelper):
     pl = {
         "library": "napalm",
-        "connection_args": napalm_connection_args(),
+        "connection_args": cisgo_helper.napalm_connection_args,
         "command": "get_facts"
     }
     res = helper.post_and_check('/getconfig', pl)
@@ -131,10 +151,10 @@ def test_getconfig_napalm_getter():
 
 @pytest.mark.getconfig
 @pytest.mark.cisgo
-def test_getconfig_napalm():
+def test_getconfig_napalm(cisgo_helper: CisgoHelper):
     pl = {
         "library": "napalm",
-        "connection_args": napalm_connection_args(),
+        "connection_args": cisgo_helper.napalm_connection_args,
         "command": "show running-config"
     }
     res = helper.post_and_check('/getconfig', pl)
@@ -144,10 +164,10 @@ def test_getconfig_napalm():
 
 @pytest.mark.getconfig
 @pytest.mark.cisgo
-def test_getconfig_netmiko_post_check():
+def test_getconfig_netmiko_post_check(cisgo_helper: CisgoHelper):
     pl = {
         "library": "netmiko",
-        "connection_args": netmiko_connection_args(),
+        "connection_args": cisgo_helper.netmiko_connection_args,
         "command": "show running-config",
         "queue_strategy": "pinned",
         "post_checks": [
@@ -171,10 +191,10 @@ def test_getconfig_netmiko_post_check():
 
 @pytest.mark.getconfig
 @pytest.mark.cisgo
-def test_getconfig_netmiko_post_check_fails():
+def test_getconfig_netmiko_post_check_fails(cisgo_helper: CisgoHelper):
     pl = {
         "library": "netmiko",
-        "connection_args": netmiko_connection_args(),
+        "connection_args": cisgo_helper.netmiko_connection_args,
         "command": "show running-config",
         "queue_strategy": "pinned",
         "post_checks": [
@@ -195,10 +215,10 @@ def test_getconfig_netmiko_post_check_fails():
 
 @pytest.mark.getconfig
 @pytest.mark.cisgo
-def test_getconfig_napalm_post_check():
+def test_getconfig_napalm_post_check(cisgo_helper: CisgoHelper):
     pl = {
         "library": "napalm",
-        "connection_args": napalm_connection_args(),
+        "connection_args": cisgo_helper.napalm_connection_args,
         "command": "show run | i hostname",
         "queue_strategy": "pinned",
         "post_checks": [
@@ -215,10 +235,3 @@ def test_getconfig_napalm_post_check():
     }
     errors = helper.post_and_check_errors('/getconfig', pl)
     assert len(errors) == 0
-
-
-# @pytest.mark.nolab
-def test_cache_route():
-    res = helper.get('cache')
-    assert "cache" in res
-    assert "size" in res

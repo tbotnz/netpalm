@@ -1,6 +1,6 @@
 import logging
-from multiprocessing import Process
 import uuid
+from multiprocessing import Process
 
 from redis import Redis
 from rq import Queue, Connection, Worker
@@ -8,7 +8,7 @@ from rq import Queue, Connection, Worker
 from backend.core.confload.confload import config
 from netpalm_worker_common import start_broadcast_listener_process
 
-config.setup_logging()
+config.setup_logging(max_debug=True)
 log = logging.getLogger(__name__)
 
 # process listner

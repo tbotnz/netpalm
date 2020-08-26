@@ -5,6 +5,7 @@ from typing import List, Union
 import pytest
 
 from tests.helper import netpalm_testhelper
+from tests.test_getconfig_cisgo import CisgoHelper
 
 log = logging.getLogger(__name__)
 helper = netpalm_testhelper()
@@ -13,37 +14,9 @@ CISGO_DEFAULT_HOSTNAME = "cisgo1000v"
 CISGO_NEW_HOSTNAME = CISGO_DEFAULT_HOSTNAME.upper() + str(random.randint(100, 900))
 
 
-def cisgo_port_number():
-    yield from range(10000, 10050)
-
-
-cisgo_port_number = cisgo_port_number()
-
-
-def netmiko_connection_args():
-    return {
-        "device_type": "cisco_ios",
-        "host": helper.test_device_cisgo,
-        "port": next(cisgo_port_number),
-        "username": "admin",
-        "password": "admin",
-        "fast_cli": True,
-        "default_enter": "\r\n"
-    }
-
-
-def napalm_connection_args():
-    return {
-        "device_type": "cisco_ios",
-        "host": helper.test_device_cisgo,
-        "username": "admin",
-        "password": "admin",
-        "optional_args": {
-            "port": next(cisgo_port_number),
-            "fast_cli": True,
-            "default_enter": "\r\n"
-        }
-    }
+@pytest.fixture(scope="function")
+def cisgo_helper():
+    return CisgoHelper()
 
 
 def hostname_from_config(config_lines: Union[List[str], str]) -> str:
@@ -76,13 +49,44 @@ def get_hostname(connection_args):
 
 @pytest.mark.setconfig
 @pytest.mark.cisgo
-def test_setconfig_netmiko():
+def test_setconfig_netmiko(cisgo_helper: CisgoHelper):
     pl = {
         "library": "netmiko",
-        "connection_args": netmiko_connection_args(),
+        "connection_args": cisgo_helper.netmiko_connection_args,
         "config": ["hostname " + CISGO_NEW_HOSTNAME],
         "enable_mode": True
     }
     res = helper.post_and_check('/setconfig', pl)
     matchstr = CISGO_NEW_HOSTNAME + "#"
     assert matchstr in res["changes"]
+
+
+@pytest.mark.setconfig
+@pytest.mark.cisgo
+def test_setconfig_netmiko_multiple(cisgo_helper: CisgoHelper):
+    pl = {
+        "library": "netmiko",
+        "connection_args": cisgo_helper.netmiko_connection_args,
+        "config": ["hostname yeti", "hostname bufoon"],
+        "enable_mode": True
+    }
+    res = helper.post_and_check('/setconfig', pl)
+    assert len(res["changes"]) > 4
+
+
+@pytest.mark.setconfig
+@pytest.mark.cisgo
+def test_setconfig_netmiko_j2(cisgo_helper):
+    pl = {
+        "library": "netmiko",
+        "connection_args": cisgo_helper.netmiko_connection_args,
+        "enable_mode": True,
+        "j2config": {
+            "template": "test",
+            "args": {
+                "vlans": ["1", "2", "3"]
+            }
+        }
+    }
+    res = helper.post_and_check('/setconfig', pl)
+    assert len(res["changes"]) > 6

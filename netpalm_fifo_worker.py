@@ -7,7 +7,7 @@ from rq import Queue, Connection, Worker
 from backend.core.confload.confload import config
 from netpalm_worker_common import start_broadcast_listener_process
 
-config.setup_logging()
+config.setup_logging(max_debug=True)
 
 
 def fifo_worker(queue, counter):
