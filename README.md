@@ -10,6 +10,7 @@
 <br/>  
 <hr/>
 </p>
+<br/> 
 
 Leveraging best of breed open source network components like [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests), netpalm makes it easy to abstract from any network devices native telnet, SSH, NETCONF or RESTCONF interface into a modern model driven open api 3 interface.
 
