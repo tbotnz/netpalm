@@ -1,0 +1,84 @@
+version: "3.7"
+
+services:
+
+    controller:
+        build:
+            context: .
+            dockerfile: ./dockerfiles/netpalm_controller_dockerfile
+
+        command: gunicorn -c gunicorn.conf.py netpalm.netpalm_controller:app
+        environment:
+            - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+            - NETPALM_CONFIG=/code/config/config.json
+            - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+#        volumes:
+#            - .:/code
+        ports:
+            - "9000:9000"
+        networks:
+            - "netpalm-network"
+        depends_on:
+            - redis
+            - cisgo
+
+    second-ctrlr:  # using --scale doesn't work on controllers because they all want to own port 9000
+        image: netpalm_controller
+        command: gunicorn -c gunicorn.conf.py netpalm.netpalm_controller:app
+        environment:
+            - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+            - NETPALM_CONFIG=/code/config/config.json
+            - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+        #        volumes:
+        #            - .:/code
+        ports:
+            - "9001:9000"
+        networks:
+            - "netpalm-network"
+        depends_on:
+            - redis
+
+    worker-pinned:
+        image: netpalm_controller
+        command: python3 worker.py pinned
+        environment:
+            - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+            - NETPALM_CONFIG=/code/config/config.json
+            - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+        depends_on:
+            - redis
+        networks:
+            - "netpalm-network"
+
+    worker-fifo:
+        image: netpalm_controller
+        command: python3 worker.py fifo
+        environment:
+            - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+            - NETPALM_CONFIG=/code/config/config.json
+            - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+        depends_on:
+            - redis
+        networks:
+            - "netpalm-network"
+
+    redis:
+        build:
+            context: .
+            dockerfile: ./dockerfiles/netpalm_redis_dockerfile
+        networks:
+            - "netpalm-network"
+        restart: always
+
+    cisgo:
+        build:
+            context: ..\cisgo-ios
+        #            dockerfile: Dockerfile
+        ports:
+            - "10005:10005"
+        networks:
+            - "netpalm-network"
+
+networks:
+    netpalm-network:
+        name: "netpalm-network"

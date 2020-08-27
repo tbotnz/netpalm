@@ -1,0 +1,38 @@
+---
+version: 1
+formatters:
+  simple:
+    # format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format: '[%(asctime)s:%(name)s:%(funcName)s:%(levelname)s] %(message)s'
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stdout
+loggers:
+  netmiko:
+    level: DEBUG
+  paramiko:
+    level: DEBUG
+  #  rq.worker:  # setting these levels appears to have no effect :(
+  #    level: WARN
+  #  rq:
+  #    level: WARN
+  netpalm_worker_common:
+    level: DEBUG
+  netpalm_worker_pinned:
+    level: DEBUG
+  netpalm_worker_fifo:
+    level: DEBUG
+  backend:
+    level: DEBUG
+  routers:
+    level: DEBUG
+
+
+root:
+  #  level: DEBUG
+  handlers: [console]
+
+disable_existing_loggers: False

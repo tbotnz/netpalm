@@ -1,10 +1,12 @@
-import pytest
-import requests
 import random
+
+import pytest
+
 from tests.helper import netpalm_testhelper
 
 helper = netpalm_testhelper()
-r = "cornicorneo"+str(random.randint(1,101))
+r = "cornicorneo" + str(random.randint(1, 101))
+
 
 @pytest.mark.setconfig
 def test_setconfig_napalm():
@@ -278,7 +280,9 @@ def test_setconfig_napalm_dry_run():
     res = helper.post_and_check('/setconfig',pl)
     assert len(res["changes"]) > 3
 
+
 @pytest.mark.setconfig
+@pytest.mark.cisgoalternate
 def test_setconfig_netmiko():
     pl = {
         "library": "netmiko",
@@ -294,7 +298,9 @@ def test_setconfig_netmiko():
     else:
         assert False
 
+
 @pytest.mark.setconfig
+@pytest.mark.cisgoalternate
 def test_setconfig_netmiko_multiple():
     pl = {
         "library": "netmiko",
@@ -307,7 +313,9 @@ def test_setconfig_netmiko_multiple():
     matchstr = r + "#"
     assert len(res["changes"]) > 4
 
+
 @pytest.mark.setconfig
+@pytest.mark.cisgoalternate
 def test_setconfig_netmiko_j2():
     pl = {
         "library": "netmiko",

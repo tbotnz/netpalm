@@ -1,11 +1,16 @@
-import requests
 import json
+import logging
 import time
+
+import requests
+
+log = logging.getLogger(__name__)
+
 
 class netpalm_testhelper:
 
     def __init__(self):
-        with open("config.json") as json_file:
+        with open("config/config.json") as json_file:
             data = json.load(json_file)
         self.apikey = data["api_key"]
         self.ip = data["listen_ip"]
@@ -15,13 +20,22 @@ class netpalm_testhelper:
         self.test_device_ios_cli = "10.0.2.33"
         self.test_device_netconf = "10.0.2.39"
         self.test_device_restconf = "ios-xe-mgmt-latest.cisco.com"
+        self.test_device_cisgo = "cisgo"
         self.http_timeout=5
+
+    def get(self, endpoint: str):
+        try:
+            r = requests.get(f"http://{self.ip}:{self.port}/{endpoint}",
+                             headers=self.headers, timeout=self.http_timeout)
+            return r.json()
+        except Exception as e:
+            log.exception(f"error while getting {endpoint}")
+            raise
 
     def check_task(self, taskid):
         try:
             time.sleep(0.5)
-            r = requests.get('http://'+self.ip+':'+str(self.port)+'/task/'+taskid,headers=self.headers, timeout=self.http_timeout)
-            return r.json()
+            return self.get(f"task/{taskid}",)
         except Exception as e:
             return False
 
@@ -34,6 +48,8 @@ class netpalm_testhelper:
                 if task_res["data"]["task_status"] == "finished":
                     result = task_res["data"]["task_result"]
                     task_complete = True
+                # time.sleep(0.1)
+            log.error(f'got {task_res}')
             return result
         except Exception as e:
             return False

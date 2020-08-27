@@ -6,10 +6,10 @@ from random import randint
 import pytest
 from fastapi import HTTPException
 
-from backend.core.confload import confload
-from backend.core.models.models import GetConfig
-from backend.core.redis import rediz
-from routers.route_utils import cacheable_model, HttpErrorHandler, cache_key_from_req_data, poison_host_cache, \
+from netpalm.backend.core.confload import confload
+from netpalm.backend.core.models.models import GetConfig
+from netpalm.backend.core.redis import rediz
+from netpalm.routers.route_utils import cacheable_model, HttpErrorHandler, cache_key_from_req_data, poison_host_cache, \
     serialized_for_hash
 
 pytestmark = pytest.mark.nolab

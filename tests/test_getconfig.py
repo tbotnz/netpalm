@@ -1,10 +1,12 @@
-import pytest
-import requests
 import random
+
+import pytest
+
 from tests.helper import netpalm_testhelper
 
 helper = netpalm_testhelper()
-r = "cornicorneo"+str(random.randint(1,101))
+r = "cornicorneo" + str(random.randint(1, 101))
+
 
 @pytest.mark.getconfig
 def test_getconfig_prepare_environment():
@@ -22,7 +24,9 @@ def test_getconfig_prepare_environment():
     else:
         assert False
 
+
 @pytest.mark.getconfig
+@pytest.mark.cisgoalternate
 def test_getconfig_napalm_post_check():
     pl = {
         "library": "napalm",
@@ -50,10 +54,12 @@ def test_getconfig_napalm_post_check():
     res = helper.post_and_check_errors('/getconfig',pl)
     assert len(res) == 0
 
+
 @pytest.mark.getconfig
+@pytest.mark.cisgoalternate
 def test_getconfig_netmiko_post_check():
     pl = {
-        "library": "napalm",
+        "library": "netmiko",
         "connection_args": {
             "device_type": "cisco_ios",
             "host": helper.test_device_ios_cli,
@@ -78,7 +84,9 @@ def test_getconfig_netmiko_post_check():
     res = helper.post_and_check_errors('/getconfig',pl)
     assert len(res) == 0
 
+
 @pytest.mark.getconfig
+@pytest.mark.cisgoalternate
 def test_getconfig_napalm():
     pl = {
         "library": "napalm",
@@ -94,7 +102,9 @@ def test_getconfig_napalm():
     else:
         assert False
 
+
 @pytest.mark.getconfig
+@pytest.mark.cisgoalternate
 def test_getconfig_napalm_getter():
     pl = {
         "library": "napalm",
@@ -102,11 +112,13 @@ def test_getconfig_napalm_getter():
             "device_type":"cisco_ios", "host":helper.test_device_ios_cli, "username":"admin", "password":"admin"
         },
         "command": "get_facts"
-    } 
+    }
     res = helper.post_and_check('/getconfig',pl)
     assert res["get_facts"]["hostname"] == r
 
+
 @pytest.mark.getconfig
+@pytest.mark.cisgoalternate
 def test_getconfig_napalm_multiple():
     pl = {
         "connection_args":{
@@ -114,11 +126,13 @@ def test_getconfig_napalm_multiple():
         },
         "library": "napalm",
         "command": ["show run | i hostname", "show ip int brief"]
-    }      
+    }
     res = helper.post_and_check('/getconfig',pl)
     assert len(res["show ip int brief"])>1 and len(res["show run | i hostname"])==1
 
+
 @pytest.mark.getconfig
+@pytest.mark.cisgoalternate
 def test_getconfig_netmiko():
     pl = {
         "library": "netmiko",
@@ -126,7 +140,7 @@ def test_getconfig_netmiko():
             "device_type":"cisco_ios", "host":helper.test_device_ios_cli, "username":"admin", "password":"admin"
         },
         "command": "show run | i hostname"
-    }        
+    }
     res = helper.post_and_check('/getconfig',pl)
     matchstr = "hostname "+r
     if matchstr in str(res):
@@ -134,7 +148,9 @@ def test_getconfig_netmiko():
     else:
         assert False
 
+
 @pytest.mark.getconfig
+@pytest.mark.cisgoalternate
 def test_getconfig_netmiko_with_textfsm():
     pl = {
         "library": "netmiko",
@@ -145,11 +161,13 @@ def test_getconfig_netmiko_with_textfsm():
         "args":{
             "use_textfsm":True
         }
-    }    
+    }
     res = helper.post_and_check('/getconfig',pl)
     assert res["show ip int brief"][0]["status"] == "up"
 
+
 @pytest.mark.getconfig
+@pytest.mark.cisgoalternate
 def test_getconfig_netmiko_multiple():
     pl = {
         "library": "netmiko",
@@ -157,7 +175,7 @@ def test_getconfig_netmiko_multiple():
             "device_type":"cisco_ios", "host":helper.test_device_ios_cli, "username":"admin", "password":"admin"
         },
         "command": ["show run | i hostname", "show ip int brief"]
-    }    
+    }
     res = helper.post_and_check('/getconfig',pl)
     assert len(res["show ip int brief"])>1 and len(res["show run | i hostname"])==1
 
