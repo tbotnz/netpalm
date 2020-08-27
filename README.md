@@ -1,22 +1,52 @@
-![netpalm_log](/netpalm/static/images/netpalm.png)
+<p align="center">
+<img src="/static/images/np_new.png" />
+</p>
 
-## why netpalm?
 
-netpalm is a ReST API into your dusty old network devices, netpalm makes it easy to push and pull network state from your apps. netpalm can abstract and render structured data both inbound and outbound to your network devices native telnet, SSH, NETCONF or RESTCONF interface.
+## what the netpalm
+
+netpalm is a REST API platform for network devices, netpalm makes it easy to push and pull state from your apps to your network.
+
+Leveraging best of breed open source components like [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  ncclient and requests, netpalm makes it easy to abstract from any network devices native telnet, SSH, NETCONF or RESTCONF interface into a modern model driven open api 3 interface.
+
+Developed with extensibility in mind netpalm allows you to bring your own jinja2 templates, scripts and webhooks for quick adoption.
+
+Built on a scalable microservice based architecture netpalm provides unparalleled API access into your network
+
+netpalm can abstract and render structured data both inbound and outbound to your network devices native .
 netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  ncclient and requests library's for network device communication, these powerful libs supprt a vast number of vendors and OS
 
-## netpalm features
+## core platform features
 
-- Speaks ReST & JSON to your app and CLI over SSH or Telnet or NETCONF/RESTCONF to your network devices
+- Speaks ReST & JSON RPC to your app and CLI over SSH or Telnet or NETCONF/RESTCONF to your network devices
 - Built in multi-level abstraction interface for service modeling of Create, Retrieve, Delete methods
 - Ability to write your own [service models and templates](https://github.com/tbotnz/netpalm/tree/master/backend/plugins/extensibles/j2_service_templates) which are self documenting to Open API 3.0 when a model is used
 - Supports pre and post checks accross CLI devices, config only deployed on pre check pass 
 - Per device async task queuing (Ensure you dont overload your VTY's) or Pooled async processes
 - Large amount of supported multivendor devices ( cheers to the netmiko & napalm & ncclient lads )
-- TextFSM for parsing/structuring device data (includes [ntc-templates](https://github.com/networktocode/ntc-templates))
-- Genie support for parsing device data
-- Jinja2 for model driven deployments of config onto devices accross [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko) and ncclient
+
+
+## concepts
+
+netpalm acts as a ReST broker for NAPALM, Netmiko, NCCLIENT or a Python Script.
+netpalm uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
+You make an API call to netpalm and it will establish a queue to your device and start sending configuration
+
+![netpalm concept](/static/images/arch.png)
+
+
+### parser support
+
+- TextFSM support via netmiko
+- [NTC-templates](https://github.com/networktocode/ntc-templates) for parsing/structuring device data (includes)
+- Napalm getters
+- Genie support via netmiko
 - Automated download and installation of TextFSM templates from http://textfsm.nornir.tech online TextFSM development tool
+- Dynamic rendering of Netconf data into JSON
+
+### webhook support
+
+- Jinja2 for model driven deployments of config onto devices accross [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko) and ncclient
 - ReST based Webhook w/ args & the ability for you to BYO webhooks
 - Execute ANY python script as async via the ReST API and includes passing in of parameters
 - Supports on the fly changes to async queue strategy for a device ( either per device pinned queues or pooled queues )
@@ -28,13 +58,6 @@ netpalm leverages popular [napalm](https://github.com/napalm-automation/napalm),
 - Can render NETCONF XML responses into JSON on the fly
 - Can render Jinja2 templates only if required via the API
 
-## concepts
-
-netpalm acts as a ReST broker for NAPALM, Netmiko, NCCLIENT or a Python Script.
-netpalm uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
-You make an API call to netpalm and it will establish a queue to your device and start sending configuration
-
-![netpalm concept](/netpalm/static/images/arch.png)
 
 ## basic netpalm example
 
@@ -45,11 +68,11 @@ We also host a [public instance](https://netpalm.tech) have a look at the swagge
 
 netpalm also supports all arguments for the transport libs, simply pass them in as below
 
-![netpalm eg3](/netpalm/static/images/netpalm_eg_3.png)
+![netpalm eg3](/static/images/netpalm_eg_3.png)
 
 #### check response
 
-![netpalm eg4](/netpalm/static/images/netpalm_eg_4.png)
+![netpalm eg4](/static/images/netpalm_eg_4.png)
 
 ### service templates in action
 
@@ -57,18 +80,18 @@ netpalm supports model driven service templates, these self render an OpenAPI 3 
 
 The below example demonstrates basic SNMP state orchestration accross multiple devices for create, retrieve, delete 
 
-![netpalm auto ingest](/netpalm/static/images/np_service.gif)
+![netpalm auto ingest](/static/images/np_service.gif)
 
 ### rapid template development and deployment
 
 netpalm is integrated into http://textfsm.nornir.tech so you can ingest your templates with ease
 
-![netpalm auto ingest](/netpalm/static/images/netpalm_ingest.gif)
+![netpalm auto ingest](/static/images/netpalm_ingest.gif)
 
 ### API documentation
 
 netpalm comes with a [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) and an OpenAPI based API with swagger ui
-![netpalm swagger](/netpalm/static/images/oapi.png)
+![netpalm swagger](/static/images/oapi.png)
 
 ## container installation
 
@@ -179,6 +202,3 @@ we maintain an active community on the networktocode slack channel
 
 #netpalm on networktocode.slack.com
 
-
-# Contributing
-Check out the [Contributing Doc](/CONTRIBUTING.md) in this repo for more info!
