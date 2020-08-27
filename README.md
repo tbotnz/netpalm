@@ -1,11 +1,15 @@
 <p align="center">
-<img src="/static/images/np_new.png" />
+   <br/>
+   <img src="/static/images/np_new.png" />
+   <br/>
+      <h3 align="center">The open API platform for network devices.</h3>
+   <br/>
+   <p align="center">
+   netpalm makes it easy to push and pull state from your apps to your network by providing multiple southbound drivers, abstractions methods and modern integration interfaces  such as open api3 and rest webhooks
+   </p>
+<br/>  
+<hr/>
 </p>
-
-
-## what the netpalm
-
-netpalm is a REST API platform for network devices, netpalm makes it easy to push and pull state from your apps to your network.
 
 Leveraging best of breed open source network components like [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests), netpalm makes it easy to abstract from any network devices native telnet, SSH, NETCONF or RESTCONF interface into a modern model driven open api 3 interface.
 
