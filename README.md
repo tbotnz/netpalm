@@ -40,7 +40,7 @@ You make an API call to netpalm and it will establish a queue to your device and
 
 ![netpalm concept](/static/images/arch.png)
 
-### additional platform features
+## additional platform features
 
 - Jinja2
    - BYO jinja2 [config templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_config_templates)
