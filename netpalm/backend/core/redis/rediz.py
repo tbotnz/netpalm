@@ -129,7 +129,8 @@ class Rediz:
         self.core_q = config.redis_core_q
         # config check if TLS required
         if config.redis_tls_enabled:
-            self.base_connection = Redis(host=self.server,
+            self.base_connection = Redis(
+                                        host=self.server,
                                         port=self.port,
                                         password=self.key,
                                         ssl=True,
@@ -141,7 +142,8 @@ class Rediz:
                                         socket_keepalive=config.redis_socket_keepalive
                                         )
         else:
-            self.base_connection = Redis(host=self.server,
+            self.base_connection = Redis(
+                                        host=self.server,
                                         port=self.port,
                                         password=self.key,
                                         socket_connect_timeout=config.redis_socket_connect_timeout,
@@ -188,20 +190,20 @@ class Rediz:
     def getqueue(self, host):
         """
         checks whether a queue exists and worker exists
-        accross the controller, redis and worker node 
+        accross the controller, redis and worker node
         """
-        #checks a centralised db / queue exists and creates a empty db if one does not exist
+        # checks a centralised db / queue exists and creates a empty db if one does not exist
         try:
-            #check the redis db store for a queue
+            # check the redis db store for a queue
             result = self.base_connection.get(self.networked_queuedb)
             if result:
                 jsresult = json.loads(result)
                 res = jsresult.get(host, False)
                 if res:
-                    #check the worker is running
+                    # check the worker is running
                     if self.check_worker_is_alive(host):
                         q_exists_in_local_db = self.local_queuedb.get(host, False)
-                        #check if the local controller queue db is out of sync with the networked db
+                        # check if the local controller queue db is out of sync with the networked db
                         if not q_exists_in_local_db:
                             self.local_queuedb[host] = {}
                             self.local_queuedb[host]["queue"] = Queue(host, connection=self.base_connection)
@@ -259,13 +261,13 @@ class Rediz:
             current_time = datetime.datetime.utcnow()
             created_parsed_time = datetime.datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S.%f")
 
-            #if enqueued but not started calculate time
+            # if enqueued but not started calculate time
             if enqueued_at != "None" and enqueued_at and started_at == "None":
                 parsed_time = datetime.datetime.strptime(enqueued_at, "%Y-%m-%d %H:%M:%S.%f")
                 task_job.meta["enqueued_elapsed_seconds"] = (current_time - parsed_time).seconds
                 task_job.save()
 
-            #if created but not finished calculate time
+            # if created but not finished calculate time
             if ended_at != "None" and ended_at:
                 parsed_time = datetime.datetime.strptime(ended_at, "%Y-%m-%d %H:%M:%S.%f")
                 task_job.meta["total_elapsed_seconds"] = (parsed_time - created_parsed_time).seconds

@@ -15,6 +15,7 @@ class snmp_service_model_args(BaseModel):
     snmp_location: str
     snmp_contact: str
 
+
 class snmp_service_model(BaseModel):
     # this class MUST match the filename & the filename must be formatted $servicetemplatename_model.py
     operation: service_lifecycle
@@ -22,7 +23,7 @@ class snmp_service_model(BaseModel):
     queue_strategy: Optional[QueueStrategy] = None
 
     class Config:
-        # add an example payload under the "example" dict 
+        # add an example payload under the "example" dict
         schema_extra = {
             "example": {
                 "operation": "retrieve",

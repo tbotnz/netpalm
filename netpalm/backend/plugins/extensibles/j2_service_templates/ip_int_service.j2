@@ -45,6 +45,7 @@
     "supported_methods": [
       {
         "operation": "create",
+        "path": "/setconfig",
         "payload": {
           "library": "netmiko",
           "connection_args": {
@@ -64,6 +65,7 @@
       },
       {
         "operation": "retrieve",
+        "path": "/getconfig",
         "payload": {
           "library": "netmiko",
           "connection_args": {
@@ -80,6 +82,7 @@
       },
       {
         "operation": "delete",
+        "path": "/setconfig",
         "payload": {
           "library": "napalm",
           "connection_args": {
