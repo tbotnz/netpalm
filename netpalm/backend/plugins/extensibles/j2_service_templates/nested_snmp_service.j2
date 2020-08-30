@@ -1,0 +1,86 @@
+{# NETPALM NESTED SERVICE EXAMPLE #}
+{#
+!!!! EXAMPLE PAYLOAD AS BELOW
+{
+	"operation": "create",
+	"args":{
+		"hosts":["10.0.2.25","10.0.2.23"],
+	}
+}
+or
+{
+	"operation": "delete",
+	"args":{
+		"hosts":["10.0.2.25","10.0.2.23"],
+	}
+}
+or
+{
+	"operation": "retrieve",
+	"args":{
+		"hosts":["10.0.2.25","10.0.2.23"],
+	}
+}
+!!!!
+#}
+[
+  {
+    "supported_methods": [
+      {
+        "operation": "create",
+        "path": "/service/v1/snmp_service",
+        "payload": {
+          "operation": "create",
+          "args": {
+            "hosts": {{hosts | tojson }},
+            "username": "admin",
+            "password": "admin",
+            "snmp_community": "test_community",
+            "snmp_location": "test_location",
+            "snmp_contact": "test_contact"
+
+          },
+          "queue_strategy": "fifo"
+      }
+      },
+      {
+        "operation": "retrieve",
+        "path": "/service/v1/snmp_service",
+        "payload": {
+          "operation": "retrieve",
+          "args": {
+            "hosts": {{hosts | tojson }},
+            "username": "admin",
+            "password": "admin",
+            "snmp_community": "test_community",
+            "snmp_location": "test_location",
+            "snmp_contact": "test_contact"
+
+          },
+          "queue_strategy": "fifo"
+        }
+      },
+      {
+        "operation": "delete",
+        "path": "/service/v1/snmp_service",
+        "payload": {
+          "operation": "delete",
+          "args": {
+            "hosts": {{hosts | tojson }},
+            "username": "admin",
+            "password": "admin",
+            "snmp_community": "test_community",
+            "snmp_location": "test_location",
+            "snmp_contact": "test_contact"
+
+          },
+          "queue_strategy": "fifo"
+      }
+      }
+    ]
+  }
+]
+
+
+
+

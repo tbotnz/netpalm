@@ -17,7 +17,7 @@ class j2:
         self.file_loader = FileSystemLoader(self.jinja_template_dir)
         self.env = Environment(loader=self.file_loader, lstrip_blocks=True, trim_blocks=True)
 
-    def opentemplate(self,template):
+    def opentemplate(self, template):
         try:
             with open(template) as f:
                 res = f.read()
@@ -70,10 +70,12 @@ class j2:
         except Exception as e:
             return e
 
+
 def j2gettemplate(tmplate, template_type=False):
     t = j2(j2_type=template_type)
     res = t.gettemplate(tmplate)
     return res
+
 
 def render_j2template(templat, template_type=False, **kwargs):
     t = j2(j2_type=template_type)

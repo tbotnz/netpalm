@@ -27,6 +27,7 @@ class Config:
         self.listen_ip = data["listen_ip"]
         self.listen_port = data["listen_port"]
         self.netpalm_container_name = data["netpalm_container_name"]
+        self.netpalm_callback_http_mode = data["netpalm_callback_http_mode"]
         self.api_key = data["api_key"]
         self.api_key_name = data["api_key_name"]
         self.cookie_domain = data["cookie_domain"]

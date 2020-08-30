@@ -30,7 +30,10 @@ def processworker():
         start_broadcast_listener_process()
         try:
             if config.redis_tls_enabled:
-                base_connection = Redis(host=config.redis_server, port=config.redis_port, password=config.redis_key,
+                base_connection = Redis(
+                                        host=config.redis_server,
+                                        port=config.redis_port,
+                                        password=config.redis_key,
                                         ssl=True,
                                         ssl_cert_reqs='required',
                                         ssl_keyfile=config.redis_tls_key_file,
@@ -40,7 +43,8 @@ def processworker():
                                         socket_keepalive=config.redis_socket_keepalive
                                         )
             else:
-                base_connection = Redis(host=config.redis_server,
+                base_connection = Redis(
+                                        host=config.redis_server,
                                         port=config.redis_port,
                                         password=config.redis_key,
                                         socket_connect_timeout=config.redis_socket_connect_timeout,
@@ -59,19 +63,21 @@ def processworker():
 def pinned_worker(queue):
     try:
         if config.redis_tls_enabled:
-            base_connection = Redis(host=config.redis_server,
-                                        port=config.redis_port,
-                                        password=config.redis_key,
-                                        ssl=True,
-                                        ssl_cert_reqs='required',
-                                        ssl_keyfile=config.redis_tls_key_file,
-                                        ssl_certfile=config.redis_tls_cert_file,
-                                        ssl_ca_certs=config.redis_tls_ca_cert_file,
-                                        socket_connect_timeout=config.redis_socket_connect_timeout,
-                                        socket_keepalive=config.redis_socket_keepalive
-                                        )
+            base_connection = Redis(
+                                    host=config.redis_server,
+                                    port=config.redis_port,
+                                    password=config.redis_key,
+                                    ssl=True,
+                                    ssl_cert_reqs='required',
+                                    ssl_keyfile=config.redis_tls_key_file,
+                                    ssl_certfile=config.redis_tls_cert_file,
+                                    ssl_ca_certs=config.redis_tls_ca_cert_file,
+                                    socket_connect_timeout=config.redis_socket_connect_timeout,
+                                    socket_keepalive=config.redis_socket_keepalive
+                                    )
         else:
-            base_connection = Redis(host=config.redis_server,
+            base_connection = Redis(
+                                    host=config.redis_server,
                                     port=config.redis_port,
                                     password=config.redis_key,
                                     socket_connect_timeout=config.redis_socket_connect_timeout,
