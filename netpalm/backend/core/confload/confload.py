@@ -47,6 +47,8 @@ class Config:
         self.redis_tls_key_file = data["redis_tls_key_file"]
         self.redis_tls_ca_cert_file = data["redis_tls_ca_cert_file"]
         self.redis_tls_enabled = data["redis_tls_enabled"]
+        self.redis_socket_connect_timeout = data["redis_socket_connect_timeout"]
+        self.redis_socket_keepalive = data["redis_socket_keepalive"]
         self.fifo_process_per_node = data["fifo_process_per_node"]
         self.pinned_process_per_node = data["pinned_process_per_node"]
         self.redis_task_timeout = data["redis_task_timeout"]

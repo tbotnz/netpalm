@@ -129,14 +129,24 @@ class Rediz:
         self.core_q = config.redis_core_q
         # config check if TLS required
         if config.redis_tls_enabled:
-            self.base_connection = Redis(host=self.server, port=self.port, password=self.key,
+            self.base_connection = Redis(host=self.server,
+                                        port=self.port,
+                                        password=self.key,
                                         ssl=True,
                                         ssl_cert_reqs='required',
                                         ssl_keyfile=config.redis_tls_key_file,
                                         ssl_certfile=config.redis_tls_cert_file,
-                                        ssl_ca_certs=config.redis_tls_ca_cert_file)
+                                        ssl_ca_certs=config.redis_tls_ca_cert_file,
+                                        socket_connect_timeout=config.redis_socket_connect_timeout,
+                                        socket_keepalive=config.redis_socket_keepalive
+                                        )
         else:
-            self.base_connection = Redis(host=self.server, port=self.port, password=self.key)
+            self.base_connection = Redis(host=self.server,
+                                        port=self.port,
+                                        password=self.key,
+                                        socket_connect_timeout=config.redis_socket_connect_timeout,
+                                        socket_keepalive=config.redis_socket_keepalive
+                                        )
         self.base_q = Queue(self.core_q, connection=self.base_connection)
         self.networked_queuedb = config.redis_queue_store
         self.local_queuedb = {}
