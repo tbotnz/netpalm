@@ -159,14 +159,22 @@ def broadcast_queue_worker(queue_name):
         log.info(f"Before listening for broadcasts, first check the log")
         update_log_processor.process_log()
         if config.redis_tls_enabled:
-            redis = Redis(host=config.redis_server, port=config.redis_port, password=config.redis_key,
-                                        ssl=True,
-                                        ssl_cert_reqs='required',
-                                        ssl_keyfile=config.redis_tls_key_file,
-                                        ssl_certfile=config.redis_tls_cert_file,
-                                        ssl_ca_certs=config.redis_tls_ca_cert_file)
+            redis = Redis(host=config.redis_server,
+                        port=config.redis_port,
+                        password=config.redis_key,
+                        ssl=True,
+                        ssl_cert_reqs='required',
+                        ssl_keyfile=config.redis_tls_key_file,
+                        ssl_certfile=config.redis_tls_cert_file,
+                        ssl_ca_certs=config.redis_tls_ca_cert_file,
+                        socket_connect_timeout=config.redis_socket_connect_timeout,
+                        socket_keepalive=config.redis_socket_keepalive
+                        )
         else:
-            redis = Redis(host=config.redis_server, port=config.redis_port, password=config.redis_key)
+            redis = Redis(host=config.redis_server,
+                        port=config.redis_port,
+                        password=config.redis_key
+                        )
         pubsub = redis.pubsub()
         pubsub.subscribe(queue_name)
 

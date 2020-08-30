@@ -24,6 +24,8 @@
     "redis_tls_cert_file": "netpalm/backend/core/security/cert/tls/redis.crt",
     "redis_tls_key_file": "netpalm/backend/core/security/cert/tls/redis.key",
     "redis_tls_ca_cert_file": "netpalm/backend/core/security/cert/tls/ca.crt",
+    "redis_socket_connect_timeout": 30,
+    "redis_socket_keepalive": 30,
     "pinned_process_per_node": 50,
     "fifo_process_per_node": 10,
     "txtfsm_index_file": "netpalm/backend/plugins/extensibles/ntc-templates/index",
