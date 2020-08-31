@@ -5,7 +5,7 @@
       <h3 align="center">The open API platform for network devices.</h3>
    <br/>
    <p align="center">
-   netpalm makes it easy to push and pull state from your apps to your network by providing multiple southbound drivers, abstractions methods and modern integration interfaces  such as open API3 and REST webhooks.
+   netpalm makes it easy to push and pull state from your apps to your network by providing multiple southbound drivers, abstraction methods and modern northbound  interfaces such as open API3 and REST webhooks.
    </p>
 <br/>  
 <hr/>
