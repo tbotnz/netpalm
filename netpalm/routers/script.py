@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from fastapi.encoders import jsonable_encoder
 
 from netpalm.backend.core.confload.confload import config
-# load models
+
 from netpalm.backend.core.models.models import Script
 from netpalm.backend.core.models.task import Response
 from netpalm.backend.core.models.task import ResponseBasic
@@ -33,6 +33,7 @@ def execute_script(script: Script):
     r = reds.execute_task(method="script", kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp
+
 
 r = routes["ls"](fldr="script")
 for script in r["data"]["task_result"]["templates"]:
