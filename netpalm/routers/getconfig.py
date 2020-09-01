@@ -39,19 +39,22 @@ def get_config(getcfg: GetConfig):
 def get_config_netmiko(getcfg: NetmikoGetConfig):
     return _get_config(getcfg, library="netmiko")
 
-#read config
+
+# read config
 @router.post("/getconfig/napalm", response_model=Response, status_code=201)
 @error_handle_w_cache
 def get_config_napalm(getcfg: NapalmGetConfig):
     return _get_config(getcfg, library="napalm")
 
-#read config
+
+# read config
 @router.post("/getconfig/ncclient", response_model=Response, status_code=201)
 @error_handle_w_cache
 def get_config_ncclient(getcfg: NcclientGetConfig):
     return _get_config(getcfg, library="ncclient")
 
-#read config
+
+# read config
 @router.post("/getconfig/restconf", response_model=Response, status_code=201)
 @error_handle_w_cache
 def get_config_restconf(getcfg: Restconf):

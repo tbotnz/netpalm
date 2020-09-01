@@ -2,7 +2,7 @@ import json
 
 import requests
 
-from netpalm.backend.core.meta.rediz_meta import write_meta_error
+from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 
 
 class restconf:
