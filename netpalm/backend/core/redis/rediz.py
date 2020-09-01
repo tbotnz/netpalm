@@ -485,10 +485,7 @@ class Rediz:
         return self.cache.clear_keys(modified_cache_key)
 
     def get_workers(self):
-        """
-        returns stats about all running rq workers
-
-        """
+        """returns stats about all running rq workers"""
         try:
             workers = Worker.all(connection=self.base_connection)
             result = []
@@ -511,3 +508,22 @@ class Rediz:
         except Exception as e:
             log.error(f"get_workers: {e}")
             return e
+
+    def kill_worker(self, worker_name=False):
+        """kills a worker by its name"""
+        running_workers = self.get_workers()
+        killed = False
+        for w in running_workers:
+            if w["name"] == worker_name:
+                killed = True
+                kill_message = {
+                    "type": "kill_worker_pid",
+                    "kwargs": {
+                        "hostname": w["hostname"],
+                        "pid": w["pid"]
+                        }
+                    }
+                self.send_broadcast(json.dumps(kill_message))
+        if not killed:
+            raise Exception(f"worker {worker_name} not found")
+

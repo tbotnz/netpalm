@@ -32,6 +32,15 @@ class netpalm_testhelper:
             log.exception(f"error while getting {endpoint}")
             raise
 
+    def post(self, endpoint: str):
+        try:
+            r = requests.post(f"http://{self.ip}:{self.port}/{endpoint}",
+                              headers=self.headers, data={}, timeout=self.http_timeout)
+            return r.json()
+        except Exception as e:
+            log.exception(f"error while getting {endpoint}")
+            raise
+
     def check_task(self, taskid):
         try:
             time.sleep(0.5)

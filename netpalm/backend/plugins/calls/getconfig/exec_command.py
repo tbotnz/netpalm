@@ -1,7 +1,7 @@
 import logging
 
-from netpalm.backend.core.meta.rediz_meta import prepare_netpalm_payload
-from netpalm.backend.core.meta.rediz_meta import write_meta_error
+from netpalm.backend.core.utilities.rediz_meta import prepare_netpalm_payload
+from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
 from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko

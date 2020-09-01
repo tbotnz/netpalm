@@ -5,7 +5,7 @@ import json
 import requests
 
 from netpalm.backend.core.confload.confload import config
-from netpalm.backend.core.meta.rediz_meta import write_meta_error
+from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.core.models.service import model_service_template
 from netpalm.backend.plugins.utilities.jinja2.j2 import render_j2template
 

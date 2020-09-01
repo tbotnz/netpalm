@@ -8,7 +8,8 @@ from netpalm.backend.core.redis import reds
 
 router = APIRouter()
 
-# get specific task 
+
+# get specific task
 @router.get("/task/{task_id}", response_model=Response)
 def get_task(task_id: str):
     try:
@@ -18,7 +19,8 @@ def get_task(task_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
-#get all tasks in queue
+
+# get all tasks in queue
 @router.get("/taskqueue/")
 def get_task_list():
     try:
@@ -28,7 +30,8 @@ def get_task_list():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
-#task view route for specific host
+
+# task view route for specific host
 @router.get("/taskqueue/{host}")
 def get_host_task_list(host: str):
     try:
@@ -38,12 +41,23 @@ def get_host_task_list(host: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
-#get all running workers
+
+# get all running workers
 @router.get("/workers/", response_model=List[WorkerResponse])
 def get_workers():
     try:
         r = reds.get_workers()
         resp = jsonable_encoder(r)
         return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split('\n'))
+
+
+# get all running workers
+@router.post("/workers/kill/{name}")
+def kill_worker(name: str):
+    try:
+        r = reds.kill_worker(worker_name=name)
+        resp = jsonable_encoder(r)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))

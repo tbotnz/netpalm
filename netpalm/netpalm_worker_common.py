@@ -9,6 +9,8 @@ from redis import Redis
 from netpalm.backend.core.confload.confload import config
 from netpalm.backend.core.models.transaction_log import TransactionLogEntryModel, TransactionLogEntryType
 from netpalm.backend.core.redis import reds, Rediz
+from netpalm.backend.core.utilities.rediz_kill_worker import kill_worker_pid
+
 from netpalm.backend.plugins.utilities.textfsm.template import listtemplates, addtemplate, removetemplate, pushtemplate
 
 log = logging.getLogger(__name__)
@@ -144,6 +146,7 @@ def handle_broadcast_message(broadcast_msg: typing.Dict, base_connection: Redis)
     handlers = {
         "ping": handle_ping,
         "process_update_log": update_log_processor.process_log,
+        "kill_worker_pid": kill_worker_pid
     }
     msg_type = data["type"]
     if msg_type not in handlers:

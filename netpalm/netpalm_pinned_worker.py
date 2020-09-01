@@ -11,10 +11,12 @@ from .netpalm_worker_common import start_broadcast_listener_process
 config.setup_logging(max_debug=True)
 log = logging.getLogger(__name__)
 
+
 # process listner
 def start_processworkerprocess():
     p = Process(target=processworker)
     p.start()
+
 
 def we_are_controller():
     import sys
@@ -23,6 +25,7 @@ def we_are_controller():
             log.error(f'{sys.argv}')
             return True
     return False
+
 
 # listens on the core queue for messages from the controller, used to create new processes on demand as needed
 def processworker():
@@ -92,9 +95,11 @@ def pinned_worker(queue):
     except Exception as e:
         return e
 
+
 def pinned_worker_constructor(queue):
     p = Process(target=pinned_worker, args=(queue,))
     p.start()
+
 
 if __name__ == '__main__':
     start_processworkerprocess()
