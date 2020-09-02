@@ -1,0 +1,33 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: tests
+
+on: [ push, pull_request ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the stack
+        #      run: docker-compose -f ./docker-compose.dev.yml up -d
+        run: docker-compose -f docker-compose.ci.yml up -d
+
+      - id: test_nolab
+        name: nolab tests
+        run: docker-compose -f docker-compose.ci.yml run netpalm-controller pytest -m nolab
+
+      - id: test_cisgo
+        name: cisgo tests
+        run: docker-compose -f docker-compose.ci.yml run netpalm-controller pytest -m cisgo
+#      run: docker-compose -f ./docker-compose.dev.yml run controller echo "asdf"
+#    - name: notify slack
+#      if:  ${{ always() }}
+#      env:
+#        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+#      uses: abinoda/slack-action@master
+#      with:
+#        args: '{\"channel\":\"CUCQA382D\",\"blocks\": [ { \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"Hey! ${{ github.actor }} just pushed to ${{ github.base_ref }} @ ${{ github.repositoryUrl }}.  The Job status is ${{ job.status }}, the step outcome is ${{ steps.test.outcome }}, and the step conclusion is ${{ steps.test.conclusion }}!\" } } ]}'
