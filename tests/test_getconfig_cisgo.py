@@ -54,7 +54,7 @@ class CisgoHelper:
             "optional_args": {
                 "port": self.port_number,
                 "fast_cli": True,
-                "default_enter": "\r\n"
+                # "default_enter": "\r\n"
             }
         }
 

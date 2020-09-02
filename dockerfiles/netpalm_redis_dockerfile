@@ -1,4 +1,4 @@
-FROM redis
+FROM redis:6.0.7-alpine
 WORKDIR /etc/redis_certs
 ADD ./netpalm/backend/core/security/cert /etc/redis_certs
 COPY ./config/redis.conf /usr/local/etc/redis/redis.conf

@@ -1,3 +1,4 @@
+![Tests](https://github.com/tbotnz/netpalm/workflows/tests/badge.svg)
 <p align="center">
    <br/>
    <img src="/static/images/np_new.png" />
@@ -11,8 +12,6 @@
 <hr/>
 </p>
 <br/> 
-
-![Tests](https://github.com/Apcela/netpalm/workflows/tests/badge.svg)
 
 Leveraging best of breed open source network components like [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests), netpalm makes it easy to abstract from any network devices native telnet, SSH, NETCONF or RESTCONF interface into a modern model driven open api 3 interface.
 

@@ -16,7 +16,31 @@ services:
       - "netpalm-network"
     depends_on:
       - redis
-    restart: always
+      - cisgo
+
+  worker-pinned:
+    image: netpalm_netpalm-controller
+    command: python3 worker.py pinned
+    environment:
+      - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+      - NETPALM_CONFIG=/code/config/config.json
+      - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+    depends_on:
+      - redis
+    networks:
+      - "netpalm-network"
+
+  worker-fifo:
+    image: netpalm_netpalm-controller
+    command: python3 worker.py fifo
+    environment:
+      - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+      - NETPALM_CONFIG=/code/config/config.json
+      - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+    depends_on:
+      - redis
+    networks:
+      - "netpalm-network"
 
   redis:
     build:
@@ -24,7 +48,13 @@ services:
       dockerfile: ./dockerfiles/netpalm_redis_dockerfile
     networks:
       - "netpalm-network"
-    restart: always
+
+  cisgo:
+    build:
+      context: ./dockerfiles
+      dockerfile: cisgo_dockerfile
+    networks:
+      - "netpalm-network"
 
 networks:
 
