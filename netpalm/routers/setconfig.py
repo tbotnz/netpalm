@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi.encoders import jsonable_encoder
 
 # load models
-from netpalm.backend.core.models.generic_setconfig import SetConfig
+from netpalm.backend.core.models.models import SetConfig
 from netpalm.backend.core.models.napalm import NapalmSetConfig
 from netpalm.backend.core.models.ncclient import NcclientSetConfig
 from netpalm.backend.core.models.netmiko import NetmikoSetConfig
