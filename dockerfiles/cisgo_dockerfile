@@ -1,0 +1,6 @@
+FROM golang:1.15.0-buster
+ENV GO111MODULE=on
+RUN git clone --depth 1 --branch v0.0.1  https://github.com/tbotnz/cisgo-ios
+WORKDIR /go/cisgo-ios/
+RUN go build cis.go
+CMD /go/cisgo-ios/cis
