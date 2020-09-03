@@ -1,0 +1,51 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: tests
+
+on: [ push, pull_request ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      #      - run: docker-compose -f docker-compose.ci.yml pull  # don't cache this
+
+      #      - run: docker-compose -f docker-compose.ci.yml build cisgo redis  # don't cache this
+
+      - run: docker pull python:3.8-slim
+      - run: docker pull golang:1.15.0-buster
+      - run: docker pull redis:6.0.7-alpine
+
+      - uses: satackey/action-docker-layer-caching@v0.0.8
+        continue-on-error: true
+        with:
+          key: ci-tests-{hash}
+          restore-keys: |
+            ci-tests-
+
+      - name: Build the stack
+        #      run: docker-compose -f ./docker-compose.dev.yml up -d
+        run: docker-compose -f docker-compose.ci.yml build --parallel
+
+      - run: docker-compose -f docker-compose.ci.yml up -d
+
+      - id: test_nolab
+        name: nolab tests
+        run: docker-compose -f docker-compose.ci.yml exec -T netpalm-controller pytest -m nolab -vv
+
+      - id: test_cisgo
+        name: cisgo tests
+        run: docker-compose -f docker-compose.ci.yml exec -T netpalm-controller pytest -m cisgo -vv
+#      run: docker-compose -f ./docker-compose.dev.yml run controller echo "asdf"
+#    - name: notify slack
+#      if:  ${{ always() }}
+#      env:
+#        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+#      uses: abinoda/slack-action@master
+#      with:
+#        args: '{\"channel\":\"CUCQA382D\",\"blocks\": [ { \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"Hey! ${{ github.actor }} just pushed to ${{ github.base_ref }} @ ${{ github.repositoryUrl }}.  The Job status is ${{ job.status }}, the step outcome is ${{ steps.test.outcome }}, and the step conclusion is ${{ steps.test.conclusion }}!\" } } ]}'
