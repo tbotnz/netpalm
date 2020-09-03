@@ -90,6 +90,7 @@ cache_key_data = [
 @pytest.mark.parametrize("req_data", cache_key_data)
 def test_cache_key_is_correct(req_data: typing.Dict):
     expected = req_data.pop("expected_cache_key")
+    assert False  # oh no!
     assert cache_key_from_req_data(req_data, unsafe_logging=True) == expected
 
 
