@@ -37,12 +37,13 @@ or
         "operation": "create",
         "path": "/setconfig",
         "payload": {
-          "library": "napalm",
+          "library": "netmiko",
           "connection_args": {
             "device_type": "cisco_ios",
             "host": "{{host}}",
             "username": "{{username}}",
-            "password": "{{password}}"
+            "password": "{{password}}",
+            "fast_cli": true
           },
         "j2config": {
     	    "template":"cisco_ios_create_vlans",
@@ -61,24 +62,39 @@ or
             "device_type": "cisco_ios",
             "host": "{{host}}",
             "username": "{{username}}",
-            "password": "{{password}}"
+            "password": "{{password}}",
+            "fast_cli": true
           },
         "command": "show int vlan 99",
         "args":{
             "use_textfsm":true
-        }
+        },
+        "post_checks": [
+          {
+            "match_type": "include",
+            "get_config_args": {
+              "command": "show int vlan 99"
+            },
+            "match_str": [
+              "Vlan99",
+              "up",
+              "EtherSVI"
+            ]
+          }
+        ]
         }
       },
       {
         "operation": "delete",
         "path": "/setconfig",
         "payload": {
-          "library": "napalm",
+          "library": "netmiko",
           "connection_args": {
             "device_type": "cisco_ios",
             "host": "{{host}}",
             "username": "{{username}}",
-            "password": "{{password}}"
+            "password": "{{password}}",
+            "fast_cli": true
           },
         "j2config": {
     	    "template":"cisco_ios_remove_vlans",
