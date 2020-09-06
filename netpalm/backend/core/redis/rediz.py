@@ -5,6 +5,9 @@ from typing import Union, Dict, List
 
 import redis_lock
 from cachelib import RedisCache
+
+import uuid
+
 from redis import Redis
 from rq import Queue, Worker
 from rq.job import Job
@@ -12,6 +15,7 @@ from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegist
 
 from netpalm.backend.core.confload.confload import config, Config
 from netpalm.backend.core.models.task import Response, WorkerResponse
+from netpalm.backend.core.models.service import model_service
 from netpalm.backend.core.models.transaction_log import TransactionLogEntryModel, TransactionLogEntryType
 from netpalm.backend.core.routes import routes
 
@@ -327,6 +331,16 @@ class Rediz:
             r = self.sendtask(q=config.redis_fifo_q, exe=method, kwargs=kw)
         return r
 
+    def execute_service_task(self, metho, **kwargs):
+        """service wrapper for execute task method"""
+        log.info(kwargs)
+        kw = kwargs.get("kwargs")
+        resul = self.execute_task(method=metho, kwargs=kw)
+        serv = self.create_service_instance(raw_data=kw)
+        if serv:
+            resul["data"]["service_id"] = serv
+        return resul
+
     def fetchsubtask(self, parent_task_object):
         try:
             status = parent_task_object["data"]["task_status"]
@@ -410,17 +424,17 @@ class Rediz:
                         "task_id": []
                     }
                 }
-                #get startedjobs
+                # get startedjobs
                 startedjobs = self.getstartedjobs(self.local_queuedb[q]["queue"])
                 for job in startedjobs:
                     task.append(job)
 
-                #get finishedjobs
+                # get finishedjobs
                 finishedjobs = self.getfinishedjobs(self.local_queuedb[q]["queue"])
                 for job in finishedjobs:
                     task.append(job)
 
-                #get failedjobs
+                # get failedjobs
                 failedjobs = self.getfailedjobs(self.local_queuedb[q]["queue"])
                 for job in failedjobs:
                     task.append(job)
@@ -527,3 +541,57 @@ class Rediz:
         if not killed:
             raise Exception(f"worker {worker_name} not found")
 
+    def create_service_instance(self, raw_data):
+        """creates a service id and stores it in the DB with the service
+        payload"""
+        u_uid = uuid.uuid4()
+        sid = f"{1}_{u_uid}_service_instance"
+        exists = self.base_connection.get(sid)
+        if not exists:
+            raw_json = json.dumps(raw_data)
+            self.base_connection.set(sid, raw_json)
+            return f"{u_uid}"
+        else:
+            return False
+
+    def fetch_service_instance(self, sid):
+        """returns ALL data from the latest copy of the latest service"""
+        sid_parsed = f"1_{sid}_service_instance"
+        exists = self.base_connection.get(sid_parsed)
+        if not exists:
+            return False
+        else:
+            return exists
+
+    def fetch_service_instance_args(self, sid):
+        """returns the args ONLY from the latest copy of the latest service"""
+        r = self.fetch_service_instance(sid)
+        if r:
+            return json.loads(r)["args"]
+        else:
+            return False
+
+    def delete_service_instance(self, sid):
+        """gets the service instance and deletes it from the db and network"""
+        sid_parsed = f"1_{sid}_service_instance"
+        res = json.loads(self.fetch_service_instance(sid))
+        res["operation"] = "delete"
+        result = self.execute_task(method="render_service", kwargs=res)
+        self.base_connection.delete(sid_parsed)
+        return result
+
+    def redeploy_service_instance(self, sid):
+        """redeploys the service instance to the network"""
+        sid_parsed = f"1_{sid}_service_instance"
+        res = json.loads(self.fetch_service_instance(sid))
+        res["operation"] = "create"
+        result = self.execute_task(method="render_service", kwargs=res)
+        return result
+
+    def validate_service_instance(self, sid):
+        """validates the service instances state against the network"""
+        sid_parsed = f"1_{sid}_service_instance"
+        res = json.loads(self.fetch_service_instance(sid))
+        res["operation"] = "retrieve"
+        result = self.execute_task(method="render_service", kwargs=res)
+        return result
