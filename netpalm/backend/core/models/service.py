@@ -10,6 +10,7 @@ class service_lifecycle(str, Enum):
     create = "create"
     retrieve = "retrieve"
     delete = "delete"
+    validate = "validate"
     script = "script"
 
 

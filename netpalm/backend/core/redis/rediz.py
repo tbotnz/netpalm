@@ -3,6 +3,8 @@ import json
 import logging
 from typing import Union, Dict, List
 
+from jsonpath_ng import jsonpath, parse
+
 import redis_lock
 from cachelib import RedisCache
 
@@ -550,6 +552,7 @@ class Rediz:
         if not exists:
             raw_json = json.dumps(raw_data)
             self.base_connection.set(sid, raw_json)
+            self.base_connection.bgsave()
             return f"{u_uid}"
         else:
             return False
@@ -565,9 +568,16 @@ class Rediz:
 
     def fetch_service_instance_args(self, sid):
         """returns the args ONLY from the latest copy of the latest service"""
-        r = self.fetch_service_instance(sid)
-        if r:
-            return json.loads(r)["args"]
+        service_inst_result = self.fetch_service_instance(sid)
+        if service_inst_result:
+            # scrub credentials
+            service_inst_json = json.loads(service_inst_result)["args"]
+            json_scrub_dict = ["$.username", "$.password", "$.key"]
+            for scrub_match in json_scrub_dict:
+                jsonpath_expr = parse(scrub_match)
+                jsonpath_expr.find(service_inst_json)
+                jsonpath_expr.update(service_inst_json, "*******")
+            return service_inst_json
         else:
             return False
 
@@ -578,6 +588,7 @@ class Rediz:
         res["operation"] = "delete"
         result = self.execute_task(method="render_service", kwargs=res)
         self.base_connection.delete(sid_parsed)
+        self.base_connection.bgsave()
         return result
 
     def redeploy_service_instance(self, sid):
@@ -588,10 +599,18 @@ class Rediz:
         result = self.execute_task(method="render_service", kwargs=res)
         return result
 
-    def validate_service_instance(self, sid):
+    def retrieve_service_instance(self, sid):
         """validates the service instances state against the network"""
         sid_parsed = f"1_{sid}_service_instance"
         res = json.loads(self.fetch_service_instance(sid))
         res["operation"] = "retrieve"
+        result = self.execute_task(method="render_service", kwargs=res)
+        return result
+
+    def validate_service_instance(self, sid):
+        """validates the service instances state against the network"""
+        sid_parsed = f"1_{sid}_service_instance"
+        res = json.loads(self.fetch_service_instance(sid))
+        res["operation"] = "validate"
         result = self.execute_task(method="render_service", kwargs=res)
         return result

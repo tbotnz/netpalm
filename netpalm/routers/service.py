@@ -43,6 +43,13 @@ def validate_service_instance_state(service_id: str):
     resp = jsonable_encoder(r)
     return resp
 
+@router.post("/service/instance/retrieve/{service_id}")
+@HttpErrorHandler()
+def retrieve_service_instance_state(service_id: str):
+    r = reds.retrieve_service_instance(sid=service_id)
+    resp = jsonable_encoder(r)
+    return resp
+
 @router.post("/service/instance/re-deploy/{service_id}")
 @HttpErrorHandler()
 def redeploy_service_instance_state(service_id: str):

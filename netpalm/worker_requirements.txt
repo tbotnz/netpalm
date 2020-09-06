@@ -14,3 +14,4 @@ pyyaml
 cachelib
 python-redis-lock
 filelock
+jsonpath_ng
