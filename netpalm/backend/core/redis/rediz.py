@@ -344,6 +344,7 @@ class Rediz:
         return resul
 
     def fetchsubtask(self, parent_task_object):
+        """fetches nested subtasks for service driven tasks"""
         try:
             status = parent_task_object["data"]["task_status"]
             log.info(f'fetching subtask: {parent_task_object["data"]["task_id"]}')
@@ -613,4 +614,20 @@ class Rediz:
         res = json.loads(self.fetch_service_instance(sid))
         res["operation"] = "validate"
         result = self.execute_task(method="render_service", kwargs=res)
+        return result
+
+    def get_service_instances(self):
+        """retrieves all service instances in the redis store"""
+        result = []
+        for sid in self.base_connection.scan_iter("*_service_instance"):
+            sid_str = sid.decode("utf-8")
+            parsed_sid = sid_str.replace('1_', '').replace('_service_instance', '')
+            log.info(parsed_sid)
+            sid_data = json.loads(self.fetch_service_instance(parsed_sid))
+            if sid_data:
+                appendres = {
+                    "service_name": sid_data["netpalm_service_name"],
+                    "service_id": parsed_sid
+                    }
+                result.append(appendres)
         return result

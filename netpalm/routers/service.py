@@ -27,7 +27,17 @@ def create_service_instance(servicename: str, service: model_service):
     resp = jsonable_encoder(r)
     return resp
 
+
+@router.get("/service/instances/")
+@HttpErrorHandler()
+def fetch_service_instance():
+    r = reds.get_service_instances()
+    resp = jsonable_encoder(r)
+    return resp
+
+
 @router.get("/service/instance/{service_id}")
+@HttpErrorHandler()
 def fetch_service_instance(service_id: str):
     r = reds.fetch_service_instance_args(sid=service_id)
     if r:
@@ -36,12 +46,14 @@ def fetch_service_instance(service_id: str):
     else:
         raise HTTPException(status_code=204, detail=f"{service_id} not found")
 
+
 @router.post("/service/instance/validate/{service_id}")
 @HttpErrorHandler()
 def validate_service_instance_state(service_id: str):
     r = reds.validate_service_instance(sid=service_id)
     resp = jsonable_encoder(r)
     return resp
+
 
 @router.post("/service/instance/retrieve/{service_id}")
 @HttpErrorHandler()
@@ -50,6 +62,7 @@ def retrieve_service_instance_state(service_id: str):
     resp = jsonable_encoder(r)
     return resp
 
+
 @router.post("/service/instance/re-deploy/{service_id}")
 @HttpErrorHandler()
 def redeploy_service_instance_state(service_id: str):
@@ -57,12 +70,14 @@ def redeploy_service_instance_state(service_id: str):
     resp = jsonable_encoder(r)
     return resp
 
+
 @router.post("/service/instance/delete/{service_id}")
 @HttpErrorHandler()
 def delete_service_instance_state(service_id: str):
     r = reds.delete_service_instance(sid=service_id)
     resp = jsonable_encoder(r)
     return resp
+
 
 r = routes["ls"](fldr="service")
 for servicename in r["data"]["task_result"]["templates"]:
@@ -80,6 +95,7 @@ for servicename in r["data"]["task_result"]["templates"]:
     @router.post(f"/service/v1/{servicename}", response_model=ServiceResponse, status_code=201)
     @HttpErrorHandler()
     def create_service_instance(service: model, request: Request):
+        # url hack
         service_name = f"{request.url}".split('/')[-1]
         req_data = service.dict()
         req_data["netpalm_service_name"] = service_name
