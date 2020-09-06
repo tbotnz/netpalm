@@ -8,6 +8,7 @@ from netpalm.backend.plugins.utilities.webhook.webhook import exec_webhook_func
 
 
 def exec_config(**kwargs):
+    """main function for executing setconfig commands to southbound drivers"""
     lib = kwargs.get("library", False)
     config = kwargs.get("config", False)
     j2conf =  kwargs.get("j2config", False)
@@ -18,7 +19,7 @@ def exec_config(**kwargs):
 
     result = False
     pre_check_ok = True
-    
+
     if j2conf:
         j2confargs = j2conf.get("args")
         try:
@@ -38,7 +39,7 @@ def exec_config(**kwargs):
             elif lib == "napalm":
                 napl = naplm(**kwargs)
                 sesh = napl.connect()
-                result = napl.config(sesh,config)
+                result = napl.config(sesh, config)
                 napl.logout(sesh)
             elif lib == "ncclient":
                 ncc = ncclien(**kwargs)
@@ -61,7 +62,7 @@ def exec_config(**kwargs):
                 if pre_checks:
                     for precheck in pre_checks:
                         command = precheck["get_config_args"]["command"]
-                        pre_check_result = netmik.sendcommand(sesh,[command])
+                        pre_check_result = netmik.sendcommand(sesh, [command])
                         for matchstr in precheck["match_str"]:
                             if precheck["match_type"] == "include" and matchstr not in str(pre_check_result):
                                 write_meta_error(f"PreCheck Failed: {matchstr} not found in {pre_check_result}")
@@ -74,7 +75,7 @@ def exec_config(**kwargs):
                     if post_checks:
                         for postcheck in post_checks:
                             command = postcheck["get_config_args"]["command"]
-                            post_check_result = netmik.sendcommand(sesh,[command])
+                            post_check_result = netmik.sendcommand(sesh, [command])
                             for matchstr in postcheck["match_str"]:
                                 if postcheck["match_type"] == "include" and matchstr not in str(post_check_result):
                                     write_meta_error(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
@@ -88,7 +89,7 @@ def exec_config(**kwargs):
                 if pre_checks:
                     for precheck in pre_checks:
                         command = precheck["get_config_args"]["command"]
-                        pre_check_result = napl.sendcommand(sesh,[command])
+                        pre_check_result = napl.sendcommand(sesh, [command])
                         for matchstr in precheck["match_str"]:
                             if precheck["match_type"] == "include" and matchstr not in str(pre_check_result):
                                 write_meta_error(f"PreCheck Failed: {matchstr} not found in {pre_check_result}")
@@ -101,7 +102,7 @@ def exec_config(**kwargs):
                     if post_checks:
                         for postcheck in post_checks:
                             command = postcheck["get_config_args"]["command"]
-                            post_check_result = napl.sendcommand(sesh,[command])
+                            post_check_result = napl.sendcommand(sesh, [command])
                             for matchstr in postcheck["match_str"]:
                                 if postcheck["match_type"] == "include" and matchstr not in str(post_check_result):
                                     write_meta_error(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
@@ -128,5 +129,5 @@ def exec_config(**kwargs):
             exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
     except Exception as e:
         write_meta_error(f"{e}")
-            
+
     return result

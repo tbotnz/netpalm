@@ -68,7 +68,21 @@ or
         "command": "show int vlan 99",
         "args":{
             "use_textfsm":true
-        },
+        }
+        }
+      },
+      {
+        "operation": "validate",
+        "path": "/getconfig",
+        "payload": {
+          "library": "netmiko",
+          "connection_args": {
+            "device_type": "cisco_ios",
+            "host": "{{host}}",
+            "username": "{{username}}",
+            "password": "{{password}}",
+            "fast_cli": true
+          },
         "post_checks": [
           {
             "match_type": "include",
@@ -108,7 +122,3 @@ or
   }{% if not loop.last %},{% endif %}{# THIS IS REQUIRED TO CONSTRUCT THE DATA CORRECTLY #}
   {% endfor -%}
 ]
-
-
-
-

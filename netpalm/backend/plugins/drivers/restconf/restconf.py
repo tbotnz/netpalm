@@ -38,7 +38,7 @@ class restconf:
 
     def sendcommand(self, session=False, command=False):
         try:
-            #restconf get call
+            # restconf get call
             result = {}
             url = self.transport+"://"+self.host+":"+str(self.port)+self.kwarg["uri"]
             response = requests.get(url, auth=(self.username, self.password), params=self.params, headers=self.headers, **self.connection_args)

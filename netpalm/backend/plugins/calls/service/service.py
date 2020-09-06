@@ -23,6 +23,7 @@ class service:
             "create": "/setconfig",
             "delete": "/setconfig",
             "retrieve": "/getconfig",
+            "validate": "/getconfig",
             "script": "/script"
             }
         self.posted_kwargs = kw
@@ -119,6 +120,6 @@ def render_service(**kwargs):
         if res:
             exeservice = s.execute_service()
     except Exception as e:
-        write_meta_error(f"render_service {e}")
+        write_meta_error(f"render_service: {e}")
 
     return exeservice
