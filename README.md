@@ -24,7 +24,8 @@ Built on a scalable microservice based architecture netpalm provides unparallele
 - Speaks REST and JSON RPC northbound, then CLI over SSH or Telnet or NETCONF/RESTCONF southbound to your network devices
 - Turns any Python script into a easy to consume, asynchronous and documented API with webhook support
 - Large amount of supported network device vendors thanks to [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests)
-- Built in multi-level abstraction interface for network service lifecycle functions for Create, Retrieve and Delete
+- Built in multi-level abstraction interface for network service lifecycle functions for create, retrieve and delete and validate
+- In band service inventory
 - Ability to write your own [service models and templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_service_templates) using your own existing [jinja2 templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/custom_scripts)
 - Well documented API with [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) full of examples and every instance gets it own openAPI 3 and self documenting for your service templates and scripts
 - Supports pre and post checks accross CLI devices raising exceptions and not deploying config as required
