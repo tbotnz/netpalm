@@ -17,7 +17,7 @@ from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegist
 
 from netpalm.backend.core.confload.confload import config, Config
 from netpalm.backend.core.models.task import Response, WorkerResponse
-from netpalm.backend.core.models.service import model_service
+from netpalm.backend.core.models.service import ServiceModel
 from netpalm.backend.core.models.transaction_log import TransactionLogEntryModel, TransactionLogEntryType
 from netpalm.backend.core.routes import routes
 
@@ -626,7 +626,7 @@ class Rediz:
             sid_data = json.loads(self.fetch_service_instance(parsed_sid))
             if sid_data:
                 appendres = {
-                    "service_name": sid_data["netpalm_service_name"],
+                    "service_model": sid_data["service_model"],
                     "service_id": parsed_sid
                     }
                 result.append(appendres)

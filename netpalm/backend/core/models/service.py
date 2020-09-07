@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from netpalm.backend.core.models.models import QueueStrategy
 
 
-class service_lifecycle(str, Enum):
+class ServiceLifecycle(str, Enum):
     create = "create"
     retrieve = "retrieve"
     delete = "delete"
@@ -14,8 +14,8 @@ class service_lifecycle(str, Enum):
     script = "script"
 
 
-class model_service(BaseModel):
-    operation: service_lifecycle
+class ServiceModel(BaseModel):
+    operation: ServiceLifecycle
     args: dict
     queue_strategy: Optional[QueueStrategy] = None
 
@@ -31,15 +31,24 @@ class model_service(BaseModel):
         }
 
 
-class model_service_template_methods(BaseModel):
-    operation: service_lifecycle
+class ServiceModelMethods(BaseModel):
+    operation: ServiceLifecycle
     path: Optional[str] = None
     payload: dict
 
 
-class model_service_template_methods(BaseModel):
-    supported_methods: List[model_service_template_methods] = None
+class ServiceModelSupportedMethods(BaseModel):
+    supported_methods: List[ServiceModelMethods] = None
 
 
-class model_service_template(BaseModel):
-    __root__: List[model_service_template_methods]
+class ServiceModelTemplate(BaseModel):
+    __root__: List[ServiceModelSupportedMethods]
+
+
+class ServiceInventorySchema(BaseModel):
+    service_model: str
+    service_id: str
+
+
+class ServiceInventoryResponse(BaseModel):
+    __root__: List[ServiceInventorySchema]

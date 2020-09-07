@@ -44,7 +44,7 @@ def get_host_task_list(host: str):
 
 # get all running workers
 @router.get("/workers/", response_model=List[WorkerResponse])
-def get_workers():
+def list_workers():
     try:
         r = reds.get_workers()
         resp = jsonable_encoder(r)

@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 from netpalm.backend.core.models.models import QueueStrategy
-from netpalm.backend.core.models.service import service_lifecycle
+from netpalm.backend.core.models.service import ServiceLifecycle
 
 
 class snmp_service_model_args(BaseModel):
@@ -18,7 +18,7 @@ class snmp_service_model_args(BaseModel):
 
 class snmp_service_model(BaseModel):
     # this class MUST match the filename & the filename must be formatted $servicetemplatename_model.py
-    operation: service_lifecycle
+    operation: ServiceLifecycle
     args: snmp_service_model_args
     queue_strategy: Optional[QueueStrategy] = None
 

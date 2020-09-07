@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 # get template list
 @router.get("/script", response_model=ResponseBasic)
 @HttpErrorHandler()
-async def get_script_list():
+async def list_scripts():
     r = routes["ls"](fldr="script")
     resp = jsonable_encoder(r)
     return resp

@@ -73,7 +73,7 @@ async def delete_textfsm_template(template_remove: TemplateRemove):
 
 # get template list
 @router.get("/j2template/config/", response_model=ResponseBasic)
-async def get_config_j2_templates():
+async def list_config_j2_templates():
     try:
         r = routes["ls"](fldr="config")
         resp = jsonable_encoder(r)
@@ -83,7 +83,7 @@ async def get_config_j2_templates():
 
 
 @router.get("/j2template/service/", response_model=ResponseBasic)
-async def get_service_j2_templates():
+async def list_service_j2_templates():
     try:
         r = routes["ls"](fldr="service")
         resp = jsonable_encoder(r)
@@ -93,7 +93,7 @@ async def get_service_j2_templates():
 
 
 @router.get("/j2template/webhook/", response_model=ResponseBasic)
-async def get_webhook_j2_templates():
+async def list_webhook_j2_templates():
     try:
         r = routes["ls"](fldr="webhook")
         resp = jsonable_encoder(r)
