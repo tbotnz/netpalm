@@ -69,7 +69,7 @@ def flush_cache_device(
 
 @router.get("/cache")
 @HttpErrorHandler()
-def get_cache():
+def list_cached_items():
     log.info(f"Getting cache info")
     keys = reds.cache.keys()
     rslt = {

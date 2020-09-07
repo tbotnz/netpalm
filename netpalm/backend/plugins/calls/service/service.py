@@ -6,7 +6,7 @@ import requests
 
 from netpalm.backend.core.confload.confload import config
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
-from netpalm.backend.core.models.service import model_service_template
+from netpalm.backend.core.models.service import ServiceModelTemplate
 from netpalm.backend.plugins.utilities.jinja2.j2 import render_j2template
 
 log = logging.getLogger(__name__)
@@ -43,7 +43,7 @@ class service:
                 rendered_template["data"]["task_result"]["template_render_result"]
                 )
             # double check the template complies with the base model
-            model_service_template(__root__=data)
+            ServiceModelTemplate(__root__=data)
             self.template_json = data
             return True
         except Exception as e:
@@ -112,7 +112,7 @@ class service:
 
 def render_service(**kwargs):
     """Main procedure for rendering and executing service & subtasks"""
-    templat = kwargs.get("netpalm_service_name")
+    templat = kwargs.get("service_model")
     exeservice = None
     try:
         s = service(kw=kwargs)
