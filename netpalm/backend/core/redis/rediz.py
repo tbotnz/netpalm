@@ -224,6 +224,7 @@ class Rediz:
             return e
 
     def get_redis_meta_template(self):
+        """template for redis meta data"""
         meta_template = {
             "errors": [],
             "enqueued_elapsed_seconds": None,
@@ -234,6 +235,10 @@ class Rediz:
         return meta_template
 
     def create_queue_worker(self, qname):
+        """
+        creates a local queue on the worker and executes a rpc to create a
+        pinned worker on a remote container
+        """
         from netpalm.netpalm_pinned_worker import pinned_worker_constructor
         try:
             log.info(f"create_queue_worker: creating queue and worker {qname}")
@@ -252,11 +257,13 @@ class Rediz:
             return e
 
     def check_and_create_q_w(self, hst):
+        """checks whether a local queue exists and creates if needed"""
         qexists = self.getqueue(hst)
         if not qexists:
             self.create_queue_worker(hst)
 
     def render_task_response(self, task_job):
+        """formats and returns the task rpc jobs result"""
         created_at = str(task_job.created_at)
         enqueued_at = str(task_job.enqueued_at)
         started_at = str(task_job.started_at)
@@ -283,7 +290,7 @@ class Rediz:
                 task_job.meta["total_elapsed_seconds"] = (current_time - created_parsed_time).seconds
                 task_job.save()
 
-            #clean up vars for response
+            # clean up vars for response
             created_at = None if created_at == "None" else created_at
             enqueued_at = None if enqueued_at == "None" else enqueued_at
             started_at = None if started_at == "None" else started_at
@@ -320,6 +327,7 @@ class Rediz:
         return resultdata
 
     def execute_task(self, method, **kwargs):
+        """main entry point for rpc tasks"""
         kw = kwargs.get("kwargs", False)
         connectionargs = kw.get("connection_args", False)
         host = False
@@ -357,9 +365,9 @@ class Rediz:
                         parent_task_object["data"]["task_status"] = temprespobj["data"]["task_status"]
                 if len(temprespobj["data"]["task_errors"]) >= 1:
                     task_errors.append({
-                        parent_task_object["data"]["task_result"][j]["host"]:{
-                            "task_id":parent_task_object["data"]["task_result"][j]["data"]["data"]["task_id"],
-                            "task_errors":temprespobj["data"]["task_errors"]
+                        parent_task_object["data"]["task_result"][j]["host"]: {
+                            "task_id": parent_task_object["data"]["task_result"][j]["data"]["data"]["task_id"],
+                            "task_errors": temprespobj["data"]["task_errors"]
                         }
                         })
                 parent_task_object["data"]["task_result"][j]["data"].update(temprespobj)
@@ -371,6 +379,7 @@ class Rediz:
             return e
 
     def fetchtask(self, task_id):
+        """gets a job result and renders it"""
         log.info(f"fetching task: {task_id}")
         try:
             task = Job.fetch(task_id, connection=self.base_connection)
@@ -382,6 +391,7 @@ class Rediz:
             return e
 
     def getjoblist(self, q):
+        """provides a list of all jobs in the queue"""
         try:
             self.getqueue(q)
             # if single host lookup
@@ -401,7 +411,7 @@ class Rediz:
                         return False
                 else:
                     return False
-            #multi host lookup
+            # multi host lookup
             elif not q:
                 response_object = {
                     "status": "success",
@@ -416,6 +426,7 @@ class Rediz:
             return e
 
     def getjobliststatus(self, q):
+        """provides a breakdown of all jobs in the queue"""
         log.info(f"getting jobs and status: {q}")
         try:
             if q:
@@ -456,6 +467,7 @@ class Rediz:
             return e
 
     def getstartedjobs(self, q):
+        """returns list of started redis jobs"""
         log.info(f"getting started jobs: {q}")
         try:
             registry = StartedJobRegistry(q, connection=self.base_connection)
@@ -465,6 +477,7 @@ class Rediz:
             return e
 
     def getfinishedjobs(self, q):
+        """returns list of finished redis jobs"""
         log.info(f"getting finished jobs: {q}")
         try:
             registry = FinishedJobRegistry(q, connection=self.base_connection)
@@ -474,6 +487,7 @@ class Rediz:
             return e
 
     def getfailedjobs(self, q):
+        """returns list of failed redis jobs"""
         log.info(f"getting failed jobs: {q}")
         try:
             registry = FailedJobRegistry(q, connection=self.base_connection)
@@ -483,6 +497,7 @@ class Rediz:
             return e
 
     def send_broadcast(self, msg: str):
+        """publishes a message to all workers"""
         log.info(f"sending broadcast: {msg}")
         try:
             self.base_connection.publish(config.redis_broadcast_q, msg)
@@ -494,6 +509,7 @@ class Rediz:
             return e
 
     def clear_cache_for_host(self, cache_key: str):
+        """poisions a cache for a specific host"""
         if not cache_key.count(":") >= 2:
             log.error(f"{cache_key=} doesn't seem to be a valid cache key!")
         host_port = cache_key.split(":")[:2]  # first 2 segments

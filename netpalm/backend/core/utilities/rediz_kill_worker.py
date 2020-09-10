@@ -7,7 +7,7 @@ log = logging.getLogger(__name__)
 
 
 def kill_worker_pid(**kwargs):
-    """kills a worker process by its pid"""
+    """kills a rq worker process by its pid"""
     try:
         hostname = kwargs.get("hostname")
         pid = kwargs.get("pid")

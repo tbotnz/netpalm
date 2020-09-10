@@ -4,6 +4,7 @@ from netpalm.backend.core.models.task import Response
 
 
 def write_meta_error(data):
+    """custom exception handler for within an rpc job"""
     job = get_current_job()
     job.meta["result"] = "failed"
     if type(data) == list:
@@ -13,7 +14,8 @@ def write_meta_error(data):
     job.save_meta()
 
 
-def prepare_netpalm_payload(job_result={}):
+def render_netpalm_payload(job_result={}):
+    """in band rpc job result renderer"""
     try:
         job = get_current_job()
         resultdata = Response(status="success",

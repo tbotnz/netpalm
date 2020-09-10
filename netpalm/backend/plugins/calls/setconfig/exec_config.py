@@ -1,4 +1,4 @@
-from netpalm.backend.core.utilities.rediz_meta import write_meta_error, prepare_netpalm_payload
+from netpalm.backend.core.utilities.rediz_meta import write_meta_error, render_netpalm_payload
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
 from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
@@ -125,7 +125,7 @@ def exec_config(**kwargs):
 
     try:
         if webhook:
-            current_jobdata = prepare_netpalm_payload(job_result=result)
+            current_jobdata = render_netpalm_payload(job_result=result)
             exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
     except Exception as e:
         write_meta_error(f"{e}")
