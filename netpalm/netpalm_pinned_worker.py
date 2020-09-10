@@ -12,8 +12,8 @@ config.setup_logging(max_debug=True)
 log = logging.getLogger(__name__)
 
 
-# process listner
 def start_processworkerprocess():
+    """process to run the processworker core function"""
     p = Process(target=processworker)
     p.start()
 
@@ -27,8 +27,12 @@ def we_are_controller():
     return False
 
 
-# listens on the core queue for messages from the controller, used to create new processes on demand as needed
 def processworker():
+    """
+    listens on the core queue for messages from the controller,
+    single processesworker runs per controller.
+    used to create new processes on demand as needed
+    """
     if not we_are_controller():
         start_broadcast_listener_process()
         try:
@@ -97,6 +101,7 @@ def pinned_worker(queue):
 
 
 def pinned_worker_constructor(queue):
+    """process constructor to run the pinned_worker"""
     p = Process(target=pinned_worker, args=(queue,))
     p.start()
 

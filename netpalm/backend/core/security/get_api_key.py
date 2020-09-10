@@ -8,12 +8,13 @@ api_key_query = APIKeyQuery(name=config.api_key_name, auto_error=False)
 api_key_header = APIKeyHeader(name=config.api_key_name, auto_error=False)
 api_key_cookie = APIKeyCookie(name=config.api_key_name, auto_error=False)
 
+
 async def get_api_key(
     api_key_query: str = Security(api_key_query),
     api_key_header: str = Security(api_key_header),
     api_key_cookie: str = Security(api_key_cookie),
 ):
-
+    """checks for an API key"""
     if api_key_query == config.api_key:
         return api_key_query
     elif api_key_header == config.api_key:
