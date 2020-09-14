@@ -206,15 +206,21 @@ There is a public instance of netpalm available below
 - https://netpalm.tech/
 - API key = 2a84465a-cf38-46b2-9d86-b84Q7d57f288
 
-### useful netpalm resources
+### netpalm external / media resources
 
-netpalm getting started blog:
+wim wauters: _netpalm getting started blog_
 - [netpalm Intro Part 1](https://blog.wimwauters.com/networkprogrammability/2020-04-14_netpalm_introduction_part1/)
 - [netpalm Intro Part 2](https://blog.wimwauters.com/networkprogrammability/2020-04-15_netpalm_introduction_part2/)
 - [netpalm Intro Part 3](https://blog.wimwauters.com/networkprogrammability/2020-04-17_netpalm_introduction_part3/)
 
-netpalm in the network collective podcast:
+network collective w/ Jason Edelman: _NTC network collective podcast ft netpalm_
 - https://networkcollective.com/2020/08/ntc-netpalm/
+
+ipsapce:_building multivendor network automation platform_
+- https://blog.ipspace.net/2020/06/reinventing-napalm.html
+
+ipsapce:_useful network automation tools_
+- https://www.ipspace.net/kb/Ansible/Useful_Network_Automation_Tools.html
 
 ### netpalm support
 
