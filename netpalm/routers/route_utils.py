@@ -192,7 +192,7 @@ def cacheable_model(f):
 
         if cacheable:
             if ttl := cache_config.get("ttl"):
-                ttl = min(ttl, config.redis_task_result_ttl)
+                ttl = min(int(ttl), int(config.redis_task_result_ttl))
                 cache_kwargs = {"timeout": ttl}
             else:
                 cache_kwargs = {}
