@@ -32,35 +32,35 @@ class NetmikoConnectionArgs(BaseModel):
     port: Optional[int] = 22
     device_type: str
     verbose: Optional[bool] = None
-    global_delay_factor: Optional[int] = None
+    global_delay_factor: Optional[int] = 1
     global_cmd_verify: Optional[bool] = None
     use_keys: Optional[bool] = None
     key_file: Optional[str] = None
     pkey: Optional[str] = None
     passphrase: Optional[str] = None
-    allow_agent: Optional[bool] = None
+    allow_agent: Optional[bool] = False
     ssh_strict: Optional[bool] = None
-    system_host_keys: Optional[bool] = None
-    alt_host_keys: Optional[bool] = None
-    alt_key_file: Optional[str] = None
+    system_host_keys: Optional[bool] = False
+    alt_host_keys: Optional[bool] = False
+    alt_key_file: Optional[str] = ""
     ssh_config_file: Optional[str] = None
-    timeout: Optional[int] = None
+    timeout: Optional[int] = 100
     session_timeout: Optional[int] = None
     auth_timeout: Optional[float] = None
-    blocking_timeout: Optional[int] = None
-    banner_timeout: Optional[int] = None
-    keepalive: Optional[int] = None
+    blocking_timeout: Optional[int] = 20
+    banner_timeout: Optional[int] = 15
+    keepalive: Optional[int] = 0
     default_enter: Optional[str] = None
     response_return: Optional[str] = None
     serial_settings: Optional[str] = None
-    fast_cli: Optional[bool] = None
+    fast_cli: Optional[bool] = False
     session_log: Optional[str] = None
     session_log_record_writes = False
-    session_log_file_mode: Optional[str] = None
-    allow_auto_change: Optional[bool] = None
-    encoding: Optional[str] = None
+    session_log_file_mode: Optional[str] = "write"
+    allow_auto_change: Optional[bool] = False
+    encoding: Optional[str] = "ascii"
     sock: Optional[bool] = None
-    auto_connect: Optional[bool] = None
+    auto_connect: Optional[bool] = True
 
 
 class NetmikoGetConfig(BaseModel):
