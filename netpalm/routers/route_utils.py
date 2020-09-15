@@ -13,6 +13,7 @@ from typing import Dict
 from fastapi import HTTPException
 from pydantic import BaseModel
 
+from netpalm.backend.core.confload.confload import config
 from netpalm.backend.core.models.transaction_log import TransactionLogEntryType
 from netpalm.backend.core.redis import reds
 
@@ -191,6 +192,7 @@ def cacheable_model(f):
 
         if cacheable:
             if ttl := cache_config.get("ttl"):
+                ttl = min(int(ttl), int(config.redis_task_result_ttl))
                 cache_kwargs = {"timeout": ttl}
             else:
                 cache_kwargs = {}

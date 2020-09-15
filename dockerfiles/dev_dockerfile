@@ -1,0 +1,10 @@
+FROM python:3.8-slim
+WORKDIR /usr/local/lib/python3.8/site-packages
+RUN apt-get update \
+    && apt-get install -y git \
+    && git clone https://github.com/networktocode/ntc-templates.git \
+    && mv ntc-templates ntc_templates \
+    && pip3 install --upgrade pip
+
+ADD netpalm/requirements.txt /code/
+RUN pip3 install -r /code/requirements.txt

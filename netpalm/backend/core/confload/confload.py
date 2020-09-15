@@ -88,6 +88,8 @@ class Config:
         for key in self.__dict__:  # Check for environment variables
             envvar_key = f"NETPALM_{key.upper()}"
             if value := os.getenv(envvar_key):
+                if type(getattr(self, key)) is int:
+                    setattr(self, key, int(value))
                 setattr(self, key, envvar_as_bool(value))
         # this is AFTER the envvar loop on purpose.  Everything down here overrides envvars
         self.config_filename = config_filename

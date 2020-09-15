@@ -258,6 +258,45 @@ def test_poison_host_cache(clean_cache_redis_helper: rediz.Rediz):
     assert foo_get(model) != first_result
 
 
+def test_cache_ttl(clean_cache_redis_helper: rediz.Rediz):
+    @cacheable_model
+    def foo_get(*args, **kwargs):
+        return randint(1, 10 ** 30)
+
+    data_dict = {
+        "library": "netmiko",
+        "connection_args": {
+            "host": "foo.com",
+            "port": "200"
+        },
+        "args": {
+            "use_textfsm": True
+        },
+        "command": "show ip int bri",
+        "cache": {
+            "enabled": True,
+            "ttl": 1,
+            "poison": False
+        }
+    }
+    original_result_ttl = confload.config.redis_task_result_ttl
+
+    model = GetConfig(**data_dict)  # base case
+    first_result = foo_get(model)
+    assert foo_get(model) == first_result  # cache is working
+    from time import sleep
+    sleep(2)
+    assert foo_get(model) != first_result  # cache expired, honoring cache_ttl
+
+    confload.config.redis_task_result_ttl = 1
+    model.cache.ttl = 10
+    first_result = foo_get(model)
+    assert foo_get(model) == first_result  # cache is still working
+    sleep(2)
+    assert foo_get(model) != first_result  # cache expir3ed, honoring result_ttl
+    confload.config.redis_task_result_ttl = original_result_ttl
+
+
 def test_auth_influences_cache(clean_cache_redis_helper: rediz.Rediz):
     @cacheable_model
     def foo_get(*args, **kwargs):
