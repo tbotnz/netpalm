@@ -11,11 +11,11 @@ from netpalm.backend.core.models.models import Webhook
 
 class NapalmDeviceType(str, Enum):
     cisco_ios = "cisco_ios"
-    cisco_xr = "iosxr"
+    cisco_xr = "cisco_xr"
     nxos = "nxos"
-    cisco_nxos_ssh = "nxos_ssh"
-    arista_eos = "eos"
-    juniper = "junos"
+    cisco_nxos_ssh = "cisco_nxos_ssh"
+    arista_eos = "arista_eos"
+    juniper = "juniper"
 
 
 class NapalmConnectionOptionalArgs(BaseModel):
