@@ -9,4 +9,6 @@ ADD netpalm/worker_requirements.txt /code/
 RUN pip3 install -r /code/worker_requirements.txt
 ADD . /code
 WORKDIR /code
-CMD python3 worker.py fifo
+STOPSIGNAL SIGINT
+ENTRYPOINT ["python3"]
+CMD ["worker.py", "fifo"]

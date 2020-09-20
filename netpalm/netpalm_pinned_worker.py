@@ -1,21 +1,36 @@
 import logging
+from multiprocessing import process
+
 import uuid
 from multiprocessing import Process
+import json
+import socket
+import sys
+import time
 
 from redis import Redis
 from rq import Queue, Connection, Worker
 
 from .backend.core.confload.confload import config
+from .backend.core.models.models import PinnedStore
 from .netpalm_worker_common import start_broadcast_listener_process
+from .backend.core.utilities.rediz_worker_controller import WorkerRediz
 
 config.setup_logging(max_debug=True)
 log = logging.getLogger(__name__)
 
 
 def start_processworkerprocess():
-    """process to run the processworker core function"""
-    p = Process(target=processworker)
-    p.start()
+    try:
+        """process to run the processworker core function"""
+        p = Process(target=processworker)
+        p.start()
+        while True:
+            time.sleep(99999999)
+    finally:
+        cleanup = WorkerRediz()
+        cleanup.worker_cleanup()
+        sys.exit()
 
 
 def we_are_controller():
@@ -29,73 +44,20 @@ def we_are_controller():
 
 def processworker():
     """
-    listens on the core queue for messages from the controller,
-    single processesworker runs per controller.
-    used to create new processes on demand as needed
+        listens on the core queue for messages from the controller,
+        single processesworker runs per controller.
+        used to create new processes on demand as needed
     """
     if not we_are_controller():
         start_broadcast_listener_process()
-        try:
-            if config.redis_tls_enabled:
-                base_connection = Redis(
-                                        host=config.redis_server,
-                                        port=config.redis_port,
-                                        password=config.redis_key,
-                                        ssl=True,
-                                        ssl_cert_reqs='required',
-                                        ssl_keyfile=config.redis_tls_key_file,
-                                        ssl_certfile=config.redis_tls_cert_file,
-                                        ssl_ca_certs=config.redis_tls_ca_cert_file,
-                                        socket_connect_timeout=config.redis_socket_connect_timeout,
-                                        socket_keepalive=config.redis_socket_keepalive
-                                        )
-            else:
-                base_connection = Redis(
-                                        host=config.redis_server,
-                                        port=config.redis_port,
-                                        password=config.redis_key,
-                                        socket_connect_timeout=config.redis_socket_connect_timeout,
-                                        socket_keepalive=config.redis_socket_keepalive
-                )
-            with Connection(base_connection):
-                q = Queue(config.redis_core_q)
-                u_uid = uuid.uuid4()
-                worker_name = f"{config.redis_core_q}_{u_uid}"
-                worker = Worker(q, name=worker_name)
-                worker.work()
-        except Exception as e:
-            return e
+        wr = WorkerRediz()
+        wr.process_worker_listen()
 
 
 def pinned_worker(queue):
     try:
-        if config.redis_tls_enabled:
-            base_connection = Redis(
-                                    host=config.redis_server,
-                                    port=config.redis_port,
-                                    password=config.redis_key,
-                                    ssl=True,
-                                    ssl_cert_reqs='required',
-                                    ssl_keyfile=config.redis_tls_key_file,
-                                    ssl_certfile=config.redis_tls_cert_file,
-                                    ssl_ca_certs=config.redis_tls_ca_cert_file,
-                                    socket_connect_timeout=config.redis_socket_connect_timeout,
-                                    socket_keepalive=config.redis_socket_keepalive
-                                    )
-        else:
-            base_connection = Redis(
-                                    host=config.redis_server,
-                                    port=config.redis_port,
-                                    password=config.redis_key,
-                                    socket_connect_timeout=config.redis_socket_connect_timeout,
-                                    socket_keepalive=config.redis_socket_keepalive
-                                    )
-        with Connection(base_connection):
-            q = Queue(queue)
-            u_uid = uuid.uuid4()
-            worker_name = f"{queue}_{u_uid}"
-            worker = Worker(q, name=worker_name)
-            worker.work()
+        wr = WorkerRediz()
+        wr.pinned_worker_listen(queue)
     except Exception as e:
         return e
 

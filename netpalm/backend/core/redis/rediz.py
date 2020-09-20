@@ -1,6 +1,7 @@
 import datetime
 import json
 import logging
+from logging import error
 from typing import Union, Dict, List
 
 from jsonpath_ng import jsonpath, parse
@@ -155,15 +156,26 @@ class Rediz:
                                         socket_connect_timeout=config.redis_socket_connect_timeout,
                                         socket_keepalive=config.redis_socket_keepalive
                                         )
-        self.base_q = Queue(self.core_q, connection=self.base_connection)
+#        self.base_q = Queue(self.core_q, connection=self.base_connection)
         self.networked_queuedb = config.redis_queue_store
+        self.redis_pinned_store = config.redis_pinned_store
+
         self.local_queuedb = {}
         self.local_queuedb[config.redis_fifo_q] = {}
         self.local_queuedb[config.redis_fifo_q]["queue"] = Queue(config.redis_fifo_q, connection=self.base_connection)
+
+        # init networked db for processes queues
         net_db_exists = self.base_connection.get(self.networked_queuedb)
         if not net_db_exists:
-            nulldb = json.dumps({"netpalm-db": "queue-val"})
-            self.base_connection.set(self.networked_queuedb, nulldb)
+            null_network_db = json.dumps({"netpalm-db": "queue-val"})
+            self.base_connection.set(self.networked_queuedb, null_network_db)
+
+        # init pinned db
+        pinned_db_exists = self.base_connection.get(self.redis_pinned_store)
+        if not pinned_db_exists:
+            null_pinned_db = json.dumps([])
+            self.base_connection.set(self.redis_pinned_store, null_pinned_db)
+
         self.cache_enabled = config.redis_cache_enabled
         self.cache_timeout = config.redis_cache_default_timeout
         # we MUST have a prefix, else ".clear()" will drop ALL keys in redis (including those used for the queues).
@@ -180,46 +192,61 @@ class Rediz:
             self.cache = DisabledCache()
         self.extn_update_log = ExtnUpdateLog(self.base_connection, config.redis_update_log)
 
-    def check_worker_is_alive(self, q):
-        """
-        checks if a worker exists on a given queue
-        """
+    def append_network_queue_db(self, qn):
+        """appends to the networked queue db"""
+        result = self.base_connection.get(self.networked_queuedb)
+        tmpdb = json.loads(result)
+        tmpdb[qn] = True
+        jsresult = json.dumps(tmpdb)
+        self.base_connection.set(self.networked_queuedb, jsresult)
+
+    def append_local_queue_db(self, qn):
+        """appends to the local queue db"""
+        self.local_queuedb[qn] = {}
+        self.local_queuedb[qn]["queue"] = Queue(qn, connection=self.base_connection)
+        return self.local_queuedb[qn]["queue"]
+
+    def exists_in_local_queue_db(self, qn):
+        q_exists_in_local_db = self.local_queuedb.get(qn, False)
+        return q_exists_in_local_db
+
+    def worker_is_alive(self, q):
+        """checks if a worker exists on a given queue"""
         try:
-            queue = Queue(q)
-            workers = Worker.all(connection=self.base_connection, queue=queue)
+            queue = Queue(q, connection=self.base_connection)
+            workers = Worker.all(queue=queue)
             if len(workers) >= 1:
                 return True
+            else:
+                log.info(f"worker required for {q}")
+                return False
         except Exception as e:
-            log.error(f"check_worker_is_alive: {e}")
+            log.error(f"worker_is_alive: {e}")
             return False
 
     def getqueue(self, host):
         """
-        checks whether a queue exists and worker exists
-        accross the controller, redis and worker node
+            checks whether a queue exists and worker exists
+            accross the controller, redis and worker node.
+            creates a local queue if required
         """
         # checks a centralised db / queue exists and creates a empty db if one does not exist
         try:
             # check the redis db store for a queue
             result = self.base_connection.get(self.networked_queuedb)
-            if result:
-                jsresult = json.loads(result)
-                res = jsresult.get(host, False)
-                if res:
-                    # check the worker is running
-                    if self.check_worker_is_alive(host):
-                        q_exists_in_local_db = self.local_queuedb.get(host, False)
-                        # check if the local controller queue db is out of sync with the networked db
-                        if not q_exists_in_local_db:
-                            self.local_queuedb[host] = {}
-                            self.local_queuedb[host]["queue"] = Queue(host, connection=self.base_connection)
-                        return True
-                    else:
-                        return False
-                else:
+            jsresult = json.loads(result)
+            res = jsresult.get(host, False)
+            # if exists on the networked db, check whether you have a local connection
+            if res:
+                if not self.worker_is_alive(host):
                     return False
+                # create a local connection if required
+                if not self.exists_in_local_queue_db(qn=host):
+                    self.append_local_queue_db(qn=host)
+                return True
             else:
                 return False
+
         except Exception as e:
             return e
 
@@ -234,33 +261,48 @@ class Rediz:
         }
         return meta_template
 
-    def create_queue_worker(self, qname):
+    def create_queue_worker(self, pinned_container_queue, pinned_worker_qname):
         """
-        creates a local queue on the worker and executes a rpc to create a
-        pinned worker on a remote container
+            creates a local queue on the worker and executes a rpc to create a
+            pinned worker on a remote container
         """
         from netpalm.netpalm_pinned_worker import pinned_worker_constructor
         try:
-            log.info(f"create_queue_worker: creating queue and worker {qname}")
+            log.info(f"create_queue_worker: creating queue and worker {pinned_worker_qname}")
             meta_template = self.get_redis_meta_template()
-            result = self.base_connection.get(self.networked_queuedb)
-            tmpdb = json.loads(result)
-            tmpdb[qname] = True
-            jsresult = json.dumps(tmpdb)
-            self.base_connection.set(self.networked_queuedb, jsresult)
-            self.base_q.enqueue_call(func=pinned_worker_constructor, args=(qname,), meta=meta_template,
+            self.append_network_queue_db(qn=pinned_worker_qname)
+            self.local_queuedb[pinned_container_queue]["queue"].enqueue_call(func=pinned_worker_constructor, args=(pinned_worker_qname,), meta=meta_template,
                                      ttl=self.ttl, result_ttl=self.task_result_ttl)
-            self.local_queuedb[qname] = {}
-            self.local_queuedb[qname]["queue"] = Queue(qname, connection=self.base_connection)
-            return self.local_queuedb[qname]["queue"]
+            r = self.append_local_queue_db(qn=pinned_worker_qname)
+            return r
         except Exception as e:
             return e
 
-    def check_and_create_q_w(self, hst):
-        """checks whether a local queue exists and creates if needed"""
+    def reoute_and_create_q_worker(self, hst):
+        """routes a process to the correct container."""
         qexists = self.getqueue(hst)
         if not qexists:
-            self.create_queue_worker(hst)
+            # check for process availability:
+            pinned_hosts = self.fetch_pinned_store()
+            capacity = False
+            # find first available container with process capacity
+            for host in pinned_hosts:
+                if host["count"] < host["limit"]:
+                    # create in the local db if required
+                    if not self.exists_in_local_queue_db(qn=host["pinned_listen_queue"]):
+                        self.append_local_queue_db(qn=host["pinned_listen_queue"])
+                    self.create_queue_worker(
+                                            pinned_container_queue=host["pinned_listen_queue"],
+                                            pinned_worker_qname=hst
+                                            )
+                    capacity = True
+                    break
+            # throw exception if no capcity found
+            if not capacity:
+                err = """Not enough pinned worker process capacity: kill pinned
+                 processes or spin up more pinned workers!"""
+                log.error(err)
+                raise Exception(f"{err}")
 
     def render_task_response(self, task_job):
         """formats and returns the task rpc jobs result"""
@@ -335,7 +377,7 @@ class Rediz:
             host = kw["connection_args"].get("host", False)
         queue_strategy = kw.get("queue_strategy", False)
         if queue_strategy == "pinned":
-            self.check_and_create_q_w(hst=host)
+            self.reoute_and_create_q_worker(hst=host)
             r = self.sendtask(q=host, exe=method, kwargs=kw)
         else:
             r = self.sendtask(q=config.redis_fifo_q, exe=method, kwargs=kw)
@@ -396,8 +438,7 @@ class Rediz:
             self.getqueue(q)
             # if single host lookup
             if q:
-                qexists = self.local_queuedb.get(q, False)
-                if qexists:
+                if self.exists_in_local_queue_db(qn=q):
                     t = self.local_queuedb[q]["queue"].get_job_ids()
                     if t:
                         response_object = {
@@ -543,7 +584,7 @@ class Rediz:
             return e
 
     def kill_worker(self, worker_name=False):
-        """kills a worker by its name"""
+        """kills a worker by its name and updates the pinned worker db"""
         running_workers = self.get_workers()
         killed = False
         for w in running_workers:
@@ -557,6 +598,18 @@ class Rediz:
                         }
                     }
                 self.send_broadcast(json.dumps(kill_message))
+
+                # update pinned db
+                r = self.base_connection.get(self.redis_pinned_store)
+                rjson = json.loads(r)
+                for container in rjson:
+                    if container["hostname"] == w["hostname"]:
+                        container["count"] -= 1
+                self.base_connection.set(
+                    self.redis_pinned_store,
+                    json.dumps(rjson)
+                    )
+
         if not killed:
             raise Exception(f"worker {worker_name} not found")
 
@@ -569,7 +622,6 @@ class Rediz:
         if not exists:
             raw_json = json.dumps(raw_data)
             self.base_connection.set(sid, raw_json)
-            self.base_connection.bgsave()
             return f"{u_uid}"
         else:
             return False
@@ -605,7 +657,6 @@ class Rediz:
         res["operation"] = "delete"
         result = self.execute_task(method="render_service", kwargs=res)
         self.base_connection.delete(sid_parsed)
-        self.base_connection.bgsave()
         return result
 
     def redeploy_service_instance(self, sid):
@@ -638,7 +689,6 @@ class Rediz:
         for sid in self.base_connection.scan_iter("*_service_instance"):
             sid_str = sid.decode("utf-8")
             parsed_sid = sid_str.replace('1_', '').replace('_service_instance', '')
-            log.info(parsed_sid)
             sid_data = json.loads(self.fetch_service_instance(parsed_sid))
             if sid_data:
                 appendres = {
@@ -647,3 +697,32 @@ class Rediz:
                     }
                 result.append(appendres)
         return result
+
+    def fetch_pinned_store(self):
+        """returns ALL data from the pinned store"""
+        exists = self.base_connection.get(self.redis_pinned_store)
+        result = json.loads(exists)
+        return result
+
+    def purge_container_from_pinned_store(self, name):
+        """force purge a specific container from the pinned store"""
+        r = self.base_connection.get(config.redis_pinned_store)
+        rjson = json.loads(r)
+        idex = 0
+        for container in rjson:
+            if container["hostname"] == name:
+                rjson.pop(idex)
+                self.base_connection.set(
+                    config.redis_pinned_store,
+                    json.dumps(rjson)
+                    )
+                break
+            idex += 1
+
+    def deregister_worker(self, container):
+        """finds and deregisters an rq worker"""
+        # purge all workers still running on this container
+        workers = Worker.all(connection=self.base_connection)
+        for worker in workers:
+            if worker.hostname == f"{container}":
+                worker.register_death()

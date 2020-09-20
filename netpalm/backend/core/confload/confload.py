@@ -40,6 +40,7 @@ class Config:
         self.redis_fifo_q = data["redis_fifo_q"]
         self.redis_broadcast_q = data["redis_broadcast_q"]
         self.redis_queue_store = data["redis_queue_store"]
+        self.redis_pinned_store = data["redis_pinned_store"]
         self.redis_cache_enabled = data["redis_cache_enabled"]
         self.redis_cache_default_timeout = data["redis_cache_default_timeout"]
         self.redis_cache_key_prefix = data["redis_cache_key_prefix"]
