@@ -182,14 +182,28 @@ class TFSMPushTemplateModel(BaseModel):
     template_text: str
 
 
-class TemplateAdd(BaseModel):
+class TFSMTemplateAdd(BaseModel):
     key: str
     driver: str
     command: str
 
 
-class TemplateRemove(BaseModel):
+class TFSMTemplateRemove(BaseModel):
     template: str = None
+
+
+class TFSMTemplateMatch(BaseModel):
+    driver: str
+    command: str
+
+
+class TFSMTemplateMatchResponse(BaseModel):
+    """Data returned from TextFSM Library Index lookup"""
+    Template: str  # this is the filename of the template
+    Hostname: str
+    Platform: str
+    Command: str
+    template_text: str  # this is the actual contents of the template file
 
 
 class GeneralError(BaseModel):

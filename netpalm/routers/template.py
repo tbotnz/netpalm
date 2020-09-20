@@ -1,11 +1,15 @@
 import logging
+from pathlib import Path
 from typing import Union
 
 from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
+from textfsm.clitable import CliTable, IndexTable
 
+from netpalm.backend.core.confload.confload import config
 # load models
-from netpalm.backend.core.models.models import TemplateRemove, TemplateAdd, TFSMPushTemplateModel
+from netpalm.backend.core.models.models import TFSMTemplateRemove, TFSMTemplateAdd, TFSMPushTemplateModel, \
+    TFSMTemplateMatch, TFSMTemplateMatchResponse
 from netpalm.backend.core.models.task import ResponseBasic
 from netpalm.backend.core.models.transaction_log import TransactionLogEntryType
 # load routes
@@ -37,10 +41,10 @@ async def get_textfsm_template(tmpname: str):
 
 @router.post("/template", response_model=ResponseBasic, status_code=201)
 @HttpErrorHandler()
-async def add_textfsm_template(template_add: Union[TemplateAdd, TFSMPushTemplateModel]):
+async def add_textfsm_template(template_add: Union[TFSMTemplateAdd, TFSMPushTemplateModel]):
     req_data = template_add.dict()
     log.debug(req_data)
-    if isinstance(template_add, TemplateAdd):
+    if isinstance(template_add, TFSMTemplateAdd):
         entry_type = TransactionLogEntryType.tfsm_pull
         log.debug(f"{entry_type=}")
         template_obj = FSMTemplate(**req_data)
@@ -56,9 +60,45 @@ async def add_textfsm_template(template_add: Union[TemplateAdd, TFSMPushTemplate
     return resp
 
 
+@router.post('/template/match', response_model=TFSMTemplateMatchResponse)
+@HttpErrorHandler()
+async def match_textfsm_templates(template_match: TFSMTemplateMatch):
+    attrs = {
+        'Command': template_match.command,
+        'Platform': template_match.driver
+    }
+    tfsm_index_file = config.txtfsm_index_file
+
+    # accesses TextFSM internals because there's no other option
+    # TFSM Internals assume that there might be more than one template match.  I'm not sure when that would be the
+    # case, or why it would be useful, but I'm honoring that here as well.
+
+    cli_table = CliTable(index_file=config.txtfsm_index_file, template_dir=Path(tfsm_index_file).parent)
+    index: IndexTable = cli_table.index
+    row_idx = index.GetRowMatch(attrs)
+    if not row_idx:
+        raise ValueError(f'No template found for {attrs}')
+
+    template_details = cli_table.index.index[row_idx]
+
+    template_details['template_text'] = ''
+
+    template_file_handles = []  # I don't like this, but this seems to be the only way given how TFSM works :'(
+
+    try:
+        template_file_handles = cli_table._TemplateNamesToFiles(template_details['Template'])
+        for f in template_file_handles:
+            template_details['template_text'] += f.read()
+    finally:
+        for f in template_file_handles:
+            f.close()
+
+    return template_details
+
+
 @router.delete("/template", status_code=204)
 @HttpErrorHandler()
-async def delete_textfsm_template(template_remove: TemplateRemove):
+async def delete_textfsm_template(template_remove: TFSMTemplateRemove):
     req_data = template_remove.dict()
     r = routes["removetemplate"](**req_data)
     try:
