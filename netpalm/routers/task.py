@@ -4,6 +4,8 @@ from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
 
 from netpalm.backend.core.models.task import Response, WorkerResponse
+from netpalm.backend.core.models.models import PinnedStore
+
 from netpalm.backend.core.redis import reds
 
 router = APIRouter()
@@ -61,3 +63,31 @@ def kill_worker(name: str):
         resp = jsonable_encoder(r)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
+
+
+# get the container process totals
+@router.get("/containers/pinned/", response_model=List)
+def list_pinned_containers():
+    try:
+        r = reds.fetch_pinned_store()
+        resp = jsonable_encoder(r)
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split('\n'))
+
+
+# # purge the container a container from the db
+# @router.delete("/containers/pinned/{hostname}")
+# def purge_pinned_containers_from_db(hostname: str):
+#     try:
+#         reds.purge_container_from_pinned_store(hostname)
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e).split('\n'))
+
+# # deregister worker
+# @router.post("/containers/deregister/{hostname}")
+# def deregister_workers_from_container(hostname: str):
+#     try:
+#         reds.deregister_worker(hostname)
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e).split('\n'))

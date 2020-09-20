@@ -195,3 +195,10 @@ class TemplateRemove(BaseModel):
 class GeneralError(BaseModel):
     status: str = None
     data: dict = None
+
+
+class PinnedStore(BaseModel):
+    hostname: str
+    count: int
+    limit: int
+    pinned_listen_queue: str
