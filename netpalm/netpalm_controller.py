@@ -54,7 +54,8 @@ async def get_documentation():
     response = get_swagger_ui_html(
         openapi_url="/swaggerfile",
         title="docs",
-        swagger_js_url="/static/js/swagger-ui-bundle.js",
+        # swagger_js_url="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.34.0/swagger-ui-bundle.min.js",
+        swagger_js_url="/static/js/swagger-ui-bundle.min.js",
         swagger_css_url="/static/css/swagger-ui.css",
-        )
+    )
     return response
