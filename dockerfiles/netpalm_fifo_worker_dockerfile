@@ -10,5 +10,4 @@ RUN pip3 install -r /code/worker_requirements.txt
 ADD . /code
 WORKDIR /code
 STOPSIGNAL SIGINT
-ENTRYPOINT ["python3"]
-CMD ["worker.py", "fifo"]
+CMD ["python3", "worker.py", "fifo"]
