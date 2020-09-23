@@ -12,7 +12,7 @@ from netpalm.backend.core.redis import reds, Rediz
 from netpalm.backend.core.utilities.rediz_kill_worker import kill_worker_pid
 
 from netpalm.backend.plugins.utilities.textfsm.template import listtemplates, addtemplate, removetemplate, pushtemplate
-
+from netpalm.backend.plugins.utilities.universal_template_mgr.unvrsl import unvrsl
 log = logging.getLogger(__name__)
 #
 update_log_lock = multiprocessing.Lock()
@@ -51,7 +51,9 @@ class UpdateLogProcessor:
             TransactionLogEntryType.echo: handle_ping,
             TransactionLogEntryType.tfsm_pull: handle_add_template,
             TransactionLogEntryType.tfsm_delete: handle_delete_template,
-            TransactionLogEntryType.tfsm_push: handle_push_template
+            TransactionLogEntryType.tfsm_push: handle_push_template,
+            TransactionLogEntryType.unvrsl_tmp_push: handle_push_universal_template,
+            TransactionLogEntryType.unvrsl_tmp_delete: handle_delete_universal_template
         }
 
         handler = handlers[entry.type]
@@ -123,6 +125,28 @@ def handle_delete_template(**kwargs):
         return
 
     log.info(f'Result: {result["data"]}')
+
+
+def handle_push_universal_template(**kwargs):
+    log.debug(f"handle_push_universal_template(): got {kwargs}")
+    template_mgr = unvrsl()
+    result = template_mgr.add_template(payload=kwargs)
+    status = result["status"]
+    if status == "error":
+        log.error(f"Failed to push template {kwargs} with error: {result['data']}")
+        return
+    log.info(f"Result: {result['data']}")
+
+
+def handle_delete_universal_template(**kwargs):
+    log.debug(f"handle_push_universal_template(): got {kwargs}")
+    template_mgr = unvrsl()
+    result = template_mgr.remove_template(payload=kwargs)
+    status = result["status"]
+    if status == "error":
+        log.error(f"Failed to push template {kwargs} with error: {result['data']}")
+        return
+    log.info(f"Result: {result['data']}")
 
 
 def handle_broadcast_message(broadcast_msg: typing.Dict, base_connection: Redis):
