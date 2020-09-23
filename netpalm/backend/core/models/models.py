@@ -206,6 +206,17 @@ class TFSMTemplateMatchResponse(BaseModel):
     template_text: str  # this is the actual contents of the template file
 
 
+class UnivsersalTemplateAdd(BaseModel):
+    """general template ingest0r for handling base64 ingestion and writing"""
+    base64_payload: str
+    name: str
+
+
+class UnivsersalTemplateRemove(BaseModel):
+    """general template remover """
+    name: str = None
+
+
 class GeneralError(BaseModel):
     status: str = None
     data: dict = None
