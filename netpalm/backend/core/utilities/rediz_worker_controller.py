@@ -12,7 +12,6 @@ log = logging.getLogger(__name__)
 
 
 class WorkerRediz:
-
     def __init__(self, config: Config = config):
 
         # globals
@@ -26,25 +25,25 @@ class WorkerRediz:
         # config check if TLS required
         if config.redis_tls_enabled:
             self.base_connection = Redis(
-                                        host=self.server,
-                                        port=self.port,
-                                        password=self.key,
-                                        ssl=True,
-                                        ssl_cert_reqs='required',
-                                        ssl_keyfile=config.redis_tls_key_file,
-                                        ssl_certfile=config.redis_tls_cert_file,
-                                        ssl_ca_certs=config.redis_tls_ca_cert_file,
-                                        socket_connect_timeout=config.redis_socket_connect_timeout,
-                                        socket_keepalive=config.redis_socket_keepalive
-                                        )
+                host=self.server,
+                port=self.port,
+                password=self.key,
+                ssl=True,
+                ssl_cert_reqs="required",
+                ssl_keyfile=config.redis_tls_key_file,
+                ssl_certfile=config.redis_tls_cert_file,
+                ssl_ca_certs=config.redis_tls_ca_cert_file,
+                socket_connect_timeout=config.redis_socket_connect_timeout,
+                socket_keepalive=config.redis_socket_keepalive,
+            )
         else:
             self.base_connection = Redis(
-                                        host=self.server,
-                                        port=self.port,
-                                        password=self.key,
-                                        socket_connect_timeout=config.redis_socket_connect_timeout,
-                                        socket_keepalive=config.redis_socket_keepalive
-                                        )
+                host=self.server,
+                port=self.port,
+                password=self.key,
+                socket_connect_timeout=config.redis_socket_connect_timeout,
+                socket_keepalive=config.redis_socket_keepalive,
+            )
 
     def process_worker_listen(self):
         """pinned worker master container process"""
@@ -56,17 +55,14 @@ class WorkerRediz:
             listn_queue = f"{hstname}_processworker"
             log.info(rjson)
             data = PinnedStore(
-                    hostname=f"{hstname}",
-                    count=0,
-                    limit=config.pinned_process_per_node,
-                    pinned_listen_queue=listn_queue
-                ).dict()
+                hostname=f"{hstname}",
+                count=0,
+                limit=config.pinned_process_per_node,
+                pinned_listen_queue=listn_queue,
+            ).dict()
             rjson.append(data)
             log.info(rjson)
-            self.base_connection.set(
-                config.redis_pinned_store,
-                json.dumps(rjson)
-                )
+            self.base_connection.set(config.redis_pinned_store, json.dumps(rjson))
             # setup queue and start working
             q = Queue(listn_queue)
             u_uid = uuid.uuid4()
@@ -85,10 +81,7 @@ class WorkerRediz:
                 if container["hostname"] == f"{hstname}":
                     container["count"] += 1
                     break
-            self.base_connection.set(
-                config.redis_pinned_store,
-                json.dumps(rjson)
-                )
+            self.base_connection.set(config.redis_pinned_store, json.dumps(rjson))
             # setup queue and start working
             q = Queue(queue)
             u_uid = uuid.uuid4()
@@ -107,7 +100,7 @@ class WorkerRediz:
 
     def worker_cleanup(self):
         """cleans up jobs on container shutdown """
-        # clear the pinned db store for capacity mgmt 
+        # clear the pinned db store for capacity mgmt
         r = self.base_connection.get(config.redis_pinned_store)
         rjson = json.loads(r)
         idex = 0
@@ -115,10 +108,7 @@ class WorkerRediz:
         for container in rjson:
             if container["hostname"] == f"{hstname}":
                 rjson.pop(idex)
-                self.base_connection.set(
-                    config.redis_pinned_store,
-                    json.dumps(rjson)
-                    )
+                self.base_connection.set(config.redis_pinned_store, json.dumps(rjson))
                 break
             idex += 1
         # purge all workers still running on this container
@@ -127,3 +117,6 @@ class WorkerRediz:
             if worker.hostname == f"{hstname}":
                 worker.register_death()
 
+    def pub_sub(self):
+        result = self.base_connection.pubsub()
+        return result
