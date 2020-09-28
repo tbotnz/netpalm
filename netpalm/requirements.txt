@@ -1,5 +1,7 @@
 fastapi
 uvicorn
+uvloop
+httptools
 netmiko
 napalm
 ncclient
