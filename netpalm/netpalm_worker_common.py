@@ -4,15 +4,23 @@ import multiprocessing
 import typing
 from multiprocessing.context import Process
 
-from redis import Redis
-
 from netpalm.backend.core.confload.confload import config
-from netpalm.backend.core.models.transaction_log import TransactionLogEntryModel, TransactionLogEntryType
+from netpalm.backend.core.models.transaction_log import (
+    TransactionLogEntryModel,
+    TransactionLogEntryType,
+)
 from netpalm.backend.core.redis import reds, Rediz
 from netpalm.backend.core.utilities.rediz_kill_worker import kill_worker_pid
+from netpalm.backend.core.utilities.rediz_worker_controller import WorkerRediz
 
-from netpalm.backend.plugins.utilities.textfsm.template import listtemplates, addtemplate, removetemplate, pushtemplate
+from netpalm.backend.plugins.utilities.textfsm.template import (
+    listtemplates,
+    addtemplate,
+    removetemplate,
+    pushtemplate,
+)
 from netpalm.backend.plugins.utilities.universal_template_mgr.unvrsl import unvrsl
+
 log = logging.getLogger(__name__)
 #
 update_log_lock = multiprocessing.Lock()
@@ -23,7 +31,9 @@ class UpdateLogProcessor:
         self.lock = update_log_lock  # Purpose of this lock is to stop multiple processes (ex. gunicorn workers)
         # from processing the update log at once
         self.log = reds.extn_update_log
-        self.last_seq_number = -1  # last sequence number handled.  -1 == not initialized
+        self.last_seq_number = (
+            -1
+        )  # last sequence number handled.  -1 == not initialized
 
     def _get_lock(self):
         return self.lock.acquire(block=False)
@@ -32,19 +42,21 @@ class UpdateLogProcessor:
         return self.lock.release()
 
     def process_log(self, **kwargs):
-        log.info(f"Processing update transaction log")
+        log.info("Processing update transaction log")
         rslt = 0
         with self.lock:
             log.info(f"Got lock for transaction log processing")
-            new_entries = self.log[self.last_seq_number + 1:]
+            new_entries = self.log[self.last_seq_number + 1 :]
             for entry in new_entries:
                 self.process_entry(entry)
             rslt = len(new_entries)
         return rslt
 
     def process_entry(self, entry: TransactionLogEntryModel):
-        if (self.last_seq_number != entry.seq - 1):
-            raise RuntimeError(f"Can't process {entry.seq} after {self.last_seq_number}!")
+        if self.last_seq_number != entry.seq - 1:
+            raise RuntimeError(
+                f"Can't process {entry.seq} after {self.last_seq_number}!"
+            )
 
         handlers = {
             TransactionLogEntryType.init: lambda **x: True,  # nothing to do
@@ -53,7 +65,7 @@ class UpdateLogProcessor:
             TransactionLogEntryType.tfsm_delete: handle_delete_template,
             TransactionLogEntryType.tfsm_push: handle_push_template,
             TransactionLogEntryType.unvrsl_tmp_push: handle_push_universal_template,
-            TransactionLogEntryType.unvrsl_tmp_delete: handle_delete_universal_template
+            TransactionLogEntryType.unvrsl_tmp_delete: handle_delete_universal_template,
         }
 
         handler = handlers[entry.type]
@@ -74,7 +86,7 @@ def handle_echo(msg: str):
 
 def handle_ping(**kwargs):
     #  Nothing to actually do here but dump to console
-    log.info(f"GOT PING!")
+    log.info("GOT PING!")
 
 
 def handle_add_template(**kwargs):
@@ -149,14 +161,16 @@ def handle_delete_universal_template(**kwargs):
     log.info(f"Result: {result['data']}")
 
 
-def handle_broadcast_message(broadcast_msg: typing.Dict, base_connection: Redis):
+def handle_broadcast_message(broadcast_msg: typing.Dict):
     try:
         msg_bytes = broadcast_msg["data"]
         data = msg_bytes.decode()
 
     except (AttributeError, KeyError):
-        log.error(f"Unintelligible broadcast message received (but this is normal "
-                  f"at startup)!: {broadcast_msg}")
+        log.error(
+            f"Unintelligible broadcast message received (but this is normal "
+            f"at startup)!: {broadcast_msg}"
+        )
         return
 
     log.debug(f"got msg: {msg_bytes=}")
@@ -170,11 +184,13 @@ def handle_broadcast_message(broadcast_msg: typing.Dict, base_connection: Redis)
     handlers = {
         "ping": handle_ping,
         "process_update_log": update_log_processor.process_log,
-        "kill_worker_pid": kill_worker_pid
+        "kill_worker_pid": kill_worker_pid,
     }
     msg_type = data["type"]
     if msg_type not in handlers:
-        log.error(f"received unimplemented broadcast message of type {msg_type}: {data}")
+        log.error(
+            f"received unimplemented broadcast message of type {msg_type}: {data}"
+        )
         return
 
     kwargs = data["kwargs"]
@@ -183,36 +199,18 @@ def handle_broadcast_message(broadcast_msg: typing.Dict, base_connection: Redis)
 
 def broadcast_queue_worker(queue_name):
     try:
-        log.info(f"Before listening for broadcasts, first check the log")
+        log.info("Before listening for broadcasts, first check the log")
         update_log_processor.process_log()
-        if config.redis_tls_enabled:
-            redis = Redis(
-                        host=config.redis_server,
-                        port=config.redis_port,
-                        password=config.redis_key,
-                        ssl=True,
-                        ssl_cert_reqs='required',
-                        ssl_keyfile=config.redis_tls_key_file,
-                        ssl_certfile=config.redis_tls_cert_file,
-                        ssl_ca_certs=config.redis_tls_ca_cert_file,
-                        socket_connect_timeout=config.redis_socket_connect_timeout,
-                        socket_keepalive=config.redis_socket_keepalive
-                        )
-        else:
-            redis = Redis(
-                        host=config.redis_server,
-                        port=config.redis_port,
-                        password=config.redis_key
-                        )
-        pubsub = redis.pubsub()
+        wr = WorkerRediz()
+        pubsub = wr.pub_sub()
         pubsub.subscribe(queue_name)
 
         log.info("Listening for broadcasts")
         for broadcast_msg in pubsub.listen():
             try:
-                handle_broadcast_message(broadcast_msg, redis)
+                handle_broadcast_message(broadcast_msg)
             except Exception as e:
-                log.exception("Error in broadcast queue handler")
+                log.exception(f"Error {e} in broadcast queue handler")
 
     except Exception as e:
         log.exception("Error in broadcast queue")
