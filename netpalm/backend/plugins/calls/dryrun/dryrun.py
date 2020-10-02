@@ -1,6 +1,7 @@
 from netpalm.backend.core.utilities.rediz_meta import render_netpalm_payload
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
+from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
 from netpalm.backend.plugins.utilities.jinja2.j2 import render_j2template
 from netpalm.backend.plugins.utilities.webhook.webhook import exec_webhook_func
@@ -11,6 +12,7 @@ def dryrun(**kwargs):
     config = kwargs.get("config", False)
     j2conf = kwargs.get("j2config", False)
     webhook = kwargs.get("webhook", False)
+    enable_mode = kwargs.get("enable_mode", False)
     result = False
 
     if j2conf:
@@ -34,6 +36,11 @@ def dryrun(**kwargs):
             sesh = ncc.connect()
             result = ncc.editconfig(session=sesh, dry_run=True)
             ncc.logout(sesh)
+        elif lib == "netmiko":
+            netmik = netmko(**kwargs)
+            sesh = netmik.connect()
+            result = netmik.config(sesh, config, enable_mode, dryrun=True)
+            netmik.logout(sesh)
     except Exception as e:
         write_meta_error(f"{e}")
 
