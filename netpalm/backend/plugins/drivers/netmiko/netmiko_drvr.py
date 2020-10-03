@@ -9,7 +9,6 @@ log = logging.getLogger(__name__)
 
 
 class netmko:
-
     def __init__(self, **kwargs):
         self.kwarg = kwargs.get("args", False)
         self.connection_args = kwargs.get("connection_args", False)
@@ -37,7 +36,11 @@ class netmko:
         except Exception as e:
             write_meta_error(f"{e}")
 
-    def config(self, session: CiscoBaseConnection, command='', enter_enable=False):
+    def config(self,
+               session: CiscoBaseConnection,
+               command='',
+               enter_enable=False,
+               dry_run=False):
         try:
             if type(command) == list:
                 comm = command
@@ -51,6 +54,21 @@ class netmko:
                 response = session.send_config_set(comm, **self.kwarg)
             else:
                 response = session.send_config_set(comm)
+
+            if not dry_run:
+                # CiscoBaseConnection(BaseConnection)
+                # implements commit and save_config in child classes
+                if hasattr(session, "commit") and callable(session.commit):
+                    try:
+                        response += session.commit()
+                    except Exception as e:
+                        write_meta_error(f"{e}")
+                elif hasattr(session, "save_config") and callable(
+                        session.save_config):
+                    try:
+                        response += session.save_config()
+                    except Exception as e:
+                        write_meta_error(f"{e}")
 
             result = {}
             result["changes"] = response.split("\n")
