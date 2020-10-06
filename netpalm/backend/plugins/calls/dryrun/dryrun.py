@@ -39,7 +39,7 @@ def dryrun(**kwargs):
         elif lib == "netmiko":
             netmik = netmko(**kwargs)
             sesh = netmik.connect()
-            result = netmik.config(sesh, config, enable_mode, dryrun=True)
+            result = netmik.config(sesh, config, enable_mode, dry_run=True)
             netmik.logout(sesh)
     except Exception as e:
         write_meta_error(f"{e}")
