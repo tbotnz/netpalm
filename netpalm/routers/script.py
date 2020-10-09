@@ -59,6 +59,6 @@ for script in r["data"]["task_result"]["templates"]:
 @router.get("/webhook", response_model=ResponseBasic)
 @HttpErrorHandler()
 async def list_webhooks():
-    r = routes["ls"](fldr="webhook")
+    r = routes["ls"](fldr="webhook_script")
     resp = jsonable_encoder(r)
     return resp

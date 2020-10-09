@@ -19,6 +19,9 @@ class ls:
         elif folder == "webhook":
             self.folder_dir = config.webhook_jinja2_templates
             self.strip = ".j2"
+        elif folder == "webhook_script":
+            self.folder_dir = config.custom_webhooks
+            self.strip = ".py"
         elif folder == "script":
             self.folder_dir = config.custom_scripts
             self.strip = ".py"
