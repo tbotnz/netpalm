@@ -54,3 +54,11 @@ for script in r["data"]["task_result"]["templates"]:
         r = reds.execute_task(method="script", kwargs=req_data)
         resp = jsonable_encoder(r)
         return resp
+
+# get template list
+@router.get("/webhook", response_model=ResponseBasic)
+@HttpErrorHandler()
+async def list_webhooks():
+    r = routes["ls"](fldr="webhook")
+    resp = jsonable_encoder(r)
+    return resp
