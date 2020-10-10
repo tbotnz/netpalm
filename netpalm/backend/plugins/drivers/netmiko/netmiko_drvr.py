@@ -37,7 +37,7 @@ class netmko:
             write_meta_error(f"{e}")
 
     def config(self,
-               session: CiscoBaseConnection,
+               session=False,
                command='',
                enter_enable=False,
                dry_run=False):
@@ -61,12 +61,17 @@ class netmko:
                 if hasattr(session, "commit") and callable(session.commit):
                     try:
                         response += session.commit()
+                    except AttributeError:
+                        pass
                     except Exception as e:
                         write_meta_error(f"{e}")
+
                 elif hasattr(session, "save_config") and callable(
                         session.save_config):
                     try:
                         response += session.save_config()
+                    except AttributeError:
+                        pass
                     except Exception as e:
                         write_meta_error(f"{e}")
 

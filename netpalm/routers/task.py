@@ -17,10 +17,11 @@ def get_task(task_id: str):
     try:
         r = reds.fetchtask(task_id=task_id)
         resp = jsonable_encoder(r)
+        if not resp:
+            raise HTTPException(status_code=404)
         return resp
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e).split('\n'))
-
+        raise HTTPException(status_code=404)
 
 # get all tasks in queue
 @router.get("/taskqueue/")
@@ -39,6 +40,8 @@ def get_host_task_list(host: str):
     try:
         r = reds.getjobliststatus(q=host)
         resp = jsonable_encoder(r)
+        if not resp:
+            raise HTTPException(status_code=404)
         return resp
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))

@@ -65,7 +65,7 @@ class NetmikoConnectionArgs(BaseModel):
 
 class NetmikoGetConfig(BaseModel):
     connection_args: NetmikoConnectionArgs
-    command: Optional[Any] = None
+    command: Any
     args: Optional[NetmikoSendConfigArgs] = None
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
