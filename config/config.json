@@ -35,6 +35,7 @@
     "custom_scripts": "netpalm/backend/plugins/extensibles/custom_scripts/",
     "jinja2_config_templates": "netpalm/backend/plugins/extensibles/j2_config_templates/",
     "jinja2_service_templates": "netpalm/backend/plugins/extensibles/j2_service_templates/",
+    "ttp_templates": "netpalm/backend/plugins/extensibles/ttp_templates/",
     "self_api_call_timeout": 15,
     "default_webhook_url": "https://9d4f355779c960d7509368ad5a7e3503.m.pipedream.net",
     "default_webhook_ssl_verify": true,

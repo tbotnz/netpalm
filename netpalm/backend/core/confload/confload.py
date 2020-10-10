@@ -68,6 +68,7 @@ class Config:
         self.custom_webhooks = data["custom_webhooks"]
         self.webhook_jinja2_templates = data["webhook_jinja2_templates"]
         self.log_config_filename = data["log_config_filename"]
+        self.ttp_templates = data["ttp_templates"]
 
         #load tls
         try:

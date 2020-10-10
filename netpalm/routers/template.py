@@ -112,6 +112,41 @@ async def delete_textfsm_template(template_remove: TFSMTemplateRemove):
 # j2 routes
 
 # get template list
+@router.get("/ttptemplate/", response_model=ResponseBasic)
+async def list_ttp_templates():
+    try:
+        r = routes["ls"](fldr="ttp_templates")
+        resp = jsonable_encoder(r)
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split("\n"))
+
+# add j2 config template
+@router.post("/ttptemplate/", response_model=ResponseBasic)
+def add_ttp_template(template: UnivsersalTemplateAdd):
+    try:
+        req_data = template.dict()
+        req_data["route_type"] = "ttp_templates"
+        add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_push, data=req_data)
+        tmplate_mgr = unvrsl()
+        r = tmplate_mgr.add_template(payload=req_data)
+        resp = jsonable_encoder(r)
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split("\n"))
+
+# remove j2 config template
+@router.delete("/ttptemplate/", status_code=204)
+def remove_ttp_template(template: UnivsersalTemplateRemove):
+    try:
+        req_data = template.dict()
+        req_data["route_type"] = "ttp_templates"
+        add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data)
+        tmplate_mgr = unvrsl()
+        r = tmplate_mgr.remove_template(payload=req_data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split("\n"))
+
 @router.get("/j2template/config/", response_model=ResponseBasic)
 async def list_config_j2_templates():
     try:

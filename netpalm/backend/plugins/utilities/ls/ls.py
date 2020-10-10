@@ -22,6 +22,9 @@ class ls:
         elif folder == "webhook_script":
             self.folder_dir = config.custom_webhooks
             self.strip = ".py"
+        elif folder == "ttp_templates":
+            self.folder_dir = config.ttp_templates
+            self.strip = ".ttp"
         elif folder == "script":
             self.folder_dir = config.custom_scripts
             self.strip = ".py"

@@ -14,6 +14,7 @@ class unvrsl:
             "j2_config_templates": {"path": config.jinja2_config_templates, "extn": ".j2"},
             "j2_service_templates": {"path": config.jinja2_service_templates, "extn": ".j2"},
             "j2_webhook_templates": {"path": config.webhook_jinja2_templates, "extn": ".j2"},
+            "ttp_templates": {"path": config.ttp_templates, "extn": ".ttp"},
             "custom_scripts": {"path": config.custom_scripts, "extn": ".py"},
             "custom_webhooks": {"path": config.custom_webhooks, "extn": ".py"}
         }
