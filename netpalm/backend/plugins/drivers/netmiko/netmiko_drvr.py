@@ -3,6 +3,7 @@ import logging
 from netmiko import ConnectHandler
 from netmiko.cisco_base_connection import CiscoBaseConnection
 
+from netpalm.backend.core.confload.confload import config
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 
 log = logging.getLogger(__name__)
@@ -25,6 +26,10 @@ class netmko:
             result = {}
             for commands in command:
                 if self.kwarg:
+                    # normalise the ttp template name for ease of use
+                    if self.kwarg["ttp_template"]:
+                        template_name = config.ttp_templates + self.kwarg["ttp_template"] + ".ttp"
+                        self.kwarg["ttp_template"] = template_name
                     response = session.send_command(commands, **self.kwarg)
                     if response:
                         result[commands] = response

@@ -1,4 +1,5 @@
-netmiko
+netmiko==3.3.2
+ttp
 napalm
 ncclient
 requests

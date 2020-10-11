@@ -2,7 +2,8 @@ fastapi
 uvicorn
 uvloop
 httptools
-netmiko
+ttp
+netmiko==3.3.2
 napalm
 ncclient
 requests
