@@ -19,6 +19,8 @@ class NetmikoSendConfigArgs(BaseModel):
     normalize: Optional[bool] = None
     use_textfsm: Optional[bool] = None
     textfsm_template: Optional[str] = None
+    use_ttp: Optional[bool] = None
+    ttp_template: Optional[str] = None
     use_genie: Optional[bool] = None
     cmd_verify: Optional[bool] = None
 
