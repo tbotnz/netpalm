@@ -27,9 +27,10 @@ class netmko:
             for commands in command:
                 if self.kwarg:
                     # normalise the ttp template name for ease of use
-                    if self.kwarg["ttp_template"]:
-                        template_name = config.ttp_templates + self.kwarg["ttp_template"] + ".ttp"
-                        self.kwarg["ttp_template"] = template_name
+                    if "ttp_template" in self.kwarg.keys():
+                        if self.kwarg["ttp_template"]:
+                            template_name = config.ttp_templates + self.kwarg["ttp_template"] + ".ttp"
+                            self.kwarg["ttp_template"] = template_name
                     response = session.send_command(commands, **self.kwarg)
                     if response:
                         result[commands] = response
