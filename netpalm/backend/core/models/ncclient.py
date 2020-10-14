@@ -9,6 +9,7 @@ from netpalm.backend.core.models.models import Webhook
 
 class NcclientSendConfigArgs(BaseModel):
     target: str
+    default_operation: Optional[str] = None
     config: str
 
 
