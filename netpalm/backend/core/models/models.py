@@ -44,6 +44,7 @@ class J2Config(BaseModel):
 
 class SetConfigArgs(BaseModel):
     payload: Optional[Any] = None
+    default_operation: Optional[str] = None
     target: Optional[str] = None
     config: Optional[str] = None
     uri: Optional[str] = None
