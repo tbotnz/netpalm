@@ -12,7 +12,7 @@ def write_meta_error(data):
     else:
         job.meta["errors"].append(data)
     job.save_meta()
-
+    raise Exception("failed")
 
 def render_netpalm_payload(job_result={}):
     """in band rpc job result renderer"""
