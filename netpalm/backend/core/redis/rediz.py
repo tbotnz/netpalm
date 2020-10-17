@@ -405,7 +405,7 @@ class Rediz:
                 if status != "started" or status != "queued":
                     if temprespobj["data"]["task_status"] == "started":
                         parent_task_object["data"]["task_status"] = temprespobj["data"]["task_status"]
-                if len(temprespobj["data"]["task_errors"]) >= 1:
+                if temprespobj["data"]["task_status"] == "failed":
                     task_errors.append({
                         parent_task_object["data"]["task_result"][j]["host"]: {
                             "task_id": parent_task_object["data"]["task_result"][j]["data"]["data"]["task_id"],
