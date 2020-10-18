@@ -1,4 +1,4 @@
-![Tests](https://github.com/tbotnz/netpalm/workflows/tests/badge.svg)
+<!---![Tests](https://github.com/tbotnz/netpalm/workflows/tests/badge.svg) -->
 <p align="center">
    <br/>
    <img src="/static/images/np_new.png" />
