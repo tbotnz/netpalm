@@ -54,7 +54,7 @@ class netpalm_testhelper:
             result = False
             while task_complete == False:
                 task_res = self.check_task(taskid)
-                if task_res["data"]["task_status"] == "finished":
+                if task_res["data"]["task_status"] == "finished" or task_res["data"]["task_status"] == "failed":
                     result = task_res["data"]["task_result"]
                     task_complete = True
                 # time.sleep(0.1)
@@ -69,7 +69,7 @@ class netpalm_testhelper:
             result = False
             while task_complete == False:
                 task_res = self.check_task(taskid)
-                if task_res["data"]["task_status"] == "finished":
+                if task_res["data"]["task_status"] == "finished" or task_res["data"]["task_status"] == "failed":
                     result = task_res
                     task_complete = True
                 # time.sleep(0.1)
@@ -84,7 +84,7 @@ class netpalm_testhelper:
             result = False
             while task_complete == False:
                 task_res = self.check_task(taskid)
-                if task_res["data"]["task_status"] == "finished":
+                if task_res["data"]["task_status"] == "finished" or task_res["data"]["task_status"] == "failed":
                     result = task_res["data"]["task_errors"]
                     task_complete = True
             return result
