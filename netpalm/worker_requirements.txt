@@ -1,7 +1,7 @@
 netmiko==3.3.2
 ttp
 napalm
-ncclient
+ncclient==0.6.9
 requests
 redis
 rq

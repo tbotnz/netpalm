@@ -18,7 +18,7 @@ router = APIRouter()
 
 
 def _set_config(setcfg: SetConfig, library: str = None):
-    req_data = setcfg.dict()
+    req_data = setcfg.dict(exclude_none=True)
     if library is not None:
         req_data["library"] = library
     r = reds.execute_task(method="setconfig", kwargs=req_data)
@@ -38,7 +38,7 @@ def set_config(setcfg: SetConfig):
 @router.post("/setconfig/dry-run", response_model=Response, status_code=201)
 @HttpErrorHandler()
 def set_config_dry_run(setcfg: SetConfig):
-    req_data = setcfg.dict()
+    req_data = setcfg.dict(exclude_none=True)
     r = reds.execute_task(method="dryrun", kwargs=req_data)
     resp = jsonable_encoder(r)
     return resp

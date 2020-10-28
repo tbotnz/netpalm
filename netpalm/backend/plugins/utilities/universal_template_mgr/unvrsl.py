@@ -40,3 +40,16 @@ class unvrsl:
         except Exception as e:
             error = ResponseBasic(status="error", data={"task_result": {"error": str(e)}}).dict()
             return error
+
+    def get_template(self, payload: Dict[str, str]):
+        try:
+            template_path = self.routing_table[payload["route_type"]]["path"] + payload["name"] + self.routing_table[payload["route_type"]]["extn"]
+            result = None
+            with open(template_path, "r") as file:
+                result = file.read()
+            raw_base = base64.b64encode(result.encode('utf-8'))
+            resultdata = ResponseBasic(status="success", data={"task_result": {"base64_payload": raw_base}}).dict()
+            return resultdata
+        except Exception as e:
+            error = ResponseBasic(status="error", data={"task_result": {"error": str(e)}}).dict()
+            return error

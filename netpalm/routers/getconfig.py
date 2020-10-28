@@ -18,7 +18,7 @@ router = APIRouter()
 
 
 def _get_config(getcfg: GetConfig, library: str = None):
-    req_data = getcfg.dict()
+    req_data = getcfg.dict(exclude_none=True)
     if library is not None:
         req_data["library"] = library
     r = reds.execute_task(method="getconfig", kwargs=req_data)
