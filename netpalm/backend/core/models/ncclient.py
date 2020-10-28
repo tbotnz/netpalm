@@ -1,4 +1,5 @@
-from typing import Optional
+from typing import Optional, Union
+from enum import Enum
 
 from pydantic import BaseModel
 
@@ -19,12 +20,36 @@ class NcclientGetConfigArgs(BaseModel):
     render_json: Optional[bool] = None
 
 
+class NcclientGetRpcArgs(BaseModel):
+    rpc: str
+    render_json: Optional[bool] = None
+
+
+class NcclientDeviceDrivers(str):
+    default = "default"
+    hpcomware = "hpcomware"
+    h3c = "h3c"
+    alu = "alu"
+    huaweiyang = "huaweiyang"
+    huawei = "huawei"
+    junos = "junos"
+    csr = "csr"
+    nexus = "nexus"
+    iosxr = "iosxr"
+    iosxe = "iosxe"
+
+
+class NcclientDeviceParams(BaseModel):
+    name: NcclientDeviceDrivers
+
+
 class NcclientConnection(BaseModel):
     host: str
     username: str
     password: str
     port: int
     hostkey_verify: bool
+    device_params: Optional[NcclientDeviceParams] = None
 
 
 class NcclientSetConfig(BaseModel):
@@ -51,7 +76,7 @@ class NcclientSetConfig(BaseModel):
 
 class NcclientGetConfig(BaseModel):
     connection_args: NcclientConnection
-    args: NcclientGetConfigArgs
+    args: Union[NcclientGetConfigArgs, NcclientGetRpcArgs]
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
     cache: Optional[CacheConfig] = {}

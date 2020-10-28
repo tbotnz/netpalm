@@ -14,7 +14,7 @@ routes = {
     "getconfig": exec_command,
     "setconfig": exec_config,
     "listtemplates": listtemplates,
-    "gettemplate": gettemplate,  # this is entirely unused now I think.
+    "gettemplate": gettemplate,  # replace with universal template mgr get_template in future
     "addtemplate": addtemplate,
     "pushtemplate": pushtemplate,
     "removetemplate": removetemplate,
@@ -23,5 +23,5 @@ routes = {
     "j2gettemplate": j2gettemplate,
     "render_j2template": render_j2template,
     "render_service": render_service,
-    "dryrun": dryrun
+    "dryrun": dryrun,
 }

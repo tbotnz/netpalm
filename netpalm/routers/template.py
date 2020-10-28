@@ -121,6 +121,23 @@ async def list_ttp_templates():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
+
+# get a specfic template
+@router.get("/ttptemplate/{tmpname}", response_model=ResponseBasic)
+async def return_specific_ttp_template(tmpname: str):
+    try:
+        send_payload = {
+            "route_type": "ttp_templates",
+            "name": tmpname
+        }
+        tmplate_mgr = unvrsl()
+        r = tmplate_mgr.get_template(payload=send_payload)
+        resp = jsonable_encoder(r)
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split("\n"))
+
+
 # add j2 config template
 @router.post("/ttptemplate/", response_model=ResponseBasic)
 def add_ttp_template(template: UnivsersalTemplateAdd):
@@ -151,6 +168,21 @@ def remove_ttp_template(template: UnivsersalTemplateRemove):
 async def list_config_j2_templates():
     try:
         r = routes["ls"](fldr="config")
+        resp = jsonable_encoder(r)
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split("\n"))
+
+# get a specfic template
+@router.get("/j2template/config/{tmpname}", response_model=ResponseBasic)
+async def return_specific_config_j2_template(tmpname: str):
+    try:
+        send_payload = {
+            "route_type": "j2_config_templates",
+            "name": tmpname
+        }
+        tmplate_mgr = unvrsl()
+        r = tmplate_mgr.get_template(payload=send_payload)
         resp = jsonable_encoder(r)
         return resp
     except Exception as e:
@@ -192,6 +224,21 @@ async def list_service_j2_templates():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
+# get a specfic template
+@router.get("/j2template/service/{tmpname}", response_model=ResponseBasic)
+async def return_specific_service_j2_template(tmpname: str):
+    try:
+        send_payload = {
+            "route_type": "j2_service_templates",
+            "name": tmpname
+        }
+        tmplate_mgr = unvrsl()
+        r = tmplate_mgr.get_template(payload=send_payload)
+        resp = jsonable_encoder(r)
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split("\n"))
+
 # add j2 service template
 @router.post("/j2template/service/", response_model=ResponseBasic)
 def add_service_j2_templates(template: UnivsersalTemplateAdd):
@@ -227,6 +274,21 @@ async def list_webhook_j2_templates():
         return resp
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
+
+# get a specfic template
+@router.get("/j2template/webhook/{tmpname}", response_model=ResponseBasic)
+async def return_specific_webhook_j2_template(tmpname: str):
+    try:
+        send_payload = {
+            "route_type": "j2_webhook_templates",
+            "name": tmpname
+        }
+        tmplate_mgr = unvrsl()
+        r = tmplate_mgr.get_template(payload=send_payload)
+        resp = jsonable_encoder(r)
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
 # add j2 webhook template
 @router.post("/j2template/webhook/", response_model=ResponseBasic)
@@ -345,6 +407,21 @@ def remove_script_file(template: UnivsersalTemplateRemove):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
+# get a specfic template
+@router.get("/script/{tmpname}", response_model=ResponseBasic)
+async def return_specific_script_file(tmpname: str):
+    try:
+        send_payload = {
+            "route_type": "custom_scripts",
+            "name": tmpname
+        }
+        tmplate_mgr = unvrsl()
+        r = tmplate_mgr.get_template(payload=send_payload)
+        resp = jsonable_encoder(r)
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split("\n"))
+
 # webhook script file
 @router.post("/webhook/add/", response_model=ResponseBasic)
 def add_webhook_script_file(template: UnivsersalTemplateAdd):
@@ -354,6 +431,21 @@ def add_webhook_script_file(template: UnivsersalTemplateAdd):
         add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_push, data=req_data)
         tmplate_mgr = unvrsl()
         r = tmplate_mgr.add_template(payload=req_data)
+        resp = jsonable_encoder(r)
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split("\n"))
+
+# get a specfic template
+@router.get("/webhook/{tmpname}", response_model=ResponseBasic)
+async def return_specific_webhook_script_file(tmpname: str):
+    try:
+        send_payload = {
+            "route_type": "custom_webhooks",
+            "name": tmpname
+        }
+        tmplate_mgr = unvrsl()
+        r = tmplate_mgr.get_template(payload=send_payload)
         resp = jsonable_encoder(r)
         return resp
     except Exception as e:
