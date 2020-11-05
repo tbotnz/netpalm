@@ -61,7 +61,7 @@ class SetConfig(BaseModel):
     queue_strategy: Optional[QueueStrategy] = None
     pre_checks: Optional[List[GenericPrePostCheck]] = None
     post_checks: Optional[List[GenericPrePostCheck]] = None
-    render_json = Optional[bool] = False
+    render_json: Optional[bool] = False
     enable_mode: bool = False
 
     class Config:
@@ -154,7 +154,7 @@ class GetConfig(BaseModel):
     queue_strategy: Optional[QueueStrategy] = None
     post_checks: Optional[List[GenericPrePostCheck]] = []
     cache: Optional[CacheConfig] = {}
-    render_json = Optional[bool] = False
+    render_json: Optional[bool] = False
 
     class Config:
         schema_extra = {
