@@ -11,6 +11,7 @@ class ncclien:
 
     def __init__(self, **kwargs):
         self.kwarg = kwargs.get("args", False)
+        self.render_json = kwargs.get("render_json", False)
         self.connection_args = kwargs.get("connection_args", False)
 
     def connect(self):
@@ -25,23 +26,18 @@ class ncclien:
         try:
             result = {}
             if self.kwarg:
-                render_json = self.kwarg.get("render_json", False)
-                rjsflag = False
-                if render_json:
-                    del self.kwarg["render_json"]
-                    rjsflag = True
                 # check whether RPC required
                 if self.kwarg.get("rpc", False):
                     response = session.rpc(**self.kwarg).data_xml
                 # else a standard get_config method call
                 else:
                     response = session.get_config(**self.kwarg).data_xml
-                if rjsflag:
+                if self.render_json:
                     respdict = xmltodict.parse(response)
                     if respdict:
                         result["get_config"] = respdict
                     else:
-                        write_meta_error("no response")
+                        write_meta_error("failed to parse response")
                 else:
                     result["get_config"] = response
             else:
@@ -54,12 +50,21 @@ class ncclien:
         try:
             result = {}
             if self.kwarg:
-                response = session.edit_config(**self.kwarg)
+                # edit_config returns an RPCReply object which doesnt have a
+                # data_xml property. Fixes 'Unserializable return value'
+                # message from rq.job:restore
+                response = session.edit_config(**self.kwarg).xml
                 if dry_run:
                     session.discard_changes()
                 else:
                     session.commit()
-                if response:
+                if self.render_json:
+                    respdict = xmltodict.parse(response)
+                    if respdict:
+                        result["edit_config"] respdict
+                    else:
+                        write_meta_error("failed to parse response")
+                else:
                     result["edit_config"] = response
             else:
                 write_meta_error("args are required")
