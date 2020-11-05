@@ -339,6 +339,25 @@ def test_setconfig_ncclient():
 
 
 @pytest.mark.setconfig
+def test_setconfig_ncclient_j2():
+    pl = {
+        "library": "ncclient",
+        "connection_args": {
+            "host": helper.test_device_netconf,
+            "username": "admin",
+            "password": "admin",
+            "port": 830,
+            "hostkey_verify": False,
+        },
+        "j2config": {
+            "template": "ncclient_test",
+            "args": {"vlans": ["10", "20", "30"]}
+        },
+    }
+    res = helper.post_and_check("/setconfig", pl)
+    assert res == 'Namespace="http://www.cisco.com/nxos:1.0:vlan_mgr_cli"'
+
+@pytest.mark.setconfig
 def test_setconfig_restconf_post():
     pl = {
         "library": "restconf",

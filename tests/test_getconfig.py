@@ -227,10 +227,10 @@ def test_getconfig_ncclient_json():
             "port": 830,
             "hostkey_verify": False,
         },
+        "render_json": True,
         "args": {
             "source": "running",
-            "filter": "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
-            "render_json": True,
+            "filter": "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>"
         },
     }
     res = helper.post_and_check("/getconfig", pl)
