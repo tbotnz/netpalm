@@ -61,7 +61,7 @@ class ncclien:
                 if self.render_json:
                     respdict = xmltodict.parse(response)
                     if respdict:
-                        result["edit_config"] respdict
+                        result["edit_config"] = respdict
                     else:
                         write_meta_error("failed to parse response")
                 else:
