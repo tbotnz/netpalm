@@ -61,6 +61,7 @@ class SetConfig(BaseModel):
     queue_strategy: Optional[QueueStrategy] = None
     pre_checks: Optional[List[GenericPrePostCheck]] = None
     post_checks: Optional[List[GenericPrePostCheck]] = None
+    render_json = Optional[bool] = False
     enable_mode: bool = False
 
     class Config:
@@ -84,6 +85,7 @@ class SetConfig(BaseModel):
                     }
                 },
             "queue_strategy": "fifo",
+            "render_json": True,
             "pre_checks": [
                 {
                     "match_type": "include",
@@ -152,6 +154,7 @@ class GetConfig(BaseModel):
     queue_strategy: Optional[QueueStrategy] = None
     post_checks: Optional[List[GenericPrePostCheck]] = []
     cache: Optional[CacheConfig] = {}
+    render_json = Optional[bool] = False
 
     class Config:
         schema_extra = {
@@ -168,6 +171,7 @@ class GetConfig(BaseModel):
                     "use_textfsm": True
                 },
                 "queue_strategy": "pinned",
+                "render_json": True,
                 "cache": {
                     "enabled": True,
                     "ttl": 300,
