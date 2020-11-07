@@ -41,6 +41,8 @@ class Config:
         self.redis_broadcast_q = data["redis_broadcast_q"]
         self.redis_queue_store = data["redis_queue_store"]
         self.redis_pinned_store = data["redis_pinned_store"]
+        self.redis_schedule_store = data["redis_schedule_store"]
+        self.redis_schedule_store_stats = data["redis_schedule_store_stats"]
         self.redis_cache_enabled = data["redis_cache_enabled"]
         self.redis_cache_default_timeout = data["redis_cache_default_timeout"]
         self.redis_cache_key_prefix = data["redis_cache_key_prefix"]
@@ -69,6 +71,8 @@ class Config:
         self.webhook_jinja2_templates = data["webhook_jinja2_templates"]
         self.log_config_filename = data["log_config_filename"]
         self.ttp_templates = data["ttp_templates"]
+        self.apscheduler_num_processes = data["apscheduler_num_processes"]
+        self.apscheduler_num_threads = data["apscheduler_num_threads"]
 
         #load tls
         try:

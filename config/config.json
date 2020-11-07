@@ -18,6 +18,8 @@
     "redis_broadcast_q": "broadcast",
     "redis_queue_store": "netpalm_queue_store",
     "redis_pinned_store": "netpalm_pinned_store",
+    "redis_schedule_store": "netpalm_schedule_store",
+    "redis_schedule_store_stats": "netpalm_schedule_store_stats",
     "redis_cache_enabled": true,
     "redis_cache_default_timeout": 300,
     "redis_cache_key_prefix": "NETPALM_RESULT_CACHE",
@@ -46,5 +48,7 @@
         "Content-Type": "application/json"
     },
     "custom_webhooks": "netpalm/backend/plugins/extensibles/custom_webhooks/",
-    "log_config_filename": "config/log-config.yml"
+    "log_config_filename": "config/log-config.yml",
+    "apscheduler_num_processes":1,
+    "apscheduler_num_threads":5
 }

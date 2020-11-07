@@ -228,3 +228,21 @@ class PinnedStore(BaseModel):
     count: int
     limit: int
     pinned_listen_queue: str
+
+
+class ScheduleBase(BaseModel):
+    path: str
+    payload: dict
+
+
+class ScheduleInterval(BaseModel):
+    weeks: Optional[int] = None
+    days: Optional[int] = None
+    hours: Optional[int] = None
+    minutes: Optional[int] = None
+    seconds: Optional[int] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    timezone: Optional[str] = None
+    jitter: Optional[int] = None
+    schedule_payload: ScheduleBase
