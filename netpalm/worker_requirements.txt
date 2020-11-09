@@ -3,7 +3,7 @@ ttp
 napalm
 ncclient==0.6.9
 requests
-redis
+redis==3.5.3
 rq
 xmltodict
 jinja2
@@ -16,3 +16,4 @@ cachelib
 python-redis-lock
 filelock
 jsonpath_ng
+apscheduler

@@ -53,7 +53,7 @@ class ls:
 
     def getfiles(self):
         try:
-            res = self.path_hierarchy(path=self.folder_dir,strip=False)
+            res = self.path_hierarchy(path=self.folder_dir, strip=False)
             return res
         except Exception as e:
             return str(e)
