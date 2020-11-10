@@ -1,4 +1,5 @@
 from typing import Optional, Any
+from enum import Enum
 
 from pydantic import BaseModel
 
@@ -14,9 +15,22 @@ class PureSNMPConnectionArgs(BaseModel):
     timeout: Optional[int] = None
 
 
+class SNMPtypes(str, Enum):
+    table = "table"
+    get = "get"
+    walk = "walk"
+#    bulkget = "bulkget"
+#    bulkwalk = "bulkwalk"
+
+
+class PureSNMPArgs(BaseModel):
+    type: SNMPtypes
+
+
 class PureSNMPGetConfig(BaseModel):
     connection_args: PureSNMPConnectionArgs
     command: Any
+    args: PureSNMPArgs
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
     cache: Optional[CacheConfig] = {}
