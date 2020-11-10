@@ -8,6 +8,7 @@ from netpalm.backend.core.models.models import GetConfig
 from netpalm.backend.core.models.napalm import NapalmGetConfig
 from netpalm.backend.core.models.ncclient import NcclientGetConfig
 from netpalm.backend.core.models.netmiko import NetmikoGetConfig
+from netpalm.backend.core.models.puresnmp import PureSNMPGetConfig
 from netpalm.backend.core.models.restconf import Restconf
 from netpalm.backend.core.models.task import Response
 from netpalm.backend.core.redis import reds
@@ -45,6 +46,13 @@ def get_config_netmiko(getcfg: NetmikoGetConfig):
 @error_handle_w_cache
 def get_config_napalm(getcfg: NapalmGetConfig):
     return _get_config(getcfg, library="napalm")
+
+
+# read config
+@router.post("/getconfig/puresnmp", response_model=Response, status_code=201)
+@error_handle_w_cache
+def get_config_puresnmp(getcfg: PureSNMPGetConfig):
+    return _get_config(getcfg, library="puresnmp")
 
 
 # read config

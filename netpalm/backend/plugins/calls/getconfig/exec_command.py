@@ -5,6 +5,7 @@ from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
 from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
+from netpalm.backend.plugins.drivers.puresnmp.puresnmp_drvr import pursnmp
 from netpalm.backend.plugins.drivers.restconf.restconf import restconf
 from netpalm.backend.plugins.utilities.webhook.webhook import exec_webhook_func
 
@@ -39,6 +40,11 @@ def exec_command(**kwargs):
                 sesh = napl.connect()
                 result = napl.sendcommand(sesh, commandlst)
                 napl.logout(sesh)
+            elif lib == "puresnmp":
+                snm = pursnmp(**kwargs)
+                sesh = snm.connect()
+                result = snm.sendcommand(sesh, commandlst)
+                snm.logout(sesh)
             elif lib == "ncclient":
                 ncc = ncclien(**kwargs)
                 sesh = ncc.connect()
