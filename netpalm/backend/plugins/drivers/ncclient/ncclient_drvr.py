@@ -8,10 +8,9 @@ log = logging.getLogger(__name__)
 
 
 class ncclien:
-
     def __init__(self, **kwargs):
         self.kwarg = kwargs.get("args", False)
-        self.render_json = kwargs.get("render_json", False)
+        self.render_json = self.kwarg.get("render_json", False)
         self.connection_args = kwargs.get("connection_args", False)
 
     def connect(self):
