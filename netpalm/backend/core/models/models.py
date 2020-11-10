@@ -14,6 +14,7 @@ class LibraryName(str, Enum):
     ncclient = "ncclient"
     restconf = "restconf"
     netmiko = "netmiko"
+    puresnmp = "puresnmp"
 
 
 class CheckEnum(str, Enum):

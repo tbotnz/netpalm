@@ -23,4 +23,5 @@ cachelib
 python-redis-lock
 filelock
 jsonpath_ng
-apscheduler
+apscheduler==3.6.3
+puresnmp==1.9.1
