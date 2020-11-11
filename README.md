@@ -216,12 +216,11 @@ There is a public instance of netpalm available below
 - [network collective w/ Jason Edelman: _NTC network collective podcast ft netpalm_](https://networkcollective.com/2020/08/ntc-netpalm/)
 - [packetflow top 5 up and coming network automation tools](https://www.packetflow.co.uk/top-5-up-and-coming-network-automation-tools/)
 
-- [ipsapce:_building multivendor network automation platform_](https://blog.ipspace.net/2020/06/reinventing-napalm.html)
-- [ipsapce:_useful network automation tools_](https://www.ipspace.net/kb/Ansible/Useful_Network_Automation_Tools.html)
+- [ipspace:_building multivendor network automation platform_](https://blog.ipspace.net/2020/06/reinventing-napalm.html)
+- [ipspace:_useful network automation tools_](https://www.ipspace.net/kb/Ansible/Useful_Network_Automation_Tools.html)
 
 ### netpalm support
 
 we maintain an active community on the networktocode slack channel
 
 #netpalm on networktocode.slack.com
- 
