@@ -10,9 +10,9 @@ from netpalm.backend.core.models.models import J2Config
 
 
 class NcclientSendConfigArgs(BaseModel):
-    target: str
+    target: Optional[str] = None
+    config: Optional[str] = None
     default_operation: Optional[str] = None
-    config: str
     render_json: Optional[bool] = False
 
 
@@ -72,12 +72,11 @@ class NcclientSetConfig(BaseModel):
                     "port": 830,
                     "hostkey_verify": False
                 },
-                "render_json": True,
                 "args": {
-                    "target":
-                    "running",
+                    "target": "running",
                     "config":
-                    "<nc:config xmlns:nc='urn:ietf:params:xml:ns:netconf:base:1.0'><configure xmlns='http://www.cisco.com/nxos:1.0:vlan_mgr_cli'><__XML__MODE__exec_configure><interface><ethernet><interface>helloworld</interface><__XML__MODE_if-ethernet-switch><switchport><trunk><allowed><vlan><add><__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans><add-vlans>99</add-vlans></__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans></add></vlan></allowed></trunk></switchport></__XML__MODE_if-ethernet-switch></ethernet></interface></__XML__MODE__exec_configure></configure></nc:config>"
+                    "<nc:config xmlns:nc='urn:ietf:params:xml:ns:netconf:base:1.0'><configure xmlns='http://www.cisco.com/nxos:1.0:vlan_mgr_cli'><__XML__MODE__exec_configure><interface><ethernet><interface>helloworld</interface><__XML__MODE_if-ethernet-switch><switchport><trunk><allowed><vlan><add><__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans><add-vlans>99</add-vlans></__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans></add></vlan></allowed></trunk></switchport></__XML__MODE_if-ethernet-switch></ethernet></interface></__XML__MODE__exec_configure></configure></nc:config>",
+                    "render_json": True
                 },
                 "queue_strategy": "pinned"
             }
@@ -102,12 +101,11 @@ class NcclientGetConfig(BaseModel):
                     "port": 830,
                     "hostkey_verify": False
                 },
-                "render_json": True,
                 "args": {
-                    "source":
-                    "running",
+                    "source": "running",
                     "filter":
-                    "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>"
+                    "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
+                    "render_json": True
                 },
                 "queue_strategy": "fifo",
                 "cache": {
