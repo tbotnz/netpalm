@@ -10,7 +10,6 @@ log = logging.getLogger(__name__)
 class ncclien:
     def __init__(self, **kwargs):
         self.kwarg = kwargs.get("args", False)
-        self.render_json = self.kwarg.get("render_json", False)
         self.connection_args = kwargs.get("connection_args", False)
 
     def connect(self):
@@ -25,13 +24,17 @@ class ncclien:
         try:
             result = {}
             if self.kwarg:
+                rjsflag = False
+                if self.kwarg.get("render_json", False):
+                    del self.kwarg["render_json"]
+                    rjsflag = True
                 # check whether RPC required
                 if self.kwarg.get("rpc", False):
                     response = session.rpc(**self.kwarg).data_xml
                 # else a standard get_config method call
                 else:
                     response = session.get_config(**self.kwarg).data_xml
-                if self.render_json:
+                if rjsflag:
                     respdict = xmltodict.parse(response)
                     if respdict:
                         result["get_config"] = respdict
@@ -49,6 +52,10 @@ class ncclien:
         try:
             result = {}
             if self.kwarg:
+                rjsflag = False
+                if self.kwarg.get("render_json", False):
+                    del self.kwarg["render_json"]
+                    rjsflag = True
                 # edit_config returns an RPCReply object which doesnt have a
                 # data_xml property. Fixes 'Unserializable return value'
                 # message from rq.job:restore
@@ -57,7 +64,7 @@ class ncclien:
                     session.discard_changes()
                 else:
                     session.commit()
-                if self.render_json:
+                if rjsflag:
                     respdict = xmltodict.parse(response)
                     if respdict:
                         result["edit_config"] = respdict
