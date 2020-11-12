@@ -6,7 +6,6 @@ import logging
 from netpalm.backend.core.confload.confload import config
 
 from datetime import datetime
-import re
 
 """
 netpalm webhook for posting a document directly to an elasticsearch index
@@ -40,9 +39,6 @@ def run_webhook(payload=False):
             headers_val = config.default_webhook_headers
             verify_val = config.default_webhook_ssl_verify
             timeout_val = config.default_webhook_timeout
-
-            payload = re.sub(r'\'(\d+)\'', r'\1', f"{payload}")
-            payload = re.sub(r'\'(\d+)\'', r'\1', f"{payload}")
 
             # prepare time for elastic format
             now = datetime.now()
