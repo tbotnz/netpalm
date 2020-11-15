@@ -53,8 +53,28 @@ def run_webhook(payload=False):
             payload["@timestamp"] = timez
 
             pl = json.dumps(payload)
-            pl = re.sub(r'\"(\d+)\"', r'\1', f"{pl}")
-            pl = re.sub(r'\"(\d+\.\d+)\"', r'\1', f"{pl}")
+
+            def cleanup_crappy_string_vals(payload):
+                payload = re.sub(r'\"(\d+)\"', r'\1', f"{payload}")
+                payload = re.sub(r'\"(\d+\.\d+)\"', r'\1', f"{payload}")
+                return payload
+
+            def cleanup_crappy_router_null_outputs(pattern, value, payload):
+                # hack some weird datatyping shit in tfsm
+                empty_string_fields = re.findall(r'\"(\w*)\":\s\"\"', payload)
+                if len(empty_string_fields) >= 1:
+                    empty_string_fields = list(dict.fromkeys(empty_string_fields))
+                    # do some magic
+                    for empty_string_key in empty_string_fields:
+                        int_regex = "\""+re.escape(empty_string_key)+"\": "+pattern
+                        is_int = re.findall(int_regex, payload)
+                        if len(is_int) >= 1:
+                            payload = re.sub("\""+re.escape(empty_string_key)+"\": \"\"", "\""+re.escape(empty_string_key)+f"\": {value}", f"{payload}")
+                return payload
+
+            pl = cleanup_crappy_string_vals(payload=pl)
+            pl = cleanup_crappy_router_null_outputs(pattern="\d+", value=0, payload=pl)
+            pl = cleanup_crappy_router_null_outputs(pattern="\d+\.\d+", value=0.00, payload=pl)
 
             # execute request
             response = requests.request("POST", url=f"{elastic_instance}/{index}/{index}/{my_id}",
