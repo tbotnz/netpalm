@@ -21,14 +21,33 @@ def get_scheduled_tasks_list():
         raise HTTPException(status_code=500)
 
 
-@router.post("/schedule/{name}")
+@router.post("/schedule/{name}", status_code=201)
 def add_scheduled_task(name: str, schedul: ScheduleInterval):
     try:
         data = schedul.dict(exclude_none=True)
         pl = data["schedule_payload"]
         del data["schedule_payload"]
 
-        r = sched.add_netpalm_job(job_name=name,
+        r = sched.add_netpalm_job(
+                                  job_name=name,
+                                  input_payload=pl,
+                                  trigger="interval",
+                                  trigger_args=data
+                                  )
+        resp = jsonable_encoder(r)
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split('\n'))
+
+
+@router.patch("/schedule/{id}", status_code=204)
+def modify_scheduled_task(id: str, schedul: ScheduleInterval):
+    try:
+        data = schedul.dict(exclude_none=True)
+        pl = data["schedule_payload"]
+        del data["schedule_payload"]
+        r = sched.modify_netpalm_job(
+                                  job_id=id,
                                   input_payload=pl,
                                   trigger="interval",
                                   trigger_args=data
