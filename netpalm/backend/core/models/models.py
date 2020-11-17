@@ -156,10 +156,10 @@ class GetConfig(BaseModel):
                 },
                 "command": "show ip int brief",
                 "args": {
-                    "use_textfsm": True
+                    "use_textfsm": True,
+                    "render_json": True
                 },
                 "queue_strategy": "pinned",
-                "render_json": True,
                 "cache": {
                     "enabled": True,
                     "ttl": 300,
