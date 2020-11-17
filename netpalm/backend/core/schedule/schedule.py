@@ -69,6 +69,7 @@ class Schedulr:
         self.scheduler = None
 
     def init_scheduler(self):
+        """ instantiate the scheduler and make it available in the class """
         self.jobstores = {
             "default": RedisJobStore(
                                 jobs_key=config.redis_schedule_store,
@@ -103,6 +104,7 @@ class Schedulr:
             log.error(f"purge_creds: {e}")
 
     def get_scheduled_jobs(self):
+        """ return the scheduled jobs from the scheduler """
         result = []
         result_data = False
         res = self.scheduler.get_jobs(jobstore="default")
@@ -124,6 +126,7 @@ class Schedulr:
         return result_data
 
     def add_netpalm_job(self, input_payload, job_name, trigger, trigger_args):
+        """ add a scheduled jobs to the scheduler """
         try:
             random_job_id = uuid.uuid4()
             job_id = f"{random_job_id}_{job_name}"
@@ -137,5 +140,27 @@ class Schedulr:
         except Exception as e:
             log.error(f"add_netpalm_job: {e}")
 
+    def modify_netpalm_job(
+                           self,
+                           input_payload=None,
+                           job_id=None,
+                           trigger=None,
+                           trigger_args=None
+                           ):
+        """ modify a scheduled job running in the scheduler """
+        try:
+            if input_payload:
+                inp = {"kwargs": input_payload}
+                self.scheduler.modify_job(job_id, **inp)
+            if trigger_args:
+                self.scheduler.reschedule_job(
+                                              job_id,
+                                              trigger=trigger,
+                                              **trigger_args
+                                              )
+        except Exception as e:
+            log.error(f"modify_netpalm_job: {e}")
+
     def remove_job(self, job_id):
+        """ remove a scheduled job from the scheduler """
         self.scheduler.remove_job(job_id)
