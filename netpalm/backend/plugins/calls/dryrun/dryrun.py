@@ -32,6 +32,11 @@ def dryrun(**kwargs):
             result = napl.config(session=sesh, command=config, dry_run=True)
             napl.logout(sesh)
         elif lib == "ncclient":
+            # if we rendered j2config, add it to the kwargs['args'] dict
+            if j2conf and config:
+                if not kwargs.get('args', False):
+                    kwargs['args'] = {}
+                kwargs['args']['config'] = config
             ncc = ncclien(**kwargs)
             sesh = ncc.connect()
             result = ncc.editconfig(session=sesh, dry_run=True)

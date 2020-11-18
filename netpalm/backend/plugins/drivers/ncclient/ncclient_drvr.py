@@ -8,7 +8,6 @@ log = logging.getLogger(__name__)
 
 
 class ncclien:
-
     def __init__(self, **kwargs):
         self.kwarg = kwargs.get("args", False)
         self.connection_args = kwargs.get("connection_args", False)
@@ -25,9 +24,8 @@ class ncclien:
         try:
             result = {}
             if self.kwarg:
-                render_json = self.kwarg.get("render_json", False)
                 rjsflag = False
-                if render_json:
+                if self.kwarg.get("render_json", False):
                     del self.kwarg["render_json"]
                     rjsflag = True
                 # check whether RPC required
@@ -41,7 +39,7 @@ class ncclien:
                     if respdict:
                         result["get_config"] = respdict
                     else:
-                        write_meta_error("no response")
+                        write_meta_error("failed to parse response")
                 else:
                     result["get_config"] = response
             else:
@@ -54,12 +52,25 @@ class ncclien:
         try:
             result = {}
             if self.kwarg:
-                response = session.edit_config(**self.kwarg)
+                rjsflag = False
+                if self.kwarg.get("render_json", False):
+                    del self.kwarg["render_json"]
+                    rjsflag = True
+                # edit_config returns an RPCReply object which doesnt have a
+                # data_xml property. Fixes 'Unserializable return value'
+                # message from rq.job:restore
+                response = session.edit_config(**self.kwarg).xml
                 if dry_run:
                     session.discard_changes()
                 else:
                     session.commit()
-                if response:
+                if rjsflag:
+                    respdict = xmltodict.parse(response)
+                    if respdict:
+                        result["edit_config"] = respdict
+                    else:
+                        write_meta_error("failed to parse response")
+                else:
                     result["edit_config"] = response
             else:
                 write_meta_error("args are required")

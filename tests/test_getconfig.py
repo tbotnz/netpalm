@@ -32,7 +32,8 @@ def test_getconfig_prepare_environment():
 @pytest.mark.cisgoalternate
 def test_getconfig_napalm_post_check():
     pl = {
-        "library": "napalm",
+        "library":
+        "napalm",
         "connection_args": {
             "device_type": "cisco_ios",
             "host": helper.test_device_ios_cli,
@@ -40,15 +41,17 @@ def test_getconfig_napalm_post_check():
             "password": "admin",
             "timeout": 5,
         },
-        "command": "show run | i hostname",
-        "queue_strategy": "pinned",
-        "post_checks": [
-            {
-                "match_type": "include",
-                "get_config_args": {"command": "show run | i hostname"},
-                "match_str": ["hostname " + r],
-            }
-        ],
+        "command":
+        "show run | i hostname",
+        "queue_strategy":
+        "pinned",
+        "post_checks": [{
+            "match_type": "include",
+            "get_config_args": {
+                "command": "show run | i hostname"
+            },
+            "match_str": ["hostname " + r],
+        }],
     }
     res = helper.post_and_check_errors("/getconfig", pl)
     assert len(res) == 0
@@ -58,7 +61,8 @@ def test_getconfig_napalm_post_check():
 @pytest.mark.cisgoalternate
 def test_getconfig_netmiko_post_check():
     pl = {
-        "library": "netmiko",
+        "library":
+        "netmiko",
         "connection_args": {
             "device_type": "cisco_ios",
             "host": helper.test_device_ios_cli,
@@ -66,15 +70,17 @@ def test_getconfig_netmiko_post_check():
             "password": "admin",
             "timeout": 5,
         },
-        "command": "show run | i hostname",
-        "queue_strategy": "pinned",
-        "post_checks": [
-            {
-                "match_type": "include",
-                "get_config_args": {"command": "show run | i hostname"},
-                "match_str": ["hostname " + r],
-            }
-        ],
+        "command":
+        "show run | i hostname",
+        "queue_strategy":
+        "pinned",
+        "post_checks": [{
+            "match_type": "include",
+            "get_config_args": {
+                "command": "show run | i hostname"
+            },
+            "match_str": ["hostname " + r],
+        }],
     }
     res = helper.post_and_check_errors("/getconfig", pl)
     assert len(res) == 0
@@ -132,7 +138,8 @@ def test_getconfig_napalm_multiple():
         "command": ["show run | i hostname", "show ip int brief"],
     }
     res = helper.post_and_check("/getconfig", pl)
-    assert len(res["show ip int brief"]) > 1 and len(res["show run | i hostname"]) == 1
+    assert len(res["show ip int brief"]) > 1 and len(
+        res["show run | i hostname"]) == 1
 
 
 @pytest.mark.getconfig
@@ -168,7 +175,9 @@ def test_getconfig_netmiko_with_textfsm():
             "password": "admin",
         },
         "command": "show ip int brief",
-        "args": {"use_textfsm": True},
+        "args": {
+            "use_textfsm": True
+        },
     }
     res = helper.post_and_check("/getconfig", pl)
     assert res["show ip int brief"][0]["status"] == "up"
@@ -188,7 +197,8 @@ def test_getconfig_netmiko_multiple():
         "command": ["show run | i hostname", "show ip int brief"],
     }
     res = helper.post_and_check("/getconfig", pl)
-    assert len(res["show ip int brief"]) > 1 and len(res["show run | i hostname"]) >= 1
+    assert len(res["show ip int brief"]) > 1 and len(
+        res["show run | i hostname"]) >= 1
 
 
 @pytest.mark.getconfig
@@ -204,8 +214,10 @@ def test_getconfig_ncclient():
             "hostkey_verify": False,
         },
         "args": {
-            "source": "running",
-            "filter": "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
+            "source":
+            "running",
+            "filter":
+            "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
         },
     }
     res = helper.post_and_check("/getconfig", pl)
@@ -229,14 +241,14 @@ def test_getconfig_ncclient_json():
         },
         "args": {
             "source": "running",
-            "filter": "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
-            "render_json": True,
+            "filter":
+            "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
+            "render_json": True
         },
     }
     res = helper.post_and_check("/getconfig", pl)
-    assert (
-        res["get_config"]["data"]["@xmlns"] == "urn:ietf:params:xml:ns:netconf:base:1.0"
-    )
+    assert (res["get_config"]["data"]["@xmlns"] ==
+            "urn:ietf:params:xml:ns:netconf:base:1.0")
 
 
 @pytest.mark.getconfig
@@ -263,5 +275,5 @@ def test_getconfig_restconf():
     }
     res = helper.post_and_check("/getconfig", pl)
     assert res[
-        "https://ios-xe-mgmt-latest.cisco.com:9443/restconf/data/Cisco-IOS-XE-native:native/interface/"
-    ]["result"]["Cisco-IOS-XE-native:interface"]
+        "https://ios-xe-mgmt-latest.cisco.com:9443/restconf/data/Cisco-IOS-XE-native:native/interface/"][
+            "result"]["Cisco-IOS-XE-native:interface"]

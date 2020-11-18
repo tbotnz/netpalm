@@ -50,6 +50,7 @@ class SetConfigArgs(BaseModel):
     config: Optional[str] = None
     uri: Optional[str] = None
     action: Optional[str] = None
+    render_json: Optional[bool] = False
 
 
 class SetConfig(BaseModel):
@@ -67,7 +68,8 @@ class SetConfig(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "library": "napalm",
+                "library":
+                "napalm",
                 "connection_args": {
                     "device_type": "cisco_ios",
                     "host": "10.0.2.33",
@@ -77,37 +79,26 @@ class SetConfig(BaseModel):
                 "j2config": {
                     "template": "test",
                     "args": {
-                        "vlans": [
-                            "5",
-                            "3",
-                            "2"
-                        ]
+                        "vlans": ["5", "3", "2"]
                     }
                 },
-            "queue_strategy": "fifo",
-            "pre_checks": [
-                {
+                "queue_strategy":
+                "fifo",
+                "pre_checks": [{
                     "match_type": "include",
                     "get_config_args": {
                         "command": "show run | i hostname"
                     },
-                    "match_str": [
-                        "hostname cat"
-                    ]
-                }
-            ],
-            "post_checks": [
-                {
+                    "match_str": ["hostname cat"]
+                }],
+                "post_checks": [{
                     "match_type": "include",
                     "get_config_args": {
                         "command": "show run | i hostname"
                     },
-                    "match_str": [
-                        "hostname dog"
-                    ]
-                }
-            ]
-        }
+                    "match_str": ["hostname dog"]
+                }]
+            }
         }
 
 
@@ -166,7 +157,8 @@ class GetConfig(BaseModel):
                 },
                 "command": "show ip int brief",
                 "args": {
-                    "use_textfsm": True
+                    "use_textfsm": True,
+                    "render_json": True
                 },
                 "queue_strategy": "pinned",
                 "cache": {
