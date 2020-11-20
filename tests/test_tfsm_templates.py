@@ -53,7 +53,7 @@ def get_matching_templates(target_template: typing.Dict, template_obj: FSMTempla
 
 def test_add_template():
     test_template = {
-        "key": "2765662087944207_217805392995412877",
+        "key": "573300637760474_59123133312286777",
         "driver": "dell_force10",
         "command": "show mac-address-table",
         "template_name": "dell_force10_show_mac-address-table.template"
@@ -65,10 +65,44 @@ def test_add_template():
     matching_templates = get_matching_templates(test_template, template_obj)
     base = len(matching_templates)
 
-    template_obj.add_template()
+    template_obj.add_template(strict=False)
 
     matching_templates = get_matching_templates(test_template, template_obj)
     assert len(matching_templates) == base + 1
+
+
+def test_invalid_template_raises_error():
+    test_template = {
+        "key": "573DOES NOT EXIST60474_59123133312286777",
+        "driver": "dell_force10",
+        "command": "show mac-address-table",
+        "template_name": "dell_force10_show_mac-address-table.template"
+    }
+    template_obj = FSMTemplate(**test_template)
+    from requests.exceptions import HTTPError
+    with pytest.raises(HTTPError):
+        template_obj.add_template()
+
+
+def test_add_template_new_section():
+    from random import randint
+    rint = randint(0, 1000)
+    test_template = {
+        "key": "573300637760474_59123133312286777",
+        "driver": f"cisgo_ios{rint}",
+        "command": "show mac-address-table",
+        "template_name": f"cisgo_ios{rint}_show_mac-address-table.template"
+    }
+
+    driver = test_template["driver"]
+
+    template_obj = FSMTemplate(**test_template)
+    existing_driver_templates = get_driver_template_list(driver, template_obj)
+    assert len(existing_driver_templates) == 0
+
+    template_obj.add_template()
+    new_driver_templates = get_driver_template_list(driver, template_obj)
+    assert len(new_driver_templates) == 1
 
 
 def test_del_template():
