@@ -6,6 +6,7 @@ from collections import defaultdict
 from functools import wraps
 
 from requests import get
+from requests.exceptions import HTTPError
 
 from netpalm.backend.core.confload.confload import config
 
@@ -64,11 +65,20 @@ class FSMTemplate:
 
         # get template text
         template_url = f"{config.txtfsm_template_server}/static/fsms/{download_filename}.txt"
-        template_text = get(template_url, timeout=10).text
+        result = get(template_url, timeout=10)
+        result.raise_for_status()
+        template_text = result.text
         return template_text
 
-    def add_template(self):
-        self.kwargs["template_text"] = self.fetch_template()
+    def add_template(self, strict=True):
+        try:
+            self.kwargs["template_text"] = self.fetch_template()
+        except HTTPError:
+            if strict:
+                raise
+            self.kwargs[
+                "template_text"] = "COULD NOT FETCH"  # useful for automated tests that don't actually need the results
+
         return self.push_template()
 
     def push_template(self):
@@ -136,6 +146,7 @@ class FSMTemplate:
         """insert line into template index at end of existing section for driver"""
         driver = self.kwargs["driver"]
         command = self.kwargs["command"]
+        new_line = f"{template_filename}, .*, {driver}, {command}\n"
         new_index_lines = []
         count = 0
         driver_section_identified = False
@@ -145,10 +156,13 @@ class FSMTemplate:
 
             elif driver_section_identified and count == 0:  # first line after the last in the right driver section
                 count += 1
-                new_line = f"{template_filename}, .*, {driver}, {command}\n"
                 new_index_lines.append(new_line)
 
             new_index_lines.append(line)
+
+        if not driver_section_identified:  # no existing section, so create a new one
+            new_index_lines.append('')
+            new_index_lines.append(new_line)
 
         return new_index_lines
 
