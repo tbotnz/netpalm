@@ -9,7 +9,7 @@ netpalm webhook for updating a request item state and worknotes
 IMPORTANT NOTES:
     webook requires a payload as per below
     "webhook": {
-        "name": "servicenow_request_item_patch",
+        "name": "servicenow_request_item_patch_netpalm_webhook",
         "args": {
             "username": "admin",
             "password": "",
