@@ -26,8 +26,8 @@ class ncclien:
             if self.kwarg:
                 rjsflag = False
                 if self.kwarg.get("render_json", False):
-                    del self.kwarg["render_json"]
                     rjsflag = True
+                del self.kwarg["render_json"]
                 # check whether RPC required
                 if self.kwarg.get("rpc", False):
                     response = session.rpc(**self.kwarg).data_xml
@@ -54,8 +54,8 @@ class ncclien:
             if self.kwarg:
                 rjsflag = False
                 if self.kwarg.get("render_json", False):
-                    del self.kwarg["render_json"]
                     rjsflag = True
+                del self.kwarg["render_json"]
                 # edit_config returns an RPCReply object which doesnt have a
                 # data_xml property. Fixes 'Unserializable return value'
                 # message from rq.job:restore
