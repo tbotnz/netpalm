@@ -1,0 +1,98 @@
+version: "3.7"
+
+services:
+
+    netpalm-controller:
+      build:
+          context: .
+          dockerfile: ./dockerfiles/netpalm_controller_dockerfile
+      environment:
+          - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+          - NETPALM_CONFIG=/code/config/config.json
+          - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+      ports:
+          - "9000:9000"
+      networks:
+          - "netpalm-network"
+      depends_on:
+          - redis
+      restart: always
+
+    netpalm-worker-pinned:
+      build:
+          context: .
+          dockerfile: ./dockerfiles/netpalm_pinned_worker_dockerfile
+      environment:
+        - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+        - NETPALM_CONFIG=/code/config/config.json
+        - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+      depends_on:
+        - redis
+      networks:
+      - "netpalm-network"
+      restart: always
+
+    netpalm-worker-fifo:
+      build:
+          context: .
+          dockerfile: ./dockerfiles/netpalm_fifo_worker_dockerfile
+      environment:
+        - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+        - NETPALM_CONFIG=/code/config/config.json
+        - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+      depends_on:
+        - redis
+      networks:
+      - "netpalm-network"
+      restart: always
+
+    redis:
+      build:
+        context: .
+        dockerfile: ./dockerfiles/netpalm_redis_dockerfile
+      networks:
+      - "netpalm-network"
+      restart: always
+
+    kafka:
+      image: confluentinc/cp-kafka
+      networks:
+      - "netpalm-network"
+      ports:
+          - "9092:9092" # netpalm container inside docker network will use port 29092
+      restart: always
+      depends_on:
+        - zookeeper
+      environment:
+        - KAFKA_BROKER_ID=1
+        - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+        - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+        - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+        - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+        - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      volumes:
+        - kafka01:/tmp/kafka-logs
+
+    zookeeper:
+      image: confluentinc/cp-zookeeper
+      networks:
+      - "netpalm-network"
+      environment:
+        - ZOOKEEPER_CLIENT_PORT=2181
+        - ZOOKEEPER_TICK_TIME=2000
+      ports:
+          - "2181:2181"
+      restart: always
+      volumes:
+        - zk01:/var/lib/zookeeper
+
+networks:
+  netpalm-network:
+    name: "netpalm-network"
+
+volumes:
+  kafka01:
+    driver: local
+  zk01:
+    driver: local
+  
