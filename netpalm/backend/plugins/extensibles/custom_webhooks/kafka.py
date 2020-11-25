@@ -12,7 +12,7 @@ netpalm webhook for posting a document directly to an kafka topic
 IMPORTANT NOTES:
     webook requires a payload as per below
     "webhook": {
-        "name": "wrm_kafka_producer_webhook",
+        "name": "kafka",
         "args": {
             "topic": "test",
             "bootstrap_server": "kafka",        # hostname or IP of kafka broker
