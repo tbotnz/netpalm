@@ -1,4 +1,5 @@
-![Tests](https://github.com/tbotnz/netpalm/workflows/tests/badge.svg)
+![Tests](https://github.com/tbotnz/netpalm/workflows/tests/badge.svg)  
+Proudly Sponsored by: <img src="https://www.apcela.com/wp-content/uploads/2020/11/apcela-white-black.png" height=20 alt="Apcela" />    
 <p align="center">
    <br/>
    <img src="/static/images/np_new.png" />
@@ -224,3 +225,6 @@ There is a public instance of netpalm available below
 we maintain an active community on the networktocode slack channel
 
 #netpalm on networktocode.slack.com
+
+Proudly Sponsored by:  
+<img src="https://www.apcela.com/wp-content/uploads/2020/11/apcela-white-black.png" height=20 alt="Apcela" /> Because Enterprise Speed Matters
