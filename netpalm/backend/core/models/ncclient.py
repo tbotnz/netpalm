@@ -54,6 +54,11 @@ class NcclientConnection(BaseModel):
     device_params: Optional[NcclientDeviceParams] = None
 
 
+class NcclientGetArgs(BaseModel):
+    filter: str
+    render_json: Optional[bool] = False
+
+
 class NcclientSetConfig(BaseModel):
     connection_args: NcclientConnection
     args: Optional[NcclientSendConfigArgs] = {}
@@ -103,6 +108,38 @@ class NcclientGetConfig(BaseModel):
                 },
                 "args": {
                     "source": "running",
+                    "filter":
+                    "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
+                    "render_json": True
+                },
+                "queue_strategy": "fifo",
+                "cache": {
+                    "enabled": True,
+                    "ttl": 300,
+                    "poison": False
+                }
+            }
+        }
+
+
+class NcclientGet(BaseModel):
+    connection_args: NcclientConnection
+    args: NcclientGetArgs
+    queue_strategy: Optional[QueueStrategy] = None
+    cache: Optional[CacheConfig] = {}
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "library": "ncclient",
+                "connection_args": {
+                    "host": "10.0.2.39",
+                    "username": "admin",
+                    "password": "admin",
+                    "port": 830,
+                    "hostkey_verify": False
+                },
+                "args": {
                     "filter":
                     "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
                     "render_json": True

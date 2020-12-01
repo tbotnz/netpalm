@@ -20,6 +20,29 @@ class ncclien:
         except Exception as e:
             write_meta_error(f"{e}")
 
+    def getmethod(self, session=False, command=False):
+        try:
+            result = {}
+            if self.kwarg:
+                rjsflag = False
+                if self.kwarg.get("render_json", False):
+                    del self.kwarg["render_json"]
+                    rjsflag = True
+                response = session.get(**self.kwarg).data_xml
+                if rjsflag:
+                    respdict = xmltodict.parse(response)
+                    if respdict:
+                        result["get_config"] = respdict
+                    else:
+                        write_meta_error("failed to parse response")
+                else:
+                    result["get_config"] = response
+            else:
+                write_meta_error("args are required")
+            return result
+        except Exception as e:
+            write_meta_error(f"{e}")
+
     def getconfig(self, session=False, command=False):
         try:
             result = {}

@@ -6,6 +6,7 @@ from fastapi.encoders import jsonable_encoder
 # load models
 from netpalm.backend.core.models.models import GetConfig
 from netpalm.backend.core.models.napalm import NapalmGetConfig
+from netpalm.backend.core.models.ncclient import NcclientGet
 from netpalm.backend.core.models.ncclient import NcclientGetConfig
 from netpalm.backend.core.models.netmiko import NetmikoGetConfig
 from netpalm.backend.core.models.puresnmp import PureSNMPGetConfig
@@ -60,6 +61,22 @@ def get_config_puresnmp(getcfg: PureSNMPGetConfig):
 @error_handle_w_cache
 def get_config_ncclient(getcfg: NcclientGetConfig):
     return _get_config(getcfg, library="ncclient")
+
+
+# ncclient Manager.get() rpc call
+# Certain device types dont have rpc methods defined in ncclient.
+# This is a work around for that.
+@router.post("/getconfig/ncclient/get",
+             response_model=Response,
+             status_code=201)
+@error_handle_w_cache
+def ncclient_get(getcfg: NcclientGet, library: str = "ncclient"):
+    req_data = getcfg.dict(exclude_none=True)
+    if library is not None:
+        req_data["library"] = library
+    r = reds.execute_task(method="ncclient_get", kwargs=req_data)
+    resp = jsonable_encoder(r)
+    return resp
 
 
 # read config
