@@ -13,9 +13,10 @@
       <a href="https://networktocode.slack.com" alt="NTC Slack"><img src="https://img.shields.io/badge/slack-networktocode-orange" alt="NTC Slack" /></a>
       <img src="https://img.shields.io/github/issues/tbotnz/netpalm" alt="Github Issues" />
       <img src="https://img.shields.io/github/issues-pr/tbotnz/netpalm" alt="Github Pull Requests" />
-      <img src="https://img.shields.io/github/license/tbotnz/netpalm" alt="License" />
-      <img src="https://img.shields.io/github/v/release/tbotnz/netpalm?include_prereleases" alt="Github Release" />
+      <img src="https://img.shields.io/github/stars/tbotnz/netpalm" alt="Github Stars" />
       <img src="https://img.shields.io/github/contributors-anon/tbotnz/netpalm" alt="Github Contributors" />
+      <img src="https://img.shields.io/github/v/release/tbotnz/netpalm?include_prereleases" alt="Github Release" />
+      <img src="https://img.shields.io/github/license/tbotnz/netpalm" alt="License" />
    </p>
 </p>
 
@@ -29,7 +30,8 @@
         <a href="https://www.apcela.com" target="_blank">
           <img width="222px" src="https://www.apcela.com/wp-content/uploads/2020/11/apcela-white-black.png" alt="Apcela" />
         </a><br />
-        <div>Apcela</div>
+        <div>Apcela</div><br />
+        <i><sub>Because Enterprise Speed Matters</sub></i>
       </td>
       <td align="center" valign="middle">
         <a href="mailto:tbotnz@gmail.com" target="_blank">
