@@ -45,7 +45,7 @@
 </table>
 <!--sponsors end-->
 
-## About
+## 🔌 About
 
 Leveraging best of breed open source network components like [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests), netpalm makes it easy to abstract from any network devices native telnet, SSH, NETCONF or RESTCONF interface into a modern model driven open api 3 interface.
 
@@ -55,7 +55,7 @@ Built on a scalable microservice based architecture netpalm provides unparallele
 
 > There is a **test instance** available at [netpalm.tech](https://netpalm.tech) where you'll need to authenticate with the following API key: `2a84465a-cf38-46b2-9d86-b84Q7d57f288`
 
-## Features
+## 🔑 Features
 
 - Speaks REST and JSON RPC northbound, then CLI over SSH or Telnet or NETCONF/RESTCONF southbound to your network devices
 - Turns any Python script into a easy to consume, asynchronous and documented API with webhook support
@@ -70,9 +70,10 @@ Built on a scalable microservice based architecture netpalm provides unparallele
 - Highly [configurable](https://github.com/tbotnz/netpalm/blob/master/config/config.json) for all aspects of the platform
 - Leverages an ecrypted Redis layer providing caching and queueing of jobs to and from devices
 
-## Configuration
+## 🔧 Configuration
 
-edit the config.json file too set params as required
+Edit the `config/config.json` file to change any parameters
+
 ```
 {
     "api_key": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
@@ -99,7 +100,7 @@ edit the config.json file too set params as required
 }
 ```
 
-## Installation
+## 🏗️ Installation
 
 1. Ensure you first have docker installed
 ```
@@ -107,30 +108,31 @@ sudo apt-get install docker.io
 sudo apt-get install docker-compose
 ```
 
-2. Clone in netpalm
+2. Clone this repository
 ```
 git clone https://github.com/tbotnz/netpalm.git
 cd netpalm
 ```
 
-3. Build container
+3. Build the container
 ```
 sudo docker-compose up -d --build
 ```
 
-4. After the container has been built and started, you're good to! netpalm will be available on port 9000 under your docker hosts IP.
+4. After the container has been built and started, you're good to go! netpalm will be available on port `9000` under your docker hosts IP.
 ```
 http://$(yourdockerhost):9000
 ```
 
-## Scaling
+## 📈 Scaling
+
 netpalm containers can be scaled in and out as required. You can define how many containers are required of each type in the `docker-compose` command
 
 ```
 docker-compose scale netpalm-controller=1 netpalm-worker-pinned=2 netpalm-worker-fifo=3
 ```
 
-## Concepts
+## ☁️ Concepts
 
 netpalm acts as a ReST broker and abstraction layer for NAPALM, Netmiko, NCCLIENT or a Python Script.
 netpalm uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
@@ -138,7 +140,7 @@ You make an API call to netpalm and it will establish a queue to your device and
 
 ![netpalm concept](/static/images/arch.png)
 
-## Additional Features
+## 🚧 Additional Features
 
 - Jinja2
    - BYO jinja2 [config templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_config_templates)
@@ -175,7 +177,7 @@ You make an API call to netpalm and it will establish a queue to your device and
 - Scaling
    - Horizontal container based scale out architecture supported by each component
 
-## Examples
+## 🖥️ Examples
 
 We could show you examples for days, but we recommend playing with the online [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) to get a feel for what can be done. We also host a [public instance](https://netpalm.tech) where you can test netpalm via the Swagger UI.
 
@@ -212,13 +214,13 @@ netpalm is integrated into http://textfsm.nornir.tech so you can ingest your tem
 </details>
 
 
-## API Docs
+## 📃 API Docs
 
-netpalm comes with a [Postman Collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) and an OpenAPI based API with SwaggerUI located at [`http://localhost:9000/`](http://localhost:9000) after starting the container.
+netpalm comes with a [Postman Collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) and an OpenAPI based API with a SwaggerUI located at [`http://localhost:9000/`](http://localhost:9000) after starting the container.
 
 ![netpalm swagger](/static/images/oapi.png)
 
-## Caching
+## 💵 Caching
 
 * Supports the following per-request configuration (`/getconfig` routes only for now)
     * permit the result of this request to be cached (default: false), and permit this request to return cached data
@@ -249,7 +251,7 @@ netpalm comes with a [Postman Collection](https://documenter.getpostman.com/view
     * Except `/setconfig/dry-run` of course 
 
 
-## Further Reading
+## 📚 Further Reading
 
 - [Cisco Developer Portal](https://developer.cisco.com/codeexchange/github/repo/tbotnz/netpalm/)
 
@@ -263,8 +265,9 @@ netpalm comes with a [Postman Collection](https://documenter.getpostman.com/view
 - [ipspace - _Building Multivendor Network Automation Platform_](https://blog.ipspace.net/2020/06/reinventing-napalm.html)
 - [ipspace - _Useful Network Automation Tools_](https://www.ipspace.net/kb/Ansible/Useful_Network_Automation_Tools.html)
 
-## Support
+## 🙏 Contributing
 
-we maintain an active community on the `networktocode` slack channel
+We are open to contributions, before making a PR, please make sure you've read our [`CONTRIBUTING.md`](https://github.com/tbotnz/netpalm/blob/master/CONTRIBUTING.md) document.
 
-`#netpalm` on [networktocode.slack.com](https://networktocode.slack.com)
+You can also find us in the channel `#netpalm` on the [networktocode Slack](https://networktocode.slack.com).
+
