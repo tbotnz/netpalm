@@ -34,10 +34,10 @@
         <i><sub>Because Enterprise Speed Matters</sub></i>
       </td>
       <td align="center" valign="middle">
-        <a href="mailto:tbotnz@gmail.com" target="_blank">
-          <img width="180px" src="https://citycloud.com/wp-content/uploads/2019/09/CC-Icon-Support-DedicatedPersonnel.png" alt="Support" />
-        </a><br />
-        <div>Maybe you?</div>
+        <a href="mailto:tonynealon1989@gmail.com" target="_blank">
+          <img width="120px" src="https://imgur.com/X1gKuY0.png" alt="Support" />
+        <br />
+        <div>Maybe you?</div></a>
       </td>
       <!-- <td align="center" valign="middle">
         <a href="#" target="_blank"></a>
@@ -70,8 +70,6 @@ Leveraging best of breed open source network components like [napalm](https://gi
 Taking a platform based approach means netpalm allows you to bring your own jinja2 config, service and webhook templates, python scripts and webhooks for quick adoption into your existing devops workflows.
 
 Built on a scalable microservice based architecture netpalm provides unparalleled scalable API access into your network.
-
-> There is a **test instance** available at [netpalm.tech](https://netpalm.tech) where you'll need to authenticate with the following API key: `2a84465a-cf38-46b2-9d86-b84Q7d57f288`
 
 ## 🔑 Features
 
