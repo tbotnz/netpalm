@@ -36,8 +36,8 @@
        <td align="center" valign="middle">
         <a href="https://www.bandwidth.com" target="_blank">
           <img width="222px" src="https://www.bandwidth.com/wp-content/uploads/BW_tm_RGB_horO_Blue.png" alt="Bandwidth" />
-        </a><br /><br />
-        <i><sub>Cloud-ready voice, messaging, and 911 built for the enterprise</sub></i>
+        </a><br /><br /><br />
+        <i><sub>Delivering the power to communicate</sub></i>
       </td>
       <td align="center" valign="middle">
         <a href="mailto:tonynealon1989@gmail.com" target="_blank">
