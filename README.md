@@ -71,8 +71,6 @@ Taking a platform based approach means netpalm allows you to bring your own jinj
 
 Built on a scalable microservice based architecture netpalm provides unparalleled scalable API access into your network.
 
-> There is a **test instance** available at [netpalm.tech](https://netpalm.tech) where you'll need to authenticate with the following API key: `2a84465a-cf38-46b2-9d86-b84Q7d57f288`
-
 ## 🔑 Features
 
 - Speaks REST and JSON RPC northbound, then CLI over SSH or Telnet or NETCONF/RESTCONF southbound to your network devices
