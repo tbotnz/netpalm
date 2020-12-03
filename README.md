@@ -34,8 +34,8 @@
         <i><sub>Because Enterprise Speed Matters</sub></i>
       </td>
       <td align="center" valign="middle">
-        <a href="mailto:tbotnz@gmail.com" target="_blank">
-          <img width="180px" src="https://citycloud.com/wp-content/uploads/2019/09/CC-Icon-Support-DedicatedPersonnel.png" alt="Support" />
+        <a href="mailto:tonynealon1989@gmail.com" target="_blank">
+          <img width="160px" src="https://imgur.com/X1gKuY0.png" alt="Support" />
         </a><br />
         <div>Maybe you?</div>
       </td>
