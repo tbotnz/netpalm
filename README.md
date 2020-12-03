@@ -35,7 +35,7 @@
       </td>
       <td align="center" valign="middle">
         <a href="mailto:tonynealon1989@gmail.com" target="_blank">
-          <img width="160px" src="https://imgur.com/X1gKuY0.png" alt="Support" />
+          <img width="120px" src="https://imgur.com/X1gKuY0.png" alt="Support" />
         </a><br />
         <div>Maybe you?</div>
       </td>
