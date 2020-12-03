@@ -37,7 +37,6 @@
         <a href="https://www.bandwidth.com" target="_blank">
           <img width="222px" src="https://www.bandwidth.com/wp-content/uploads/BW_tm_RGB_horO_Blue.png" alt="Bandwidth" />
         </a><br />
-        <div>Bandwidth</div><br />
         <i><sub>Cloud-ready voice, messaging, and 911 built for the enterprise</sub></i>
       </td>
       <td align="center" valign="middle">
