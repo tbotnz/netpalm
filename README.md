@@ -174,6 +174,7 @@ You make an API call to netpalm and it will establish a queue to your device and
 - Parsers
    - TextFSM support via netmiko
    - [NTC-templates](https://github.com/networktocode/ntc-templates) for parsing/structuring device data (includes)
+   - [TTP](https://ttp.readthedocs.io/en/latest/) Template Text Parser - Jinja2-like parsing of semi-structured CLI data
    - Napalm getters
    - Genie support via netmiko
    - Automated download and installation of TextFSM templates from http://textfsm.nornir.tech online TextFSM development tool
