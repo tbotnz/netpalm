@@ -22,6 +22,7 @@
 
 <h2 align="center">Supporting netpalm</h2>
 
+
 <!--sponsors start-->
 <table>
   <tbody>
@@ -30,46 +31,69 @@
         <a href="https://www.apcela.com" target="_blank">
           <img width="222px" src="https://www.apcela.com/wp-content/uploads/2020/11/apcela-white-black.png" alt="Apcela" />
         </a><br />
-        <div>Apcela</div><br />
         <i><sub>Because Enterprise Speed Matters</sub></i>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>  
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>  
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>  
       </td>
        <td align="center" valign="middle">
         <a href="https://www.bandwidth.com" target="_blank">
           <img width="222px" src="https://www.bandwidth.com/wp-content/uploads/BW_tm_RGB_horO_Blue.png" alt="Bandwidth" />
-        </a><br /><br /><br />
-        <i><sub>Delivering the power to communicate</sub></i>
+        </a><br /><br />
+        <i><sub align="center">Delivering the power to communicate</sub></i>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>    
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>  
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>  
       </td>
       <td align="center" valign="middle">
         <a href="mailto:tonynealon1989@gmail.com" target="_blank">
-          <img width="120px" src="https://imgur.com/X1gKuY0.png" alt="Support" />
+          <img width="90px" src="https://imgur.com/X1gKuY0.png" alt="Support" />
         <br />
         <div>Maybe you?</div></a>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>    
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>  
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>  
       </td>
-      <!-- <td align="center" valign="middle">
-        <a href="#" target="_blank"></a>
-      </td> -->
-    </tr><tr></tr>
+    </tr>
   </tbody>
 </table>
 <!--sponsors end-->
 
-## 🚩 Table of Contents
+## Table of Contents
 
-- [About](#-about)
-- [Features](#-features)
-- [Configuration](#-configuration)
-- [Installation](#-installation)
-- [Scaling](#-Scaling)
-- [Concepts](#-concepts)
-- [Additional Features](#-additional-features)
-- [Examples](#-examples)
-- [API Docs](#-api-docs)
-- [Caching](#-caching)
-- [Further Reading](#-further-reading)
-- [Contributing](#-contributing)
+* [What is netpalm?](#what-is-netpalm)
+* [Features](#features)
+* [Configuration](#configuration)
+* [Installation](#installation)
+* [Scaling](#scaling)
+* [Concepts](#concepts)
+* [Additional Features](#additional-features)
+* [Examples](#examples)
+* [API Docs](#api-docs)
+* [Caching](#caching)
+* [Further Reading](#further-reading)
+* [Contributing](#contributing)
 
 
-## 🔌 About
+## What is netpalm?
 
 Leveraging best of breed open source network components like [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests), netpalm makes it easy to abstract from any network devices native telnet, SSH, NETCONF or RESTCONF interface into a modern model driven open api 3 interface.
 
@@ -77,7 +101,7 @@ Taking a platform based approach means netpalm allows you to bring your own jinj
 
 Built on a scalable microservice based architecture netpalm provides unparalleled scalable API access into your network.
 
-## 🔑 Features
+## Features
 
 - Speaks REST and JSON RPC northbound, then CLI over SSH or Telnet or NETCONF/RESTCONF southbound to your network devices
 - Turns any Python script into a easy to consume, asynchronous and documented API with webhook support
@@ -85,14 +109,14 @@ Built on a scalable microservice based architecture netpalm provides unparallele
 - Built in multi-level abstraction interface for network service lifecycle functions for create, retrieve and delete and validate
 - In band service inventory
 - Ability to write your own [service models and templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_service_templates) using your own existing [jinja2 templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/custom_scripts)
-- Well documented API with [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) full of examples and every instance gets it own openAPI 3 and self documenting for your service templates and scripts
+- Well documented API with [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) full of examples and every instance gets it own self documenting openAPI 3 UI.
 - Supports pre and post checks accross CLI devices raising exceptions and not deploying config as required
-- Multiple ways to queue jobs to devices, either pinned strict task by task to each device or pooled first in first out
+- Multiple ways to queue jobs to devices, either pinned strict (prevent connection pooling at device)or pooled first in first out
 - Modern, container based scale out architecture supported by every component
 - Highly [configurable](https://github.com/tbotnz/netpalm/blob/master/config/config.json) for all aspects of the platform
 - Leverages an ecrypted Redis layer providing caching and queueing of jobs to and from devices
 
-## 🔧 Configuration
+## Configuration
 
 Edit the `config/config.json` file to change any parameters
 
@@ -122,7 +146,7 @@ Edit the `config/config.json` file to change any parameters
 }
 ```
 
-## 🏗️ Installation
+## Installation
 
 1. Ensure you first have docker installed
 ```
@@ -146,7 +170,7 @@ sudo docker-compose up -d --build
 http://$(yourdockerhost):9000
 ```
 
-## 📈 Scaling
+## Scaling
 
 netpalm containers can be scaled in and out as required. You can define how many containers are required of each type in the `docker-compose` command
 
@@ -154,7 +178,7 @@ netpalm containers can be scaled in and out as required. You can define how many
 docker-compose scale netpalm-controller=1 netpalm-worker-pinned=2 netpalm-worker-fifo=3
 ```
 
-## ☁️ Concepts
+## Concepts
 
 netpalm acts as a ReST broker and abstraction layer for NAPALM, Netmiko, NCCLIENT or a Python Script.
 netpalm uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
@@ -162,7 +186,7 @@ You make an API call to netpalm and it will establish a queue to your device and
 
 ![netpalm concept](/static/images/arch.png)
 
-## 🚧 Additional Features
+## Additional Features
 
 - Jinja2
    - BYO jinja2 [config templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_config_templates)
@@ -200,7 +224,7 @@ You make an API call to netpalm and it will establish a queue to your device and
 - Scaling
    - Horizontal container based scale out architecture supported by each component
 
-## 🖥️ Examples
+## Examples
 
 We could show you examples for days, but we recommend playing with the online [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) to get a feel for what can be done. We also host a [public instance](https://netpalm.tech) where you can test netpalm via the Swagger UI.
 
@@ -237,13 +261,13 @@ netpalm is integrated into http://textfsm.nornir.tech so you can ingest your tem
 </details>
 
 
-## 📃 API Docs
+## API Docs
 
 netpalm comes with a [Postman Collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) and an OpenAPI based API with a SwaggerUI located at [`http://localhost:9000/`](http://localhost:9000) after starting the container.
 
 ![netpalm swagger](/static/images/oapi.png)
 
-## 💵 Caching
+## Caching
 
 * Supports the following per-request configuration (`/getconfig` routes only for now)
     * permit the result of this request to be cached (default: false), and permit this request to return cached data
@@ -274,7 +298,7 @@ netpalm comes with a [Postman Collection](https://documenter.getpostman.com/view
     * Except `/setconfig/dry-run` of course 
 
 
-## 📚 Further Reading
+## Further Reading
 
 - [Cisco Developer Portal](https://developer.cisco.com/codeexchange/github/repo/tbotnz/netpalm/)
 
@@ -288,7 +312,7 @@ netpalm comes with a [Postman Collection](https://documenter.getpostman.com/view
 - [ipspace - _Building Multivendor Network Automation Platform_](https://blog.ipspace.net/2020/06/reinventing-napalm.html)
 - [ipspace - _Useful Network Automation Tools_](https://www.ipspace.net/kb/Ansible/Useful_Network_Automation_Tools.html)
 
-## 🙏 Contributing
+## Contributing
 
 We are open to contributions, before making a PR, please make sure you've read our [`CONTRIBUTING.md`](https://github.com/tbotnz/netpalm/blob/master/CONTRIBUTING.md) document.
 
