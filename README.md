@@ -74,11 +74,15 @@
 
 netpalm makes it easy to integrate your network into your automation architecture.
 
-![netpalm concept](/static/images/np-basic-new2.png)
+<p align="center">
+<img src="/static/images/np-basic-new2.png">
+</p>
 
 Leveraging best of breed open source network components like [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests), netpalm makes it easy to abstract from any network devices native telnet, SSH, NETCONF or RESTCONF interface into a modern model driven open api 3 interface.
 
-![netpalm concept](/static/images/np-basic-new.png)
+<p align="center">
+<img src="/static/images/np-basic-new.png">
+</p>
 
 Taking a platform based approach means netpalm allows you to bring your own jinja2 config, service and webhook templates, python scripts and webhooks for quick adoption into your existing devops workflows.
 
