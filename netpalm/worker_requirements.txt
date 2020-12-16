@@ -1,5 +1,6 @@
-netmiko==3.3.2
+
 ttp
+netmiko==3.3.2
 napalm
 ncclient==0.6.9
 requests
@@ -10,11 +11,11 @@ jinja2
 jinja2schema
 jsonschema
 genie
-pydantic
 pyyaml
 cachelib
 python-redis-lock
 filelock
 jsonpath_ng
 apscheduler==3.6.3
-puresnmp===1.9.1
+puresnmp==1.9.1
+pydantic
