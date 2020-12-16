@@ -1,11 +1,3 @@
-fastapi
-uvicorn
-uvloop
-httptools
-gunicorn
-pytest
-pytest-timeout
-aiofiles
 ttp
 netmiko==3.3.2
 napalm
@@ -25,3 +17,4 @@ filelock
 jsonpath_ng
 apscheduler==3.6.3
 puresnmp==1.9.1
+pydantic

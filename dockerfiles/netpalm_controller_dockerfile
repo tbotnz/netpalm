@@ -8,6 +8,10 @@ RUN apt-get update \
 
 ADD netpalm/requirements.txt /code/
 RUN pip3 install -r /code/requirements.txt
+
+ADD netpalm/controller_addtl_requirements.txt /code/
+RUN pip3 install -r /code/controller_addtl_requirements.txt
+
 ADD . /code
 WORKDIR /code
 CMD gunicorn -c gunicorn.conf.py netpalm.netpalm_controller:app
