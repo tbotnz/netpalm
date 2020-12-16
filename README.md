@@ -58,14 +58,13 @@
 
 * [What is netpalm?](#what-is-netpalm)
 * [Features](#features)
-* [Configuration](#configuration)
-* [Installation](#installation)
-* [Scaling](#scaling)
 * [Concepts](#concepts)
 * [Additional Features](#additional-features)
 * [Examples](#examples)
 * [API Docs](#api-docs)
 * [Caching](#caching)
+* [Configuration](#configuration)
+* [Installation](#installation)
 * [Further Reading](#further-reading)
 * [Contributing](#contributing)
 
@@ -124,8 +123,8 @@ netpalm provides domain focused queueing strategy for task execution on network 
 </p>
 
 ### Scaling Concepts
-
-netpalm containers can be scaled in and out as required. Kubernetes or Swarm is reccomended for any large scale deployments.
+Every netpalm container can be scaled in and out as required.
+Kubernetes or Swarm is reccomended for any large scale deployments.
 
 <p align="center">
 <img src="/static/images/np-scale-out.png">
