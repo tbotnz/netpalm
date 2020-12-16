@@ -105,32 +105,33 @@ Built on a scalable microservice based architecture netpalm provides unparallele
 netpalm acts as a ReST broker and abstraction layer for NAPALM, Netmiko, NCCLIENT or a Python Script.
 netpalm uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
 
-
 <p align="center">
 <img src="/static/images/np-basic-overview.png">
 </p>
 
-
-
-
 ### Component Concepts
-netpalm is underpinned by a container based scale out architecture.
+netpalm is underpinned by a container based scale out architecture for all components.
 
 <p align="center">
 <img src="/static/images/np-component.png">
 </p>
 
 ### Queueing Concepts
-netpalm provides domain focused queueing strategy for task execution.
+netpalm provides domain focused queueing strategy for task execution on network equipment.
 
 <p align="center">
 <img src="/static/images/np-basic-q.png">
 </p>
 
+### Scaling Concepts
 
-## Scaling
+netpalm containers can be scaled in and out as required. Kubernetes or Swarm is reccomended for any large scale deployments.
 
-netpalm containers can be scaled in and out as required. You can define how many containers are required of each type in the `docker-compose` command
+<p align="center">
+<img src="/static/images/np-scale-out.png">
+</p>
+
+To scale out the basic included compose deployment use the `docker-compose` command
 
 ```
 docker-compose scale netpalm-controller=1 netpalm-worker-pinned=2 netpalm-worker-fifo=3
