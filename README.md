@@ -72,13 +72,11 @@
 
 ## What is netpalm?
 
-netpalm makes it easy to integrate your network into your automation architecture.
+Leveraging best of breed open source network components like [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests), netpalm makes it easy to abstract from any network devices native telnet, SSH, NETCONF or RESTCONF interface into a modern model driven open api 3 interface.
 
 <p align="center">
-<img src="/static/images/np-basic-new.png">
+<img src="/static/images/np-basic-new1.png">
 </p>
-
-Leveraging best of breed open source network components like [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests), netpalm makes it easy to abstract from any network devices native telnet, SSH, NETCONF or RESTCONF interface into a modern model driven open api 3 interface.
 
 Taking a platform based approach means netpalm allows you to bring your own jinja2 config, service and webhook templates, python scripts and webhooks for quick adoption into your existing devops workflows.
 
@@ -102,14 +100,18 @@ Built on a scalable microservice based architecture netpalm provides unparallele
 
 ## Concepts
 
-### Functional Concepts
+### Basic Concepts
+
 netpalm acts as a ReST broker and abstraction layer for NAPALM, Netmiko, NCCLIENT or a Python Script.
 netpalm uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
-You make an API call to netpalm and it will establish a queue to your device and start sending configuration
+
 
 <p align="center">
-<img src="/static/images/np-basic-new2.png">
+<img src="/static/images/np-basic-overview.png">
 </p>
+
+
+
 
 ### Component Concepts
 netpalm is underpinned by a container based scale out architecture.
