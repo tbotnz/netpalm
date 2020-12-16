@@ -115,14 +115,14 @@ You make an API call to netpalm and it will establish a queue to your device and
 netpalm is underpinned by a container based scale out architecture.
 
 <p align="center">
-<img src="/static/images/np-basic-q.png">
+<img src="/static/images/np-component.png">
 </p>
 
 ### Queueing Concepts
 netpalm provides domain focused queueing strategy for task execution.
 
 <p align="center">
-<img src="/static/images/np-component.png">
+<img src="/static/images/np-basic-q.png">
 </p>
 
 
