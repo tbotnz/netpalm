@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+uvloop
+httptools
+gunicorn
+pytest
+pytest-timeout
+aiofiles
