@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 
 # load models
 from netpalm.backend.core.models.models import GetConfig
-from netpalm.backend.core.models.napalm import NapalmGetConfig
+from netpalm.backend.core.models.napalm import NapalmGetConfig, NapalmGetConfigGetter
 from netpalm.backend.core.models.ncclient import NcclientGet
 from netpalm.backend.core.models.ncclient import NcclientGetConfig
 from netpalm.backend.core.models.netmiko import NetmikoGetConfig
@@ -93,3 +93,31 @@ def ncclient_get(getcfg: NcclientGet, library: str = "ncclient"):
 @error_handle_w_cache
 def get_config_restconf(getcfg: Restconf):
     return _get_config(getcfg, library="restconf")
+
+
+@router.post("/napalm/getter/{getter}", response_model=Response, status_code=201)
+@error_handle_w_cache
+def get_config_napalm_getter(getter: str, getter_cfg: NapalmGetConfigGetter):
+    """
+    Attempt to use arbitrary NAPALM Getter to pull and process data.
+    Subject to NAPALM platform support documented
+    [here](https://napalm.readthedocs.io/en/latest/support/#getters-support-matrix).
+
+    Example getter formats:
+
+    -   /napalm/getter/arp-table
+    -   /napalm/getter/get_arp_table
+    -   /napalm/getter/get-arp-table
+
+    all of those will ultimately call the NAPALM `get_arp_table` getter method.
+    """
+    getter = getter.replace('-', '_').replace(' ', '_').strip()
+    if not getter.startswith('get_'):
+        getter = f'get_{getter}'
+
+    getcfg = GetConfig(
+        library='napalm',
+        command=getter,
+        **getter_cfg.dict()
+    )
+    return _get_config(getcfg)
