@@ -47,7 +47,6 @@ class NapalmGetConfig(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "library": "napalm",
                 "connection_args": {
                     "device_type": "cisco_ios", "host": "10.0.2.23", "username": "admin", "password": "admin"
                 },
@@ -97,7 +96,6 @@ class NapalmSetConfig(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "library": "napalm",
                 "connection_args": {
                     "device_type": "cisco_ios", "host": "10.0.2.33", "username": "admin", "password": "admin"
                 },

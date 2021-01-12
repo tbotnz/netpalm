@@ -33,6 +33,12 @@ def _get_config(getcfg: GetConfig, library: str = None):
 @router.post("/get", response_model=Response, status_code=201)
 @error_handle_w_cache
 def get_config(getcfg: GetConfig):
+    """
+    Can take any of the valid input models for the other `/get/<library>/` routes, with the added requirement of
+    specifying the library
+
+    all `/get/...` routes are identical to the equivalent `/getconfig/...` route
+    """
     return _get_config(getcfg)
 
 

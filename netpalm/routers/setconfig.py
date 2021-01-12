@@ -46,6 +46,7 @@ def set_config_dry_run(setcfg: SetConfig):
 
 # deploy a configuration
 @router.post("/setconfig/netmiko", response_model=Response, status_code=201)
+@router.post("/netmiko/set", response_model=Response, status_code=201)
 @HttpErrorHandler()
 @poison_host_cache
 def set_config_netmiko(setcfg: NetmikoSetConfig):

@@ -42,7 +42,6 @@ class Restconf(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "library": "restconf",
                 "connection_args": {
                     "host": "ios-xe-mgmt-latest.cisco.com", "port": 9443, "username": "developer",
                     "password": "C1sco12345", "verify": False, "timeout": 10, "transport": "https", "headers": {
