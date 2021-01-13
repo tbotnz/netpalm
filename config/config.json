@@ -50,5 +50,6 @@
   "custom_webhooks": "netpalm/backend/plugins/extensibles/custom_webhooks/",
   "log_config_filename": "config/log-config.yml",
   "apscheduler_num_processes": 1,
-  "apscheduler_num_threads": 5
+  "apscheduler_num_threads": 5,
+  "device_whitelist": []
 }
