@@ -20,7 +20,8 @@ log = logging.getLogger(__name__)
         ("10.0.0.*", "10.0.0.1", True),
         ("10.0.0.0/8", "10.0.0.1", True),
         ("10.0.0.0", "10.0.0.1", False),
-        ("10.0.0.1", "10.0.0.1", True)
+        ("10.0.0.1", "10.0.0.1", True),
+        ("2600::1", "2600:0:0:0:0::1", True)
     ]
 )
 def test_whitelist_rule(rule_definition: str, hostname: str, expected: bool):
