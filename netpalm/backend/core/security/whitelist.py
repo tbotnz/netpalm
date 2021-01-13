@@ -15,13 +15,13 @@ class WhiteListRule:
     def __init__(self, definition: str):
         try:
             self.definition = ipaddress.ip_interface(definition).network
-            self.type = 'ip'
+            self.type = "ip"
         except ValueError:
             self.definition = definition
-            self.type = 'str'
+            self.type = "str"
 
     def match(self, host: str) -> bool:
-        if self.type == 'ip':
+        if self.type == "ip":
             try:
                 return ipaddress.ip_address(host) in self.definition
             except ValueError:

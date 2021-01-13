@@ -6,11 +6,12 @@ from pathlib import Path
 
 import yaml
 
+from netpalm.backend.core.security.whitelist import DeviceWhitelist
+
 try:
     yaml_loader = yaml.CSafeLoader
 except AttributeError:
     yaml_loader = yaml.SafeLoader
-
 
 log = logging.getLogger(__name__)
 DEFAULT_FILENAME = "config/config.json"
@@ -73,6 +74,7 @@ class Config:
         self.ttp_templates = data["ttp_templates"]
         self.apscheduler_num_processes = data["apscheduler_num_processes"]
         self.apscheduler_num_threads = data["apscheduler_num_threads"]
+        self.whitelist = DeviceWhitelist(data.get("device_whitelist"))
 
         #load tls
         try:
