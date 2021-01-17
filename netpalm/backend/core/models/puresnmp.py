@@ -1,5 +1,5 @@
-from typing import Optional, Any
 from enum import Enum
+from typing import Optional, Any
 
 from pydantic import BaseModel
 
@@ -38,7 +38,6 @@ class PureSNMPGetConfig(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "library": "puresnmp",
                 "connection_args": {
                     "host": "10.0.2.33",
                     "community": "test",

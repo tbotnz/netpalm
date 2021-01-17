@@ -77,7 +77,6 @@ class NetmikoGetConfig(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "library": "netmiko",
                 "connection_args": {
                     "device_type": "cisco_ios", "host": "10.0.2.33", "username": "admin", "password": "admin"
                 },
@@ -109,7 +108,6 @@ class NetmikoSetConfig(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "library": "netmiko",
                 "connection_args": {
                     "device_type": "cisco_ios", "host": "10.0.2.33", "username": "admin", "password": "admin"
                 },

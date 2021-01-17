@@ -47,11 +47,33 @@ class NapalmGetConfig(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "library": "napalm",
                 "connection_args": {
                     "device_type": "cisco_ios", "host": "10.0.2.23", "username": "admin", "password": "admin"
                 },
                 "command": "get_facts",
+                "queue_strategy": "fifo",
+                "cache": {
+                    "enabled": True,
+                    "ttl": 300,
+                    "poison": False
+                }
+            }
+        }
+
+
+class NapalmGetConfigGetter(BaseModel):
+    connection_args: NapalmConnectionArgs
+    webhook: Optional[Webhook] = None
+    queue_strategy: Optional[QueueStrategy] = None
+    post_checks: Optional[List[GenericPrePostCheck]] = None
+    cache: Optional[CacheConfig] = {}
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "connection_args": {
+                    "device_type": "cisco_ios", "host": "10.0.2.23", "username": "admin", "password": "admin"
+                },
                 "queue_strategy": "fifo",
                 "cache": {
                     "enabled": True,
@@ -74,7 +96,6 @@ class NapalmSetConfig(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "library": "napalm",
                 "connection_args": {
                     "device_type": "cisco_ios", "host": "10.0.2.33", "username": "admin", "password": "admin"
                 },

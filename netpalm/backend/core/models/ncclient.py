@@ -1,12 +1,11 @@
 from typing import Optional, Union
-from enum import Enum
 
 from pydantic import BaseModel
 
 from netpalm.backend.core.models.models import CacheConfig
+from netpalm.backend.core.models.models import J2Config
 from netpalm.backend.core.models.models import QueueStrategy
 from netpalm.backend.core.models.models import Webhook
-from netpalm.backend.core.models.models import J2Config
 
 
 class NcclientSendConfigArgs(BaseModel):
@@ -69,7 +68,6 @@ class NcclientSetConfig(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "library": "ncclient",
                 "connection_args": {
                     "host": "10.0.2.39",
                     "username": "admin",
@@ -98,7 +96,6 @@ class NcclientGetConfig(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "library": "ncclient",
                 "connection_args": {
                     "host": "10.0.2.39",
                     "username": "admin",
@@ -131,7 +128,6 @@ class NcclientGet(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "library": "ncclient",
                 "connection_args": {
                     "host": "10.0.2.39",
                     "username": "admin",
