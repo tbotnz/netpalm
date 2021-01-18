@@ -11,7 +11,7 @@ from netpalm.backend.core.models.netmiko import NetmikoSetConfig
 from netpalm.backend.core.models.restconf import Restconf
 from netpalm.backend.core.models.task import Response
 from netpalm.backend.core.redis import reds
-from netpalm.routers.route_utils import HttpErrorHandler, poison_host_cache
+from netpalm.routers.route_utils import HttpErrorHandler, poison_host_cache, whitelist
 
 log = logging.getLogger(__name__)
 router = APIRouter()
@@ -30,6 +30,7 @@ def _set_config(setcfg: SetConfig, library: str = None):
 @router.post("/setconfig", response_model=Response, status_code=201)
 @HttpErrorHandler()
 @poison_host_cache
+@whitelist
 def set_config(setcfg: SetConfig):
     return _set_config(setcfg)
 
@@ -37,6 +38,7 @@ def set_config(setcfg: SetConfig):
 # dry run a configuration
 @router.post("/setconfig/dry-run", response_model=Response, status_code=201)
 @HttpErrorHandler()
+@whitelist
 def set_config_dry_run(setcfg: SetConfig):
     req_data = setcfg.dict(exclude_none=True)
     r = reds.execute_task(method="dryrun", kwargs=req_data)
@@ -48,6 +50,7 @@ def set_config_dry_run(setcfg: SetConfig):
 @router.post("/setconfig/netmiko", response_model=Response, status_code=201)
 @HttpErrorHandler()
 @poison_host_cache
+@whitelist
 def set_config_netmiko(setcfg: NetmikoSetConfig):
     return _set_config(setcfg, library="netmiko")
 
@@ -56,6 +59,7 @@ def set_config_netmiko(setcfg: NetmikoSetConfig):
 @router.post("/setconfig/napalm", response_model=Response, status_code=201)
 @HttpErrorHandler()
 @poison_host_cache
+@whitelist
 def set_config_napalm(setcfg: NapalmSetConfig):
     return _set_config(setcfg, library="napalm")
 
@@ -64,6 +68,7 @@ def set_config_napalm(setcfg: NapalmSetConfig):
 @router.post("/setconfig/ncclient", response_model=Response, status_code=201)
 @HttpErrorHandler()
 @poison_host_cache
+@whitelist
 def set_config_ncclient(setcfg: NcclientSetConfig):
     return _set_config(setcfg, library="ncclient")
 
@@ -72,5 +77,6 @@ def set_config_ncclient(setcfg: NcclientSetConfig):
 @router.post("/setconfig/restconf", response_model=Response, status_code=201)
 @HttpErrorHandler()
 @poison_host_cache
+@whitelist
 def set_config_restconf(setcfg: Restconf):
     return _set_config(setcfg, library="restconf")

@@ -8,7 +8,7 @@ from copy import deepcopy
 from enum import Enum
 from functools import wraps
 from itertools import chain
-from typing import Dict
+from typing import Dict, List
 
 from fastapi import HTTPException
 from pydantic import BaseModel
@@ -228,3 +228,35 @@ def add_transaction_log_entry(entry_type: TransactionLogEntryType, data: Dict):
         "kwargs": {}
     }
     reds.send_broadcast(json.dumps(worker_message))
+
+
+def whitelist(f):
+    """THIS IS PROBABLY NOT ASYNC SAFE YET
+    Only works on routes with a properly defined BaseModel that includes `connection_args`"""
+
+    def get_hosts_and_ips(model: BaseModel) -> List[str]:
+        connection_args = model.dict()["connection_args"]
+        return [
+            value
+            for key, value in connection_args.items()
+            if (key in ["host", "ip"]) and (value is not None)
+        ]
+
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        arg_list = list(args) + list(kwargs.values())
+        try:
+            model = [arg for arg in arg_list if isinstance(arg, BaseModel)][0]
+        except IndexError:
+            raise NotImplementedError(f"`@whitelist` only supports routes with a valid BaseModel")
+
+        hostnames = get_hosts_and_ips(model)
+        # all hostnames found must match at least one whitelist rule
+        valid = all(config.whitelist.match(hostname) for hostname in hostnames)
+        if not valid:
+            raise HTTPException(status_code=403,
+                                detail=f"hosts in {hostnames} not permitted by whitelist: {config.whitelist.definition}")
+
+        return f(*args, **kwargs)
+
+    return wrapper
