@@ -150,21 +150,24 @@ class FSMTemplate:
         new_index_lines = []
         count = 0
         driver_section_identified = False
+
         for line in original_template_lines:
             if line.startswith(driver):
                 driver_section_identified = True
 
-            elif driver_section_identified and count == 0:  # first line after the last in the right driver section
+            if driver_section_identified and count == 0:  # first line after the last in the right driver section
                 count += 1
                 new_index_lines.append(new_line)
-
+            
             new_index_lines.append(line)
 
         if not driver_section_identified:  # no existing section, so create a new one
             new_index_lines.append('')
             new_index_lines.append(new_line)
 
-        return new_index_lines
+        # remove any duplicates
+        result = list(dict.fromkeys(new_index_lines))
+        return result
 
 
 def return_errors(f):
