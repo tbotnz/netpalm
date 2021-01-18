@@ -6,7 +6,7 @@
    <h3 align="center">The Open API Platform for Network Devices</h3>
    <br/>
    <p align="center">
-   Netpalm makes it easy to push and pull state from your apps to your network by providing multiple southbound drivers, abstraction methods and modern northbound  interfaces such as open API3 and REST webhooks.
+   netpalm makes it easy to push and pull state from your apps to your network by providing multiple southbound drivers, abstraction methods and modern northbound  interfaces such as open API3 and REST webhooks.
    </p>
    <p align="center" style="align: center;">
       <img src="https://github.com/tbotnz/netpalm/workflows/tests/badge.svg" alt="Tests"/>
@@ -20,7 +20,7 @@
    </p>
 </p>
 
-<h2 align="center">Supporting Netpalm</h2>
+<h2 align="center">Supporting netpalm</h2>
 
 
 <!--sponsors start-->
@@ -68,80 +68,63 @@
 * [Further Reading](#further-reading)
 * [Contributing](#contributing)
 
-## What is Netpalm?
 
-Leveraging best of breed open source network components like [napalm](https://github.com/napalm-automation/napalm)
-, [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient)
-and [requests](https://github.com/psf/requests), Netpalm makes it easy to abstract from any network devices native
-telnet, SSH, NETCONF or RESTCONF interface into a modern model driven open api 3 interface.
+## What is netpalm?
+
+Leveraging best of breed open source network components like [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests), netpalm makes it easy to abstract from any network devices native telnet, SSH, NETCONF or RESTCONF interface into a modern model driven open api 3 interface.
 
 <p align="center">
 <img src="/static/images/np-basic-new1.png">
 </p>
 
-Taking a platform based approach means Netpalm allows you to bring your own jinja2 config, service and webhook
-templates, python scripts and webhooks for quick adoption into your existing devops workflows.
+Taking a platform based approach means netpalm allows you to bring your own jinja2 config, service and webhook templates, python scripts and webhooks for quick adoption into your existing devops workflows.
 
-Built on a scalable microservice based architecture Netpalm provides unparalleled scalable API access into your network.
+Built on a scalable microservice based architecture netpalm provides unparalleled scalable API access into your network.
 
 ## Features
 
-- Speaks REST and JSON RPC northbound, then CLI over SSH or Telnet or NETCONF/RESTCONF southbound to your network
-  devices
-- Turns any Python script into an easy to consume, asynchronous and documented API with webhook support
-- Large amount of supported network device vendors thanks to [napalm](https://github.com/napalm-automation/napalm)
-  , [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient)
-  and [requests](https://github.com/psf/requests)
-- Built in multi-level abstraction interface for network service lifecycle functions for create, retrieve and delete and
-  validate
+- Speaks REST and JSON RPC northbound, then CLI over SSH or Telnet or NETCONF/RESTCONF southbound to your network devices
+- Turns any Python script into a easy to consume, asynchronous and documented API with webhook support
+- Large amount of supported network device vendors thanks to [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests)
+- Built in multi-level abstraction interface for network service lifecycle functions for create, retrieve and delete and validate
 - In band service inventory
-- Ability to write your
-  own [service models and templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_service_templates)
-  using your own
-  existing [jinja2 templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/custom_scripts)
-- Well documented API
-  with [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20)
-  full of examples and every instance gets it own self documenting openAPI 3 UI.
-- Supports pre and post checks across CLI devices raising exceptions and not deploying config as required
-- Multiple ways to queue jobs to devices, either pinned strict (prevent simultaneous access, tty exhaustion, etc at the
-  device) or pooled first in first out
+- Ability to write your own [service models and templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_service_templates) using your own existing [jinja2 templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/custom_scripts)
+- Well documented API with [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) full of examples and every instance gets it own self documenting openAPI 3 UI.
+- Supports pre and post checks accross CLI devices raising exceptions and not deploying config as required
+- Multiple ways to queue jobs to devices, either pinned strict (prevent connection pooling at device)or pooled first in first out
 - Modern, container based scale out architecture supported by every component
-- Highly [configurable](https://github.com/tbotnz/netpalm/blob/master/config/config.json) for all aspects of the
-  platform
-- Leverages an encrypted Redis layer providing caching and queueing of jobs to and from devices
+- Highly [configurable](https://github.com/tbotnz/netpalm/blob/master/config/config.json) for all aspects of the platform
+- Leverages an ecrypted Redis layer providing caching and queueing of jobs to and from devices
 
 
 ## Concepts
 
 ### Basic Concepts
 
-Netpalm acts as a ReST broker and abstraction layer for NAPALM, Netmiko, NCCLIENT or a Python Script. Netpalm uses
-TextFSM or Jinja2 to model and transform both ingress and egress data if required.
+netpalm acts as a ReST broker and abstraction layer for NAPALM, Netmiko, NCCLIENT or a Python Script.
+netpalm uses TextFSM or Jinja2 to model and transform both ingress and egress data if required.
 
 <p align="center">
 <img src="/static/images/np-basic-overview.png">
 </p>
 
 ### Component Concepts
-
-Netpalm is underpinned by a container based scale out architecture for all components.
+netpalm is underpinned by a container based scale out architecture for all components.
 
 <p align="center">
 <img src="/static/images/np-component.png">
 </p>
 
 ### Queueing Concepts
-
-Netpalm provides domain focused queueing strategy for task execution on network equipment.
+netpalm provides domain focused queueing strategy for task execution on network equipment.
 
 <p align="center">
 <img src="/static/images/np-basic-q.png">
 </p>
 
 ### Scaling Concepts
-
-Every Netpalm container can be scaled in and out as required. Kubernetes or Swarm is recommended for any large scale
-deployments.
+Every netpalm container can be scaled in and out as required.
+Kubernetes or Swarm is reccomended for any large scale deployments.
 
 <p align="center">
 <img src="/static/images/np-scale-out.png">
@@ -159,9 +142,8 @@ docker-compose scale netpalm-controller=1 netpalm-worker-pinned=2 netpalm-worker
 - Jinja2
    - BYO jinja2 [config templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_config_templates)
    - BYO jinja2 [service templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_service_templates)
-   - BYO
-     jinja2 [webhook templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_webhook_templates)
-   - Can be used to just render Jinja2 templates via the REST API
+   - BYO jinja2 [webhook templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_webhook_templates)
+   - Can be used to just redner Jinja2 templates via the REST API
    - Automatically generates a JSON schema for any Jinja2 Template
    
 - Parsers
@@ -187,23 +169,20 @@ docker-compose scale netpalm-controller=1 netpalm-worker-pinned=2 netpalm-worker
    - Supports on the fly changes to the async queue strategy for a device
 
 - Caching
-  - Can cache responses from devices so that the same request doesn't have to go back to the device
-  - Automated cache poisioning on config changes on devices
+   - Can cache responses from devices so that the same request doesnt have to go back to the device
+   - Automated cache poisioning on config changes on devices
 
 - Scaling
    - Horizontal container based scale out architecture supported by each component
 
 ## Examples
 
-We could show you examples for days, but we recommend playing with the
-online [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20)
-to get a feel for what can be done. We also host a [public instance](https://netpalm.tech) where you can test Netpalm
-via the Swagger UI.
+We could show you examples for days, but we recommend playing with the online [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) to get a feel for what can be done. We also host a [public instance](https://netpalm.tech) where you can test netpalm via the Swagger UI.
 
 <details>
-   <summary style="display:inline-block;" markdown="span"><strong><code>get</code> method</strong></summary>
-
-Netpalm also supports all arguments for the transport libs, simply pass them in as below
+   <summary style="display:inline-block;" markdown="span"><strong><code>getconfig</code> method</strong></summary>
+  
+netpalm also supports all arguments for the transport libs, simply pass them in as below
 
 ![netpalm eg3](/static/images/netpalm_eg_3.png)
 </details>
@@ -216,19 +195,18 @@ Netpalm also supports all arguments for the transport libs, simply pass them in 
 
 <details>
    <summary style="display:inline-block;"><strong style="display:inline-block;">ServiceTemplates</strong></summary>
+  
+netpalm supports model driven service templates, these self render an OpenAPI 3 interface and provide abstraction and orchestration of tasks accross many devices using the get/setconfig or script methods.
 
-Netpalm supports model driven service templates, these self render an OpenAPI 3 interface and provide abstraction and
-orchestration of tasks accross many devices using the get/setconfig or script methods.
-
-The below example demonstrates basic SNMP state orchestration across multiple devices for create, retrieve, delete
+The below example demonstrates basic SNMP state orchestration accross multiple devices for create, retrieve, delete 
 
 ![netpalm auto ingest](/static/images/np_service.gif)
 </details>
 
 <details>
    <summary><strong style="display:inline-block;">Template Development and Deployment</strong></summary>
-
-Netpalm is integrated into http://textfsm.nornir.tech so you can ingest your templates with ease
+  
+netpalm is integrated into http://textfsm.nornir.tech so you can ingest your templates with ease
 
 ![netpalm auto ingest](/static/images/netpalm_ingest.gif)
 </details>
@@ -242,10 +220,10 @@ netpalm comes with a [Postman Collection](https://documenter.getpostman.com/view
 
 ## Caching
 
-* Supports the following per-request configuration (`/get` routes only for now)
-  * permit the result of this request to be cached (default: false), and permit this request to return cached data
-  * hold the cache for 30 seconds (default: 300. Should not be set above `redis_task_result_ttl` which defaults to 500)
-  * do NOT invalidate any existing cache for this request (default: false)
+* Supports the following per-request configuration (`/getconfig` routes only for now)
+    * permit the result of this request to be cached (default: false), and permit this request to return cached data
+    * hold the cache for 30 seconds (default: 300.  Should not be set above `redis_task_result_ttl` which defaults to 500)
+    * do NOT invalidate any existing cache for this request (default: false)
     ```json
       {
         "cache": {
@@ -255,20 +233,20 @@ netpalm comes with a [Postman Collection](https://documenter.getpostman.com/view
         }
       }
      ```
-
+  
 * Supports the following global configuration:
-  * Enable/Disable caching: `"redis_cache_enabled": true`
-    for caching to apply it must be enabled BOTH globally and in the request itself
-  * Default TTL:  `"redis_cache_default_timeout": 300`
+    * Enable/Disable caching: `"redis_cache_enabled": true`
+        for caching to apply it must be enabled BOTH globally and in the request itself
+    * Default TTL:  `"redis_cache_default_timeout": 300`
 
 * Any change to the request payload will result in a new cache key EXCEPT:
-  * JSON formatting differences:  `{ "x": 1, "y": 2 } == {"x":1,"y":2}`
-  * Dictionary ordering differences:  `{"x":1,"y":2} == {"y":2,"x"1}`
-  * changes to cache configuration (e.g. changing the TTL, etc)
-  * `fifo` vs `pinned` queueing strategy
+    * JSON formatting.  `{ "x": 1, "y": 2 } == {"x":1,"y":2}`
+    * Dictionary ordering:  `{"x":1,"y":2} == {"y":2,"x"1}`
+    * changes to cache configuration (e.g. changing the TTL, etc)
+    * `fifo` vs `pinned` queueing strategy
 
 * Any call to any `/setconfig` route for a given host:port will poison ALL cache entries for that host:port
-  * Except `/setconfig/dry-run` of course
+    * Except `/setconfig/dry-run` of course 
 
 ## Configuration
 
@@ -319,8 +297,7 @@ cd netpalm
 sudo docker-compose up -d --build
 ```
 
-4. After the container has been built and started, you're good to go! Netpalm will be available on port `9000` under
-   your docker hosts IP.
+4. After the container has been built and started, you're good to go! netpalm will be available on port `9000` under your docker hosts IP.
 ```
 http://$(yourdockerhost):9000
 ```
