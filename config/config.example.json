@@ -1,0 +1,28 @@
+{
+  "__comment__": "Values given here will override the values given in 'defaults.json'",
+  "api_key": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
+  "redis_key": "Red1zp4ww0rd_",
+  "device_whitelist": [],
+  "redis_tls_enabled": true,
+  "redis_tls_cert_file": "netpalm/backend/core/security/cert/tls/redis.crt",
+  "redis_tls_key_file": "netpalm/backend/core/security/cert/tls/redis.key",
+  "redis_tls_ca_cert_file": "netpalm/backend/core/security/cert/tls/ca.crt",
+  "txtfsm_template_server": "http://textfsm.nornir.tech",
+  "default_webhook_url": "https://9d4f355779c960d7509368ad5a7e3503.m.pipedream.net",
+  "gunicorn_workers": 3,
+  "pinned_process_per_node": 40,
+  "fifo_process_per_node": 10,
+  "apscheduler_num_processes": 1,
+  "apscheduler_num_threads": 5,
+  "redis_task_ttl": 500,
+  "redis_task_timeout": 500,
+  "redis_task_result_ttl": 500,
+  "redis_cache_default_timeout": 300,
+  "self_api_call_timeout": 15,
+  "default_webhook_ssl_verify": true,
+  "default_webhook_timeout": 5,
+  "default_webhook_name": "default_webhook",
+  "default_webhook_headers": {
+    "Content-Type": "application/json"
+  }
+}

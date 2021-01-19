@@ -11,18 +11,33 @@ try:
 except AttributeError:
     yaml_loader = yaml.SafeLoader
 
-
 log = logging.getLogger(__name__)
-DEFAULT_FILENAME = "config/config.json"
+CONFIG_FILENAME = "config/config.json"
+DEFAULTS_FILENAME = "config/defaults.json"
+
+
+def load_config_files(defaults_filename: str = DEFAULTS_FILENAME, config_filename: str = CONFIG_FILENAME) -> dict:
+    data = {}
+
+    for fname in (defaults_filename, config_filename):
+        try:
+            with open(fname) as infil:
+                data.update(json.load(infil))
+        except FileNotFoundError:
+            log.warning(f"Couldn't find {fname}")
+
+    if not data:
+        raise RuntimeError(f"Could not find either {defaults_filename} or {config_filename}")
+
+    return data
 
 
 class Config:
     def __init__(self, config_filename=None, search_tfsm=True):
         if config_filename is None:
-            config_filename = DEFAULT_FILENAME
+            config_filename = CONFIG_FILENAME
 
-        with open(config_filename) as json_file:
-            data = json.load(json_file)
+        data = load_config_files(DEFAULTS_FILENAME, config_filename)
 
         self.listen_ip = data["listen_ip"]
         self.listen_port = data["listen_port"]
@@ -131,9 +146,9 @@ class Config:
         ]
         potentials.insert(0, self.txtfsm_index_file)
         for potential in potentials:
-
             if Path(potential).exists():
                 return potential
+
         raise FileNotFoundError(f"confload: Can't find TextFSM Index file in any of {potentials}")
 
     def __call__(self):
