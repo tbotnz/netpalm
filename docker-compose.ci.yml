@@ -50,9 +50,7 @@ services:
       - "netpalm-network"
 
   cisgo:
-    build:
-      context: ./dockerfiles
-      dockerfile: cisgo_dockerfile
+    image: apcela/cisshgo:v0.0.1
     networks:
       - "netpalm-network"
 
