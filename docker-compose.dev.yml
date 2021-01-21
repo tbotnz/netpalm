@@ -71,9 +71,7 @@ services:
         restart: always
 
     cisgo:
-        build:
-            context: ./dockerfiles
-            dockerfile: cisgo_dockerfile
+        image: apcela/cisshgo:v0.0.1
         #            dockerfile: Dockerfile
         ports:
             - "10005:10005"  # one port just for convenience in case you need to ssh from outside for some reason
