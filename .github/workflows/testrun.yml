@@ -21,7 +21,7 @@ jobs:
       - run: docker pull golang:1.15.0-buster
       - run: docker pull redis:6.0.7-alpine
 
-      - uses: satackey/action-docker-layer-caching@v0.0.8
+      - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
         with:
           key: ci-tests-{hash}
