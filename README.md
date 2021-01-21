@@ -7,7 +7,7 @@
    <br/>
    <p align="center">
    netpalm makes it easy to push and pull state from your apps to your network by providing multiple southbound drivers, abstraction methods and modern northbound  interfaces such as open API3 and REST webhooks.
-   </p>
+   </p> 
    <p align="center" style="align: center;">
       <img src="https://github.com/tbotnz/netpalm/workflows/tests/badge.svg" alt="Tests"/>
       <a href="https://networktocode.slack.com" alt="NTC Slack"><img src="https://img.shields.io/badge/slack-networktocode-orange" alt="NTC Slack" /></a>
