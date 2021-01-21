@@ -18,20 +18,24 @@ from netpalm.backend.core.confload import confload
 
 
 def test_netpalm_config_honors_envvar():
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(KeyError):
         config = confload.Config("DOES NOT EXIST.json")
+        _ = config.data["__comment__"]
 
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(KeyError):
         os.environ["NETPALM_CONFIG"] = "DOES NOT EXIST.JSON"
         config = confload.initialize_config()
+        _ = config.data["__comment__"]
 
     # with pytest.raises(FileNotFoundError):  # this depends on the fact that you're running pytest from the tests directory
     #     del os.environ["NETPALM_CONFIG"]    # but we're not doing that anymore and it's okay really
     #     config = confload.initialize_config()
 
     config = confload.Config(ACTUAL_CONFIG_PATH)
+    _ = config.data["__comment__"]
     os.environ["NETPALM_CONFIG"] = str(ACTUAL_CONFIG_PATH)
     config = confload.initialize_config()
+    _ = config.data["__comment__"]
 
 
 def test_netpalm_config_value_precedence(monkeypatch):

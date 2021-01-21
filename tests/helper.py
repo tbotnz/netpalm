@@ -5,13 +5,30 @@ import time
 import requests
 
 log = logging.getLogger(__name__)
+CONFIG_FILENAME = "config/config.json"
+DEFAULTS_FILENAME = "config/defaults.json"
+
+
+def load_config_files(defaults_filename: str = DEFAULTS_FILENAME, config_filename: str = CONFIG_FILENAME) -> dict:
+    data = {}
+
+    for fname in (defaults_filename, config_filename):
+        try:
+            with open(fname) as infil:
+                data.update(json.load(infil))
+        except FileNotFoundError:
+            log.warning(f"Couldn't find {fname}")
+
+    if not data:
+        raise RuntimeError(f"Could not find either {defaults_filename} or {config_filename}")
+
+    return data
 
 
 class netpalm_testhelper:
 
     def __init__(self):
-        with open("config/config.json") as json_file:
-            data = json.load(json_file)
+        data = load_config_files()
         self.apikey = data["api_key"]
         self.ip = data["listen_ip"]
         self.port = data["listen_port"]
@@ -110,7 +127,7 @@ class netpalm_testhelper:
             result = self.poll_task_errors(task)
             return result
         except Exception as e:
-            return e
+            raise e
 
     def check_many(self, payload):
         try:

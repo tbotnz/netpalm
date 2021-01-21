@@ -40,6 +40,7 @@ class Config:
             config_filename = CONFIG_FILENAME
 
         data = load_config_files(DEFAULTS_FILENAME, config_filename)
+        self.data = data
 
         self.listen_ip = data["listen_ip"]
         self.listen_port = data["listen_port"]
