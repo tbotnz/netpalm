@@ -8,7 +8,7 @@ from tests.helper import netpalm_testhelper
 log = logging.getLogger(__name__)
 helper = netpalm_testhelper()
 
-CISGO_DEFAULT_HOSTNAME = "cisgo1000v"
+CISGO_DEFAULT_HOSTNAME = "cisshgo1000v"
 
 
 def cisgo_port_number():
