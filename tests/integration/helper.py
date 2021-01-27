@@ -33,6 +33,7 @@ class NetpalmTestHelper:
         self.apikey = data["api_key"]
         self.ip = data["listen_ip"]
         self.port = data["listen_port"]
+        self.base_url = f"http://{self.ip}:{self.port}"
         self.headers = {'Content-type': 'application/json', 'Accept': 'text/plain', 'x-api-key': self.apikey}
         # test devices go here
         self.test_device_ios_cli = "10.0.2.33"
@@ -40,6 +41,8 @@ class NetpalmTestHelper:
         self.test_device_restconf = "ios-xe-mgmt-latest.cisco.com"
         self.test_device_cisgo = "cisgo"
         self.http_timeout = 5
+        self.task_timeout = 30
+        self.task_poll_interval = 0.2
 
     def get(self, endpoint: str):
         try:
@@ -56,86 +59,52 @@ class NetpalmTestHelper:
                               headers=self.headers, json=data, timeout=self.http_timeout)
             return r.json()
         except Exception as e:
-            log.exception(f"error while getting {endpoint}")
+            log.exception(f"error while posting to {endpoint}")
             raise
 
     def check_task(self, taskid):
-        try:
-            time.sleep(0.5)
-            return self.get(f"task/{taskid}",)
-        except Exception as e:
-            return False
+        return self.get(f"task/{taskid}")
 
-    def poll_task(self, taskid):
-        try:
-            task_complete = False
-            result = False
-            while task_complete == False:
-                task_res = self.check_task(taskid)
-                if task_res["data"]["task_status"] == "finished" or task_res["data"]["task_status"] == "failed":
-                    result = task_res["data"]["task_result"]
-                    task_complete = True
-                # time.sleep(0.1)
-            log.error(f'got {task_res}')
-            return result
-        except Exception as e:
-            return False
+    def poll_task(self, taskid, timeout=None) -> Tuple[Dict, List]:
+        if timeout is None:
+            timeout = self.task_timeout
 
-    def poll_task_raw(self, taskid):
-        try:
-            task_complete = False
-            result = False
-            while task_complete == False:
-                task_res = self.check_task(taskid)
-                if task_res["data"]["task_status"] == "finished" or task_res["data"]["task_status"] == "failed":
-                    result = task_res
-                    task_complete = True
-                # time.sleep(0.1)
-            log.error(f'got {task_res}')
-            return result
-        except Exception as e:
-            return False
+        start_time = time.time()
+        while True:
+            task_res = self.check_task(taskid)
+            if task_res["data"]["task_status"] == "finished" or task_res["data"]["task_status"] == "failed":
+                result, errors = task_res["data"]["task_result"], task_res["data"]["task_errors"]
+                break
 
-    def poll_task_errors(self, taskid):
-        try:
-            task_complete = False
-            result = False
-            while task_complete == False:
-                task_res = self.check_task(taskid)
-                if task_res["data"]["task_status"] == "finished" or task_res["data"]["task_status"] == "failed":
-                    result = task_res["data"]["task_errors"]
-                    task_complete = True
-            return result
-        except Exception as e:
-            return False
+            if time.time() + self.task_poll_interval > start_time + timeout:
+                raise TimeoutError("Netmiko task timed out")
 
-    def post_and_check(self, url, payload, raw=False):
-        try:
-            r = requests.post('http://'+self.ip+':'+str(self.port)+url, json=payload, headers=self.headers, timeout=self.http_timeout)
-            task = r.json()["data"]["task_id"]
-            if raw:
-                result = self.poll_task_raw(task)
-            else:
-                result = self.poll_task(task)
-            return result
-        except Exception as e:
-            return e
+            time.sleep(self.task_poll_interval)
 
-    def post_and_check_errors(self, url, payload):
-        try:
-            r = requests.post('http://'+self.ip+':'+str(self.port)+url, json=payload, headers=self.headers, timeout=self.http_timeout)
-            task = r.json()["data"]["task_id"]
-            result = self.poll_task_errors(task)
-            return result
-        except Exception as e:
-            raise e
+        log.error(f'got {task_res}')
+        return result, errors
 
-    def check_many(self, payload):
-        try:
-            result = []
-            for task in payload:
-                res = self.poll_task(task["data"]["data"]["task_id"])
-                result.append(res)
-            return result
-        except Exception as e:
-            return e
+    def poll_task_errors(self, taskid, timeout=None) -> List:
+        result, errors = self.poll_task(taskid, timeout)
+        return errors
+
+    def post_and_check(self, endpoint, payload) -> Dict:
+        url = f"{self.base_url}{endpoint}"
+        r = requests.post(url, json=payload, headers=self.headers, timeout=self.http_timeout)
+        task_id = r.json()["data"]["task_id"]
+        result, errors = self.poll_task(task_id)
+        return result
+
+    def post_and_check_errors(self, endpoint, payload) -> List:
+        url = f"{self.base_url}{endpoint}"
+        r = requests.post(url, json=payload, headers=self.headers, timeout=self.http_timeout)
+        task_id = r.json()["data"]["task_id"]
+        errors = self.poll_task_errors(task_id)
+        return errors
+
+    def check_many(self, payload) -> List[Dict]:
+        results = []
+        for task in payload:
+            res, err = self.poll_task(task["data"]["data"]["task_id"])
+            results.append(res)
+        return results
