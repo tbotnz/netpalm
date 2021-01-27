@@ -3,11 +3,11 @@ import requests
 import random
 import logging
 
-from tests.helper import netpalm_testhelper
+from tests.integration.helper import NetpalmTestHelper
 
 log = logging.getLogger(__name__)
 
-helper = netpalm_testhelper()
+helper = NetpalmTestHelper()
 
 @pytest.mark.service
 def test_prepare_vlan_service_environment():

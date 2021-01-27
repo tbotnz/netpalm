@@ -3,6 +3,7 @@ import logging
 import time
 
 import requests
+from typing import Dict, Tuple, List
 
 log = logging.getLogger(__name__)
 CONFIG_FILENAME = "config/config.json"
@@ -25,7 +26,7 @@ def load_config_files(defaults_filename: str = DEFAULTS_FILENAME, config_filenam
     return data
 
 
-class netpalm_testhelper:
+class NetpalmTestHelper:
 
     def __init__(self):
         data = load_config_files()

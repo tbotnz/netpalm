@@ -2,9 +2,9 @@ import random
 
 import pytest
 
-from tests.helper import netpalm_testhelper
+from tests.integration.helper import NetpalmTestHelper
 
-helper = netpalm_testhelper()
+helper = NetpalmTestHelper()
 r = "cornicorneo" + str(random.randint(1, 101))
 
 

@@ -4,13 +4,13 @@ from typing import List, Union
 
 import pytest
 
-from tests.helper import netpalm_testhelper
-from tests.test_getconfig_cisgo import CisgoHelper
+from tests.integration.helper import NetpalmTestHelper
+from tests.integration.test_getconfig_cisgo import CisgoHelper
 
 log = logging.getLogger(__name__)
-helper = netpalm_testhelper()
+helper = NetpalmTestHelper()
 
-CISGO_DEFAULT_HOSTNAME = "cisgo1000v"
+CISGO_DEFAULT_HOSTNAME = "cisshgo1000v"
 CISGO_NEW_HOSTNAME = CISGO_DEFAULT_HOSTNAME.upper() + str(random.randint(100, 900))
 
 

@@ -1,8 +1,8 @@
 import pytest
 
-from tests.helper import netpalm_testhelper
+from tests.integration.helper import NetpalmTestHelper
 
-helper = netpalm_testhelper()
+helper = NetpalmTestHelper()
 
 
 @pytest.mark.test_worker_route
