@@ -15,7 +15,7 @@ def test_worker():
 def test_kill_worker():
     resz = helper.get("workers/")
     rt = "workers/kill/" + resz[0]["name"]
-    rest = helper.post(rt)
+    rest = helper.post(rt, data={})
     assert rest is None
 
 

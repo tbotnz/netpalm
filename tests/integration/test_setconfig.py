@@ -7,6 +7,8 @@ from tests.integration.helper import NetpalmTestHelper
 helper = NetpalmTestHelper()
 r = "cornicorneo" + str(random.randint(1, 101))
 
+pytestmark = pytest.mark.fulllab
+
 
 @pytest.mark.setconfig
 def test_setconfig_napalm():

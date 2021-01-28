@@ -43,6 +43,7 @@ def test_create_vlan_service_instance():
     else:
         assert False
 
+@pytest.mark.fulllab
 @pytest.mark.service
 def test_retrieve_vlan_service():
     pl = {
@@ -61,6 +62,7 @@ def test_retrieve_vlan_service():
     else:
         assert False
 
+@pytest.mark.fulllab
 @pytest.mark.service
 def test_delete_vlan_service_legacy():
     pl = {

@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 import pytest
-pytestmark = pytest.mark.nolab
 
 CONFIG_FILENAME = "config/config.json"
 ACTUAL_CONFIG_PATH = Path(CONFIG_FILENAME).absolute()

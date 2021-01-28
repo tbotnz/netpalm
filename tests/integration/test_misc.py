@@ -7,7 +7,8 @@ helper = NetpalmTestHelper()
 
 @pytest.mark.misc_worker_router
 def test_worker_route():
-    r = requests.get("http://"+helper.ip+":"+str(helper.port)+"/workers/", json={}, headers=helper.headers, timeout=helper.http_timeout)
+    url = f"{helper.base_url}/workers/"
+    r = requests.get(url, json={}, headers=helper.headers, timeout=helper.http_timeout)
     res = r.json()
     assert len(res) >= 2 
 

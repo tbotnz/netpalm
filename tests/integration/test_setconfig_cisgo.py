@@ -4,8 +4,8 @@ from typing import List, Union
 
 import pytest
 
-from tests.integration.helper import NetpalmTestHelper
-from tests.integration.test_getconfig_cisgo import CisgoHelper
+from .helper import NetpalmTestHelper
+from .test_getconfig_cisgo import CisgoHelper
 
 log = logging.getLogger(__name__)
 helper = NetpalmTestHelper()

@@ -31,7 +31,7 @@ class NetpalmTestHelper:
     def __init__(self):
         data = load_config_files()
         self.apikey = data["api_key"]
-        self.ip = data["listen_ip"]
+        self.ip = '127.0.0.1'
         self.port = data["listen_port"]
         self.base_url = f"http://{self.ip}:{self.port}"
         self.headers = {'Content-type': 'application/json', 'Accept': 'text/plain', 'x-api-key': self.apikey}
@@ -41,7 +41,7 @@ class NetpalmTestHelper:
         self.test_device_restconf = "ios-xe-mgmt-latest.cisco.com"
         self.test_device_cisgo = "cisgo"
         self.http_timeout = 5
-        self.task_timeout = 30
+        self.task_timeout = 15
         self.task_poll_interval = 0.2
 
     def get(self, endpoint: str):
