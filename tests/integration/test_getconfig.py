@@ -24,10 +24,7 @@ def test_getconfig_prepare_environment():
     }
     res = helper.post_and_check("/setconfig", pl)
     matchstr = r + "#"
-    if matchstr in str(res):
-        assert True
-    else:
-        assert False
+    assert matchstr in str(res)
 
 
 @pytest.mark.getconfig
@@ -103,10 +100,7 @@ def test_getconfig_napalm():
     }
     res = helper.post_and_check("/getconfig", pl)
     matchstr = "hostname " + r
-    if matchstr in str(res):
-        assert True
-    else:
-        assert False
+    assert matchstr in str(res)
 
 
 @pytest.mark.getconfig
@@ -140,8 +134,8 @@ def test_getconfig_napalm_multiple():
         "command": ["show run | i hostname", "show ip int brief"],
     }
     res = helper.post_and_check("/getconfig", pl)
-    assert len(res["show ip int brief"]) > 1 and len(
-        res["show run | i hostname"]) == 1
+    assert len(res["show ip int brief"]) > 1
+    assert len(res["show run | i hostname"]) == 1
 
 
 @pytest.mark.getconfig
@@ -159,10 +153,7 @@ def test_getconfig_netmiko():
     }
     res = helper.post_and_check("/getconfig", pl)
     matchstr = "hostname " + r
-    if matchstr in str(res):
-        assert True
-    else:
-        assert False
+    assert matchstr in str(res)
 
 
 @pytest.mark.getconfig
@@ -199,8 +190,8 @@ def test_getconfig_netmiko_multiple():
         "command": ["show run | i hostname", "show ip int brief"],
     }
     res = helper.post_and_check("/getconfig", pl)
-    assert len(res["show ip int brief"]) > 1 and len(
-        res["show run | i hostname"]) >= 1
+    assert len(res["show ip int brief"]) > 1
+    assert len(res["show run | i hostname"]) >= 1
 
 
 @pytest.mark.getconfig
@@ -224,10 +215,7 @@ def test_getconfig_ncclient():
     }
     res = helper.post_and_check("/getconfig", pl)
     matchstr = "urn:ietf:params:xml:ns:netconf:base:1.0"
-    if matchstr in res["get_config"]:
-        assert True
-    else:
-        assert False
+    assert matchstr in res["get_config"]
 
 
 @pytest.mark.getconfig

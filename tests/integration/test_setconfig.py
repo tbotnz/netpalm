@@ -24,10 +24,7 @@ def test_setconfig_napalm():
     }
     res = helper.post_and_check("/setconfig", pl)
     matchstr = "+hostname " + str(r)
-    if matchstr in res["changes"][0]:
-        assert True
-    else:
-        assert False
+    assert matchstr in res["changes"][0]
 
 
 @pytest.mark.setconfig
@@ -279,10 +276,7 @@ def test_setconfig_netmiko():
     }
     res = helper.post_and_check("/setconfig", pl)
     matchstr = r + "#"
-    if matchstr in res["changes"]:
-        assert True
-    else:
-        assert False
+    assert  matchstr in res["changes"]
 
 
 @pytest.mark.setconfig
