@@ -36,7 +36,7 @@ jobs:
 
       - id: test_nolab
         name: integration tests
-        run: docker-compose -f docker-compose.ci.yml exec -T netpalm-controller pytest -m "not fulllab" -vv tests/integrations
+        run: docker-compose -f docker-compose.ci.yml exec -T netpalm-controller pytest -m "not fulllab" -vv tests/integration
 
       - id: test_cisgo
         name: unit tests
