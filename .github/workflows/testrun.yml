@@ -35,12 +35,12 @@ jobs:
       - run: docker-compose -f docker-compose.ci.yml up -d
 
       - id: test_nolab
-        name: nolab tests
-        run: docker-compose -f docker-compose.ci.yml exec -T netpalm-controller pytest -m nolab -vv
+        name: integration tests
+        run: docker-compose -f docker-compose.ci.yml exec -T netpalm-controller pytest -m "not fulllab" -vv tests/integrations
 
       - id: test_cisgo
-        name: cisgo tests
-        run: docker-compose -f docker-compose.ci.yml exec -T netpalm-controller pytest -m cisgo -vv
+        name: unit tests
+        run: docker-compose -f docker-compose.ci.yml exec -T netpalm-controller pytest -vv tests/unit
 #      run: docker-compose -f ./docker-compose.dev.yml run controller echo "asdf"
 #    - name: notify slack
 #      if:  ${{ always() }}
