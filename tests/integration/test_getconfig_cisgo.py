@@ -93,6 +93,8 @@ def test_getconfig_netmiko(cisgo_helper: CisgoHelper):
     }
     res = helper.post_and_check('/getconfig', pl)
     assert hostname_from_config(res["show running-config"]) == CISGO_DEFAULT_HOSTNAME
+    res = helper.post_and_check('/get', pl)
+    assert hostname_from_config(res["show running-config"]) == CISGO_DEFAULT_HOSTNAME
 
 
 @pytest.mark.getconfig
@@ -108,6 +110,8 @@ def test_getconfig_netmiko_with_textfsm(cisgo_helper: CisgoHelper):
     }
     res = helper.post_and_check('/getconfig', pl)
     assert res["show ip interface brief"][0]["status"] == "up"
+    res = helper.post_and_check('/get', pl)
+    assert res["show ip interface brief"][0]["status"] == "up"
 
 
 @pytest.mark.getconfig
@@ -119,6 +123,9 @@ def test_getconfig_netmiko_multiple(cisgo_helper: CisgoHelper):
         "command": ["show running-config", "show ip interface brief"]
     }
     res = helper.post_and_check('/getconfig', pl)
+    assert len(res["show ip interface brief"]) > 1
+    assert hostname_from_config(res["show running-config"]) == CISGO_DEFAULT_HOSTNAME
+    res = helper.post_and_check('/get', pl)
     assert len(res["show ip interface brief"]) > 1
     assert hostname_from_config(res["show running-config"]) == CISGO_DEFAULT_HOSTNAME
 
@@ -135,6 +142,10 @@ def test_getconfig_napalm_multiple(cisgo_helper: CisgoHelper):
     log.error(res)
     assert len(res["show ip interface brief"]) > 1
     assert hostname_from_config(res["show running-config"])
+    res = helper.post_and_check('/get', pl)
+    log.error(res)
+    assert len(res["show ip interface brief"]) > 1
+    assert hostname_from_config(res["show running-config"])
 
 
 @pytest.mark.getconfig
@@ -148,6 +159,9 @@ def test_getconfig_napalm_getter(cisgo_helper: CisgoHelper):
     res = helper.post_and_check('/getconfig', pl)
     log.error(res["get_facts"])
     assert res["get_facts"]["hostname"] == CISGO_DEFAULT_HOSTNAME
+    res = helper.post_and_check('/get', pl)
+    log.error(res["get_facts"])
+    assert res["get_facts"]["hostname"] == CISGO_DEFAULT_HOSTNAME
 
 
 @pytest.mark.getconfig
@@ -159,7 +173,8 @@ def test_getconfig_napalm(cisgo_helper: CisgoHelper):
         "command": "show running-config"
     }
     res = helper.post_and_check('/getconfig', pl)
-
+    assert hostname_from_config(res["show running-config"])
+    res = helper.post_and_check('/get', pl)
     assert hostname_from_config(res["show running-config"])
 
 
@@ -183,7 +198,7 @@ def test_getconfig_netmiko_post_check(cisgo_helper: CisgoHelper):
             }
         ]
     }
-    errors = helper.post_and_check_errors('/getconfig', pl)
+    errors = helper.post_and_check_errors('/get', pl)
     assert len(errors) == 0
     pl["post_checks"][0]["match_str"][0] += "asdf"
     errors = helper.post_and_check_errors('/getconfig', pl)
@@ -212,6 +227,8 @@ def test_getconfig_netmiko_post_check_fails(cisgo_helper: CisgoHelper):
     }
     errors = helper.post_and_check_errors('/getconfig', pl)
     assert len(errors) > 0
+    errors = helper.post_and_check_errors('/get', pl)
+    assert len(errors) > 0
 
 
 @pytest.mark.getconfig
@@ -235,4 +252,6 @@ def test_getconfig_napalm_post_check(cisgo_helper: CisgoHelper):
         ]
     }
     errors = helper.post_and_check_errors('/getconfig', pl)
+    assert len(errors) == 0
+    errors = helper.post_and_check_errors('/get', pl)
     assert len(errors) == 0

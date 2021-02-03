@@ -91,6 +91,7 @@ class NetpalmTestHelper:
     def post_and_check(self, endpoint, payload) -> Dict:
         url = f"{self.base_url}{endpoint}"
         r = requests.post(url, json=payload, headers=self.headers, timeout=self.http_timeout)
+        r.raise_for_status()
         task_id = r.json()["data"]["task_id"]
         result, errors = self.poll_task(task_id)
         return result
