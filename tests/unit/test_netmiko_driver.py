@@ -1,7 +1,6 @@
-from pprint import pprint
+from unittest.mock import Mock
 
 import pytest
-from unittest.mock import Mock
 from pytest_mock import MockerFixture
 
 from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
@@ -29,6 +28,7 @@ def rq_job(mocker: MockerFixture) -> MockerFixture:
     mocked_job.meta = {"errors": []}
     mocked_get_current_job.return_value = mocked_job
 
+
 @pytest.fixture()
 def netmiko_connection_handler(mocker: MockerFixture) -> MockerFixture:
     mocked_CH = mocker.patch('netpalm.backend.plugins.drivers.netmiko.netmiko_drvr.ConnectHandler', autospec=True)
@@ -45,6 +45,7 @@ def netmiko_connection_handler(mocker: MockerFixture) -> MockerFixture:
     mocked_session.send_config_set.return_value = ""
 
     return mocked_CH
+
 
 def test_netmko_connect(netmiko_connection_handler: Mock):
     netmiko_driver = netmko(kwarg={}, connection_args=NETMIKO_C_ARGS)
@@ -100,6 +101,7 @@ def test_netmiko_gc_exec_command(netmiko_connection_handler: Mock):
     netmiko_connection_handler.assert_called_once_with(**NETMIKO_C_ARGS)
     for command, value in NETMIKO_COMMANDS.items():
         assert result[command] == value.splitlines()
+    assert netmiko_connection_handler.session.disconnect.called
 
 
 def test_netmiko_gc_exec_command_post_checks(netmiko_connection_handler: Mock, rq_job):
