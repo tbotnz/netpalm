@@ -2,7 +2,6 @@ import typing
 
 import pytest
 
-pytestmark = pytest.mark.nolab
 
 from netpalm.backend.core.confload import confload
 from netpalm.backend.plugins.utilities.textfsm.template import FSMTemplate

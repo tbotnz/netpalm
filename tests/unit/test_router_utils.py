@@ -12,7 +12,6 @@ from netpalm.backend.core.redis import rediz
 from netpalm.routers.route_utils import cacheable_model, HttpErrorHandler, cache_key_from_req_data, poison_host_cache, \
     serialized_for_hash
 
-pytestmark = pytest.mark.nolab
 log = logging.getLogger(__name__)
 
 cache_key_data = [

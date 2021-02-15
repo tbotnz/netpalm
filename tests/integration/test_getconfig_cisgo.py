@@ -3,10 +3,10 @@ from typing import List, Union
 
 import pytest
 
-from tests.helper import netpalm_testhelper
+from tests.integration.helper import NetpalmTestHelper
 
 log = logging.getLogger(__name__)
-helper = netpalm_testhelper()
+helper = NetpalmTestHelper()
 
 CISGO_DEFAULT_HOSTNAME = "cisshgo1000v"
 
@@ -88,7 +88,8 @@ def test_getconfig_netmiko(cisgo_helper: CisgoHelper):
     pl = {
         "library": "netmiko",
         "connection_args": cisgo_helper.netmiko_connection_args,
-        "command": "show running-config"
+        "command": "show running-config",
+        # "cache": {"enabled": False}
     }
     res = helper.post_and_check('/getconfig', pl)
     assert hostname_from_config(res["show running-config"]) == CISGO_DEFAULT_HOSTNAME
