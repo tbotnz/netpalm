@@ -20,6 +20,14 @@ class ncclien:
         except Exception as e:
             write_meta_error(f"{e}")
 
+    @staticmethod
+    def get_capabilities(session=False):
+        try:
+            capabilities = session.server_capabilities
+            return capabilities
+        except Exception as e:
+            write_meta_error(f"{e}")
+
     def getmethod(self, session=False, command=False):
         try:
             result = {}
@@ -51,6 +59,10 @@ class ncclien:
                 if self.kwarg.get("render_json", False):
                     del self.kwarg["render_json"]
                     rjsflag = True
+                if self.kwarg.get("capabilities", False):
+                    del self.kwarg["capabilities"]
+                    result["capabilities"] = self.get_capabilities(
+                        session=session)
                 # check whether RPC required
                 if self.kwarg.get("rpc", False):
                     response = session.rpc(**self.kwarg).data_xml
