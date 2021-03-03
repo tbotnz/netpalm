@@ -33,9 +33,10 @@ class ncclien:
             result = {}
             if self.kwarg:
                 rjsflag = False
-                if self.kwarg.get("render_json"):
-                    rjsflag = True
-                del self.kwarg["render_json"]
+                if "render_json" in self.kwarg:
+                    if self.kwarg.get("render_json"):
+                        rjsflag = True
+                    del self.kwarg["render_json"]
                 response = session.get(**self.kwarg).data_xml
                 if rjsflag:
                     respdict = xmltodict.parse(response)
@@ -57,14 +58,16 @@ class ncclien:
             if self.kwarg:
                 rjsflag = False
 
-                # pydantic is defaulting these to false
-                if self.kwarg.get("render_json"):
-                    rjsflag = True
-                if self.kwarg.get("capabilities"):
-                    result["capabilities"] = self.get_capabilities(
-                        session=session)
-                del self.kwarg["render_json"]
-                del self.kwarg["capabilities"]
+                if "render_json" in self.kwarg:
+                    if self.kwarg.get("render_json"):
+                        rjsflag = True
+                    del self.kwarg["render_json"]
+
+                if "capabilities" in self.kwarg:
+                    if self.kwarg.get("capabilities"):
+                        result["capabilities"] = self.get_capabilities(
+                            session=session)
+                    del self.kwarg["capabilities"]
 
                 # check whether RPC required
                 if self.kwarg.get("rpc", False):
@@ -91,10 +94,10 @@ class ncclien:
             result = {}
             if self.kwarg:
                 rjsflag = False
-                # pydantic is defaulting these to false
-                if self.kwarg.get("render_json"):
-                    rjsflag = True
-                del self.kwarg["render_json"]
+                if "render_json" in self.kwarg:
+                    if self.kwarg.get("render_json"):
+                        rjsflag = True
+                    del self.kwarg["render_json"]
                 # edit_config returns an RPCReply object which doesnt have a
                 # data_xml property. Fixes 'Unserializable return value'
                 # message from rq.job:restore
