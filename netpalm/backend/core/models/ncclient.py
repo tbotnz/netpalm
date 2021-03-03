@@ -26,6 +26,7 @@ class NcclientGetConfigArgs(BaseModel):
 class NcclientGetRpcArgs(BaseModel):
     rpc: str
     render_json: Optional[bool] = False
+    capabilities: Optional[bool] = False
 
 
 class NcclientDeviceDrivers(str):
