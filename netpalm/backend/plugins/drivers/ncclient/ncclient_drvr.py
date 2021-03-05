@@ -20,14 +20,23 @@ class ncclien:
         except Exception as e:
             write_meta_error(f"{e}")
 
+    @staticmethod
+    def get_capabilities(session=False):
+        try:
+            capabilities = session.server_capabilities
+            return capabilities
+        except Exception as e:
+            write_meta_error(f"{e}")
+
     def getmethod(self, session=False, command=False):
         try:
             result = {}
             if self.kwarg:
                 rjsflag = False
-                if self.kwarg.get("render_json", False):
+                if "render_json" in self.kwarg:
+                    if self.kwarg.get("render_json"):
+                        rjsflag = True
                     del self.kwarg["render_json"]
-                    rjsflag = True
                 response = session.get(**self.kwarg).data_xml
                 if rjsflag:
                     respdict = xmltodict.parse(response)
@@ -48,9 +57,18 @@ class ncclien:
             result = {}
             if self.kwarg:
                 rjsflag = False
-                if self.kwarg.get("render_json", False):
+
+                if "render_json" in self.kwarg:
+                    if self.kwarg.get("render_json"):
+                        rjsflag = True
                     del self.kwarg["render_json"]
-                    rjsflag = True
+
+                if "capabilities" in self.kwarg:
+                    if self.kwarg.get("capabilities"):
+                        result["capabilities"] = self.get_capabilities(
+                            session=session)
+                    del self.kwarg["capabilities"]
+
                 # check whether RPC required
                 if self.kwarg.get("rpc", False):
                     response = session.rpc(**self.kwarg).data_xml
@@ -76,9 +94,10 @@ class ncclien:
             result = {}
             if self.kwarg:
                 rjsflag = False
-                if self.kwarg.get("render_json", False):
+                if "render_json" in self.kwarg:
+                    if self.kwarg.get("render_json"):
+                        rjsflag = True
                     del self.kwarg["render_json"]
-                    rjsflag = True
                 # edit_config returns an RPCReply object which doesnt have a
                 # data_xml property. Fixes 'Unserializable return value'
                 # message from rq.job:restore
