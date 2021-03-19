@@ -8,7 +8,6 @@ log = logging.getLogger(__name__)
 
 def ncclient_get(**kwargs):
     """main function for executing getconfig commands to southbound drivers"""
-    log.debug(f'called w/ {kwargs}')
     lib = kwargs.get("library", False)
 
     result = False
