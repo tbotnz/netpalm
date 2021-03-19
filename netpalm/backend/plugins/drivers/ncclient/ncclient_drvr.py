@@ -14,7 +14,6 @@ class ncclien:
 
     def connect(self):
         try:
-            log.info(self.connection_args)
             conn = manager.connect(**self.connection_args)
             return conn
         except Exception as e:

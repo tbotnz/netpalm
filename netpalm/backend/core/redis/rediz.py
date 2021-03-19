@@ -385,7 +385,6 @@ class Rediz:
 
     def execute_service_task(self, metho, **kwargs):
         """service wrapper for execute task method"""
-        log.info(kwargs)
         kw = kwargs.get("kwargs")
         resul = self.execute_task(method=metho, kwargs=kw)
         serv = self.create_service_instance(raw_data=kw)
