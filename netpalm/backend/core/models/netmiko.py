@@ -12,6 +12,7 @@ class NetmikoSendConfigArgs(BaseModel):
     command_string: Optional[str] = None
     expect_string: Optional[str] = None
     delay_factor: Optional[int] = None
+    commit_label: Optional[str] = None
     max_loops: Optional[int] = None
     auto_find_prompt: Optional[bool] = None
     strip_prompt: Optional[bool] = None
@@ -79,7 +80,10 @@ class NetmikoGetConfig(BaseModel):
             "example": {
                 "library": "netmiko",
                 "connection_args": {
-                    "device_type": "cisco_ios", "host": "10.0.2.33", "username": "admin", "password": "admin"
+                    "device_type": "cisco_ios",
+                    "host": "10.0.2.33",
+                    "username": "admin",
+                    "password": "admin"
                 },
                 "command": "show ip int brief",
                 "args": {
@@ -111,7 +115,10 @@ class NetmikoSetConfig(BaseModel):
             "example": {
                 "library": "netmiko",
                 "connection_args": {
-                    "device_type": "cisco_ios", "host": "10.0.2.33", "username": "admin", "password": "admin"
+                    "device_type": "cisco_ios",
+                    "host": "10.0.2.33",
+                    "username": "admin",
+                    "password": "admin"
                 },
                 "config": ["hostname cat"],
                 "queue_strategy": "pinned"
