@@ -35,7 +35,8 @@ class netmko:
                     # normalise the ttp template name for ease of use
                     if "ttp_template" in self.kwarg.keys():
                         if self.kwarg["ttp_template"]:
-                            template_name = config.ttp_templates + self.kwarg["ttp_template"] + ".ttp"
+                            template_name = config.ttp_templates + self.kwarg[
+                                "ttp_template"] + ".ttp"
                             self.kwarg["ttp_template"] = template_name
                     response = session.send_command(commands, **self.kwarg)
                     if response:
@@ -81,7 +82,7 @@ class netmko:
                     except Exception as e:
                         write_meta_error(f"{e}")
 
-                elif hasattr(session, "save_config") and callable(
+                if hasattr(session, "save_config") and callable(
                         session.save_config):
                     try:
                         response += session.save_config()
