@@ -69,27 +69,16 @@ class netmko:
                 response = session.send_config_set(comm)
 
             if not dry_run:
-                # CiscoBaseConnection(BaseConnection)
-                # implements commit and save_config in child classes
-                if hasattr(session, "commit") and callable(session.commit):
-                    try:
-                        if self.commit_label:
-                            response += session.commit(label=self.commit_label)
-                        else:
-                            response += session.commit()
-                    except AttributeError:
-                        pass
-                    except Exception as e:
-                        write_meta_error(f"{e}")
-
-                if hasattr(session, "save_config") and callable(
-                        session.save_config):
-                    try:
-                        response += session.save_config()
-                    except AttributeError:
-                        pass
-                    except Exception as e:
-                        write_meta_error(f"{e}")
+                try:
+                    if self.commit_label:
+                        response += session.commit(label=self.commit_label)
+                    else:
+                        response += session.commit()
+                except (AttributeError, NotImplementedError):
+                    # commit not implemented try save_config
+                    response += session.save_config()
+                except Exception as e:
+                    write_meta_error(f"{e}")
 
             result = {}
             result["changes"] = response.split("\n")
