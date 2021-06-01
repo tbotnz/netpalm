@@ -11,7 +11,8 @@ log = logging.getLogger(__name__)
 helper = NetpalmTestHelper()
 
 CISGO_DEFAULT_HOSTNAME = "cisshgo1000v"
-CISGO_NEW_HOSTNAME = CISGO_DEFAULT_HOSTNAME.upper() + str(random.randint(100, 900))
+CISGO_NEW_HOSTNAME = CISGO_DEFAULT_HOSTNAME.upper() + str(
+    random.randint(100, 900))
 
 
 @pytest.fixture(scope="function")
@@ -28,7 +29,9 @@ def hostname_from_config(config_lines: Union[List[str], str]) -> str:
             continue
         command, *args = line.split()
         if command == "hostname":
-            hostname = ' '.join(args)  # this will false-match if there's weird whitespace in hostname like \t, etc
+            hostname = ' '.join(
+                args
+            )  # this will false-match if there's weird whitespace in hostname like \t, etc
             break
 
     else:
@@ -56,7 +59,7 @@ def test_setconfig_netmiko(cisgo_helper: CisgoHelper):
         "config": ["hostname " + CISGO_NEW_HOSTNAME],
         "enable_mode": True
     }
-    res = helper.post_and_check('/setconfig', pl)
+    res = helper.post_and_check('/setconfig/dry-run', pl)
     matchstr = CISGO_NEW_HOSTNAME + "#"
     assert matchstr in res["changes"]
 
@@ -70,7 +73,7 @@ def test_setconfig_netmiko_multiple(cisgo_helper: CisgoHelper):
         "config": ["hostname yeti", "hostname bufoon"],
         "enable_mode": True
     }
-    res = helper.post_and_check('/setconfig', pl)
+    res = helper.post_and_check('/setconfig/dry-run', pl)
     assert len(res["changes"]) > 4
 
 
@@ -88,5 +91,5 @@ def test_setconfig_netmiko_j2(cisgo_helper):
             }
         }
     }
-    res = helper.post_and_check('/setconfig', pl)
+    res = helper.post_and_check('/setconfig/dry-run', pl)
     assert len(res["changes"]) > 6
