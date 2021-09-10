@@ -6,7 +6,7 @@
    <h3 align="center">The Open API Platform for Network Devices</h3>
    <br/>
    <p align="center">
-   netpalm makes it easy to push and pull state from your apps to your network by providing multiple southbound drivers, abstraction methods and modern northbound  interfaces such as open API3 and REST webhooks.
+   netpalm makes it easy to push and pull state from your apps to your network by providing multiple southbound drivers, abstraction methods and modern northbound interfaces such as open API3 and REST webhooks.
    </p> 
    <p align="center" style="align: center;">
       <img src="https://github.com/tbotnz/netpalm/workflows/tests/badge.svg" alt="Tests"/>
@@ -71,7 +71,7 @@
 
 ## What is netpalm?
 
-Leveraging best of breed open source network components like [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests), netpalm makes it easy to abstract from any network devices native telnet, SSH, NETCONF or RESTCONF interface into a modern model driven open api 3 interface.
+Leveraging best of breed open source network components like [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko), [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests), netpalm makes it easy to abstract from any network devices native telnet, SSH, NETCONF or RESTCONF interface into a modern model driven open api 3 interface.
 
 <p align="center">
 <img src="/static/images/np-basic-new1.png">
@@ -85,16 +85,16 @@ Built on a scalable microservice based architecture netpalm provides unparallele
 
 - Speaks REST and JSON RPC northbound, then CLI over SSH or Telnet or NETCONF/RESTCONF southbound to your network devices
 - Turns any Python script into a easy to consume, asynchronous and documented API with webhook support
-- Large amount of supported network device vendors thanks to [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko),  [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests)
+- Large amount of supported network device vendors thanks to [napalm](https://github.com/napalm-automation/napalm), [netmiko](https://github.com/ktbyers/netmiko), [ncclient](https://github.com/ncclient/ncclient) and [requests](https://github.com/psf/requests)
 - Built in multi-level abstraction interface for network service lifecycle functions for create, retrieve and delete and validate
 - In band service inventory
 - Ability to write your own [service models and templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_service_templates) using your own existing [jinja2 templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/custom_scripts)
 - Well documented API with [postman collection](https://documenter.getpostman.com/view/2391814/T1DqgwcU?version=latest#33acdbb8-b5cd-4b55-bc67-b15c328d6c20) full of examples and every instance gets it own self documenting openAPI 3 UI.
-- Supports pre and post checks accross CLI devices raising exceptions and not deploying config as required
+- Supports pre- and post-checks across CLI devices raising exceptions and not deploying config as required
 - Multiple ways to queue jobs to devices, either pinned strict (prevent connection pooling at device)or pooled first in first out
 - Modern, container based scale out architecture supported by every component
 - Highly [configurable](https://github.com/tbotnz/netpalm/blob/master/config/config.json) for all aspects of the platform
-- Leverages an ecrypted Redis layer providing caching and queueing of jobs to and from devices
+- Leverages an encrypted Redis layer providing caching and queueing of jobs to and from devices
 
 
 ## Concepts
@@ -124,7 +124,7 @@ netpalm provides domain focused queueing strategy for task execution on network 
 
 ### Scaling Concepts
 Every netpalm container can be scaled in and out as required.
-Kubernetes or Swarm is reccomended for any large scale deployments.
+Kubernetes or Swarm is recommended for any large scale deployments.
 
 <p align="center">
 <img src="/static/images/np-scale-out.png">
@@ -143,7 +143,7 @@ docker-compose scale netpalm-controller=1 netpalm-worker-pinned=2 netpalm-worker
    - BYO jinja2 [config templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_config_templates)
    - BYO jinja2 [service templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_service_templates)
    - BYO jinja2 [webhook templates](https://github.com/tbotnz/netpalm/tree/master/netpalm/backend/plugins/extensibles/j2_webhook_templates)
-   - Can be used to just redner Jinja2 templates via the REST API
+   - Can be used to just render Jinja2 templates via the REST API
    - Automatically generates a JSON schema for any Jinja2 Template
    
 - Parsers
@@ -169,7 +169,7 @@ docker-compose scale netpalm-controller=1 netpalm-worker-pinned=2 netpalm-worker
    - Supports on the fly changes to the async queue strategy for a device
 
 - Caching
-   - Can cache responses from devices so that the same request doesnt have to go back to the device
+   - Can cache responses from devices so that the same request doesn't have to go back to the device
    - Automated cache poisioning on config changes on devices
 
 - Scaling
@@ -196,9 +196,9 @@ netpalm also supports all arguments for the transport libs, simply pass them in 
 <details>
    <summary style="display:inline-block;"><strong style="display:inline-block;">ServiceTemplates</strong></summary>
   
-netpalm supports model driven service templates, these self render an OpenAPI 3 interface and provide abstraction and orchestration of tasks accross many devices using the get/setconfig or script methods.
+netpalm supports model driven service templates, these self render an OpenAPI 3 interface and provide abstraction and orchestration of tasks across many devices using the get/setconfig or script methods.
 
-The below example demonstrates basic SNMP state orchestration accross multiple devices for create, retrieve, delete 
+The below example demonstrates basic SNMP state orchestration across multiple devices for create, retrieve, delete 
 
 ![netpalm auto ingest](/static/images/np_service.gif)
 </details>

@@ -5,8 +5,6 @@ import redis_lock
 
 from netpalm.backend.core.confload.confload import config
 
-pytestmark = pytest.mark.nolab
-
 from netpalm.backend.core.confload import confload
 from netpalm.backend.core.redis import reds
 from netpalm.backend.core.redis.rediz import ExtnUpdateLog, TransactionLogEntryType, TransactionLogEntryModel

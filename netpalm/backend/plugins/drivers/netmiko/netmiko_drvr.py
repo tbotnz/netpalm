@@ -13,6 +13,12 @@ class netmko:
     def __init__(self, **kwargs):
         self.kwarg = kwargs.get("args", False)
         self.connection_args = kwargs.get("connection_args", False)
+        #  support IOSXR commit labels
+        self.commit_label = None
+        if self.kwarg:
+            if commit_label := self.kwarg.get("commit_label", None):
+                self.commit_label = commit_label
+                del self.kwarg["commit_label"]
 
     def connect(self):
         try:
@@ -66,7 +72,10 @@ class netmko:
                 # implements commit and save_config in child classes
                 if hasattr(session, "commit") and callable(session.commit):
                     try:
-                        response += session.commit()
+                        if self.commit_label:
+                            response += session.commit(label=self.commit_label)
+                        else:
+                            response += session.commit()
                     except AttributeError:
                         pass
                     except Exception as e:

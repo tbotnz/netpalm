@@ -210,7 +210,6 @@ def error_handle_w_cache(f):
     @HttpErrorHandler()
     @cacheable_model
     def wrapper(*args, **kwargs):
-        log.info(f"{args=}, {kwargs=}")
         return f(*args, **kwargs)
 
     return wrapper

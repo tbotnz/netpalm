@@ -50,7 +50,7 @@ services:
       - "netpalm-network"
 
   cisgo:
-    image: apcela/cisshgo:v0.0.4
+    image: apcela/cisshgo:v0.1.0
     networks:
       - "netpalm-network"
 

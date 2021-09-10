@@ -20,11 +20,13 @@ class NcclientGetConfigArgs(BaseModel):
     source: str
     filter: Optional[str] = None
     render_json: Optional[bool] = False
+    capabilities: Optional[bool] = False
 
 
 class NcclientGetRpcArgs(BaseModel):
     rpc: str
     render_json: Optional[bool] = False
+    capabilities: Optional[bool] = False
 
 
 class NcclientDeviceDrivers(str):
@@ -110,7 +112,8 @@ class NcclientGetConfig(BaseModel):
                     "source": "running",
                     "filter":
                     "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
-                    "render_json": True
+                    "render_json": True,
+                    "capabilities": True
                 },
                 "queue_strategy": "fifo",
                 "cache": {
