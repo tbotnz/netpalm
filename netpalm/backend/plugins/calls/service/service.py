@@ -5,7 +5,7 @@ import json
 import requests
 
 from netpalm.backend.core.confload.confload import config
-from netpalm.backend.core.utilities.rediz_meta import write_meta_error
+from netpalm.backend.core.utilities.rediz_meta import write_meta_error, write_mandatory_meta
 from netpalm.backend.core.models.service import ServiceModelTemplate
 from netpalm.backend.plugins.utilities.jinja2.j2 import render_j2template
 
@@ -115,6 +115,7 @@ def render_service(**kwargs):
     templat = kwargs.get("service_model")
     exeservice = None
     try:
+        write_mandatory_meta()
         s = service(kw=kwargs)
         res = s.validate_template(template_name=templat)
         if res:

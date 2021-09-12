@@ -51,6 +51,7 @@ class RedisWorker:
 
         self.worker_name_base = ""
         self._uuid = uuid.uuid4()
+        self.config = config
 
     def worker_cleanup(self):
         """cleans up jobs on container shutdown """
@@ -80,6 +81,8 @@ class RedisWorker:
         return f"{self.worker_name_base}_{self._uuid}"
 
     def _listen(self, queue_name):
+        log.debug(f'This worker name is: {self.worker_name}')
+        self.config.worker_name = self.worker_name  # register our name for other modules to reference
         queue = Queue(queue_name)
         worker = Worker(queue, name=self.worker_name)
         worker.work()
@@ -132,7 +135,7 @@ class RedisProcessWorker(RedisWorker):
             # register container to pinned store
             r = self.base_connection.get(self.redis_pinned_store)
             rjson = json.loads(r)
-            log.info(rjson)
+            # log.info(rjson)
             data = PinnedStore(
                 hostname=self.hostname,
                 count=0,
@@ -140,7 +143,7 @@ class RedisProcessWorker(RedisWorker):
                 pinned_listen_queue=self.queue_name
             ).dict()
             rjson.append(data)
-            log.info(rjson)
+            # log.info(rjson)
             self.base_connection.set(self.redis_pinned_store, json.dumps(rjson))
             # setup queue and start working
 

@@ -2,12 +2,14 @@ from multiprocessing import Process
 import time
 import sys
 
+import logging
+
 from .backend.core.confload.confload import config
 from .netpalm_worker_common import start_broadcast_listener_process
 from .backend.core.utilities.rediz_worker_controller import RedisWorker, RedisFifoWorker
 
 config.setup_logging(max_debug=True)
-
+log = logging.getLogger(__name__)
 
 def fifo_worker(queue, counter):
     try:
