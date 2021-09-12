@@ -342,7 +342,6 @@ class Rediz:
             log.error(f"render_task_response : {str(e)}")
             pass
 
-        resultdata = None
         resultdata = Response(status="success", data={
             "task_id": task_job.get_id(),
             "created_on": created_at,
