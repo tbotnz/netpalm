@@ -11,7 +11,7 @@ from netpalm.backend.core.models.transaction_log import (
 )
 from netpalm.backend.core.redis import reds, Rediz
 from netpalm.backend.core.utilities.rediz_kill_worker import kill_worker_pid
-from netpalm.backend.core.utilities.rediz_worker_controller import WorkerRediz
+from netpalm.backend.core.utilities.rediz_worker_controller import RedisWorker
 
 from netpalm.backend.plugins.utilities.textfsm.template import (
     listtemplates,
@@ -201,7 +201,7 @@ def broadcast_queue_worker(queue_name):
     try:
         log.info("Before listening for broadcasts, first check the log")
         update_log_processor.process_log()
-        wr = WorkerRediz()
+        wr = RedisWorker(config)
         pubsub = wr.pub_sub()
         pubsub.subscribe(queue_name)
 

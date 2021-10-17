@@ -1,24 +1,20 @@
-import uuid
 from multiprocessing import Process
 import time
-import socket
-import json
 import sys
 
-from redis import Redis
-from rq import Queue, Connection, Worker
+import logging
 
 from .backend.core.confload.confload import config
 from .netpalm_worker_common import start_broadcast_listener_process
-from .backend.core.utilities.rediz_worker_controller import WorkerRediz
+from .backend.core.utilities.rediz_worker_controller import RedisWorker, RedisFifoWorker
 
 config.setup_logging(max_debug=True)
-
+log = logging.getLogger(__name__)
 
 def fifo_worker(queue, counter):
     try:
-        wr = WorkerRediz()
-        wr.fifo_worker_listen(queue, counter)
+        wr = RedisFifoWorker(config, queue, counter)
+        wr.listen()
     except Exception as e:
         return e
 
@@ -32,7 +28,7 @@ def fifo_worker_constructor(queue):
         while True:
             time.sleep(99999999)
     finally:
-        cleanup = WorkerRediz()
+        cleanup = RedisWorker(config)
         cleanup.worker_cleanup()
         sys.exit()
 

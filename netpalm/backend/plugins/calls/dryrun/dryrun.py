@@ -1,4 +1,4 @@
-from netpalm.backend.core.utilities.rediz_meta import render_netpalm_payload
+from netpalm.backend.core.utilities.rediz_meta import render_netpalm_payload, write_mandatory_meta
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
 from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
@@ -15,16 +15,14 @@ def dryrun(**kwargs):
     enable_mode = kwargs.get("enable_mode", False)
     result = False
 
-    if j2conf:
-        j2confargs = j2conf.get("args")
-        try:
+    try:
+        write_mandatory_meta()
+
+        if j2conf:
+            j2confargs = j2conf.get("args")
             res = render_j2template(j2conf["template"], template_type="config", kwargs=j2confargs)
             config = res["data"]["task_result"]["template_render_result"]
-        except Exception as e:
-            config = False
-            write_meta_error(f"{e}")
 
-    try:
         result = {}
         if lib == "napalm":
             napl = naplm(**kwargs)
@@ -46,13 +44,11 @@ def dryrun(**kwargs):
             sesh = netmik.connect()
             result = netmik.config(sesh, config, enable_mode, dry_run=True)
             netmik.logout(sesh)
-    except Exception as e:
-        write_meta_error(f"{e}")
 
-    try:
         if webhook:
             current_jobdata = render_netpalm_payload(job_result=result)
             exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
+
     except Exception as e:
         write_meta_error(f"{e}")
 

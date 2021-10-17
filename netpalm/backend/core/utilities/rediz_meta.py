@@ -1,5 +1,6 @@
 from rq import get_current_job
 
+from netpalm.backend.core.confload.confload import config
 from netpalm.backend.core.models.task import Response
 
 
@@ -13,6 +14,16 @@ def write_meta_error(data):
         job.meta["errors"].append(data)
     job.save_meta()
     raise Exception(f"failed: {data}")
+
+
+def write_mandatory_meta():
+    job = get_current_job()
+    if job is None:  # it will be None in many/all unit tests
+        return
+
+    job.meta["assigned_worker"] = config.worker_name
+    job.save_meta()
+
 
 def render_netpalm_payload(job_result={}):
     """in band rpc job result renderer"""
