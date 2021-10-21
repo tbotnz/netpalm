@@ -320,16 +320,17 @@ class Rediz:
             if enqueued_at != "None" and enqueued_at and started_at == "None":
                 parsed_time = datetime.datetime.strptime(enqueued_at, "%Y-%m-%d %H:%M:%S.%f")
                 task_job.meta["enqueued_elapsed_seconds"] = (current_time - parsed_time).seconds
+                task_job.save()
 
             # if created but not finished calculate time
             if ended_at != "None" and ended_at:
                 parsed_time = datetime.datetime.strptime(ended_at, "%Y-%m-%d %H:%M:%S.%f")
                 task_job.meta["total_elapsed_seconds"] = (parsed_time - created_parsed_time).seconds
+                task_job.save()
 
             elif ended_at == "None":
                 task_job.meta["total_elapsed_seconds"] = (current_time - created_parsed_time).seconds
-
-            task_job.save()
+                task_job.save()
 
             # clean up vars for response
             created_at = None if created_at == "None" else created_at
@@ -341,6 +342,7 @@ class Rediz:
             log.error(f"render_task_response : {str(e)}")
             pass
 
+        resultdata = None
         resultdata = Response(status="success", data={
             "task_id": task_job.get_id(),
             "created_on": created_at,
@@ -350,8 +352,7 @@ class Rediz:
                 "started_at": started_at,
                 "ended_at": ended_at,
                 "enqueued_elapsed_seconds": task_job.meta["enqueued_elapsed_seconds"],
-                "total_elapsed_seconds": task_job.meta["total_elapsed_seconds"],
-                "assigned_worker": task_job.meta.get("assigned_worker")
+                "total_elapsed_seconds": task_job.meta["total_elapsed_seconds"]
             },
             "task_status": task_job.get_status(),
             "task_result": task_job.result,

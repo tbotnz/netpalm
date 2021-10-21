@@ -1,11 +1,20 @@
 import logging
+from multiprocessing import process
+
+import uuid
 from multiprocessing import Process
+import json
+import socket
 import sys
 import time
 
+from redis import Redis
+from rq import Queue, Connection, Worker
+
 from .backend.core.confload.confload import config
+from .backend.core.models.models import PinnedStore
 from .netpalm_worker_common import start_broadcast_listener_process
-from .backend.core.utilities.rediz_worker_controller import RedisWorker, RedisPinnedWorker, RedisProcessWorker
+from .backend.core.utilities.rediz_worker_controller import WorkerRediz
 
 config.setup_logging(max_debug=True)
 log = logging.getLogger(__name__)
@@ -19,7 +28,7 @@ def start_processworkerprocess():
         while True:
             time.sleep(99999999)
     finally:
-        cleanup = RedisWorker(config)
+        cleanup = WorkerRediz()
         cleanup.worker_cleanup()
         sys.exit()
 
@@ -28,6 +37,7 @@ def we_are_controller():
     import sys
     for part in sys.argv:
         if 'controller' in part:
+            log.error(f'{sys.argv}')
             return True
     return False
 
@@ -40,14 +50,14 @@ def processworker():
     """
     if not we_are_controller():
         start_broadcast_listener_process()
-        wr = RedisProcessWorker(config)
-        wr.listen()
+        wr = WorkerRediz()
+        wr.process_worker_listen()
 
 
 def pinned_worker(queue):
     try:
-        wr = RedisPinnedWorker(config, queue)
-        wr.listen()
+        wr = WorkerRediz()
+        wr.pinned_worker_listen(queue)
     except Exception as e:
         return e
 

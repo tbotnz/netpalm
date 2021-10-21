@@ -1,4 +1,4 @@
-from netpalm.backend.core.utilities.rediz_meta import write_meta_error, render_netpalm_payload, write_mandatory_meta
+from netpalm.backend.core.utilities.rediz_meta import write_meta_error, render_netpalm_payload
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
 from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
@@ -20,16 +20,17 @@ def exec_config(**kwargs):
     result = False
     pre_check_ok = True
 
-    try:
-        write_mandatory_meta()
-
-        if j2conf:
-            j2confargs = j2conf.get("args")
+    if j2conf:
+        j2confargs = j2conf.get("args")
+        try:
             res = render_j2template(j2conf["template"], template_type="config", kwargs=j2confargs)
             config = res["data"]["task_result"]["template_render_result"]
+        except Exception as e:
+            config = False
+            write_meta_error(f"{e}")
 
-        if not pre_checks and not post_checks:
-
+    if not pre_checks and not post_checks:
+        try:
             if lib == "netmiko":
                 netmik = netmko(**kwargs)
                 sesh = netmik.connect()
@@ -55,8 +56,11 @@ def exec_config(**kwargs):
                 sesh = rcc.connect()
                 result = rcc.config(sesh)
                 rcc.logout(sesh)
+        except Exception as e:
+            write_meta_error(f"{e}")
 
-        else:
+    else:
+        try:
             if lib == "netmiko":
                 netmik = netmko(**kwargs)
                 sesh = netmik.connect()
@@ -121,11 +125,13 @@ def exec_config(**kwargs):
                 sesh = rcc.connect()
                 result = rcc.config(sesh)
                 rcc.logout(sesh)
+        except Exception as e:
+            write_meta_error(f"{e}")        
 
+    try:
         if webhook:
             current_jobdata = render_netpalm_payload(job_result=result)
             exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
-
     except Exception as e:
         write_meta_error(f"{e}")
 

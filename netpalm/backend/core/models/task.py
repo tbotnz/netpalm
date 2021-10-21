@@ -29,7 +29,6 @@ class TaskMetaData(BaseModel):
     ended_at: Optional[str]
     enqueued_elapsed_seconds: Optional[str]
     total_elapsed_seconds: Optional[str]
-    assigned_worker: Optional[str]
 
 
 class TaskResponse(BaseModel):
