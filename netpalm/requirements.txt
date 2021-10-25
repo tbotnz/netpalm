@@ -11,7 +11,7 @@ jinja2schema
 jsonschema
 genie
 pyyaml
-cachelib
+cachelib==0.3.0
 python-redis-lock
 filelock
 jsonpath_ng
