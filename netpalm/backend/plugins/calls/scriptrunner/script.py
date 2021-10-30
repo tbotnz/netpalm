@@ -15,13 +15,10 @@ class script_kiddy:
         self.script_name = self.scrp_path.replace('/', '.') + self.script
 
     def s_exec(self):
-        try:
-            module = importlib.import_module(self.script_name)
-            runscrp = getattr(module, "run")
-            res = runscrp(kwargs=self.arg)
-            return res
-        except Exception as e:
-            return e
+        module = importlib.import_module(self.script_name)
+        runscrp = getattr(module, "run")
+        res = runscrp(kwargs=self.arg)
+        return res
 
 
 def script_exec(**kwargs):
