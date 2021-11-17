@@ -1,3 +1,4 @@
+fastapi
 ttp
 netmiko==3.3.2
 napalm

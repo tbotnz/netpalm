@@ -1,7 +1,6 @@
 import logging
 
 from fastapi import APIRouter
-from fastapi.encoders import jsonable_encoder
 
 # load models
 from netpalm.backend.core.models.models import SetConfig
@@ -10,20 +9,13 @@ from netpalm.backend.core.models.ncclient import NcclientSetConfig
 from netpalm.backend.core.models.netmiko import NetmikoSetConfig
 from netpalm.backend.core.models.restconf import Restconf
 from netpalm.backend.core.models.task import Response
-from netpalm.backend.core.redis import reds
+
+from netpalm.backend.core.manager import ntplm
+
 from netpalm.routers.route_utils import HttpErrorHandler, poison_host_cache, whitelist
 
 log = logging.getLogger(__name__)
 router = APIRouter()
-
-
-def _set_config(setcfg: SetConfig, library: str = None):
-    req_data = setcfg.dict(exclude_none=True)
-    if library is not None:
-        req_data["library"] = library
-    r = reds.execute_task(method="setconfig", kwargs=req_data)
-    resp = jsonable_encoder(r)
-    return resp
 
 
 # deploy a configuration
@@ -32,7 +24,7 @@ def _set_config(setcfg: SetConfig, library: str = None):
 @poison_host_cache
 @whitelist
 def set_config(setcfg: SetConfig):
-    return _set_config(setcfg)
+    return ntplm._set_config(setcfg)
 
 
 # dry run a configuration
@@ -40,10 +32,7 @@ def set_config(setcfg: SetConfig):
 @HttpErrorHandler()
 @whitelist
 def set_config_dry_run(setcfg: SetConfig):
-    req_data = setcfg.dict(exclude_none=True)
-    r = reds.execute_task(method="dryrun", kwargs=req_data)
-    resp = jsonable_encoder(r)
-    return resp
+    return ntplm.set_config_dry_run(setcfg)
 
 
 # deploy a configuration
@@ -52,7 +41,7 @@ def set_config_dry_run(setcfg: SetConfig):
 @poison_host_cache
 @whitelist
 def set_config_netmiko(setcfg: NetmikoSetConfig):
-    return _set_config(setcfg, library="netmiko")
+    return ntplm.set_config_netmiko(setcfg)
 
 
 # deploy a configuration
@@ -61,7 +50,7 @@ def set_config_netmiko(setcfg: NetmikoSetConfig):
 @poison_host_cache
 @whitelist
 def set_config_napalm(setcfg: NapalmSetConfig):
-    return _set_config(setcfg, library="napalm")
+    return ntplm.set_config_napalm(setcfg)
 
 
 # deploy a configuration
@@ -70,7 +59,7 @@ def set_config_napalm(setcfg: NapalmSetConfig):
 @poison_host_cache
 @whitelist
 def set_config_ncclient(setcfg: NcclientSetConfig):
-    return _set_config(setcfg, library="ncclient")
+    return ntplm.set_config_ncclient(setcfg)
 
 
 # deploy a configuration
@@ -79,4 +68,4 @@ def set_config_ncclient(setcfg: NcclientSetConfig):
 @poison_host_cache
 @whitelist
 def set_config_restconf(setcfg: Restconf):
-    return _set_config(setcfg, library="restconf")
+    return ntplm.set_config_restconf(setcfg)
