@@ -29,6 +29,8 @@ services:
       - redis
     networks:
       - "netpalm-network"
+#    deploy:
+#      replicas: 2
 
   worker-fifo:
     image: netpalm_netpalm-controller
