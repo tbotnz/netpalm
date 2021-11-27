@@ -50,6 +50,6 @@ def dryrun(**kwargs):
             exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
 
     except Exception as e:
-        write_meta_error(f"{e}")
+        write_meta_error(e)
 
     return result

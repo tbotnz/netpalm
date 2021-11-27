@@ -1,4 +1,5 @@
-from netpalm.backend.core.utilities.rediz_meta import write_meta_error, render_netpalm_payload, write_mandatory_meta
+from netpalm.backend.core.utilities.rediz_meta import write_meta_error_string, render_netpalm_payload, \
+    write_mandatory_meta, write_meta_error
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
 from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
@@ -66,10 +67,10 @@ def exec_config(**kwargs):
                         pre_check_result = netmik.sendcommand(sesh, [command])
                         for matchstr in precheck["match_str"]:
                             if precheck["match_type"] == "include" and matchstr not in str(pre_check_result):
-                                write_meta_error(f"PreCheck Failed: {matchstr} not found in {pre_check_result}")
+                                write_meta_error_string(f"PreCheck Failed: {matchstr} not found in {pre_check_result}")
                                 pre_check_ok = False
                             if precheck["match_type"] == "exclude" and matchstr in str(pre_check_result):
-                                write_meta_error(f"PreCheck Failed: {matchstr} found in {pre_check_result}")
+                                write_meta_error_string(f"PreCheck Failed: {matchstr} found in {pre_check_result}")
                                 pre_check_ok = False
                 if pre_check_ok:
                     result = netmik.config(sesh, config, enable_mode)
@@ -79,9 +80,9 @@ def exec_config(**kwargs):
                             post_check_result = netmik.sendcommand(sesh, [command])
                             for matchstr in postcheck["match_str"]:
                                 if postcheck["match_type"] == "include" and matchstr not in str(post_check_result):
-                                    write_meta_error(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
+                                    write_meta_error_string(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
                                 if postcheck["match_type"] == "exclude" and matchstr in str(post_check_result):
-                                    write_meta_error(f"PostCheck Failed: {matchstr} found in {post_check_result}")
+                                    write_meta_error_string(f"PostCheck Failed: {matchstr} found in {post_check_result}")
                 netmik.logout(sesh)
 
             elif lib == "napalm":
@@ -93,10 +94,10 @@ def exec_config(**kwargs):
                         pre_check_result = napl.sendcommand(sesh, [command])
                         for matchstr in precheck["match_str"]:
                             if precheck["match_type"] == "include" and matchstr not in str(pre_check_result):
-                                write_meta_error(f"PreCheck Failed: {matchstr} not found in {pre_check_result}")
+                                write_meta_error_string(f"PreCheck Failed: {matchstr} not found in {pre_check_result}")
                                 pre_check_ok = False
                             if precheck["match_type"] == "exclude" and matchstr in str(pre_check_result):
-                                write_meta_error(f"PreCheck Failed: {matchstr} found in {pre_check_result}")
+                                write_meta_error_string(f"PreCheck Failed: {matchstr} found in {pre_check_result}")
                                 pre_check_ok = False
                 if pre_check_ok:
                     result = napl.config(sesh,config)
@@ -106,9 +107,9 @@ def exec_config(**kwargs):
                             post_check_result = napl.sendcommand(sesh, [command])
                             for matchstr in postcheck["match_str"]:
                                 if postcheck["match_type"] == "include" and matchstr not in str(post_check_result):
-                                    write_meta_error(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
+                                    write_meta_error_string(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
                                 if postcheck["match_type"] == "exclude" and matchstr in str(post_check_result):
-                                    write_meta_error(f"PostCheck Failed: {matchstr} found in {post_check_result}")
+                                    write_meta_error_string(f"PostCheck Failed: {matchstr} found in {post_check_result}")
                 napl.logout(sesh)
 
             elif lib == "ncclient":
@@ -127,6 +128,6 @@ def exec_config(**kwargs):
             exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
 
     except Exception as e:
-        write_meta_error(f"{e}")
+        write_meta_error(e)
 
     return result

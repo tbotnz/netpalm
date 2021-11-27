@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional, Any
+from typing import Optional, Any, List, Union
 
 from pydantic import BaseModel
 
@@ -18,11 +18,6 @@ class TaskStatusEnum(str, Enum):
     scheduled = "scheduled"
 
 
-class TaskMeta(BaseModel):
-    result: str
-    errors: list
-
-
 class TaskMetaData(BaseModel):
     enqueued_at: Optional[str]
     started_at: Optional[str]
@@ -32,6 +27,11 @@ class TaskMetaData(BaseModel):
     assigned_worker: Optional[str]
 
 
+class TaskError(BaseModel):
+    exception_class: str
+    exception_args: [List[str]]
+
+
 class TaskResponse(BaseModel):
     task_id: str
     created_on: str
@@ -39,7 +39,7 @@ class TaskResponse(BaseModel):
     task_meta: Optional[TaskMetaData] = None
     task_status: TaskStatusEnum
     task_result: Any
-    task_errors: list
+    task_errors: List[Union[str, TaskError]]
 
 
 class Response(BaseModel):

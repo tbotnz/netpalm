@@ -5,6 +5,7 @@ from napalm.base.base import NetworkDriver
 import pytest
 from pytest_mock import MockerFixture
 
+from netpalm.backend.core.utilities.rediz_meta import NetpalmMetaProcessedException
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
 from netpalm.backend.plugins.calls.getconfig.exec_command import exec_command
 
@@ -155,6 +156,6 @@ def test_napalm_gc_exec_command_post_checks(napalm_get_network_driver: Mock, rq_
                                                              username=NAPALM_C_ARGS["username"],
                                                              password=NAPALM_C_ARGS["password"])
 
-    with pytest.raises(Exception):
+    with pytest.raises(NetpalmMetaProcessedException):
         _ = exec_command(library="napalm", command=command,
                          connection_args=NAPALM_C_ARGS.copy(), post_checks=[bad_post_check])

@@ -2,7 +2,7 @@ import xmltodict
 import logging
 from ncclient import manager
 
-from netpalm.backend.core.utilities.rediz_meta import write_meta_error
+from netpalm.backend.core.utilities.rediz_meta import write_meta_error_string, write_meta_error
 
 log = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class ncclien:
             conn = manager.connect(**self.connection_args)
             return conn
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)
 
     @staticmethod
     def get_capabilities(session=False):
@@ -25,7 +25,7 @@ class ncclien:
             capabilities = session.server_capabilities
             return capabilities
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)
 
     def getmethod(self, session=False, command=False):
         try:
@@ -42,14 +42,14 @@ class ncclien:
                     if respdict:
                         result["get_config"] = respdict
                     else:
-                        write_meta_error("failed to parse response")
+                        write_meta_error_string("failed to parse response")
                 else:
                     result["get_config"] = response
             else:
-                write_meta_error("args are required")
+                write_meta_error_string("args are required")
             return result
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)
 
     def getconfig(self, session=False, command=False):
         try:
@@ -79,14 +79,14 @@ class ncclien:
                     if respdict:
                         result["get_config"] = respdict
                     else:
-                        write_meta_error("failed to parse response")
+                        write_meta_error_string("failed to parse response")
                 else:
                     result["get_config"] = response
             else:
-                write_meta_error("args are required")
+                write_meta_error_string("args are required")
             return result
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)
 
     def editconfig(self, session=False, dry_run=False):
         try:
@@ -110,18 +110,18 @@ class ncclien:
                     if respdict:
                         result["edit_config"] = respdict
                     else:
-                        write_meta_error("failed to parse response")
+                        write_meta_error_string("failed to parse response")
                 else:
                     result["edit_config"] = response
             else:
-                write_meta_error("args are required")
+                write_meta_error_string("args are required")
             return result
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)
 
     def logout(self, session):
         try:
             response = session.close_session()
             return response
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)

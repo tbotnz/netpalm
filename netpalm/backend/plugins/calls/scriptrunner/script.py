@@ -34,6 +34,6 @@ def script_exec(**kwargs):
             current_jobdata = render_netpalm_payload(job_result=result)
             exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
     except Exception as e:
-        write_meta_error(f"{e}")
+        write_meta_error(e)
 
     return result
