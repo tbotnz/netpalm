@@ -52,7 +52,7 @@ services:
       - "netpalm-network"
 
   cisgo:
-    image: apcela/cisshgo:v0.1.0
+    image: apcela/cisshgo:v0.1.1
     networks:
       - "netpalm-network"
 
