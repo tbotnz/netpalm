@@ -29,7 +29,7 @@ class TaskMetaData(BaseModel):
 
 class TaskError(BaseModel):
     exception_class: str
-    exception_args: [List[str]]
+    exception_args: List[str]
 
 
 class TaskResponse(BaseModel):
