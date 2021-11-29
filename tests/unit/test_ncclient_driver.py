@@ -5,7 +5,7 @@ from napalm.base.base import NetworkDriver
 import pytest
 from pytest_mock import MockerFixture
 
-from netpalm.backend.core.utilities.rediz_meta import NetpalmMetaProcessedException
+from netpalm.exceptions import NetpalmMetaProcessedException
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
 from netpalm.backend.plugins.calls.getconfig.exec_command import exec_command
 

@@ -4,10 +4,7 @@ from rq import get_current_job
 
 from netpalm.backend.core.confload.confload import config
 from netpalm.backend.core.models.task import Response
-
-
-class NetpalmMetaProcessedException(Exception):
-    pass
+from netpalm.exceptions import NetpalmMetaProcessedException
 
 
 def exception_full_name(exception: BaseException):

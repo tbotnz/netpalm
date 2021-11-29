@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 # get specific task
-@router.get("/task/{task_id}", response_model=Response)
+@router.get("/task/{task_id}", response_model=Response)  # this can *also* return ServiceResponse, but trying to typdef it doesn't seem to work
 def get_task(task_id: str):
     try:
         r = ntplm.fetchtask(task_id=task_id)

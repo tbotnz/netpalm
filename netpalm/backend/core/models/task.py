@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional, Any, List, Union
+from typing import Optional, Any, List, Union, Dict
 
 from pydantic import BaseModel
 
@@ -32,6 +32,16 @@ class TaskError(BaseModel):
     exception_args: List[str]
 
 
+TaskErrorList = List[Union[str, TaskError]]
+
+class ServiceTaskHostError(BaseModel):
+    task_id: str
+    task_errors: TaskErrorList
+
+
+ServiceTaskErrors = List[Dict[str, ServiceTaskHostError]]
+
+
 class TaskResponse(BaseModel):
     task_id: str
     created_on: str
@@ -39,7 +49,7 @@ class TaskResponse(BaseModel):
     task_meta: Optional[TaskMetaData] = None
     task_status: TaskStatusEnum
     task_result: Any
-    task_errors: List[Union[str, TaskError]]
+    task_errors: Union[TaskErrorList, ServiceTaskErrors]  # Needed to get service tasks to validate when they're polled from /task/:taskid
 
 
 class Response(BaseModel):
