@@ -21,15 +21,16 @@ def exception_full_name(exception: BaseException):
 
 def yield_exception_chain(exc: BaseException):
     yield exc
-    if exc.__cause__ is None:
+    if exc.__context__ is None:
         return
-    yield from yield_exception_chain(exc.__cause__)
+    yield from yield_exception_chain(exc.__context__)
 
 
 def write_meta_error(exception: Exception):
     """custom exception handler for within an rpc job"""
     if isinstance(exception, NetpalmMetaProcessedException):
-        return  # Don't process the same exception twice
+        raise exception from None  # Don't process the same exception twice
+
     job = get_current_job()
     job.meta["result"] = "failed"
 
