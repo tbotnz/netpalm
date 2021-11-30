@@ -5,6 +5,8 @@ import json
 import logging
 import uuid
 
+from names_generator import generate_name
+
 from netpalm.backend.core.confload.confload import Config
 from netpalm.backend.core.models.models import PinnedStore
 
@@ -49,8 +51,9 @@ class RedisWorker:
                 socket_keepalive=config.redis_socket_keepalive,
             )
 
-        self.worker_name_base = ""
-        self._uuid = uuid.uuid4()
+        self.hostname = socket.gethostname()
+        self._unique = generate_name(seed=self.hostname)
+        self.worker_name = "UNNAMED WORKER!"  # should never see this
         self.config = config
 
     def worker_cleanup(self):
@@ -59,9 +62,8 @@ class RedisWorker:
         r = self.base_connection.get(self.redis_pinned_store)
         rjson = json.loads(r)
         idex = 0
-        hstname = socket.gethostname()
         for container in rjson:
-            if container["hostname"] == f"{hstname}":
+            if container["hostname"] == self.hostname:
                 rjson.pop(idex)
                 self.base_connection.set(self.redis_pinned_store, json.dumps(rjson))
                 break
@@ -69,16 +71,13 @@ class RedisWorker:
         # purge all workers still running on this container
         workers = Worker.all(connection=self.base_connection)
         for worker in workers:
-            if worker.hostname == f"{hstname}":
+            if worker.hostname == self.hostname:
                 worker.register_death()
 
     def pub_sub(self):
         result = self.base_connection.pubsub()
         return result
 
-    @property
-    def worker_name(self):
-        return f"{self.worker_name_base}_{self._uuid}"
 
     def _listen(self, queue_name):
         log.debug(f'This worker name is: {self.worker_name}')
@@ -92,7 +91,7 @@ class RedisFifoWorker(RedisWorker):
     def __init__(self, config: Config, queue_name: str, counter: int):
         super().__init__(config)
         self.queue_name = queue_name
-        self.worker_name_base = f"{queue_name}_{counter}"
+        self.worker_name = f"{self._unique}_{self.queue_name}_{counter}"
 
     def listen(self):
         """fifo worker instance process"""
@@ -104,7 +103,7 @@ class RedisPinnedWorker(RedisWorker):
     def __init__(self, config: Config, queue_name: str):
         super().__init__(config)
         self.queue_name = queue_name
-        self.worker_name_base = queue_name
+        self.worker_name = f"{self._unique}_{self.queue_name}"
 
     def listen(self):
         """pinned worker instance process"""
@@ -112,9 +111,8 @@ class RedisPinnedWorker(RedisWorker):
             # update pinned db
             r = self.base_connection.get(self.redis_pinned_store)
             rjson = json.loads(r)
-            hostname = socket.gethostname()
             for container in rjson:
-                if container["hostname"] == hostname:
+                if container["hostname"] == self.hostname:
                     container["count"] += 1
                     break
             self.base_connection.set(self.redis_pinned_store, json.dumps(rjson))
@@ -125,9 +123,8 @@ class RedisPinnedWorker(RedisWorker):
 class RedisProcessWorker(RedisWorker):
     def __init__(self, config: Config):
         super().__init__(config)
-        self.hostname = socket.gethostname()
-        self.queue_name = f"{self.hostname}_processworker"
-        self.worker_name_base = self.queue_name
+        self.queue_name = f"{self._unique}_processworker"
+        self.worker_name = self.queue_name
 
     def listen(self):
         """pinned worker master container process"""
