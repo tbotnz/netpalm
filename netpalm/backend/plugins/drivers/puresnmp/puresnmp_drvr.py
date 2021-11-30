@@ -20,7 +20,7 @@ class pursnmp:
         try:
             return True
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)
 
     def sendcommand(self, session=False, command=False):
         try:
@@ -70,16 +70,16 @@ class pursnmp:
                     result[c] = f"{response}"
             return result
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)
 
     def config(self, session=False, command=False, dry_run=False):
         try:
             return True
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)
 
     def logout(self, session):
         try:
             return True
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)

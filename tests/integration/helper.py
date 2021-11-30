@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+from json import JSONDecodeError
 
 import requests
 from typing import Dict, Tuple, List
@@ -92,7 +93,13 @@ class NetpalmTestHelper:
         url = f"{self.base_url}{endpoint}"
         r = requests.post(url, json=payload, headers=self.headers, timeout=self.http_timeout)
         r.raise_for_status()
-        task_id = r.json()["data"]["task_id"]
+        try:
+            task_id = r.json()["data"]["task_id"]
+
+        except JSONDecodeError:
+            log.error(f"Can't JSON decode response:\n{r.text}")
+            raise
+
         result, errors = self.poll_task(task_id)
         return result
 

@@ -23,6 +23,6 @@ def ncclient_get(**kwargs):
         else:
             raise NotImplementedError(f"unknown 'library' parameter {lib}")
     except Exception as e:
-        write_meta_error(f"{e}")
+        write_meta_error(e)
 
     return result
