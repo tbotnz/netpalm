@@ -1,2 +1,10 @@
 .git
+.github
+.gitignore
+.idea
+.vscode
+venv
+backend/plugins/extensibles/ntc-templates
 static
+docker-compose*.yml
+dockerfiles

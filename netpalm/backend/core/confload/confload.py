@@ -92,8 +92,9 @@ class Config:
         self.apscheduler_num_processes = data["apscheduler_num_processes"]
         self.apscheduler_num_threads = data["apscheduler_num_threads"]
         self.whitelist = DeviceWhitelist(data.get("device_whitelist"))
+        self.worker_name = "NOT A WORKER"  # Worker objects will record this here so that it can be referenced elsewhere
 
-        #load tls
+        # load tls
         try:
             log.info(f"confload: opening TLS files")
             tls_files = [self.redis_tls_cert_file, self.redis_tls_key_file, self.redis_tls_ca_cert_file]

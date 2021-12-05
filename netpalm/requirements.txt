@@ -1,3 +1,4 @@
+fastapi
 ttp
 netmiko==3.3.2
 napalm
@@ -11,10 +12,11 @@ jinja2schema
 jsonschema
 genie
 pyyaml
-cachelib
+cachelib==0.3.0
 python-redis-lock
 filelock
 jsonpath_ng
 apscheduler==3.6.3
 puresnmp==1.9.1
 pydantic
+names_generator==0.1.0

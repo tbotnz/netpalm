@@ -6,16 +6,16 @@ from fastapi.encoders import jsonable_encoder
 from netpalm.backend.core.models.task import Response, WorkerResponse
 from netpalm.backend.core.models.models import PinnedStore
 
-from netpalm.backend.core.redis import reds
+from netpalm.backend.core.manager import ntplm
 
 router = APIRouter()
 
 
 # get specific task
-@router.get("/task/{task_id}", response_model=Response)
+@router.get("/task/{task_id}", response_model=Response)  # this can *also* return ServiceResponse, but trying to typdef it doesn't seem to work
 def get_task(task_id: str):
     try:
-        r = reds.fetchtask(task_id=task_id)
+        r = ntplm.fetchtask(task_id=task_id)
         resp = jsonable_encoder(r)
         if not resp:
             raise HTTPException(status_code=404)
@@ -27,7 +27,7 @@ def get_task(task_id: str):
 @router.get("/taskqueue/")
 def get_task_list():
     try:
-        r = reds.getjoblist(q=False)
+        r = ntplm.getjoblist(q=False)
         resp = jsonable_encoder(r)
         return resp
     except Exception as e:
@@ -38,7 +38,7 @@ def get_task_list():
 @router.get("/taskqueue/{host}")
 def get_host_task_list(host: str):
     try:
-        r = reds.getjobliststatus(q=host)
+        r = ntplm.getjobliststatus(q=host)
         resp = jsonable_encoder(r)
         if not resp:
             raise HTTPException(status_code=404)
@@ -51,7 +51,7 @@ def get_host_task_list(host: str):
 @router.get("/workers/", response_model=List[WorkerResponse])
 def list_workers():
     try:
-        r = reds.get_workers()
+        r = ntplm.get_workers()
         resp = jsonable_encoder(r)
         return resp
     except Exception as e:
@@ -62,7 +62,7 @@ def list_workers():
 @router.post("/workers/kill/{name}")
 def kill_worker(name: str):
     try:
-        r = reds.kill_worker(worker_name=name)
+        r = ntplm.kill_worker(worker_name=name)
         resp = jsonable_encoder(r)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
@@ -72,7 +72,7 @@ def kill_worker(name: str):
 @router.get("/containers/pinned/", response_model=List)
 def list_pinned_containers():
     try:
-        r = reds.fetch_pinned_store()
+        r = ntplm.fetch_pinned_store()
         resp = jsonable_encoder(r)
         return resp
     except Exception as e:
@@ -83,7 +83,7 @@ def list_pinned_containers():
 # @router.delete("/containers/pinned/{hostname}")
 # def purge_pinned_containers_from_db(hostname: str):
 #     try:
-#         reds.purge_container_from_pinned_store(hostname)
+#         ntplm.purge_container_from_pinned_store(hostname)
 #     except Exception as e:
 #         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
@@ -91,6 +91,6 @@ def list_pinned_containers():
 # @router.post("/containers/deregister/{hostname}")
 # def deregister_workers_from_container(hostname: str):
 #     try:
-#         reds.deregister_worker(hostname)
+#         ntplm.deregister_worker(hostname)
 #     except Exception as e:
 #         raise HTTPException(status_code=500, detail=str(e).split('\n'))

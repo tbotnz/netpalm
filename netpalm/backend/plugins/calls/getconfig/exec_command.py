@@ -1,6 +1,6 @@
 import logging
 
-from netpalm.backend.core.utilities.rediz_meta import render_netpalm_payload
+from netpalm.backend.core.utilities.rediz_meta import render_netpalm_payload, write_mandatory_meta
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
@@ -8,6 +8,7 @@ from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
 from netpalm.backend.plugins.drivers.puresnmp.puresnmp_drvr import pursnmp
 from netpalm.backend.plugins.drivers.restconf.restconf import restconf
 from netpalm.backend.plugins.utilities.webhook.webhook import exec_webhook_func
+from netpalm.exceptions import NetpalmCheckError
 
 log = logging.getLogger(__name__)
 
@@ -26,8 +27,9 @@ def exec_command(**kwargs):
     else:
         commandlst = command
 
-    if not post_checks:
-        try:
+    try:
+        write_mandatory_meta()
+        if not post_checks:
             result = {}
             if lib == "netmiko":
                 netmik = netmko(**kwargs)
@@ -56,11 +58,8 @@ def exec_command(**kwargs):
                 rc.logout(sesh)
             else:
                 raise NotImplementedError(f"unknown 'library' parameter {lib}")
-        except Exception as e:
-            write_meta_error(f"{e}")
 
-    else:
-        try:
+        else:
             result = {}
             if lib == "netmiko":
                 netmik = netmko(**kwargs)
@@ -73,10 +72,11 @@ def exec_command(**kwargs):
                         post_check_result = netmik.sendcommand(sesh, [command])
                         for matchstr in postcheck["match_str"]:
                             if postcheck["match_type"] == "include" and matchstr not in str(post_check_result):
-                                write_meta_error(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
+                                raise NetpalmCheckError(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
                             if postcheck["match_type"] == "exclude" and matchstr in str(post_check_result):
-                                write_meta_error(f"PostCheck Failed: {matchstr} found in {post_check_result}")
+                                raise NetpalmCheckError(f"PostCheck Failed: {matchstr} found in {post_check_result}")
                 netmik.logout(sesh)
+
             elif lib == "napalm":
                 napl = naplm(**kwargs)
                 sesh = napl.connect()
@@ -88,10 +88,11 @@ def exec_command(**kwargs):
                         post_check_result = napl.sendcommand(sesh, [command])
                         for matchstr in postcheck["match_str"]:
                             if postcheck["match_type"] == "include" and matchstr not in str(post_check_result):
-                                write_meta_error(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
+                                raise NetpalmCheckError(f"PostCheck Failed: {matchstr} not found in {post_check_result}")
                             if postcheck["match_type"] == "exclude" and matchstr in str(post_check_result):
-                                write_meta_error(f"PostCheck Failed: {matchstr} found in {post_check_result}")
+                                raise NetpalmCheckError(f"PostCheck Failed: {matchstr} found in {post_check_result}")
                 napl.logout(sesh)
+
             elif lib == "ncclient":
                 ncc = ncclien(**kwargs)
                 sesh = ncc.connect()
@@ -102,14 +103,11 @@ def exec_command(**kwargs):
                 sesh = rc.connect()
                 result = rc.sendcommand(sesh)
                 rc.logout(sesh)
-        except Exception as e:
-            write_meta_error(f"{e}")
 
-    try:
         if webhook:
             current_jobdata = render_netpalm_payload(job_result=result)
             exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
     except Exception as e:
-        write_meta_error(f"{e}")
+        write_meta_error(e)
 
     return result

@@ -46,6 +46,9 @@ class NcclientDeviceDrivers(str):
 class NcclientDeviceParams(BaseModel):
     name: NcclientDeviceDrivers
 
+class NcclientManagerParams(BaseModel):
+    timeout: int
+
 
 class NcclientConnection(BaseModel):
     host: str
@@ -54,6 +57,7 @@ class NcclientConnection(BaseModel):
     port: int
     hostkey_verify: bool
     device_params: Optional[NcclientDeviceParams] = None
+    manager_params: Optional[NcclientManagerParams] = None
 
 
 class NcclientGetArgs(BaseModel):

@@ -1,5 +1,7 @@
-backend/plugins/extensibles/ntc-templates/
-*.pyc
-backend/plugins/extensibles/ntc-templates
 .vscode/
 .vscode/settings.json
+.idea
+*.pyc
+venv
+backend/plugins/extensibles/ntc-templates/
+backend/plugins/extensibles/ntc-templates

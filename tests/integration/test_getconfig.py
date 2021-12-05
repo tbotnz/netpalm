@@ -42,8 +42,7 @@ def test_getconfig_napalm_post_check():
         },
         "command":
         "show run | i hostname",
-        "queue_strategy":
-        "pinned",
+        "queue_strategy": "pinned",
         "post_checks": [{
             "match_type": "include",
             "get_config_args": {

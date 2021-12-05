@@ -9,9 +9,11 @@ from netpalm.backend.core.confload.confload import config
 from netpalm.backend.core.models.models import Script
 from netpalm.backend.core.models.task import Response
 from netpalm.backend.core.models.task import ResponseBasic
-from netpalm.backend.core.redis import reds
+
 from netpalm.backend.core.routes.routes import routes
 from netpalm.routers.route_utils import HttpErrorHandler
+
+from netpalm.backend.core.manager import ntplm
 
 router = APIRouter()
 
@@ -29,10 +31,7 @@ async def list_scripts():
 @router.post("/script", response_model=Response, status_code=201)
 @HttpErrorHandler()
 def execute_script(script: Script):
-    req_data = script.dict()
-    r = reds.execute_task(method="script", kwargs=req_data)
-    resp = jsonable_encoder(r)
-    return resp
+    return ntplm.execute_script(script)
 
 r = routes["ls"](fldr="script")
 for script in r["data"]["task_result"]["templates"]:
@@ -50,10 +49,7 @@ for script in r["data"]["task_result"]["templates"]:
     @router.post(f"/script/v1/{script}", response_model=Response, status_code=201)
     @HttpErrorHandler()
     def execute_script(script: model):
-        req_data = script.dict()
-        r = reds.execute_task(method="script", kwargs=req_data)
-        resp = jsonable_encoder(r)
-        return resp
+        return ntplm.execute_script(script)
 
 # get template list
 @router.get("/webhook", response_model=ResponseBasic)
