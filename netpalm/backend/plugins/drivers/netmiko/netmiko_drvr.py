@@ -1,7 +1,8 @@
 import logging
 
-from netmiko import ConnectHandler
+from netmiko import ConnectHandler, BaseConnection
 from netmiko.cisco_base_connection import CiscoBaseConnection
+from typing import Optional
 
 from netpalm.backend.core.confload.confload import config
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
@@ -69,22 +70,35 @@ class netmko:
                 response = session.send_config_set(comm)
 
             if not dry_run:
-                try:
-                    if self.commit_label:
-                        response += session.commit(label=self.commit_label)
-                    else:
-                        response += session.commit()
-                except (AttributeError, NotImplementedError):
-                    # commit not implemented try save_config
-                    response += session.save_config()
-                except Exception as e:
-                    write_meta_error(f"{e}")
+                response += self.try_commit_or_save(session)
 
             result = {}
             result["changes"] = response.split("\n")
             return result
+
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)
+
+    def try_commit_or_save(self, session: BaseConnection) -> Optional[str]:
+        """ Attempt to commit, failing that attempt to save.  If neither method exists, then the driver doesn't
+        support it, so not our problem and we can presume user is aware I think."""
+
+        result = None
+        try:
+            if self.commit_label:
+                result = session.commit(label=self.commit_label)
+            else:
+                result = session.commit()
+
+        except (NotImplementedError, AttributeError):  # Netmiko uses AttributeError sometimes
+            # commit not implemented try save_config
+            try:
+                session.set_base_prompt()  # this is needed if there's any chance you've changed the hostname
+                result = session.save_config()
+            except NotImplementedError:
+                pass
+
+        return result
 
     def logout(self, session):
         try:

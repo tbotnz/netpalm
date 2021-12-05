@@ -1,10 +1,13 @@
 import inspect
+from logging import getLogger
 
 from rq import get_current_job
 
 from netpalm.backend.core.confload.confload import config
 from netpalm.backend.core.models.task import Response
 from netpalm.exceptions import NetpalmMetaProcessedException
+
+log = getLogger(__name__)
 
 
 def exception_full_name(exception: BaseException):
@@ -27,6 +30,8 @@ def write_meta_error(exception: Exception):
     """custom exception handler for within an rpc job"""
     if isinstance(exception, NetpalmMetaProcessedException):
         raise exception from None  # Don't process the same exception twice
+
+    log.exception('`write_meta_error` processing error')
 
     job = get_current_job()
     job.meta["result"] = "failed"

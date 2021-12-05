@@ -59,7 +59,7 @@ def test_setconfig_netmiko(cisgo_helper: CisgoHelper):
         "config": ["hostname " + CISGO_NEW_HOSTNAME],
         "enable_mode": True
     }
-    res = helper.post_and_check('/setconfig/dry-run', pl)
+    res = helper.post_and_check('/setconfig', pl)
     matchstr = CISGO_NEW_HOSTNAME + "#"
     assert matchstr in res["changes"]
 
@@ -73,7 +73,7 @@ def test_setconfig_netmiko_multiple(cisgo_helper: CisgoHelper):
         "config": ["hostname yeti", "hostname bufoon"],
         "enable_mode": True
     }
-    res = helper.post_and_check('/setconfig/dry-run', pl)
+    res = helper.post_and_check('/setconfig', pl)
     assert len(res["changes"]) > 4
 
 
@@ -91,5 +91,5 @@ def test_setconfig_netmiko_j2(cisgo_helper):
             }
         }
     }
-    res = helper.post_and_check('/setconfig/dry-run', pl)
+    res = helper.post_and_check('/setconfig', pl)
     assert len(res["changes"]) > 6
