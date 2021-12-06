@@ -22,8 +22,7 @@ def test_prepare_vlan_service_environment():
     }
     reslist = helper.post_and_check('/service/vlan_service',pl)
     res = helper.check_many(reslist)
-    if res:
-        assert True
+    assert res
         
 @pytest.mark.service
 def test_create_vlan_service_instance():

@@ -8,7 +8,9 @@ from starlette.responses import RedirectResponse
 
 # load config
 from netpalm.backend.core.confload.confload import config
-from netpalm.backend.core.redis import reds
+
+from netpalm.backend.core.manager import ntplm
+
 from netpalm.routers.route_utils import HttpErrorHandler
 
 log = logging.getLogger(__name__)
@@ -31,8 +33,8 @@ async def ping():
         "type": "ping",
         "kwargs": {}
     }
-    rslt = reds.send_broadcast(json.dumps(worker_message))
-    # rslt = reds.send_broadcast("PING")  # only way to see "response" is look at logs
+    rslt = ntplm.send_broadcast(json.dumps(worker_message))
+    # rslt = ntplm.send_broadcast("PING")  # only way to see "response" is look at logs
     resp = jsonable_encoder(rslt)
     return resp
 
@@ -45,7 +47,7 @@ def flush_cache(fail: Optional[bool] = Query(False, title="Fail", description="F
         raise RuntimeError(f"Failing on Purpose")
     log.info(f"Flushing Cache")
     rslt = {
-        "cleared_records": int(reds.cache.clear())
+        "cleared_records": int(ntplm.cache.clear())
     }
     log.info(f"flush got this result: {rslt}")
     return rslt
@@ -61,7 +63,7 @@ def flush_cache_device(
 ):
     log.info(f"Flushing Cache for {cache_key}")
     rslt = {
-        "cleared_records": int(reds.clear_cache_for_host(cache_key=cache_key))
+        "cleared_records": int(ntplm.clear_cache_for_host(cache_key=cache_key))
     }
     log.info(f"flush got this result: {rslt}")
     return rslt
@@ -71,7 +73,7 @@ def flush_cache_device(
 @HttpErrorHandler()
 def list_cached_items():
     log.info(f"Getting cache info")
-    keys = reds.cache.keys()
+    keys = ntplm.cache.keys()
     rslt = {
         "cache": keys,
         "size": len(keys)
@@ -87,9 +89,9 @@ def get_cache_item(
                               description="may include prefix, rest of the key must be complete")
 ):
     log.info(f"Getting cache info for {cache_key}")
-    prefix = reds.cache.key_prefix
+    prefix = ntplm.cache.key_prefix
     cache_key = cache_key.replace(prefix, "")  # no way to stop cache from adding this right now, so ensure no duplicate
     rslt = {
-        cache_key: reds.cache.get(cache_key)
+        cache_key: ntplm.cache.get(cache_key)
     }
     return rslt

@@ -3,6 +3,7 @@ from unittest.mock import Mock
 import pytest
 from pytest_mock import MockerFixture
 
+from netpalm.exceptions import NetpalmMetaProcessedException
 from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
 from netpalm.backend.plugins.calls.getconfig.exec_command import exec_command
 
@@ -84,7 +85,7 @@ def test_netmko_config(netmiko_connection_handler: Mock, rq_job):
     assert mock_session.commit.called
     assert not mock_session.enable.called
 
-    del mock_session.commit
+    mock_session.commit.side_effect = Mock(side_effect=NotImplementedError())
     _ = netmiko_driver.config(mock_session, "hostname asdf")
     mock_session.send_config_set.assert_called_with(["hostname asdf"])
     assert mock_session.save_config.called
@@ -127,7 +128,7 @@ def test_netmiko_gc_exec_command_post_checks(netmiko_connection_handler: Mock, r
     for command, value in list(NETMIKO_COMMANDS.items())[:1]:
         assert result[command] == value.splitlines()
 
-    with pytest.raises(Exception):
+    with pytest.raises(NetpalmMetaProcessedException):
         result = exec_command(library="netmiko", command=command, connection_args=NETMIKO_C_ARGS, post_checks=[bad_post_check])
 
 

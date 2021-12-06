@@ -84,11 +84,27 @@ def hostname_from_config(config_lines: Union[List[str], str]) -> str:
 
 @pytest.mark.getconfig
 @pytest.mark.cisgo
-def test_getconfig_netmiko(cisgo_helper: CisgoHelper):
+def test_getconfig_netmiko_fifo(cisgo_helper: CisgoHelper):
     pl = {
         "library": "netmiko",
         "connection_args": cisgo_helper.netmiko_connection_args,
         "command": "show running-config",
+        # "cache": {"enabled": False}
+    }
+    res = helper.post_and_check('/getconfig', pl)
+    assert hostname_from_config(res["show running-config"]) == CISGO_DEFAULT_HOSTNAME
+    res = helper.post_and_check('/get', pl)
+    assert hostname_from_config(res["show running-config"]) == CISGO_DEFAULT_HOSTNAME
+
+
+@pytest.mark.getconfig
+@pytest.mark.cisgo
+def test_getconfig_netmiko_pinned(cisgo_helper: CisgoHelper):
+    pl = {
+        "library": "netmiko",
+        "connection_args": cisgo_helper.netmiko_connection_args,
+        "command": "show running-config",
+        "queue_strategy": "pinned",
         # "cache": {"enabled": False}
     }
     res = helper.post_and_check('/getconfig', pl)

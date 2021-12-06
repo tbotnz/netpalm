@@ -24,7 +24,7 @@
   "redis_cache_default_timeout": 300,
   "redis_cache_key_prefix": "NETPALM_RESULT_CACHE",
   "redis_update_log": "netpalm_extensibles_update_log",
-  "redis_tls_enabled": false,
+  "redis_tls_enabled": true,
   "redis_tls_cert_file": "netpalm/backend/core/security/cert/tls/redis.crt",
   "redis_tls_key_file": "netpalm/backend/core/security/cert/tls/redis.key",
   "redis_tls_ca_cert_file": "netpalm/backend/core/security/cert/tls/ca.crt",

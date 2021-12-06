@@ -9,9 +9,10 @@ from netpalm.backend.core.models.transaction_log import (
     TransactionLogEntryModel,
     TransactionLogEntryType,
 )
-from netpalm.backend.core.redis import reds, Rediz
+
+from netpalm.backend.core.manager import ntplm, NetpalmManager
 from netpalm.backend.core.utilities.rediz_kill_worker import kill_worker_pid
-from netpalm.backend.core.utilities.rediz_worker_controller import WorkerRediz
+from netpalm.backend.core.utilities.rediz_worker_controller import RedisWorker
 
 from netpalm.backend.plugins.utilities.textfsm.template import (
     listtemplates,
@@ -27,10 +28,10 @@ update_log_lock = multiprocessing.Lock()
 
 
 class UpdateLogProcessor:
-    def __init__(self, reds: Rediz):  # quotes to avoid import issues
+    def __init__(self, ntplm: NetpalmManager):  # quotes to avoid import issues
         self.lock = update_log_lock  # Purpose of this lock is to stop multiple processes (ex. gunicorn workers)
         # from processing the update log at once
-        self.log = reds.extn_update_log
+        self.log = ntplm.extn_update_log
         self.last_seq_number = (
             -1
         )  # last sequence number handled.  -1 == not initialized
@@ -77,7 +78,7 @@ class UpdateLogProcessor:
         return result
 
 
-update_log_processor = UpdateLogProcessor(reds)
+update_log_processor = UpdateLogProcessor(ntplm)
 
 
 def handle_echo(msg: str):
@@ -201,7 +202,7 @@ def broadcast_queue_worker(queue_name):
     try:
         log.info("Before listening for broadcasts, first check the log")
         update_log_processor.process_log()
-        wr = WorkerRediz()
+        wr = RedisWorker(config)
         pubsub = wr.pub_sub()
         pubsub.subscribe(queue_name)
 

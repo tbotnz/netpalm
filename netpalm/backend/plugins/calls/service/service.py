@@ -5,7 +5,7 @@ import json
 import requests
 
 from netpalm.backend.core.confload.confload import config
-from netpalm.backend.core.utilities.rediz_meta import write_meta_error
+from netpalm.backend.core.utilities.rediz_meta import write_meta_error_string, write_mandatory_meta
 from netpalm.backend.core.models.service import ServiceModelTemplate
 from netpalm.backend.plugins.utilities.jinja2.j2 import render_j2template
 
@@ -47,7 +47,7 @@ class service:
             self.template_json = data
             return True
         except Exception as e:
-            write_meta_error(f"validate_template: {e}")
+            write_meta_error_string(f"validate_template: {e}")
             log.error(f"validate_template: {e}")
 
     def execute_api_call(self, oper, payload):
@@ -68,11 +68,11 @@ class service:
             if res.status_code == 201:
                 return res.json()
             else:
-                write_meta_error(
+                write_meta_error_string(
                     f"error calling self api response {res.status_code}"
                     )
         except Exception as e:
-            write_meta_error(f"execute_api_call service: {e}")
+            write_meta_error_string(f"execute_api_call service: {e}")
             log.error(f"execute_api_call service: {e}")
 
     def execute_service(self):
@@ -115,11 +115,12 @@ def render_service(**kwargs):
     templat = kwargs.get("service_model")
     exeservice = None
     try:
+        write_mandatory_meta()
         s = service(kw=kwargs)
         res = s.validate_template(template_name=templat)
         if res:
             exeservice = s.execute_service()
     except Exception as e:
-        write_meta_error(f"render_service: {e}")
+        write_meta_error_string(f"render_service: {e}")
 
     return exeservice

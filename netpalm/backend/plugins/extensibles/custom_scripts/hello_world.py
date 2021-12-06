@@ -1,5 +1,4 @@
-
-#all functions need to be wrapped in the "run" function and pass in kwargs
+# all functions need to be wrapped in the "run" function and pass in kwargs
 # JSON example to send into the /script route is as below
 #
 # {
@@ -14,8 +13,10 @@ def run(**kwargs):
         # mandatory get of kwargs - payload comes through as {"kwargs": {"hello": "world"}}
         args = kwargs.get("kwargs")
         # access your vars here in a dict format - payload is now {"hello": "world"}
-        world = args.get("hello")
-        #reutn "world"
+        world = args["hello"]
+        # reutn "world"
         return world
+    except KeyError as e:
+        raise Exception(f"Required args: {e}")
     except Exception as e:
-        return e
+        raise Exception(e)

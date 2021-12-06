@@ -15,7 +15,8 @@ from pydantic import BaseModel
 
 from netpalm.backend.core.confload.confload import config
 from netpalm.backend.core.models.transaction_log import TransactionLogEntryType
-from netpalm.backend.core.redis import reds
+
+from netpalm.backend.core.manager import ntplm
 
 log = logging.getLogger(__name__)
 
@@ -159,7 +160,7 @@ def poison_host_cache(f):
         req_data = model.dict()
 
         cache_key = cache_key_from_req_data(req_data)
-        reds.clear_cache_for_host(cache_key)
+        ntplm.clear_cache_for_host(cache_key)
         return f(*args, **kwargs)
 
     return wrapper
@@ -182,10 +183,10 @@ def cacheable_model(f):
         cache_key = cache_key_from_req_data(req_data)
 
         if poison := cache_config.get("poison"):
-            reds.clear_cache_for_host(cache_key)
+            ntplm.clear_cache_for_host(cache_key)
 
         if cacheable := cache_config.get("enabled") and not poison:
-            if cache_result := reds.cache.get(cache_key):
+            if cache_result := ntplm.cache.get(cache_key):
                 return cache_result
 
         result = f(*args, **kwargs)
@@ -196,7 +197,7 @@ def cacheable_model(f):
                 cache_kwargs = {"timeout": ttl}
             else:
                 cache_kwargs = {}
-            reds.cache.set(cache_key, result, **cache_kwargs)
+            ntplm.cache.set(cache_key, result, **cache_kwargs)
 
         return result
 
@@ -221,12 +222,12 @@ def add_transaction_log_entry(entry_type: TransactionLogEntryType, data: Dict):
         "type": entry_type,
         "data": data
     }
-    reds.extn_update_log.add(item_dict)
+    ntplm.extn_update_log.add(item_dict)
     worker_message = {
         "type": "process_update_log",
         "kwargs": {}
     }
-    reds.send_broadcast(json.dumps(worker_message))
+    ntplm.send_broadcast(json.dumps(worker_message))
 
 
 def whitelist(f):
