@@ -85,7 +85,7 @@ def test_netmko_config(netmiko_connection_handler: Mock, rq_job):
     assert mock_session.commit.called
     assert not mock_session.enable.called
 
-    del mock_session.commit
+    mock_session.commit.side_effect = Mock(side_effect=NotImplementedError())
     _ = netmiko_driver.config(mock_session, "hostname asdf")
     mock_session.send_config_set.assert_called_with(["hostname asdf"])
     assert mock_session.save_config.called

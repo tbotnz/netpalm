@@ -11,7 +11,8 @@ log = logging.getLogger(__name__)
 helper = NetpalmTestHelper()
 
 CISGO_DEFAULT_HOSTNAME = "cisshgo1000v"
-CISGO_NEW_HOSTNAME = CISGO_DEFAULT_HOSTNAME.upper() + str(random.randint(100, 900))
+CISGO_NEW_HOSTNAME = CISGO_DEFAULT_HOSTNAME.upper() + str(
+    random.randint(100, 900))
 
 
 @pytest.fixture(scope="function")
@@ -28,7 +29,9 @@ def hostname_from_config(config_lines: Union[List[str], str]) -> str:
             continue
         command, *args = line.split()
         if command == "hostname":
-            hostname = ' '.join(args)  # this will false-match if there's weird whitespace in hostname like \t, etc
+            hostname = ' '.join(
+                args
+            )  # this will false-match if there's weird whitespace in hostname like \t, etc
             break
 
     else:
