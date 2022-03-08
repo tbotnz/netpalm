@@ -18,7 +18,7 @@ from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegist
 
 from netpalm.backend.core.confload.confload import config, Config
 from netpalm.backend.core.models.task import Response, WorkerResponse
-from netpalm.backend.core.models.service import ServiceModel
+from netpalm.backend.core.models.service import ServiceInstanceData, ServiceInstanceState
 from netpalm.backend.core.models.transaction_log import TransactionLogEntryModel, TransactionLogEntryType
 from netpalm.backend.core.routes import routes
 
@@ -382,11 +382,26 @@ class Rediz:
             r = self.sendtask(q=config.redis_fifo_q, exe=method, kwargs=kw)
         return r
 
-    def execute_service_task(self, metho, **kwargs):
+    def execute_create_service_task(self, metho, model, **kwargs):
         """service wrapper for execute task method"""
+
         kw = kwargs.get("kwargs")
-        resul = self.execute_task(method=metho, kwargs=kw)
-        serv = self.create_service_instance(raw_data=kw)
+        current_time = datetime.datetime.utcnow()
+        created_parsed_time = datetime.datetime.strftime(current_time, "%Y-%m-%d %H:%M:%S.%f")
+        u_uid_v = uuid.uuid4()
+
+        service_data = ServiceInstanceData(
+            service_meta={
+                "service_model": model,
+                "created_at": created_parsed_time,
+                "updated_at": None,
+                "service_id": f"{u_uid_v}"
+            },
+            service_data=kw
+        ).dict()
+
+        resul = self.execute_task(method=metho, kwargs=service_data)
+        serv = self.create_service_instance(raw_data=service_data, u_uid=u_uid_v)
         if serv:
             resul["data"]["service_id"] = serv
         return resul
@@ -611,14 +626,14 @@ class Rediz:
         if not killed:
             raise Exception(f"worker {worker_name} not found")
 
-    def create_service_instance(self, raw_data):
+    def create_service_instance(self, raw_data, u_uid):
         """creates a service id and stores it in the DB with the service
         payload"""
-        u_uid = uuid.uuid4()
         sid = f"{1}_{u_uid}_service_instance"
         exists = self.base_connection.get(sid)
         if not exists:
             raw_json = json.dumps(raw_data)
+            log.debug(f"create_service_instance: creating service instance {sid} with attrs {raw_json}")
             self.base_connection.set(sid, raw_json)
             return f"{u_uid}"
         else:
@@ -633,12 +648,33 @@ class Rediz:
         else:
             return exists
 
+    def update_service_instance_data(self, sid, new_data):
+        data = self.fetch_service_instance(sid)
+        if data:
+            sid_parsed = f"1_{sid}_service_instance"
+            # add a backup transaction thing prior to delete in future
+            self.base_connection.delete(sid_parsed)
+            current_time = datetime.datetime.utcnow()
+            created_parsed_time = datetime.datetime.strftime(current_time, "%Y-%m-%d %H:%M:%S.%f")
+            new_data["service_meta"]["updated_at"] = created_parsed_time
+            self.create_service_instance(raw_data=new_data, u_uid=sid)
+
+    def set_service_instance_status(self, sid, state: ServiceInstanceState):
+        log.debug(f"set_service_instance_status: {sid} {state}")
+        data = self.fetch_service_instance(sid)
+        if data:
+            service_json = json.loads(data)
+            service_json["service_meta"]["service_state"] = state
+            self.update_service_instance_data(sid, service_json)
+
     def fetch_service_instance_args(self, sid):
+        log.debug(f"fetch_service_instance_args: {sid}")
         """returns the args ONLY from the latest copy of the latest service"""
         service_inst_result = self.fetch_service_instance(sid)
         if service_inst_result:
+            log.debug(f"fetch_service_instance_args: {service_inst_result}")
             # scrub credentials
-            service_inst_json = json.loads(service_inst_result)["args"]
+            service_inst_json = json.loads(service_inst_result)
             json_scrub_dict = ["$.username", "$.password", "$.key"]
             for scrub_match in json_scrub_dict:
                 jsonpath_expr = parse(scrub_match)
@@ -653,7 +689,7 @@ class Rediz:
         sid_parsed = f"1_{sid}_service_instance"
         res = json.loads(self.fetch_service_instance(sid))
         res["operation"] = "delete"
-        result = self.execute_task(method="render_service", kwargs=res)
+        result = self.execute_task(method="service_delete", kwargs=res)
         self.base_connection.delete(sid_parsed)
         return result
 
@@ -662,7 +698,7 @@ class Rediz:
         sid_parsed = f"1_{sid}_service_instance"
         res = json.loads(self.fetch_service_instance(sid))
         res["operation"] = "create"
-        result = self.execute_task(method="render_service", kwargs=res)
+        result = self.execute_task(method="service_re_deploy", kwargs=res)
         return result
 
     def retrieve_service_instance(self, sid):
@@ -670,7 +706,7 @@ class Rediz:
         sid_parsed = f"1_{sid}_service_instance"
         res = json.loads(self.fetch_service_instance(sid))
         res["operation"] = "retrieve"
-        result = self.execute_task(method="render_service", kwargs=res)
+        result = self.execute_task(method="service_retrieve", kwargs=res)
         return result
 
     def validate_service_instance(self, sid):
@@ -678,7 +714,15 @@ class Rediz:
         sid_parsed = f"1_{sid}_service_instance"
         res = json.loads(self.fetch_service_instance(sid))
         res["operation"] = "validate"
-        result = self.execute_task(method="render_service", kwargs=res)
+        result = self.execute_task(method="service_validate", kwargs=res)
+        return result
+
+    def health_check_service_instance(self, sid):
+        """health check the service instances state against the network"""
+        sid_parsed = f"1_{sid}_service_instance"
+        res = json.loads(self.fetch_service_instance(sid))
+        res["operation"] = "validate"
+        result = self.execute_task(method="service_health_check", kwargs=res)
         return result
 
     def get_service_instances(self):
@@ -689,11 +733,7 @@ class Rediz:
             parsed_sid = sid_str.replace('1_', '').replace('_service_instance', '')
             sid_data = json.loads(self.fetch_service_instance(parsed_sid))
             if sid_data:
-                appendres = {
-                    "service_model": sid_data["service_model"],
-                    "service_id": parsed_sid
-                    }
-                result.append(appendres)
+                result.append(sid_data["service_meta"])
         return result
 
     def fetch_pinned_store(self):

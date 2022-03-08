@@ -12,7 +12,7 @@ class unvrsl:
     def __init__(self):
         self.routing_table = {
             "j2_config_templates": {"path": config.jinja2_config_templates, "extn": ".j2"},
-            "j2_service_templates": {"path": config.jinja2_service_templates, "extn": ".j2"},
+            "j2_service_templates": {"path": config.jinja2_service_templates, "extn": ".py"},
             "j2_webhook_templates": {"path": config.webhook_jinja2_templates, "extn": ".j2"},
             "ttp_templates": {"path": config.ttp_templates, "extn": ".ttp"},
             "custom_scripts": {"path": config.custom_scripts, "extn": ".py"},

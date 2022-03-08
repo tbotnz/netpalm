@@ -215,8 +215,8 @@ def remove_config_j2_templates(template: UnivsersalTemplateRemove):
         raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
 # get j2 service templates
-@router.get("/j2template/service/", response_model=ResponseBasic)
-async def list_service_j2_templates():
+@router.get("/template/service/", response_model=ResponseBasic)
+async def list_service_templates():
     try:
         r = routes["ls"](fldr="service")
         resp = jsonable_encoder(r)
@@ -225,8 +225,8 @@ async def list_service_j2_templates():
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
 # get a specfic template
-@router.get("/j2template/service/{tmpname}", response_model=ResponseBasic)
-async def return_specific_service_j2_template(tmpname: str):
+@router.get("/template/service/{tmpname}", response_model=ResponseBasic)
+async def return_specific_service_template(tmpname: str):
     try:
         send_payload = {
             "route_type": "j2_service_templates",
@@ -240,8 +240,8 @@ async def return_specific_service_j2_template(tmpname: str):
         raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
 # add j2 service template
-@router.post("/j2template/service/", response_model=ResponseBasic)
-def add_service_j2_templates(template: UnivsersalTemplateAdd):
+@router.post("/template/service/", response_model=ResponseBasic)
+def add_service_templates(template: UnivsersalTemplateAdd):
     try:
         req_data = template.dict()
         req_data["route_type"] = "j2_service_templates"
@@ -254,8 +254,8 @@ def add_service_j2_templates(template: UnivsersalTemplateAdd):
         raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
 # remove j2 service template
-@router.delete("/j2template/service/", status_code=204)
-def remove_service_j2_templates(template: UnivsersalTemplateRemove):
+@router.delete("/template/service/", status_code=204)
+def remove_service_templates(template: UnivsersalTemplateRemove):
     try:
         req_data = template.dict()
         req_data["route_type"] = "j2_service_templates"
@@ -326,15 +326,15 @@ async def get_j2_template_specific_config(tmpname: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
-# view contents of a service template
-@router.get("/j2template/service/{tmpname}", response_model=ResponseBasic)
-async def get_j2_template_specific_service(tmpname: str):
-    try:
-        r = routes["j2gettemplate"](tmpname, template_type="service")
-        resp = jsonable_encoder(r)
-        return resp
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e).split('\n'))
+# # view contents of a service template
+# @router.get("/j2template/service/{tmpname}", response_model=ResponseBasic)
+# async def get_j2_template_specific_service(tmpname: str):
+#     try:
+#         r = routes["j2gettemplate"](tmpname, template_type="service")
+#         resp = jsonable_encoder(r)
+#         return resp
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
 # view contents of a webhook template
 @router.get("/j2template/webhook/{tmpname}", response_model=ResponseBasic)
@@ -357,16 +357,16 @@ async def render_j2_template_config(tmpname: str, data: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
-# render contents of a service template
-@router.post("/j2template/render/service/{tmpname}", response_model=ResponseBasic, status_code=201)
-async def render_j2_template_service(tmpname: str, data: dict):
-    try:
-        req_data = data
-        r = routes["render_j2template"](tmpname, template_type="service", kwargs=req_data)
-        resp = jsonable_encoder(r)
-        return resp
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e).split('\n'))
+# # render contents of a service template
+# @router.post("/j2template/render/service/{tmpname}", response_model=ResponseBasic, status_code=201)
+# async def render_j2_template_service(tmpname: str, data: dict):
+#     try:
+#         req_data = data
+#         r = routes["render_j2template"](tmpname, template_type="service", kwargs=req_data)
+#         resp = jsonable_encoder(r)
+#         return resp
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
 # render contents of a webhook template
 @router.post("/j2template/render/webhook/{tmpname}", response_model=ResponseBasic, status_code=201)
