@@ -1,5 +1,11 @@
 import importlib
+import inspect
+
+from typing import Any
+
 import logging
+
+from pydantic import BaseModel
 
 from fastapi import APIRouter, Request, HTTPException
 
@@ -7,9 +13,12 @@ from netpalm.backend.core.confload.confload import config
 
 # load models
 from netpalm.backend.core.models.service import ServiceModel, ServiceInventoryResponse
-from netpalm.backend.core.models.task import ServiceResponse, Response
+from netpalm.backend.core.models.task import ServiceResponse, Response, ResponseBasic
 
 from netpalm.backend.core.manager import ntplm
+
+
+from netpalm.backend.plugins.calls.service.procedures import get_service
 
 # load routes
 from netpalm.backend.core.routes.routes import routes
@@ -20,44 +29,47 @@ router = APIRouter()
 log = logging.getLogger(__name__)
 
 
-@router.post("/service/{service_model}", response_model=ServiceResponse, status_code=201)
-@HttpErrorHandler()
-def create_service_instance(service_model: str, service: ServiceModel):
-    return ntplm.create_new_service_instance(service_model, service)
-
-
-@router.get("/service/instances/", response_model=ServiceInventoryResponse)
-@HttpErrorHandler()
+#@router.get("/service/instances/", response_model=ServiceInventoryResponse)
+@router.get("/service/instances/")
 def list_service_instances():
-    return ntplm.list_service_instances()
-
+    res = ntplm.list_service_instances()
+    if res["data"]["task_result"] is None:
+        raise HTTPException(status_code=404, detail=ResponseBasic(status="success", data={"task_result": None}).dict())
+    return res
 
 @router.get("/service/instance/{service_id}")
-@HttpErrorHandler()
 def get_service_instance(service_id: str):
     res = ntplm.get_service_instance(service_id)
     if res:
         return res
     else:
-        raise HTTPException(status_code=204, detail=f"{service_id} not found")
+        raise HTTPException(status_code=404, detail=ResponseBasic(status="success", data={"task_result": f"{service_id} not found"}).dict())
 
 
-@router.post("/service/instance/validate/{service_id}", response_model=Response, status_code=201)
-@HttpErrorHandler()
-def validate_service_instance_state(service_id: str):
-    return ntplm.validate_service_instance_state(service_id)
+r = routes["ls"](fldr="service")
+for service_model in r["data"]["task_result"]["templates"]:
+    try:
+        model_name = f"{service_model}"
+        model = get_service(model_name)["service_model"]
+    except Exception as e:
+        log.error(f"dynamic_service_route: no model found for {service_model} import error {e}")
+        model = ServiceModel
 
 
-@router.post("/service/instance/retrieve/{service_id}", response_model=Response, status_code=201)
-@HttpErrorHandler()
-def retrieve_service_instance_state(service_id: str):
-    return ntplm.retrieve_service_instance_state(service_id)
+    @router.post(f"/service/instance/create/{service_model}", response_model=ServiceResponse, status_code=201)
+    @HttpErrorHandler()
+    def create_service_instance(service: model, request: Request):
+        # url hack
+        service_model_name = f"{request.url.path}".split('/')[-1]
+        return ntplm.create_new_service_instance(service_model_name, service)
 
-
-@router.post("/service/instance/re-deploy/{service_id}", response_model=Response, status_code=201)
-@HttpErrorHandler()
-def redeploy_service_instance_state(service_id: str):
-    return ntplm.redeploy_service_instance_state(service_id)
+    @router.patch(f"/service/instance/update/{service_model}"+"/{service_id}", response_model=Response, status_code=201)
+    def update_service_instance_state(service: model, service_id: str, request: Request):
+        res = ntplm.update_service_instance(service_id, service)
+        if res:
+            return res
+        else:
+            raise HTTPException(status_code=404, detail=ResponseBasic(status="success", data={"task_result": f"{service_id} not found"}).dict())
 
 
 @router.post("/service/instance/delete/{service_id}", response_model=Response, status_code=201)
@@ -65,23 +77,27 @@ def redeploy_service_instance_state(service_id: str):
 def delete_service_instance_state(service_id: str):
     return ntplm.delete_service_instance_state(service_id)
 
-
-r = routes["ls"](fldr="service")
-for service_model in r["data"]["task_result"]["templates"]:
-    try:
-        model_name = f"{service_model}_model"
-        template_model_path_raw = config.jinja2_service_templates
-        template_model_path = template_model_path_raw.replace('/', '.') + model_name
-        module = importlib.import_module(template_model_path)
-        model = getattr(module, model_name)
-    except Exception as e:
-        log.error(f"dynamic_service_route: no model found for {service_model} import error {e}")
-        model = ServiceModel
+@router.post("/service/instance/redeploy/{service_id}", response_model=Response, status_code=201)
+def redeploy_service_instance_state(service_id: str):
+    res = ntplm.redeploy_service_instance_state(service_id)
+    if res:
+        return res
+    else:
+        raise HTTPException(status_code=404, detail=ResponseBasic(status="success", data={"task_result": f"{service_id} not found"}).dict())
 
 
-    @router.post(f"/service/v1/{service_model}", response_model=ServiceResponse, status_code=201)
-    @HttpErrorHandler()
-    def create_service_instance(service: model, request: Request):
-        # url hack
-        service_model_name = f"{request.url}".split('/')[-1]
-        return ntplm.create_new_service_instance(service_model_name, service)
+@router.post("/service/instance/validate/{service_id}", response_model=Response, status_code=201)
+def validate_service_instance_state(service_id: str):
+    res = ntplm.validate_service_instance_state(service_id)
+    if res:
+        return res
+    else:
+        raise HTTPException(status_code=404, detail=ResponseBasic(status="success", data={"task_result": f"{service_id} not found"}).dict())
+
+@router.post("/service/instance/healthcheck/{service_id}", response_model=Response, status_code=201)
+def health_check_service_instance_state(service_id: str):
+    res = ntplm.health_check_service_instance_state(service_id)
+    if res:
+        return res
+    else:
+        raise HTTPException(status_code=404, detail=ResponseBasic(status="success", data={"task_result": f"{service_id} not found"}).dict())

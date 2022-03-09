@@ -14,8 +14,8 @@ class ls:
             self.folder_dir = config.jinja2_config_templates
             self.strip = ".j2"
         elif folder == "service":
-            self.folder_dir = config.jinja2_service_templates
-            self.strip = ".j2"
+            self.folder_dir = config.python_service_templates
+            self.strip = ".py"
         elif folder == "webhook":
             self.folder_dir = config.webhook_jinja2_templates
             self.strip = ".j2"
