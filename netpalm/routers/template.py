@@ -214,57 +214,6 @@ def remove_config_j2_templates(template: UnivsersalTemplateRemove):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
-# get j2 service templates
-@router.get("/template/service/", response_model=ResponseBasic)
-async def list_service_templates():
-    try:
-        r = routes["ls"](fldr="service")
-        resp = jsonable_encoder(r)
-        return resp
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e).split('\n'))
-
-# get a specfic template
-@router.get("/template/service/{tmpname}", response_model=ResponseBasic)
-async def return_specific_service_template(tmpname: str):
-    try:
-        send_payload = {
-            "route_type": "j2_service_templates",
-            "name": tmpname
-        }
-        tmplate_mgr = unvrsl()
-        r = tmplate_mgr.get_template(payload=send_payload)
-        resp = jsonable_encoder(r)
-        return resp
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e).split("\n"))
-
-# add j2 service template
-@router.post("/template/service/", response_model=ResponseBasic)
-def add_service_templates(template: UnivsersalTemplateAdd):
-    try:
-        req_data = template.dict()
-        req_data["route_type"] = "j2_service_templates"
-        add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_push, data=req_data)
-        tmplate_mgr = unvrsl()
-        r = tmplate_mgr.add_template(payload=req_data)
-        resp = jsonable_encoder(r)
-        return resp
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e).split("\n"))
-
-# remove j2 service template
-@router.delete("/template/service/", status_code=204)
-def remove_service_templates(template: UnivsersalTemplateRemove):
-    try:
-        req_data = template.dict()
-        req_data["route_type"] = "j2_service_templates"
-        add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data)
-        tmplate_mgr = unvrsl()
-        r = tmplate_mgr.remove_template(payload=req_data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e).split("\n"))
-
 # get j2 webhook templates
 @router.get("/j2template/webhook/", response_model=ResponseBasic)
 async def list_webhook_j2_templates():
@@ -326,16 +275,6 @@ async def get_j2_template_specific_config(tmpname: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
-# # view contents of a service template
-# @router.get("/j2template/service/{tmpname}", response_model=ResponseBasic)
-# async def get_j2_template_specific_service(tmpname: str):
-#     try:
-#         r = routes["j2gettemplate"](tmpname, template_type="service")
-#         resp = jsonable_encoder(r)
-#         return resp
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e).split('\n'))
-
 # view contents of a webhook template
 @router.get("/j2template/webhook/{tmpname}", response_model=ResponseBasic)
 async def get_j2_template_specific_webhook(tmpname: str):
@@ -357,17 +296,6 @@ async def render_j2_template_config(tmpname: str, data: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
 
-# # render contents of a service template
-# @router.post("/j2template/render/service/{tmpname}", response_model=ResponseBasic, status_code=201)
-# async def render_j2_template_service(tmpname: str, data: dict):
-#     try:
-#         req_data = data
-#         r = routes["render_j2template"](tmpname, template_type="service", kwargs=req_data)
-#         resp = jsonable_encoder(r)
-#         return resp
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e).split('\n'))
-
 # render contents of a webhook template
 @router.post("/j2template/render/webhook/{tmpname}", response_model=ResponseBasic, status_code=201)
 async def render_j2_template_webhook(tmpname: str, data: dict):
@@ -378,8 +306,6 @@ async def render_j2_template_webhook(tmpname: str, data: dict):
         return resp
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
-
-# move this section in the future but i'm tired
 
 # add script file
 @router.post("/script/add/", response_model=ResponseBasic)
@@ -457,6 +383,47 @@ def remove_webhook_script_file(template: UnivsersalTemplateRemove):
     try:
         req_data = template.dict()
         req_data["route_type"] = "custom_webhooks"
+        add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data)
+        tmplate_mgr = unvrsl()
+        r = tmplate_mgr.remove_template(payload=req_data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split("\n"))
+
+# webhook service file
+@router.post("/service/add/", response_model=ResponseBasic)
+def add_service_file(template: UnivsersalTemplateAdd):
+    try:
+        req_data = template.dict()
+        req_data["route_type"] = "python_service_templates"
+        add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_push, data=req_data)
+        tmplate_mgr = unvrsl()
+        r = tmplate_mgr.add_template(payload=req_data)
+        resp = jsonable_encoder(r)
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split("\n"))
+
+# get a service template
+@router.get("/service/{tmpname}", response_model=ResponseBasic)
+async def return_service_script_file(tmpname: str):
+    try:
+        send_payload = {
+            "route_type": "python_service_templates",
+            "name": tmpname
+        }
+        tmplate_mgr = unvrsl()
+        r = tmplate_mgr.get_template(payload=send_payload)
+        resp = jsonable_encoder(r)
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e).split("\n"))
+
+# remove service file
+@router.delete("/service/remove/", status_code=204)
+def remove_service_file(template: UnivsersalTemplateRemove):
+    try:
+        req_data = template.dict()
+        req_data["route_type"] = "python_service_templates"
         add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data)
         tmplate_mgr = unvrsl()
         r = tmplate_mgr.remove_template(payload=req_data)

@@ -474,7 +474,9 @@ class Rediz:
                     }
                 }
                 for i in self.local_queuedb:
-                    response_object["data"]["task_id"].append(self.local_queuedb[i]["queue"].get_job_ids())
+                    res = self.local_queuedb[i]["queue"].get_job_ids()
+                    if res:
+                        response_object["data"]["task_id"].append(res)
                 return response_object
         except Exception as e:
             return e
@@ -738,7 +740,7 @@ class Rediz:
 
     def fetch_pinned_store(self):
         """returns ALL data from the pinned store"""
-        exists = self.base_connection.get(self.redis_pinned_store)
+        exists = self.base_connection.get(config.redis_pinned_store)
         result = json.loads(exists)
         return result
 

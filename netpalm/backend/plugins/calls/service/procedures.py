@@ -20,7 +20,7 @@ def get_service(service_name):
     """ imports a service class and its model """
     model_name = f"{service_name}"
     return_obj = {"service_model": None, "service_class": None}
-    template_model_path_raw = config.jinja2_service_templates
+    template_model_path_raw = config.python_service_templates
     template_model_path = template_model_path_raw.replace('/', '.') + model_name
     module = importlib.import_module(template_model_path)
     for name, obj in inspect.getmembers(module, inspect.isclass):

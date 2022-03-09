@@ -78,7 +78,7 @@ class Config:
         self.txtfsm_template_server = data["txtfsm_template_server"]
         self.custom_scripts = data["custom_scripts"]
         self.jinja2_config_templates = data["jinja2_config_templates"]
-        self.jinja2_service_templates = data["jinja2_service_templates"]
+        self.python_service_templates = data["python_service_templates"]
         self.self_api_call_timeout = data["self_api_call_timeout"]
         self.default_webhook_url = data["default_webhook_url"]
         self.default_webhook_ssl_verify = data["default_webhook_ssl_verify"]

@@ -13,7 +13,7 @@ from netpalm.backend.core.confload.confload import config
 
 # load models
 from netpalm.backend.core.models.service import ServiceModel, ServiceInventoryResponse
-from netpalm.backend.core.models.task import ServiceResponse, Response
+from netpalm.backend.core.models.task import ServiceResponse, Response, ResponseBasic
 
 from netpalm.backend.core.manager import ntplm
 
@@ -31,18 +31,19 @@ log = logging.getLogger(__name__)
 
 #@router.get("/service/instances/", response_model=ServiceInventoryResponse)
 @router.get("/service/instances/")
-@HttpErrorHandler()
 def list_service_instances():
-    return ntplm.list_service_instances()
+    res = ntplm.list_service_instances()
+    if res["data"]["task_result"] is None:
+        raise HTTPException(status_code=404, detail=ResponseBasic(status="success", data={"task_result": None}).dict())
+    return res
 
 @router.get("/service/instance/{service_id}")
-@HttpErrorHandler()
 def get_service_instance(service_id: str):
     res = ntplm.get_service_instance(service_id)
     if res:
         return res
     else:
-        raise HTTPException(status_code=204, detail=f"{service_id} not found")
+        raise HTTPException(status_code=404, detail=ResponseBasic(status="success", data={"task_result": f"{service_id} not found"}).dict())
 
 
 r = routes["ls"](fldr="service")

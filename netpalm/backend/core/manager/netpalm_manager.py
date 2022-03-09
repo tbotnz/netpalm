@@ -19,7 +19,7 @@ from netpalm.backend.core.models.napalm import NapalmSetConfig
 from netpalm.backend.core.models.ncclient import NcclientSetConfig
 from netpalm.backend.core.models.netmiko import NetmikoSetConfig
 from netpalm.backend.core.models.restconf import Restconf
-from netpalm.backend.core.models.task import Response
+from netpalm.backend.core.models.task import Response, ResponseBasic
 
 from netpalm.backend.core.models.service import ServiceInstanceData, ServiceInstanceState
 from netpalm.backend.core.models.task import ServiceResponse, Response
@@ -152,14 +152,19 @@ class NetpalmManager(Rediz):
     def list_service_instances(self):
         """ lists services in the netpalm service inventory """
         r = self.get_service_instances()
-        resp = jsonable_encoder(r)
+        if r:
+            formatted_result = ResponseBasic(status="success", data={"task_result": r}).dict()
+        else:
+            formatted_result = ResponseBasic(status="success", data={"task_result": None}).dict()
+        resp = jsonable_encoder(formatted_result)
         return resp
 
     def get_service_instance(self, service_id: str):
         """ gets a from the service inventory """
         r = self.fetch_service_instance_args(sid=service_id)
         if r:
-            resp = jsonable_encoder(r)
+            formatted_result = ResponseBasic(status="success", data={"task_result": r}).dict()
+            resp = jsonable_encoder(formatted_result)
             return resp
         else:
             return False
