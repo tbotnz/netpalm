@@ -1,6 +1,8 @@
 import time
 import json
 
+import logging
+
 from typing import Any
 
 from netpalm.backend.core.redis.rediz import Rediz
@@ -29,6 +31,8 @@ from netpalm.backend.core.models.models import Script
 from netpalm.backend.core.models.task import Response
 
 from netpalm.backend.plugins.utilities.webhook.webhook import exec_webhook_func
+
+log = logging.getLogger(__name__)
 
 
 class NetpalmManager(Rediz):
@@ -171,15 +175,21 @@ class NetpalmManager(Rediz):
 
     def validate_service_instance_state(self, service_id: str):
         """ runs the validate method on the service template """
-        r = self.validate_service_instance(sid=service_id)
-        resp = jsonable_encoder(r)
-        return resp
+        try:
+            r = self.validate_service_instance(sid=service_id)
+            resp = jsonable_encoder(r)
+            return resp
+        except Exception:
+            return False
 
     def health_check_service_instance_state(self, service_id: str):
         """ runs the validate method on the service template """
-        r = self.health_check_service_instance(sid=service_id)
-        resp = jsonable_encoder(r)
-        return resp
+        try:
+            r = self.health_check_service_instance(sid=service_id)
+            resp = jsonable_encoder(r)
+            return resp
+        except Exception:
+            return False
 
     def retrieve_service_instance_state(self, service_id: str):
         """ retrieves the service current state """
@@ -189,10 +199,13 @@ class NetpalmManager(Rediz):
 
     def redeploy_service_instance_state(self, service_id: str):
         """ redeploys the service instance """
-        self.set_service_instance_status(self.service_id, state="deploying")
-        r = self.redeploy_service_instance(sid=service_id)
-        resp = jsonable_encoder(r)
-        return resp
+        try:
+            self.set_service_instance_status(self.service_id, state="deploying")
+            r = self.redeploy_service_instance(sid=service_id)
+            resp = jsonable_encoder(r)
+            return resp
+        except Exception:
+            return False
 
     def delete_service_instance_state(self, service_id: str):
         """ deletes the service instance """
@@ -214,9 +227,11 @@ class NetpalmManager(Rediz):
             service_json["service_data"] = req_data
             service_json["service_meta"]["service_state"] = "deploying"
             self.update_service_instance_data(service_id, service_json)
-        r = self.execute_task(method="service_update", kwargs=service_json)
-        resp = jsonable_encoder(r)
-        return resp
+            r = self.execute_task(method="service_update", kwargs=service_json)
+            resp = jsonable_encoder(r)
+            return resp
+        else:
+            return False
 
     def retrieve_task_result(self, netpalm_response: Response):
         """ waits for the task to complete the returns the result """

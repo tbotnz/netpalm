@@ -64,26 +64,40 @@ for service_model in r["data"]["task_result"]["templates"]:
         return ntplm.create_new_service_instance(service_model_name, service)
 
     @router.patch(f"/service/instance/update/{service_model}"+"/{service_id}", response_model=Response, status_code=201)
-    @HttpErrorHandler()
     def update_service_instance_state(service: model, service_id: str, request: Request):
-        return ntplm.update_service_instance(service_id, service)
+        res = ntplm.update_service_instance(service_id, service)
+        if res:
+            return res
+        else:
+            raise HTTPException(status_code=404, detail=ResponseBasic(status="success", data={"task_result": f"{service_id} not found"}).dict())
 
-@router.delete("/service/instance/delete/{service_id}", response_model=Response, status_code=201)
+
+@router.post("/service/instance/delete/{service_id}", response_model=Response, status_code=201)
 @HttpErrorHandler()
 def delete_service_instance_state(service_id: str):
     return ntplm.delete_service_instance_state(service_id)
 
 @router.post("/service/instance/redeploy/{service_id}", response_model=Response, status_code=201)
-@HttpErrorHandler()
 def redeploy_service_instance_state(service_id: str):
-    return ntplm.redeploy_service_instance_state(service_id)
+    res = ntplm.redeploy_service_instance_state(service_id)
+    if res:
+        return res
+    else:
+        raise HTTPException(status_code=404, detail=ResponseBasic(status="success", data={"task_result": f"{service_id} not found"}).dict())
+
 
 @router.post("/service/instance/validate/{service_id}", response_model=Response, status_code=201)
-@HttpErrorHandler()
 def validate_service_instance_state(service_id: str):
-    return ntplm.validate_service_instance_state(service_id)
+    res = ntplm.validate_service_instance_state(service_id)
+    if res:
+        return res
+    else:
+        raise HTTPException(status_code=404, detail=ResponseBasic(status="success", data={"task_result": f"{service_id} not found"}).dict())
 
 @router.post("/service/instance/healthcheck/{service_id}", response_model=Response, status_code=201)
-@HttpErrorHandler()
 def health_check_service_instance_state(service_id: str):
-    return ntplm.health_check_service_instance_state(service_id)
+    res = ntplm.health_check_service_instance_state(service_id)
+    if res:
+        return res
+    else:
+        raise HTTPException(status_code=404, detail=ResponseBasic(status="success", data={"task_result": f"{service_id} not found"}).dict())
