@@ -29,4 +29,15 @@ def test_exec_script_failure():
     res = helper.post_and_check("/script", pl)
     res2 = helper.post_and_check_errors("/script", pl)
     assert res is None
-    assert res2 == ["Required args: 'hello'"]
+    assert res2 == [
+        # "Required args: 'hello'"
+
+        {
+            "exception_args": ["hello"],
+            "exception_class": "KeyError"
+        },
+        {
+            "exception_args": ["Required args: 'hello'"],
+            "exception_class": "Exception"
+        }
+    ]

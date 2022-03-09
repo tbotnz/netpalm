@@ -89,6 +89,10 @@ docker-compose command to force this to background, but it's handy to see this o
 
 ## Running Cisgo tests
 
+```
+docker-compose -f docker-compose.ci.yml exec netpalm-controller pytest -m "not fulllab" -vv tests/integration
+```
+
 We'll actually run our tests from another terminal now.
 
 We're actually going to execute these from inside the controller container. 

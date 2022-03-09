@@ -29,6 +29,8 @@ services:
       - redis
     networks:
       - "netpalm-network"
+#    deploy:
+#      replicas: 2
 
   worker-fifo:
     image: netpalm_netpalm-controller
@@ -50,7 +52,9 @@ services:
       - "netpalm-network"
 
   cisgo:
-    image: apcela/cisshgo:v0.1.0
+    image: apcela/cisshgo:v0.1.1
+    ports:
+        - "10005:10005"  # one port just for convenience in case you need to ssh from outside for some reason
     networks:
       - "netpalm-network"
 

@@ -1,7 +1,8 @@
 import logging
 
-from netmiko import ConnectHandler
+from netmiko import ConnectHandler, BaseConnection
 from netmiko.cisco_base_connection import CiscoBaseConnection
+from typing import Optional
 
 from netpalm.backend.core.confload.confload import config
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
@@ -25,7 +26,7 @@ class netmko:
             netmikoses = ConnectHandler(**self.connection_args)
             return netmikoses
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)
 
     def sendcommand(self, session=False, command=False):
         try:
@@ -35,7 +36,8 @@ class netmko:
                     # normalise the ttp template name for ease of use
                     if "ttp_template" in self.kwarg.keys():
                         if self.kwarg["ttp_template"]:
-                            template_name = config.ttp_templates + self.kwarg["ttp_template"] + ".ttp"
+                            template_name = config.ttp_templates + self.kwarg[
+                                "ttp_template"] + ".ttp"
                             self.kwarg["ttp_template"] = template_name
                     response = session.send_command(commands, **self.kwarg)
                     if response:
@@ -46,7 +48,7 @@ class netmko:
                         result[commands] = response.split("\n")
             return result
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)
 
     def config(self,
                session=False,
@@ -68,37 +70,39 @@ class netmko:
                 response = session.send_config_set(comm)
 
             if not dry_run:
-                # CiscoBaseConnection(BaseConnection)
-                # implements commit and save_config in child classes
-                if hasattr(session, "commit") and callable(session.commit):
-                    try:
-                        if self.commit_label:
-                            response += session.commit(label=self.commit_label)
-                        else:
-                            response += session.commit()
-                    except AttributeError:
-                        pass
-                    except Exception as e:
-                        write_meta_error(f"{e}")
-
-                elif hasattr(session, "save_config") and callable(
-                        session.save_config):
-                    try:
-                        response += session.save_config()
-                    except AttributeError:
-                        pass
-                    except Exception as e:
-                        write_meta_error(f"{e}")
+                response += self.try_commit_or_save(session)
 
             result = {}
             result["changes"] = response.split("\n")
             return result
+
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)
+
+    def try_commit_or_save(self, session: BaseConnection) -> Optional[str]:
+        """ Attempt to commit, failing that attempt to save.  If neither method exists, then the driver doesn't
+        support it, so not our problem and we can presume user is aware I think."""
+
+        result = None
+        try:
+            if self.commit_label:
+                result = session.commit(label=self.commit_label)
+            else:
+                result = session.commit()
+
+        except (NotImplementedError, AttributeError):  # Netmiko uses AttributeError sometimes
+            # commit not implemented try save_config
+            try:
+                session.set_base_prompt()  # this is needed if there's any chance you've changed the hostname
+                result = session.save_config()
+            except NotImplementedError:
+                pass
+
+        return result
 
     def logout(self, session):
         try:
             response = session.disconnect()
             return response
         except Exception as e:
-            write_meta_error(f"{e}")
+            write_meta_error(e)
