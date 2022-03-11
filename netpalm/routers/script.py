@@ -15,6 +15,8 @@ from netpalm.routers.route_utils import HttpErrorHandler
 
 from netpalm.backend.core.manager import ntplm
 
+from netpalm.routers.route_utils import error_handle_w_cache
+
 router = APIRouter()
 
 log = logging.getLogger(__name__)
@@ -29,7 +31,7 @@ async def list_scripts():
 
 
 @router.post("/script", response_model=Response, status_code=201)
-@HttpErrorHandler()
+@error_handle_w_cache
 def execute_script(script: Script):
     return ntplm.execute_script(script)
 
@@ -47,7 +49,7 @@ for script in r["data"]["task_result"]["templates"]:
 
 
     @router.post(f"/script/v1/{script}", response_model=Response, status_code=201)
-    @HttpErrorHandler()
+    @error_handle_w_cache
     def execute_script(script: model):
         return ntplm.execute_script(script)
 

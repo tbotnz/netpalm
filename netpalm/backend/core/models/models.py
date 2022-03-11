@@ -102,24 +102,6 @@ class SetConfig(BaseModel):
         }
 
 
-class Script(BaseModel):
-    script: str
-    args: Optional[dict] = None
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "script": "hello_world",
-                "args": {
-                    "hello": "world"
-                },
-                "queue_strategy": "fifo"
-            }
-        }
-
-
 class CacheConfig(BaseModel):
     enabled: bool = False
     ttl: Optional[int] = None
@@ -131,6 +113,24 @@ class CacheConfig(BaseModel):
                 'enabled': True,
                 'ttl': 300,
                 'poison': False
+            }
+        }
+
+class Script(BaseModel):
+    script: str
+    args: Optional[dict] = None
+    webhook: Optional[Webhook] = None
+    queue_strategy: Optional[QueueStrategy] = None
+    cache: Optional[CacheConfig] = {}
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "script": "hello_world",
+                "args": {
+                    "hello": "world"
+                },
+                "queue_strategy": "fifo"
             }
         }
 

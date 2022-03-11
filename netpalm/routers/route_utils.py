@@ -115,16 +115,19 @@ def serialized_for_hash(obj) -> str:
 def cache_key_from_req_data(req_data: dict, unsafe_logging: bool = False) -> str:
     """WARNING: unsafe_logging=True can dump plaintext passwords into logs!"""
 
-    connection_args = req_data["connection_args"]
-    library_args = req_data.get("args", {})  # still necessary because maybe not all models will have an 'args' key
-    host = connection_args.get("host")
-    port = connection_args.get("port")
-    command = req_data.get("command")
-    if command is None:
-        for subkey in ["uri", "filter"]:
-            if (value := library_args.get(subkey)) is not None:
-                command = value
-                break
+    connection_args_set = False
+    if req_data.get("connection_args", False):
+        connection_args_set = True
+        connection_args = req_data["connection_args"]
+        library_args = req_data.get("args", {})  # still necessary because maybe not all models will have an 'args' key
+        host = connection_args.get("host")
+        port = connection_args.get("port")
+        command = req_data.get("command")
+        if command is None:
+            for subkey in ["uri", "filter"]:
+                if (value := library_args.get(subkey)) is not None:
+                    command = value
+                    break
 
     req_data = deepcopy(req_data)
     for key in ["cache", "queue_strategy"]:
@@ -145,7 +148,12 @@ def cache_key_from_req_data(req_data: dict, unsafe_logging: bool = False) -> str
     hash = m.hexdigest()
     log.info(f"hashed key: {hash}")
 
-    cache_key = f'{host}:{port}:{command}:{hash}'
+    if connection_args_set:
+        cache_key = f'{host}:{port}:{command}:{hash}'
+        log.debug(f"cache_key_from_req_data: cache key {cache_key}")
+    else:
+        # script is used
+        cache_key = f"{req_data}"
     return cache_key
 
 
@@ -179,6 +187,8 @@ def cacheable_model(f):
         ][0]  # only take first model found because any more than that doesn't make sense
 
         req_data = model.dict()
+        log.debug(f"cacheable_model: req_data {req_data}")
+
         cache_config = req_data.get("cache", {})
         cache_key = cache_key_from_req_data(req_data)
 
@@ -187,6 +197,7 @@ def cacheable_model(f):
 
         if cacheable := cache_config.get("enabled") and not poison:
             if cache_result := ntplm.cache.get(cache_key):
+                # log.debug(f"cacheable_model: retrieving from cache with {cache_key}")
                 return cache_result
 
         result = f(*args, **kwargs)
