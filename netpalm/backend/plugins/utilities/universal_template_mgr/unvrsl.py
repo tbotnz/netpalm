@@ -1,11 +1,12 @@
 import base64
-import os
+import os, signal
 
 from typing import Dict
 
 from netpalm.backend.core.confload.confload import config
 from netpalm.backend.core.models.task import ResponseBasic
 
+from netpalm.backend.core.utilities.extensibles_reload import reload_extensibles_func
 
 class unvrsl:
 
@@ -25,6 +26,7 @@ class unvrsl:
             template_path = self.routing_table[payload["route_type"]]["path"] + payload["name"] + self.routing_table[payload["route_type"]]["extn"]
             with open(template_path, "w") as file:
                 file.write(raw_base)
+            reload_extensibles_func()
             resultdata = ResponseBasic(status="success", data={"task_result": {"added": payload["name"]}}).dict()
             return resultdata
         except Exception as e:
@@ -36,6 +38,7 @@ class unvrsl:
             template_path = self.routing_table[payload["route_type"]]["path"] + payload["name"] + self.routing_table[payload["route_type"]]["extn"]
             os.remove(template_path)
             resultdata = ResponseBasic(status="success", data={"task_result": {"removed": payload["name"]}}).dict()
+            reload_extensibles_func()
             return resultdata
         except Exception as e:
             error = ResponseBasic(status="error", data={"task_result": {"error": str(e)}}).dict()
