@@ -1,8 +1,13 @@
 import importlib
+
+import inspect
+
 import logging
 
 from fastapi import APIRouter
 from fastapi.encoders import jsonable_encoder
+
+from pydantic import BaseModel
 
 from netpalm.backend.core.confload.confload import config
 # load models
@@ -37,6 +42,8 @@ def execute_script(script: Script):
 
 r = routes["ls"](fldr="script")
 for script in r["data"]["task_result"]["templates"]:
+    model = Script
+    # first check whether there is the legacy _model.py file against the script name
     try:
         model_name = f"{script}_model"
         template_model_path_raw = config.custom_scripts
@@ -44,9 +51,26 @@ for script in r["data"]["task_result"]["templates"]:
         module = importlib.import_module(template_model_path)
         model = getattr(module, model_name)
     except Exception as e:
-        log.info(f"dynamic_script_route: no model found for {script} import error {e}")
+        log.info(f"dynamic_script_route: no legacy model found for {script} import error {e} attempting with newer model in file")
         model = Script
+        pass
 
+    # if this does not exist, check within the file to see if a model exists 
+    # clean this up at some point -_-'
+
+    try:
+        model_name = f"{script}"
+        template_model_path_raw = config.custom_scripts
+        template_model_path = template_model_path_raw.replace('/', '.') + model_name
+        module = importlib.import_module(template_model_path)
+        runscrp = getattr(module, "run")
+        for item in inspect.getfullargspec(runscrp):
+            if type(item) is dict:
+                for key, value in item.items():
+                    if issubclass(value, BaseModel):
+                        model = value
+    except Exception as e:
+        pass
 
     @router.post(f"/script/v1/{script}", response_model=Response, status_code=201)
     @error_handle_w_cache

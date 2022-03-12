@@ -5,6 +5,12 @@ from pydantic import BaseModel
 from netpalm.backend.core.models.models import QueueStrategy
 from netpalm.backend.core.models.models import Webhook
 
+#
+#
+# !!!! WARNING, this is considered a legacy way of doing this, check the example hello_world_embedded_pydanticmodel.py
+# for an updated method of defining models within the same file as the script !!!
+#
+#
 
 class hello_world_model_args(BaseModel):
     # your model goes here!

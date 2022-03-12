@@ -14,4 +14,5 @@ RUN pip3 install -r /code/controller_addtl_requirements.txt
 
 ADD . /code
 WORKDIR /code
-CMD gunicorn -c gunicorn.conf.py netpalm.netpalm_controller:app
+
+CMD gunicorn -p controller.pid -c gunicorn.conf.py netpalm.netpalm_controller:app

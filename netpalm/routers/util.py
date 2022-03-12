@@ -2,6 +2,8 @@ import json
 import logging
 from typing import Optional
 
+import os, signal
+
 from fastapi import APIRouter, Query, Path
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import RedirectResponse
@@ -10,6 +12,8 @@ from starlette.responses import RedirectResponse
 from netpalm.backend.core.confload.confload import config
 
 from netpalm.backend.core.manager import ntplm
+
+from netpalm.backend.core.utilities.extensibles_reload import reload_extensibles_func
 
 from netpalm.routers.route_utils import HttpErrorHandler
 
@@ -95,3 +99,9 @@ def get_cache_item(
         cache_key: ntplm.cache.get(cache_key)
     }
     return rslt
+
+
+@router.put("/reload-extensibles")
+def reload_extensibles():
+    result = reload_extensibles_func()
+    return result
