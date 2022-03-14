@@ -44,7 +44,7 @@ def execute_script(script: Script):
         req_data = script
     else:
         req_data = script.dict(exclude_none=True)
-    return ntplm.execute_script(req_data)
+    return ntplm.execute_script(**req_data)
 
 r = routes["ls"](fldr="script")
 for script in r["data"]["task_result"]["templates"]:
