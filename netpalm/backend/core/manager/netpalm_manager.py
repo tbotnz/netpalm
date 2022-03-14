@@ -31,6 +31,7 @@ from netpalm.backend.core.models.models import Script
 from netpalm.backend.core.models.task import Response
 
 from netpalm.backend.plugins.utilities.webhook.webhook import exec_webhook_func
+from netpalm.backend.plugins.calls.scriptrunner.script import script_model_finder
 
 log = logging.getLogger(__name__)
 
@@ -124,13 +125,10 @@ class NetpalmManager(Rediz):
         """ executes the restconf setconfig method async and returns the response obj """
         return self._set_config(setcfg, library="restconf")
 
-    def execute_script(self, script: Script):
+    def execute_script(self, **kwargs):
         """ executes the netpalm script method async and returns the response obj """
-        if isinstance(script, dict):
-            req_data = script
-        else:
-            req_data = script.dict(exclude_none=True)
-
+        log.debug(f"execute_script: called with {kwargs}")
+        req_data = kwargs
         # check if pinned required
         if req_data.get("queue_strategy") == "pinned":
             if isinstance(req_data.get("connection_args"), dict):

@@ -62,7 +62,6 @@ def write_mandatory_meta():
     job = get_current_job()
     if job is None:  # it will be None in many/all unit tests
         return
-
     job.meta["assigned_worker"] = config.worker_name
     job.save_meta()
 

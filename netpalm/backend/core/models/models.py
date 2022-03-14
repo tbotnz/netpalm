@@ -64,6 +64,7 @@ class SetConfig(BaseModel):
     pre_checks: Optional[List[GenericPrePostCheck]] = None
     post_checks: Optional[List[GenericPrePostCheck]] = None
     enable_mode: bool = False
+    ttl: Optional[int] = None
 
     class Config:
         schema_extra = {
@@ -122,6 +123,7 @@ class Script(BaseModel):
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
     cache: Optional[CacheConfig] = {}
+    ttl: Optional[int] = None
 
     class Config:
         schema_extra = {
@@ -134,6 +136,20 @@ class Script(BaseModel):
             }
         }
 
+class ScriptCustom(BaseModel):
+    script: str
+    webhook: Optional[Webhook] = None
+    queue_strategy: Optional[QueueStrategy] = None
+    cache: Optional[CacheConfig] = {}
+    ttl: Optional[int] = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "script": "hello_world",
+                "queue_strategy": "fifo"
+            }
+        }
 
 class GetConfig(BaseModel):
     library: LibraryName
@@ -144,6 +160,7 @@ class GetConfig(BaseModel):
     queue_strategy: Optional[QueueStrategy] = None
     post_checks: Optional[List[GenericPrePostCheck]] = []
     cache: Optional[CacheConfig] = {}
+    ttl: Optional[int] = None
 
     class Config:
         schema_extra = {

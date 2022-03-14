@@ -360,10 +360,18 @@ class Rediz:
         return resultdata
 
     def sendtask(self, q, exe, **kwargs):
+        
+        log.debug(f'sendtask: {kwargs["kwargs"]}')
+        ttl = kwargs["kwargs"].get("ttl")
         meta_template = self.get_redis_meta_template()
-        task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl,
-                                                           result_ttl=self.task_result_ttl, kwargs=kwargs["kwargs"],
-                                                           meta=meta_template, timeout=self.timeout)
+        if not ttl:
+            task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl,
+                                                            result_ttl=self.task_result_ttl, kwargs=kwargs["kwargs"],
+                                                            meta=meta_template, timeout=self.timeout)
+        else:
+            task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=ttl,
+                                                            result_ttl=ttl, kwargs=kwargs["kwargs"],
+                                                            meta=meta_template, timeout=ttl)
         resultdata = self.render_task_response(task)
         return resultdata
 
