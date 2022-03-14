@@ -40,7 +40,11 @@ async def list_scripts():
 @router.post("/script", response_model=Response, status_code=201)
 @error_handle_w_cache
 def execute_script(script: Script):
-    return ntplm.execute_script(script)
+    if isinstance(script, dict):
+        req_data = script
+    else:
+        req_data = script.dict(exclude_none=True)
+    return ntplm.execute_script(req_data)
 
 r = routes["ls"](fldr="script")
 for script in r["data"]["task_result"]["templates"]:
