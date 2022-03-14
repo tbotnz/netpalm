@@ -2,7 +2,7 @@
 from netpalm.backend.plugins.calls.dryrun.dryrun import dryrun
 from netpalm.backend.plugins.calls.getconfig.exec_command import exec_command
 from netpalm.backend.plugins.calls.getconfig.ncclient_get import ncclient_get
-from netpalm.backend.plugins.calls.scriptrunner.script import script_exec
+from netpalm.backend.plugins.calls.scriptrunner.script import script_kiddy
 from netpalm.backend.plugins.calls.service.procedures import (
     create,
     update,
@@ -27,7 +27,7 @@ routes = {
     "pushtemplate": pushtemplate,
     "removetemplate": removetemplate,
     "ls": list_files,
-    "script": script_exec,
+    "script": script_kiddy,
     "j2gettemplate": j2gettemplate,
     "render_j2template": render_j2template,
     "dryrun": dryrun,

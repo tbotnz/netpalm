@@ -38,6 +38,7 @@ class Restconf(BaseModel):
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
     cache: Optional[CacheConfig] = {}
+    ttl: Optional[int] = None
 
     class Config:
         schema_extra = {

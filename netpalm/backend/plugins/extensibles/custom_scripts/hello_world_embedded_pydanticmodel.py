@@ -1,13 +1,14 @@
 from typing import Optional, Any, List
-from pydantic import BaseModel
+from netpalm.backend.core.models.models import ScriptCustom
 
-class CustomScriptModel(BaseModel):
-    args: Optional[str] = None
+class MyCustomScriptModel(ScriptCustom):
+    script: str
+    test: Optional[str] = None
 
-def run(payload: CustomScriptModel):
+def run(payload: MyCustomScriptModel):
     try:
         # mandatory get of kwargs - payload comes through as {"kwargs": {"hello": "world"}}
-        args = payload.args
+        args = payload.test
         # reutn "world"
         return args
     except Exception as e:

@@ -74,6 +74,7 @@ class NetmikoGetConfig(BaseModel):
     queue_strategy: Optional[QueueStrategy] = None
     post_checks: Optional[List[GenericPrePostCheck]] = None
     cache: Optional[CacheConfig] = {}
+    ttl: Optional[int] = None
 
     class Config:
         schema_extra = {
@@ -109,6 +110,7 @@ class NetmikoSetConfig(BaseModel):
     pre_checks: Optional[List[GenericPrePostCheck]] = None
     post_checks: Optional[List[GenericPrePostCheck]] = None
     enable_mode: bool = False
+    ttl: Optional[int] = None
 
     class Config:
         schema_extra = {

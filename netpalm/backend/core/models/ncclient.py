@@ -71,6 +71,7 @@ class NcclientSetConfig(BaseModel):
     j2config: Optional[J2Config] = None
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
+    ttl: Optional[int] = None
 
     class Config:
         schema_extra = {
@@ -100,6 +101,7 @@ class NcclientGetConfig(BaseModel):
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
     cache: Optional[CacheConfig] = {}
+    ttl: Optional[int] = None
 
     class Config:
         schema_extra = {
@@ -134,6 +136,7 @@ class NcclientGet(BaseModel):
     args: NcclientGetArgs
     queue_strategy: Optional[QueueStrategy] = None
     cache: Optional[CacheConfig] = {}
+    ttl: Optional[int] = None
 
     class Config:
         schema_extra = {

@@ -39,6 +39,7 @@ class ServiceModel(BaseModel):
     operation: ServiceLifecycle
     args: dict
     queue_strategy: Optional[QueueStrategy] = None
+    ttl: Optional[int] = None
 
     class Config:
         schema_extra = {
