@@ -80,7 +80,7 @@ def script_kiddy(**kwargs):
         runscrp = getattr(module, "run")
     except Exception as e:
         log.error(f"script_kiddy: could not import {script_path_full_name} with {e}")
-        write_meta_error(f"script_kiddy: could not import {script_path_full_name} with {e}")
+        write_meta_error(e)
 
     try:
         log.debug(f'script_kiddy: attempting to run script {script_path_full_name}')
@@ -95,7 +95,7 @@ def script_kiddy(**kwargs):
             exec_webhook_func(jobdata=current_jobdata, webhook_payload=webhook)
     except Exception as e:
         log.error(f"script_kiddy: could not run script {script_path_full_name} with {e}")
-        write_meta_error(f"script_kiddy: could not run script {script_path_full_name} with {e}")
+        write_meta_error(e)
 
     return result
 
