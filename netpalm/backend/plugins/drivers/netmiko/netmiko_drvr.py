@@ -20,6 +20,7 @@ class netmko:
             if commit_label := self.kwarg.get("commit_label", None):
                 self.commit_label = commit_label
                 del self.kwarg["commit_label"]
+        self.enable_mode = kwargs.get("enable_mode", False)
 
     def connect(self):
         try:
@@ -30,6 +31,8 @@ class netmko:
 
     def sendcommand(self, session=False, command=False):
         try:
+            if self.enable_mode:
+                session.enable()
             result = {}
             for commands in command:
                 if self.kwarg:
@@ -46,6 +49,8 @@ class netmko:
                     response = session.send_command(commands)
                     if response:
                         result[commands] = response.split("\n")
+            if self.enable_mode:
+                session.exit_enable_mode()
             return result
         except Exception as e:
             write_meta_error(e)
