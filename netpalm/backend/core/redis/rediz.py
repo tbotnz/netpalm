@@ -192,7 +192,7 @@ class Rediz:
             self.cache = DisabledCache()
         self.extn_update_log = ExtnUpdateLog(self.base_connection, config.redis_update_log)
 
-    def append_network_queue_db(self, qn):
+    def __append_network_queue_db(self, qn):
         """appends to the networked queue db"""
         result = self.base_connection.get(self.networked_queuedb)
         tmpdb = json.loads(result)
@@ -200,17 +200,17 @@ class Rediz:
         jsresult = json.dumps(tmpdb)
         self.base_connection.set(self.networked_queuedb, jsresult)
 
-    def append_local_queue_db(self, qn):
+    def __append_local_queue_db(self, qn):
         """appends to the local queue db"""
         self.local_queuedb[qn] = {}
         self.local_queuedb[qn]["queue"] = Queue(qn, connection=self.base_connection)
         return self.local_queuedb[qn]["queue"]
 
-    def exists_in_local_queue_db(self, qn):
+    def __exists_in_local_queue_db(self, qn):
         q_exists_in_local_db = self.local_queuedb.get(qn, False)
         return q_exists_in_local_db
 
-    def worker_is_alive(self, q):
+    def __worker_is_alive(self, q):
         """checks if a worker exists on a given queue"""
         try:
             queue = Queue(q, connection=self.base_connection)
@@ -221,10 +221,10 @@ class Rediz:
                 log.info(f"worker required for {q}")
                 return False
         except Exception as e:
-            log.error(f"worker_is_alive: {e}")
+            log.error(f"__worker_is_alive: {e}")
             return False
 
-    def getqueue(self, host):
+    def __getqueue(self, host):
         """
             checks whether a queue exists and worker exists
             accross the controller, redis and worker node.
@@ -238,11 +238,11 @@ class Rediz:
             res = jsresult.get(host, False)
             # if exists on the networked db, check whether you have a local connection
             if res:
-                if not self.worker_is_alive(host):
+                if not self.__worker_is_alive(host):
                     return False
                 # create a local connection if required
-                if not self.exists_in_local_queue_db(qn=host):
-                    self.append_local_queue_db(qn=host)
+                if not self.__exists_in_local_queue_db(qn=host):
+                    self.__append_local_queue_db(qn=host)
                 return True
             else:
                 return False
@@ -250,7 +250,7 @@ class Rediz:
         except Exception as e:
             return e
 
-    def get_redis_meta_template(self):
+    def __get_redis_meta_template(self):
         """template for redis meta data"""
         meta_template = {
             "errors": [],
@@ -261,26 +261,26 @@ class Rediz:
         }
         return meta_template
 
-    def create_queue_worker(self, pinned_container_queue, pinned_worker_qname):
+    def __create_queue_worker(self, pinned_container_queue, pinned_worker_qname):
         """
             creates a local queue on the worker and executes a rpc to create a
             pinned worker on a remote container
         """
         from netpalm.netpalm_pinned_worker import pinned_worker_constructor
         try:
-            log.info(f"create_queue_worker: creating queue and worker {pinned_worker_qname}")
-            meta_template = self.get_redis_meta_template()
-            self.append_network_queue_db(qn=pinned_worker_qname)
+            log.info(f"__create_queue_worker: creating queue and worker {pinned_worker_qname}")
+            meta_template = self.__get_redis_meta_template()
+            self.__append_network_queue_db(qn=pinned_worker_qname)
             self.local_queuedb[pinned_container_queue]["queue"].enqueue_call(func=pinned_worker_constructor, args=(pinned_worker_qname,), meta=meta_template,
                                      ttl=self.ttl, result_ttl=self.task_result_ttl)
-            r = self.append_local_queue_db(qn=pinned_worker_qname)
+            r = self.__append_local_queue_db(qn=pinned_worker_qname)
             return r
         except Exception as e:
             return e
 
-    def reoute_and_create_q_worker(self, hst):
+    def __reoute_and_create_q_worker(self, hst):
         """routes a process to the correct container."""
-        qexists = self.getqueue(hst)
+        qexists = self.__getqueue(hst)
         if not qexists:
             # check for process availability:
             pinned_hosts = self.fetch_pinned_store()
@@ -289,9 +289,9 @@ class Rediz:
             for host in pinned_hosts:
                 if host["count"] < host["limit"]:
                     # create in the local db if required
-                    if not self.exists_in_local_queue_db(qn=host["pinned_listen_queue"]):
-                        self.append_local_queue_db(qn=host["pinned_listen_queue"])
-                    self.create_queue_worker(
+                    if not self.__exists_in_local_queue_db(qn=host["pinned_listen_queue"]):
+                        self.__append_local_queue_db(qn=host["pinned_listen_queue"])
+                    self.__create_queue_worker(
                                             pinned_container_queue=host["pinned_listen_queue"],
                                             pinned_worker_qname=hst
                                             )
@@ -304,7 +304,7 @@ class Rediz:
                 log.error(err)
                 raise Exception(f"{err}")
 
-    def render_task_response(self, task_job):
+    def __render_task_response(self, task_job):
         """formats and returns the task rpc jobs result"""
         created_at = str(task_job.created_at)
         enqueued_at = str(task_job.enqueued_at)
@@ -338,7 +338,7 @@ class Rediz:
             ended_at = None if ended_at == "None" else ended_at
 
         except Exception as e:
-            log.error(f"render_task_response : {str(e)}")
+            log.error(f"__render_task_response : {str(e)}")
             pass
 
         resultdata = Response(status="success", data={
@@ -359,11 +359,11 @@ class Rediz:
         }).dict()
         return resultdata
 
-    def sendtask(self, q, exe, **kwargs):
+    def __sendtask(self, q, exe, **kwargs):
         
-        log.debug(f'sendtask: {kwargs["kwargs"]}')
+        log.debug(f'__sendtask: {kwargs["kwargs"]}')
         ttl = kwargs["kwargs"].get("ttl")
-        meta_template = self.get_redis_meta_template()
+        meta_template = self.__get_redis_meta_template()
         if not ttl:
             task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=self.ttl,
                                                             result_ttl=self.task_result_ttl, kwargs=kwargs["kwargs"],
@@ -372,7 +372,7 @@ class Rediz:
             task = self.local_queuedb[q]["queue"].enqueue_call(func=self.routes[exe], description=q, ttl=ttl,
                                                             result_ttl=ttl, kwargs=kwargs["kwargs"],
                                                             meta=meta_template, timeout=ttl)
-        resultdata = self.render_task_response(task)
+        resultdata = self.__render_task_response(task)
         return resultdata
 
     def execute_task(self, method, **kwargs):
@@ -384,10 +384,10 @@ class Rediz:
             host = kw["connection_args"].get("host", False)
         queue_strategy = kw.get("queue_strategy", False)
         if queue_strategy == "pinned":
-            self.reoute_and_create_q_worker(hst=host)
-            r = self.sendtask(q=host, exe=method, kwargs=kw)
+            self.__reoute_and_create_q_worker(hst=host)
+            r = self.__sendtask(q=host, exe=method, kwargs=kw)
         else:
-            r = self.sendtask(q=config.redis_fifo_q, exe=method, kwargs=kw)
+            r = self.__sendtask(q=config.redis_fifo_q, exe=method, kwargs=kw)
         return r
 
     def execute_create_service_task(self, metho, model, **kwargs):
@@ -409,12 +409,12 @@ class Rediz:
         ).dict()
 
         resul = self.execute_task(method=metho, kwargs=service_data)
-        serv = self.create_service_instance(raw_data=service_data, u_uid=u_uid_v)
+        serv = self.__create_service_instance(raw_data=service_data, u_uid=u_uid_v)
         if serv:
             resul["data"]["service_id"] = serv
         return resul
 
-    def fetchsubtask(self, parent_task_object):
+    def __fetchsubtask(self, parent_task_object):
         """fetches nested subtasks for service driven tasks"""
         try:
             status = parent_task_object["data"]["task_status"]
@@ -422,7 +422,7 @@ class Rediz:
             task_errors = []
             for j in range(len(parent_task_object["data"]["task_result"])):
                 tempres = Job.fetch(parent_task_object["data"]["task_result"][j]["data"]["data"]["task_id"], connection=self.base_connection)
-                temprespobj = self.render_task_response(tempres)
+                temprespobj = self.__render_task_response(tempres)
                 if status != "started" or status != "queued":
                     if temprespobj["data"]["task_status"] == "started":
                         parent_task_object["data"]["task_status"] = temprespobj["data"]["task_status"]
@@ -446,9 +446,9 @@ class Rediz:
         log.info(f"fetching task: {task_id}")
         try:
             task = Job.fetch(task_id, connection=self.base_connection)
-            response_object = self.render_task_response(task)
+            response_object = self.__render_task_response(task)
             if "task_id" in str(response_object["data"]["task_result"]) and "operation" in str(response_object["data"]["task_result"]):
-                response_object = self.fetchsubtask(parent_task_object=response_object)
+                response_object = self.__fetchsubtask(parent_task_object=response_object)
             return response_object
         except Exception as e:
             return e
@@ -456,10 +456,10 @@ class Rediz:
     def getjoblist(self, q):
         """provides a list of all jobs in the queue"""
         try:
-            self.getqueue(q)
+            self.__getqueue(q)
             # if single host lookup
             if q:
-                if self.exists_in_local_queue_db(qn=q):
+                if self.__exists_in_local_queue_db(qn=q):
                     t = self.local_queuedb[q]["queue"].get_job_ids()
                     if t:
                         response_object = {
@@ -494,7 +494,7 @@ class Rediz:
         log.info(f"getting jobs and status: {q}")
         try:
             if q:
-                self.getqueue(q)
+                self.__getqueue(q)
                 task = self.local_queuedb[q]["queue"].get_job_ids()
                 response_object = {
                     "status": "success",
@@ -503,17 +503,17 @@ class Rediz:
                     }
                 }
                 # get startedjobs
-                startedjobs = self.getstartedjobs(self.local_queuedb[q]["queue"])
+                startedjobs = self.__getstartedjobs(self.local_queuedb[q]["queue"])
                 for job in startedjobs:
                     task.append(job)
 
                 # get finishedjobs
-                finishedjobs = self.getfinishedjobs(self.local_queuedb[q]["queue"])
+                finishedjobs = self.__getfinishedjobs(self.local_queuedb[q]["queue"])
                 for job in finishedjobs:
                     task.append(job)
 
                 # get failedjobs
-                failedjobs = self.getfailedjobs(self.local_queuedb[q]["queue"])
+                failedjobs = self.__getfailedjobs(self.local_queuedb[q]["queue"])
                 for job in failedjobs:
                     task.append(job)
 
@@ -521,7 +521,7 @@ class Rediz:
                     for job in task:
                         try:
                             jobstatus = Job.fetch(job, connection=self.base_connection)
-                            jobdata = self.render_task_response(jobstatus)
+                            jobdata = self.__render_task_response(jobstatus)
                             response_object["data"]["task_id"].append(jobdata)
                         except Exception as e:
                             return e
@@ -530,7 +530,7 @@ class Rediz:
         except Exception as e:
             return e
 
-    def getstartedjobs(self, q):
+    def __getstartedjobs(self, q):
         """returns list of started redis jobs"""
         log.info(f"getting started jobs: {q}")
         try:
@@ -540,7 +540,7 @@ class Rediz:
         except Exception as e:
             return e
 
-    def getfinishedjobs(self, q):
+    def __getfinishedjobs(self, q):
         """returns list of finished redis jobs"""
         log.info(f"getting finished jobs: {q}")
         try:
@@ -550,7 +550,7 @@ class Rediz:
         except Exception as e:
             return e
 
-    def getfailedjobs(self, q):
+    def __getfailedjobs(self, q):
         """returns list of failed redis jobs"""
         log.info(f"getting failed jobs: {q}")
         try:
@@ -636,14 +636,14 @@ class Rediz:
         if not killed:
             raise Exception(f"worker {worker_name} not found")
 
-    def create_service_instance(self, raw_data, u_uid):
+    def __create_service_instance(self, raw_data, u_uid):
         """creates a service id and stores it in the DB with the service
         payload"""
         sid = f"{1}_{u_uid}_service_instance"
         exists = self.base_connection.get(sid)
         if not exists:
             raw_json = json.dumps(raw_data)
-            log.debug(f"create_service_instance: creating service instance {sid} with attrs {raw_json}")
+            log.debug(f"__create_service_instance: creating service instance {sid} with attrs {raw_json}")
             self.base_connection.set(sid, raw_json)
             return f"{u_uid}"
         else:
@@ -667,7 +667,7 @@ class Rediz:
             current_time = datetime.datetime.utcnow()
             created_parsed_time = datetime.datetime.strftime(current_time, "%Y-%m-%d %H:%M:%S.%f")
             new_data["service_meta"]["updated_at"] = created_parsed_time
-            self.create_service_instance(raw_data=new_data, u_uid=sid)
+            self.__create_service_instance(raw_data=new_data, u_uid=sid)
 
     def set_service_instance_status(self, sid, state: ServiceInstanceState):
         log.debug(f"set_service_instance_status: {sid} {state}")

@@ -1,5 +1,9 @@
 ---
 version: 1
+filters:
+    secret_scrub:
+      (): netpalm.backend.core.confload.confload.ScrubFilter
+
 formatters:
   simple:
     # format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -10,6 +14,7 @@ handlers:
     level: DEBUG
     formatter: simple
     stream: ext://sys.stdout
+    filters: [secret_scrub]
 loggers:
   netmiko:
     level: DEBUG
