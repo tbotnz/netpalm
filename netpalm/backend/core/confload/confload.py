@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 import yaml
+import re
 
 from netpalm.backend.core.security.whitelist import DeviceWhitelist
 
@@ -17,6 +18,58 @@ log = logging.getLogger(__name__)
 CONFIG_FILENAME = "config/config.json"
 DEFAULTS_FILENAME = "config/defaults.json"
 
+class ScrubFilter(logging.Filter):
+
+    def __init__(self):
+        super(ScrubFilter, self).__init__()
+
+    def filter(self, record):
+        # handle msg
+        record.msg = self.scrub(record.msg)
+        # handle args
+        if isinstance(record.args, dict):
+            for k in record.args.keys():
+                record.args[k] = self.scrub(record.args[k])
+        else:
+            record.args = tuple(self.scrub(arg) for arg in record.args)
+
+        return True
+
+    def scrub(self, message):
+        lookup_table = [
+            # {'library': <LibraryName.napalm: 'napalm'>, 'connection_args': {'device_type': 'cisco_ios', 'community': '10.0.2.24', 'username': 'admin', 'password': 'admin'}, 'command': 'show run | i hostname', 'args': {}, 'webhook': {}, 'queue_strategy': <QueueStrategy.pinned: 'pinned'>, 'post_checks': [], 'cache': {}}
+            {
+                "pattern": r"(?:[aA][sS][sS][wW][oO][rR][dD](?:'|\"): (?:'|\")(.*?)(?:'|\"))",
+                "expected_group_index": 1
+            },
+            {
+                "pattern": r"(?:[oO][kK][eE][nN](?:'|\"): (?:'|\")(.*?)(?:'|\"))",
+                "expected_group_index": 1
+            },
+            {
+                "pattern": r"(?:[kK][eE][yY](?:'|\"): (?:'|\")(.*?)(?:'|\"))",
+                "expected_group_index": 1
+            },
+            {
+                "pattern": r"(?:[eE][cC][rR][eE][tT](?:'|\"): (?:'|\")(.*?)(?:'|\"))",
+                "expected_group_index": 1
+            },
+            {
+                "pattern": r"(?:[oO][mM][uU][nN][iI][tT][yY](?:'|\"): (?:'|\")(.*?)(?:'|\"))",
+                "expected_group_index": 1
+            },
+        ]
+        try:
+            result = message
+            if type(message) == str:
+                for lookup_val in lookup_table:
+                    m = re.search(lookup_val["pattern"], result)
+                    if m:
+                        match_str = m.group(lookup_val["expected_group_index"])
+                        result = re.sub(f"{match_str}", "******", result)
+        except Exception as e:
+            pass
+        return result
 
 def load_config_files(defaults_filename: str = DEFAULTS_FILENAME, config_filename: str = CONFIG_FILENAME) -> dict:
     data = {}
