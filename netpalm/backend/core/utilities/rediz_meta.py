@@ -41,7 +41,7 @@ def write_meta_error(exception: Exception):
     for exception in reversed(list(exception_chain)):
         task_error = {
             'exception_class': exception_full_name(exception),
-            'exception_args': exception.args
+            'exception_args': [arg for arg in exception.args if arg is not None]
         }
         job.meta["errors"].append(task_error)
 
