@@ -34,14 +34,22 @@ class netmko:
             if self.enable_mode:
                 session.enable()
             result = {}
-            for commands in command:
+            
+            if "ttp_template" in self.kwarg.keys():
+                if type(self.kwarg["ttp_template"]) == str:
+                    templatelst = [self.kwarg["ttp_template"]]
+                else:
+                    templatelst = self.kwarg["ttp_template"]
+
+            for idx, commands in enumerate(command):
                 if self.kwarg:
                     # normalise the ttp template name for ease of use
                     if "ttp_template" in self.kwarg.keys():
-                        if self.kwarg["ttp_template"]:
-                            template_name = config.ttp_templates + self.kwarg[
-                                "ttp_template"] + ".ttp"
+                        if idx < len(templatelst):
+                            template_name = config.ttp_templates + templatelst[idx] + ".ttp"
                             self.kwarg["ttp_template"] = template_name
+                        else:
+                            self.kwarg["use_ttp"] = False
                     response = session.send_command(commands, **self.kwarg)
                     if response:
                         result[commands] = response
