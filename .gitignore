@@ -7,3 +7,4 @@ backend/plugins/extensibles/ntc-templates/
 backend/plugins/extensibles/ntc-templates
 vagrant/*.log
 vagrant/roles
+vagrant/.vagrant
