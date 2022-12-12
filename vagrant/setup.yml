@@ -18,7 +18,7 @@
         groups: docker
         append: yes
 
-    - name: Clone netpalm into conductor directory
+    - name: Clone netpalm into /opt/netpalm
       git:
         repo: "https://github.com/tbotnz/netpalm.git"
         dest: /opt/netpalm/
