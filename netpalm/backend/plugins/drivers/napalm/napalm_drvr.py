@@ -1,6 +1,6 @@
 import logging
 
-import napalm
+from napalm import get_network_driver, driver
 
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
@@ -29,7 +29,7 @@ class naplm(NetpalmDriver):
 
     def connect(self):
         try:
-            driver = napalm.get_network_driver(self.driver)
+            driver = get_network_driver(self.driver)
             napalmses = driver(**self.connection_args)
             return napalmses
         except Exception as e:
