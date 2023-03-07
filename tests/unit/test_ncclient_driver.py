@@ -107,7 +107,7 @@ def test_ncclient_getconfig(ncclient_manager: Mock, rq_job):
     }
     ncclient_driver = ncclien(args=args, connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
-    result = ncclient_driver.getconfig(sesh)
+    result = ncclient_driver.sendcommand(sesh)
     sesh.get_config.assert_called_with(**args)
     assert result["get_config"] is sesh.get_config().data_xml
 
@@ -123,7 +123,7 @@ def test_ncclient_getconfig_rjson(ncclient_manager: Mock, rq_job, xml_parse):
     }
     ncclient_driver = ncclien(args=args.copy(), connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
-    result = ncclient_driver.getconfig(sesh)
+    result = ncclient_driver.sendcommand(sesh)
     sesh.get_config.assert_called_with(
         source=args["source"], filter=args["filter"]
     )  # excluding render_json
@@ -141,7 +141,7 @@ def test_ncclient_getconfig_rpc(ncclient_manager: Mock, rq_job):
     }
     ncclient_driver = ncclien(args=args.copy(), connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
-    result = ncclient_driver.getconfig(sesh)
+    result = ncclient_driver.sendcommand(sesh)
     sesh.rpc.assert_called_with(**args)
     assert result["get_config"] is sesh.rpc().data_xml
 
@@ -158,7 +158,7 @@ def test_ncclient_getconfig_rpc_rjson(ncclient_manager: Mock, rq_job, xml_parse)
     }
     ncclient_driver = ncclien(args=args.copy(), connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
-    result = ncclient_driver.getconfig(sesh)
+    result = ncclient_driver.sendcommand(sesh)
     sesh.rpc.assert_called_with(
         source=args["source"], filter=args["filter"], rpc=True
     )  # excluding render_json
