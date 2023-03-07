@@ -7,7 +7,7 @@ from netpalm.backend.core.utilities.rediz_meta import (
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
-from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
+from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr_new import netmko
 from netpalm.backend.plugins.drivers.puresnmp.puresnmp_drvr import pursnmp
 from netpalm.backend.plugins.drivers.restconf.restconf import restconf
 from netpalm.backend.core.utilities.webhook.webhook import exec_webhook_func

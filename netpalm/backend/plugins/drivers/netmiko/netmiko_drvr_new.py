@@ -1,3 +1,4 @@
+from netpalm.backend.core.utilities.driver.netpalm_driver import NetpalmDriver
 import logging
 
 from netmiko import ConnectHandler, BaseConnection
@@ -10,7 +11,7 @@ from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 log = logging.getLogger(__name__)
 
 
-class netmko:
+class netmko(NetpalmDriver):
     def __init__(self, **kwargs):
         self.kwarg = kwargs.get("args", False)
         self.connection_args = kwargs.get("connection_args", False)

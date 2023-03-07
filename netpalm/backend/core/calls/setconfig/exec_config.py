@@ -5,7 +5,7 @@ from netpalm.backend.core.utilities.rediz_meta import (
 )
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
-from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
+from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr_new import netmko
 from netpalm.backend.plugins.drivers.restconf.restconf import restconf
 from netpalm.backend.core.utilities.jinja2.j2 import render_j2template
 from netpalm.backend.core.utilities.webhook.webhook import exec_webhook_func
