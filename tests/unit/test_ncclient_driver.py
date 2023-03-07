@@ -1,7 +1,6 @@
 from typing import List
 from unittest.mock import Mock, MagicMock
 
-from napalm.base.base import NetworkDriver
 import pytest
 from pytest_mock import MockerFixture
 
