@@ -1,9 +1,12 @@
-from redis import Redis
-from rq import Queue, Connection, Worker
+
 import socket
 import json
 import logging
 import uuid
+
+from redis import Redis
+from redis.exceptions import ConnectionError
+from rq import Queue, Connection, Worker
 
 from names_generator import generate_name
 
@@ -41,6 +44,8 @@ class RedisWorker:
                 ssl_ca_certs=config.redis_tls_ca_cert_file,
                 socket_connect_timeout=config.redis_socket_connect_timeout,
                 socket_keepalive=config.redis_socket_keepalive,
+                retry_on_timeout=True,
+                retry_on_error=[ConnectionError],
             )
         else:
             self.base_connection = Redis(
@@ -49,6 +54,8 @@ class RedisWorker:
                 password=self.key,
                 socket_connect_timeout=config.redis_socket_connect_timeout,
                 socket_keepalive=config.redis_socket_keepalive,
+                retry_on_timeout=True,
+                retry_on_error=[ConnectionError],
             )
 
         self.hostname = socket.gethostname()
@@ -78,10 +85,11 @@ class RedisWorker:
         result = self.base_connection.pubsub()
         return result
 
-
     def _listen(self, queue_name):
-        log.debug(f'This worker name is: {self.worker_name}')
-        self.config.worker_name = self.worker_name  # register our name for other modules to reference
+        log.debug(f"This worker name is: {self.worker_name}")
+        self.config.worker_name = (
+            self.worker_name
+        )  # register our name for other modules to reference
         queue = Queue(queue_name)
         worker = Worker(queue, name=self.worker_name)
         worker.work()
@@ -137,7 +145,7 @@ class RedisProcessWorker(RedisWorker):
                 hostname=self.hostname,
                 count=0,
                 limit=self.pinned_process_per_node,
-                pinned_listen_queue=self.queue_name
+                pinned_listen_queue=self.queue_name,
             ).dict()
             rjson.append(data)
             # log.info(rjson)

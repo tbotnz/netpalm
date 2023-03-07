@@ -12,6 +12,7 @@ from cachelib import RedisCache
 import uuid
 
 from redis import Redis
+from redis.exceptions import ConnectionError
 from rq import Queue, Worker
 from rq.job import Job
 from rq.registry import StartedJobRegistry, FinishedJobRegistry, FailedJobRegistry
@@ -146,7 +147,9 @@ class Rediz:
                                         ssl_certfile=config.redis_tls_cert_file,
                                         ssl_ca_certs=config.redis_tls_ca_cert_file,
                                         socket_connect_timeout=config.redis_socket_connect_timeout,
-                                        socket_keepalive=config.redis_socket_keepalive
+                                        socket_keepalive=config.redis_socket_keepalive,
+                                        retry_on_timeout=True,
+                                        retry_on_error=[ConnectionError]
                                         )
         else:
             self.base_connection = Redis(
@@ -154,7 +157,9 @@ class Rediz:
                                         port=self.port,
                                         password=self.key,
                                         socket_connect_timeout=config.redis_socket_connect_timeout,
-                                        socket_keepalive=config.redis_socket_keepalive
+                                        socket_keepalive=config.redis_socket_keepalive,
+                                        retry_on_timeout=True,
+                                        retry_on_error=[ConnectionError]
                                         )
 #        self.base_q = Queue(self.core_q, connection=self.base_connection)
         self.networked_queuedb = config.redis_queue_store
