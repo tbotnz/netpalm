@@ -31,6 +31,7 @@ def driver_auto_loader():
                         if driver_class != NetpalmDriver:
                             try:
                                 driver_map[driver_class.driver_name] = driver_class
+                                log.debug(f"loaded driver: {driver_class.driver_name}")
                             except Exception as e:
                                 log.error(f"unable to load driver with error: {e}")
     return driver_map

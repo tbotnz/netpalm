@@ -78,7 +78,7 @@ class netmko(NetpalmDriver):
                 response = session.send_config_set(comm)
 
             if not dry_run:
-                response += self.try_commit_or_save(session)
+                response += self.__try_commit_or_save(session)
 
             result = {}
             result["changes"] = response.split("\n")
@@ -87,7 +87,7 @@ class netmko(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def try_commit_or_save(self, session: BaseConnection) -> Optional[str]:
+    def __try_commit_or_save(self, session: BaseConnection) -> Optional[str]:
         """Attempt to commit, failing that attempt to save.  If neither method exists, then the driver doesn't
         support it, so not our problem and we can presume user is aware I think."""
 

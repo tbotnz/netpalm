@@ -1,13 +1,18 @@
+import logging
+
 import napalm
 
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
+
+log = logging.getLogger(__name__)
 
 
 class naplm(NetpalmDriver):
     driver_name = "napalm"
 
     def __init__(self, **kwargs):
+        log.debug(f"initializing napalm driver with args: {kwargs}")
         self.connection_args = kwargs.get("connection_args", False)
         # convert the netmiko naming format to the native napalm format
         driver_lookup = {
@@ -31,6 +36,7 @@ class naplm(NetpalmDriver):
             write_meta_error(e)
 
     def sendcommand(self, session=False, command=False):
+        log.debug(f"running send command on napalm driver: {session} {command}")
         try:
             result = {}
             session.open()

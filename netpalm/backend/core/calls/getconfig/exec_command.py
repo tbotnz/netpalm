@@ -27,6 +27,8 @@ def exec_command(**kwargs):
     else:
         commandlst = command
 
+    log.debug(f"driver_map: {driver_map}")
+
     if not driver_map.get(lib):
         raise NotImplementedError(f"unknown 'driver' {lib}")
 
