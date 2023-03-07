@@ -95,7 +95,7 @@ class ncclien(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def editconfig(self, session=False, dry_run=False):
+    def config(self, session=False, dry_run=False):
         try:
             result = {}
             if self.kwarg:

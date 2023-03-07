@@ -165,7 +165,7 @@ def test_ncclient_getconfig_rpc_rjson(ncclient_manager: Mock, rq_job, xml_parse)
     assert result["get_config"] is xml_parse()
 
 
-def test_ncclient_editconfig(ncclient_manager: Mock, rq_job):
+def test_ncclient_config(ncclient_manager: Mock, rq_job):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     args = {
         "source": "running",
@@ -175,14 +175,14 @@ def test_ncclient_editconfig(ncclient_manager: Mock, rq_job):
     }
     ncclient_driver = ncclien(args=args, connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
-    result = ncclient_driver.editconfig(sesh)
+    result = ncclient_driver.config(sesh)
     sesh.edit_config.assert_called_with(**args)
     assert result["edit_config"] is sesh.edit_config().xml
     assert sesh.commit.called
     assert not sesh.discard_changes.called
 
 
-def test_ncclient_editconfig_rjson(ncclient_manager: Mock, rq_job, xml_parse):
+def test_ncclient_config_rjson(ncclient_manager: Mock, rq_job, xml_parse):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     args = {
         "source": "running",
@@ -193,14 +193,14 @@ def test_ncclient_editconfig_rjson(ncclient_manager: Mock, rq_job, xml_parse):
     }
     ncclient_driver = ncclien(args=args.copy(), connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
-    result = ncclient_driver.editconfig(sesh)
+    result = ncclient_driver.config(sesh)
     sesh.edit_config.assert_called_with(
         source=args["source"], filter=args["filter"]
     )  # excluding render_json
     assert result["edit_config"] is xml_parse()
 
 
-def test_ncclient_editconfig_dry_run(ncclient_manager: Mock, rq_job):
+def test_ncclient_config_dry_run(ncclient_manager: Mock, rq_job):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     args = {
         "source": "running",
@@ -210,7 +210,7 @@ def test_ncclient_editconfig_dry_run(ncclient_manager: Mock, rq_job):
     }
     ncclient_driver = ncclien(args=args, connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
-    result = ncclient_driver.editconfig(sesh, dry_run=True)
+    result = ncclient_driver.config(sesh, dry_run=True)
     sesh.edit_config.assert_called_with(**args)
     assert result["edit_config"] is sesh.edit_config().xml
     assert not sesh.commit.called
