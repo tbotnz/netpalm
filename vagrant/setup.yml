@@ -1,0 +1,32 @@
+---
+- hosts: all
+  vars:
+    pip_install_packages:
+      - name: docker
+    ansible_python_interpreter: /usr/bin/python3
+    docker_install_compose_plugin: true
+    docker_compose_package: docker-compose-plugin
+    docker_compose_package_state: present
+  roles:
+    - geerlingguy.pip
+    - geerlingguy.docker
+  become: true
+  tasks:
+    - name: add vagrant user to docker group
+      user:
+        name: vagrant
+        groups: docker
+        append: yes
+    - name: Clone netpalm into /opt/netpalm
+      git:
+        repo: "https://github.com/tbotnz/netpalm.git"
+        dest: /opt/netpalm/
+        force: true
+    - name: Build netpalm - [ This may take a while ] !
+      ansible.builtin.shell:
+        cmd: docker compose build
+        chdir: /opt/netpalm
+    - name: Run netpalm
+      ansible.builtin.shell:
+        cmd: docker compose up -d
+        chdir: /opt/netpalm
