@@ -250,33 +250,8 @@ netpalm comes with a [Postman Collection](https://documenter.getpostman.com/view
 
 ## Configuration
 
-Edit the `config/config.json` file to change any parameters
+Edit the `config/config.json` file to change any parameters ( see `defaults.json` for example )
 
-```
-{
-    "api_key": "2a84465a-cf38-46b2-9d86-b84Q7d57f288",
-    "api_key_name" : "x-api-key",
-    "cookie_domain" : "netpalm.local",
-    "listen_port": 9000,
-    "listen_ip":"0.0.0.0",
-    "gunicorn_workers":3,
-    "redis_task_ttl":500,
-    "redis_task_timeout":500,
-    "redis_server":"redis",
-    "redis_port":6379,
-    "redis_core_q":"process",
-    "redis_fifo_q":"fifo",
-    "redis_queue_store":"netpalm_queue_store",
-    "pinned_process_per_node":100,
-    "fifo_process_per_node":10,
-    "txtfsm_index_file":"backend/plugins/ntc-templates/index",
-    "txtfsm_template_server":"http://textfsm.nornir.tech",
-    "custom_scripts":"backend/plugins/custom_scripts/",
-    "jinja2_config_templates":"backend/plugins/jinja2_templates/",
-    "python_service_templates":"backend/plugins/services/",
-    "self_api_call_timeout":15
-}
-```
 
 ## Installation
 
