@@ -4,17 +4,21 @@ import requests
 
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 
+from netpalm.backend.core.utilities.driver.netpalm_driver import NetpalmDriver
 
-class restconf:
 
+class restconf(NetpalmDriver):
     def __init__(self, **kwargs):
-        self.connection_args = kwargs.get('connection_args', False)
+        self.connection_args = kwargs.get("connection_args", False)
         self.host = self.connection_args.get("host", False)
         del self.connection_args["host"]
-        self.kwarg = kwargs.get('args', False)
+        self.kwarg = kwargs.get("args", False)
         self.port = self.connection_args.get("port", False)
         del self.connection_args["port"]
-        self.default_headers = {'Content-Type': 'application/vnd.yang.data+json', 'Accept': 'application/vnd.yang.data+json'}
+        self.default_headers = {
+            "Content-Type": "application/vnd.yang.data+json",
+            "Accept": "application/vnd.yang.data+json",
+        }
         self.username = self.connection_args.get("username", False)
         del self.connection_args["username"]
         self.password = self.connection_args.get("password", False)
@@ -40,8 +44,21 @@ class restconf:
         try:
             # restconf get call
             result = {}
-            url = self.transport+"://"+self.host+":"+str(self.port)+self.kwarg["uri"]
-            response = requests.get(url, auth=(self.username, self.password), params=self.params, headers=self.headers, **self.connection_args)
+            url = (
+                self.transport
+                + "://"
+                + self.host
+                + ":"
+                + str(self.port)
+                + self.kwarg["uri"]
+            )
+            response = requests.get(
+                url,
+                auth=(self.username, self.password),
+                params=self.params,
+                headers=self.headers,
+                **self.connection_args
+            )
             try:
                 res = json.loads(response.text)
             except Exception:
@@ -57,9 +74,23 @@ class restconf:
     def config(self, session=False, command=False):
         try:
             result = {}
-            url = self.transport+"://"+self.host+":"+str(self.port)+self.kwarg["uri"]
+            url = (
+                self.transport
+                + "://"
+                + self.host
+                + ":"
+                + str(self.port)
+                + self.kwarg["uri"]
+            )
             if hasattr(requests, str(self.action)):
-                response = getattr(requests, str(self.action))(url, auth=(self.username, self.password), data=json.dumps(self.payload), params=self.params, headers=self.headers, **self.connection_args)
+                response = getattr(requests, str(self.action))(
+                    url,
+                    auth=(self.username, self.password),
+                    data=json.dumps(self.payload),
+                    params=self.params,
+                    headers=self.headers,
+                    **self.connection_args
+                )
                 try:
                     res = json.loads(response.text)
                 except Exception:
@@ -70,7 +101,7 @@ class restconf:
                 result[url]["result"] = res
                 return result
             else:
-                raise Exception(self.action + " not found in requests") 
+                raise Exception(self.action + " not found in requests")
         except Exception as e:
             write_meta_error(e)
 

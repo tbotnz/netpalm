@@ -6,11 +6,12 @@ from netpalm.backend.core.utilities.rediz_meta import (
     write_meta_error_string,
     write_meta_error,
 )
+from netpalm.backend.core.utilities.driver.netpalm_driver import NetpalmDriver
 
 log = logging.getLogger(__name__)
 
 
-class ncclien:
+class ncclien(NetpalmDriver):
     def __init__(self, **kwargs):
         self.kwarg = kwargs.get("args", False)
         self.connection_args = kwargs.get("connection_args", False)

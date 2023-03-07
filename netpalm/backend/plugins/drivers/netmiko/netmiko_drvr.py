@@ -5,12 +5,14 @@ from netmiko.cisco_base_connection import CiscoBaseConnection
 from typing import Optional
 
 from netpalm.backend.core.confload.confload import config
+
+from netpalm.backend.core.utilities.driver.netpalm_driver import NetpalmDriver
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 
 log = logging.getLogger(__name__)
 
 
-class netmko:
+class netmko(NetpalmDriver):
     def __init__(self, **kwargs):
         self.kwarg = kwargs.get("args", False)
         self.connection_args = kwargs.get("connection_args", False)

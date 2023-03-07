@@ -1,10 +1,10 @@
 from puresnmp import puresnmp
 
+from netpalm.backend.core.utilities.driver.netpalm_driver import NetpalmDriver
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 
 
-class pursnmp:
-
+class pursnmp(NetpalmDriver):
     def __init__(self, **kwargs):
         self.connection_args = kwargs.get("connection_args", False)
         if "port" not in self.connection_args.keys():
@@ -29,19 +29,19 @@ class pursnmp:
                 # remove timeout weirdness for tables
                 if self.input_args["type"] == "table":
                     response = getattr(puresnmp, self.input_args["type"])(
-                                ip=self.connection_args["host"],
-                                community=self.connection_args["community"],
-                                oid=c,
-                                port=self.connection_args["port"]
-                                )
+                        ip=self.connection_args["host"],
+                        community=self.connection_args["community"],
+                        oid=c,
+                        port=self.connection_args["port"],
+                    )
                 else:
                     response = getattr(puresnmp, self.input_args["type"])(
-                                ip=self.connection_args["host"],
-                                community=self.connection_args["community"],
-                                oid=c,
-                                port=self.connection_args["port"],
-                                timeout=self.connection_args["timeout"],
-                                )
+                        ip=self.connection_args["host"],
+                        community=self.connection_args["community"],
+                        oid=c,
+                        port=self.connection_args["port"],
+                        timeout=self.connection_args["timeout"],
+                    )
 
                 # remnder result data for get call
                 if self.input_args["type"] == "get":
