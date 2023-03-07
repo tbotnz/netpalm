@@ -4,7 +4,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class NetPalmDriver:
+class NetpalmDriver:
     """ NetPalmDriver is the base class for all NetPalm drivers. """
 
     def __init__(self, **kwargs):

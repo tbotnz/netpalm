@@ -1,4 +1,3 @@
-from netpalm.backend.core.utilities.driver.netpalm_driver import NetpalmDriver
 import logging
 
 from netmiko import ConnectHandler, BaseConnection
@@ -6,6 +5,8 @@ from netmiko.cisco_base_connection import CiscoBaseConnection
 from typing import Optional
 
 from netpalm.backend.core.confload.confload import config
+
+from netpalm.backend.core.utilities.driver.netpalm_driver import NetpalmDriver
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 
 log = logging.getLogger(__name__)
