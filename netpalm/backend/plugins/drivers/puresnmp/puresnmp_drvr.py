@@ -1,6 +1,6 @@
 from puresnmp import puresnmp
 
-from netpalm.backend.core.core.driver.netpalm_driver import NetpalmDriver
+from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 
 

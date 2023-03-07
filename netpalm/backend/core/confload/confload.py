@@ -150,6 +150,7 @@ class Config:
         self.apscheduler_num_processes = data["apscheduler_num_processes"]
         self.apscheduler_num_threads = data["apscheduler_num_threads"]
         self.whitelist = DeviceWhitelist(data.get("device_whitelist"))
+        self.drivers = data["drivers"]
         self.worker_name = "NOT A WORKER"  # Worker objects will record this here so that it can be referenced elsewhere
 
         # load tls

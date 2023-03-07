@@ -4,7 +4,7 @@ import logging
 import importlib
 import os
 
-from netpalm.backend.core.core.driver.netpalm_driver import NetpalmDriver
+from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
 
 from netpalm.backend.core.confload.confload import config
 
