@@ -11,6 +11,8 @@ from netpalm.backend.core.utilities.jinja2.j2 import render_j2template
 from netpalm.backend.core.utilities.webhook.webhook import exec_webhook_func
 from netpalm.exceptions import NetpalmCheckError
 
+from netpalm.backend.core.driver import driver_map
+
 
 def exec_config(**kwargs):
     """main function for executing setconfig commands to southbound drivers"""
@@ -35,133 +37,66 @@ def exec_config(**kwargs):
             )
             config = res["data"]["task_result"]["template_render_result"]
 
-        if not pre_checks and not post_checks:
+            if (
+                j2conf and config and lib == "ncclient"
+            ):  # move this into the driver in future
+                if not kwargs.get("args", False):
+                    kwargs["args"] = {}
+                kwargs["args"]["config"] = config
 
-            if lib == "netmiko":
-                netmik = netmko(**kwargs)
-                sesh = netmik.connect()
-                result = netmik.config(sesh, config, enable_mode)
-                netmik.logout(sesh)
-            elif lib == "napalm":
-                napl = naplm(**kwargs)
-                sesh = napl.connect()
-                result = napl.config(sesh, config)
-                napl.logout(sesh)
-            elif lib == "ncclient":
-                # if we rendered j2config, add it to the kwargs['args'] dict
-                if j2conf and config:
-                    if not kwargs.get("args", False):
-                        kwargs["args"] = {}
-                    kwargs["args"]["config"] = config
-                ncc = ncclien(**kwargs)
-                sesh = ncc.connect()
-                result = ncc.editconfig(sesh)
-                ncc.logout(sesh)
-            elif lib == "restconf":
-                rcc = restconf(**kwargs)
-                sesh = rcc.connect()
-                result = rcc.config(sesh)
-                rcc.logout(sesh)
+        if not driver_map.get(lib):
+            raise NotImplementedError(f"unknown 'driver' {lib}")
+
+        if not pre_checks and not post_checks:
+            driver_obj = driver_map[lib](**kwargs)
+            sesh = driver_obj.connect()
+            if enable_mode:
+                result = driver_obj.config(sesh, config, enable_mode)
+            else:
+                result = driver_obj.config(sesh, config)
+            driver_obj.logout(sesh)
 
         else:
-            if lib == "netmiko":
-                netmik = netmko(**kwargs)
-                sesh = netmik.connect()
-                if pre_checks:
-                    for precheck in pre_checks:
-                        command = precheck["get_config_args"]["command"]
-                        pre_check_result = netmik.sendcommand(sesh, [command])
-                        for matchstr in precheck["match_str"]:
-                            if precheck[
+            driver_obj = driver_map[lib](**kwargs)
+            sesh = driver_obj.connect()
+            if pre_checks:
+                for precheck in pre_checks:
+                    command = precheck["get_config_args"]["command"]
+                    pre_check_result = driver_obj.sendcommand(sesh, [command])
+                    for matchstr in precheck["match_str"]:
+                        if precheck["match_type"] == "include" and matchstr not in str(
+                            pre_check_result
+                        ):
+                            raise NetpalmCheckError(
+                                f"PreCheck Failed: {matchstr} not found in {pre_check_result}"
+                            )
+                        if precheck["match_type"] == "exclude" and matchstr in str(
+                            pre_check_result
+                        ):
+                            raise NetpalmCheckError(
+                                f"PreCheck Failed: {matchstr} found in {pre_check_result}"
+                            )
+
+            if pre_check_ok:
+                result = driver_obj.config(sesh, config, enable_mode)
+                if post_checks:
+                    for postcheck in post_checks:
+                        command = postcheck["get_config_args"]["command"]
+                        post_check_result = driver_obj.sendcommand(sesh, [command])
+                        for matchstr in postcheck["match_str"]:
+                            if postcheck[
                                 "match_type"
-                            ] == "include" and matchstr not in str(pre_check_result):
+                            ] == "include" and matchstr not in str(post_check_result):
                                 raise NetpalmCheckError(
-                                    f"PreCheck Failed: {matchstr} not found in {pre_check_result}"
+                                    f"PostCheck Failed: {matchstr} not found in {post_check_result}"
                                 )
-                            if precheck["match_type"] == "exclude" and matchstr in str(
-                                pre_check_result
+                            if postcheck["match_type"] == "exclude" and matchstr in str(
+                                post_check_result
                             ):
                                 raise NetpalmCheckError(
-                                    f"PreCheck Failed: {matchstr} found in {pre_check_result}"
+                                    f"PostCheck Failed: {matchstr} found in {post_check_result}"
                                 )
-
-                if pre_check_ok:
-                    result = netmik.config(sesh, config, enable_mode)
-                    if post_checks:
-                        for postcheck in post_checks:
-                            command = postcheck["get_config_args"]["command"]
-                            post_check_result = netmik.sendcommand(sesh, [command])
-                            for matchstr in postcheck["match_str"]:
-                                if postcheck[
-                                    "match_type"
-                                ] == "include" and matchstr not in str(
-                                    post_check_result
-                                ):
-                                    raise NetpalmCheckError(
-                                        f"PostCheck Failed: {matchstr} not found in {post_check_result}"
-                                    )
-                                if postcheck[
-                                    "match_type"
-                                ] == "exclude" and matchstr in str(post_check_result):
-                                    raise NetpalmCheckError(
-                                        f"PostCheck Failed: {matchstr} found in {post_check_result}"
-                                    )
-                netmik.logout(sesh)
-
-            elif lib == "napalm":
-                napl = naplm(**kwargs)
-                sesh = napl.connect()
-                if pre_checks:
-                    for precheck in pre_checks:
-                        command = precheck["get_config_args"]["command"]
-                        pre_check_result = napl.sendcommand(sesh, [command])
-                        for matchstr in precheck["match_str"]:
-                            if precheck[
-                                "match_type"
-                            ] == "include" and matchstr not in str(pre_check_result):
-                                raise NetpalmCheckError(
-                                    f"PreCheck Failed: {matchstr} not found in {pre_check_result}"
-                                )
-                            if precheck["match_type"] == "exclude" and matchstr in str(
-                                pre_check_result
-                            ):
-                                raise NetpalmCheckError(
-                                    f"PreCheck Failed: {matchstr} found in {pre_check_result}"
-                                )
-
-                if pre_check_ok:
-                    result = napl.config(sesh, config)
-                    if post_checks:
-                        for postcheck in post_checks:
-                            command = postcheck["get_config_args"]["command"]
-                            post_check_result = napl.sendcommand(sesh, [command])
-                            for matchstr in postcheck["match_str"]:
-                                if postcheck[
-                                    "match_type"
-                                ] == "include" and matchstr not in str(
-                                    post_check_result
-                                ):
-                                    raise NetpalmCheckError(
-                                        f"PostCheck Failed: {matchstr} not found in {post_check_result}"
-                                    )
-                                if postcheck[
-                                    "match_type"
-                                ] == "exclude" and matchstr in str(post_check_result):
-                                    raise NetpalmCheckError(
-                                        f"PostCheck Failed: {matchstr} found in {post_check_result}"
-                                    )
-                napl.logout(sesh)
-
-            elif lib == "ncclient":
-                ncc = ncclien(**kwargs)
-                sesh = ncc.connect()
-                result = ncc.editconfig(sesh)
-                ncc.logout(sesh)
-            elif lib == "restconf":
-                rcc = restconf(**kwargs)
-                sesh = rcc.connect()
-                result = rcc.config(sesh)
-                rcc.logout(sesh)
+            driver_obj.logout(sesh)
 
         if webhook:
             current_jobdata = render_netpalm_payload(job_result=result)
