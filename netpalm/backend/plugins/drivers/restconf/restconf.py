@@ -4,10 +4,12 @@ import requests
 
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 
-from netpalm.backend.core.utilities.driver.netpalm_driver import NetpalmDriver
+from netpalm.backend.core.core.driver.netpalm_driver import NetpalmDriver
 
 
 class restconf(NetpalmDriver):
+    driver_name = "restconf"
+
     def __init__(self, **kwargs):
         self.connection_args = kwargs.get("connection_args", False)
         self.host = self.connection_args.get("host", False)

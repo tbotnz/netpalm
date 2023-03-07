@@ -48,6 +48,7 @@
     "Content-Type": "application/json"
   },
   "custom_webhooks": "netpalm/backend/plugins/extensibles/custom_webhooks/",
+  "drivers": "netpalm/backend/plugins/drivers/",
   "log_config_filename": "config/log-config.yml",
   "apscheduler_num_processes": 1,
   "apscheduler_num_threads": 5,

@@ -1,10 +1,12 @@
 import napalm
 
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
-from netpalm.backend.core.utilities.driver.netpalm_driver import NetpalmDriver
+from netpalm.backend.core.core.driver.netpalm_driver import NetpalmDriver
 
 
 class naplm(NetpalmDriver):
+    driver_name = "napalm"
+
     def __init__(self, **kwargs):
         self.connection_args = kwargs.get("connection_args", False)
         # convert the netmiko naming format to the native napalm format

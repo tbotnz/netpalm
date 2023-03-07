@@ -7,11 +7,13 @@ from netpalm.backend.core.utilities.rediz_meta import (
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
-from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr_new import netmko
+from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
 from netpalm.backend.plugins.drivers.puresnmp.puresnmp_drvr import pursnmp
 from netpalm.backend.plugins.drivers.restconf.restconf import restconf
 from netpalm.backend.core.utilities.webhook.webhook import exec_webhook_func
 from netpalm.exceptions import NetpalmCheckError
+
+from netpalm.backend.core.driver import driver_map
 
 log = logging.getLogger(__name__)
 
@@ -30,98 +32,46 @@ def exec_command(**kwargs):
     else:
         commandlst = command
 
+    if not driver_map.get(lib):
+        raise NotImplementedError(f"unknown 'driver' {lib}")
+
     try:
         write_mandatory_meta()
         if not post_checks:
             result = {}
-            if lib == "netmiko":
-                netmik = netmko(**kwargs)
-                sesh = netmik.connect()
-                result = netmik.sendcommand(sesh, commandlst)
-                netmik.logout(sesh)
-            elif lib == "napalm":
-                napl = naplm(**kwargs)
-                sesh = napl.connect()
-                result = napl.sendcommand(sesh, commandlst)
-                napl.logout(sesh)
-            elif lib == "puresnmp":
-                snm = pursnmp(**kwargs)
-                sesh = snm.connect()
-                result = snm.sendcommand(sesh, commandlst)
-                snm.logout(sesh)
-            elif lib == "ncclient":
-                ncc = ncclien(**kwargs)
-                sesh = ncc.connect()
-                result = ncc.getconfig(sesh)
-                ncc.logout(sesh)
-            elif lib == "restconf":
-                rc = restconf(**kwargs)
-                sesh = rc.connect()
-                result = rc.sendcommand(sesh)
-                rc.logout(sesh)
+
+            driver_obj = driver_map[lib](**kwargs)
+            sesh = driver_obj.connect()
+            if commandlst:
+                result = driver_obj.sendcommand(sesh, commandlst)
             else:
-                raise NotImplementedError(f"unknown 'library' parameter {lib}")
+                result = driver_obj.sendcommand(sesh)
+            driver_obj.logout(sesh)
 
         else:
             result = {}
-            if lib == "netmiko":
-                netmik = netmko(**kwargs)
-                sesh = netmik.connect()
-                if commandlst:
-                    result = netmik.sendcommand(sesh, commandlst)
-                if post_checks:
-                    for postcheck in post_checks:
-                        command = postcheck["get_config_args"]["command"]
-                        post_check_result = netmik.sendcommand(sesh, [command])
-                        for matchstr in postcheck["match_str"]:
-                            if postcheck[
-                                "match_type"
-                            ] == "include" and matchstr not in str(post_check_result):
-                                raise NetpalmCheckError(
-                                    f"PostCheck Failed: {matchstr} not found in {post_check_result}"
-                                )
-                            if postcheck["match_type"] == "exclude" and matchstr in str(
-                                post_check_result
-                            ):
-                                raise NetpalmCheckError(
-                                    f"PostCheck Failed: {matchstr} found in {post_check_result}"
-                                )
-                netmik.logout(sesh)
-
-            elif lib == "napalm":
-                napl = naplm(**kwargs)
-                sesh = napl.connect()
-                if commandlst:
-                    result = napl.sendcommand(sesh, commandlst)
-                if post_checks:
-                    for postcheck in post_checks:
-                        command = postcheck["get_config_args"]["command"]
-                        post_check_result = napl.sendcommand(sesh, [command])
-                        for matchstr in postcheck["match_str"]:
-                            if postcheck[
-                                "match_type"
-                            ] == "include" and matchstr not in str(post_check_result):
-                                raise NetpalmCheckError(
-                                    f"PostCheck Failed: {matchstr} not found in {post_check_result}"
-                                )
-                            if postcheck["match_type"] == "exclude" and matchstr in str(
-                                post_check_result
-                            ):
-                                raise NetpalmCheckError(
-                                    f"PostCheck Failed: {matchstr} found in {post_check_result}"
-                                )
-                napl.logout(sesh)
-
-            elif lib == "ncclient":
-                ncc = ncclien(**kwargs)
-                sesh = ncc.connect()
-                result = ncc.getconfig(sesh)
-                ncc.logout(sesh)
-            elif lib == "restconf":
-                rc = restconf(**kwargs)
-                sesh = rc.connect()
-                result = rc.sendcommand(sesh)
-                rc.logout(sesh)
+            driver_obj = driver_map[lib](**kwargs)
+            sesh = driver_obj.connect()
+            if commandlst:
+                result = driver_obj.sendcommand(sesh, commandlst)
+            if post_checks:
+                for postcheck in post_checks:
+                    command = postcheck["get_config_args"]["command"]
+                    post_check_result = driver_obj.sendcommand(sesh, [command])
+                    for matchstr in postcheck["match_str"]:
+                        if postcheck["match_type"] == "include" and matchstr not in str(
+                            post_check_result
+                        ):
+                            raise NetpalmCheckError(
+                                f"PostCheck Failed: {matchstr} not found in {post_check_result}"
+                            )
+                        if postcheck["match_type"] == "exclude" and matchstr in str(
+                            post_check_result
+                        ):
+                            raise NetpalmCheckError(
+                                f"PostCheck Failed: {matchstr} found in {post_check_result}"
+                            )
+            driver_obj.logout(sesh)
 
         if webhook:
             current_jobdata = render_netpalm_payload(job_result=result)

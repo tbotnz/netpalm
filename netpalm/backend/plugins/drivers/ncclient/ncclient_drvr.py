@@ -6,12 +6,14 @@ from netpalm.backend.core.utilities.rediz_meta import (
     write_meta_error_string,
     write_meta_error,
 )
-from netpalm.backend.core.utilities.driver.netpalm_driver import NetpalmDriver
+from netpalm.backend.core.core.driver.netpalm_driver import NetpalmDriver
 
 log = logging.getLogger(__name__)
 
 
 class ncclien(NetpalmDriver):
+    driver_name = "ncclient"
+
     def __init__(self, **kwargs):
         self.kwarg = kwargs.get("args", False)
         self.connection_args = kwargs.get("connection_args", False)
@@ -55,7 +57,7 @@ class ncclien(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def getconfig(self, session=False, command=False):
+    def sendcommand(self, session=False, command=False):
         try:
             result = {}
             if self.kwarg:

@@ -18,8 +18,8 @@ log = logging.getLogger(__name__)
 CONFIG_FILENAME = "config/config.json"
 DEFAULTS_FILENAME = "config/defaults.json"
 
-class ScrubFilter(logging.Filter):
 
+class ScrubFilter(logging.Filter):
     def __init__(self):
         super(ScrubFilter, self).__init__()
 
@@ -40,23 +40,23 @@ class ScrubFilter(logging.Filter):
             # {'library': <LibraryName.napalm: 'napalm'>, 'connection_args': {'device_type': 'cisco_ios', 'community': '10.0.2.24', 'username': 'admin', 'password': 'admin'}, 'command': 'show run | i hostname', 'args': {}, 'webhook': {}, 'queue_strategy': <QueueStrategy.pinned: 'pinned'>, 'post_checks': [], 'cache': {}}
             {
                 "pattern": r"(?:[aA][sS][sS][wW][oO][rR][dD](?:'|\"): (?:'|\")(.*?)(?:'|\"))",
-                "expected_group_index": 1
+                "expected_group_index": 1,
             },
             {
                 "pattern": r"(?:[oO][kK][eE][nN](?:'|\"): (?:'|\")(.*?)(?:'|\"))",
-                "expected_group_index": 1
+                "expected_group_index": 1,
             },
             {
                 "pattern": r"(?:[kK][eE][yY](?:'|\"): (?:'|\")(.*?)(?:'|\"))",
-                "expected_group_index": 1
+                "expected_group_index": 1,
             },
             {
                 "pattern": r"(?:[eE][cC][rR][eE][tT](?:'|\"): (?:'|\")(.*?)(?:'|\"))",
-                "expected_group_index": 1
+                "expected_group_index": 1,
             },
             {
                 "pattern": r"(?:[oO][mM][uU][nN][iI][tT][yY](?:'|\"): (?:'|\")(.*?)(?:'|\"))",
-                "expected_group_index": 1
+                "expected_group_index": 1,
             },
         ]
         try:
@@ -71,7 +71,10 @@ class ScrubFilter(logging.Filter):
             pass
         return result
 
-def load_config_files(defaults_filename: str = DEFAULTS_FILENAME, config_filename: str = CONFIG_FILENAME) -> dict:
+
+def load_config_files(
+    defaults_filename: str = DEFAULTS_FILENAME, config_filename: str = CONFIG_FILENAME
+) -> dict:
     data = {}
 
     for fname in (defaults_filename, config_filename):
@@ -82,7 +85,9 @@ def load_config_files(defaults_filename: str = DEFAULTS_FILENAME, config_filenam
             log.warning(f"Couldn't find {fname}")
 
     if not data:
-        raise RuntimeError(f"Could not find either {defaults_filename} or {config_filename}")
+        raise RuntimeError(
+            f"Could not find either {defaults_filename} or {config_filename}"
+        )
 
     return data
 
@@ -150,7 +155,11 @@ class Config:
         # load tls
         try:
             log.info(f"confload: opening TLS files")
-            tls_files = [self.redis_tls_cert_file, self.redis_tls_key_file, self.redis_tls_ca_cert_file]
+            tls_files = [
+                self.redis_tls_cert_file,
+                self.redis_tls_key_file,
+                self.redis_tls_ca_cert_file,
+            ]
             for tlsf in tls_files:
                 with open(tlsf) as f:
                     tlsf = f
@@ -200,14 +209,14 @@ class Config:
         potentials = [
             "netpalm/backend/plugins/extensibles/ntc-templates/index",
             "/code/netpalm/backend/plugins/extensibles/ntc-templates/index",
-            "/usr/local/lib/python3.8/site-packages/ntc_templates/templates/index"
+            "/usr/local/lib/python3.8/site-packages/ntc_templates/templates/index",
         ]
         potentials.insert(0, self.txtfsm_index_file)
         for potential in potentials:
             if Path(potential).exists():
                 return potential
 
-        raise FileNotFoundError(f"confload: Can't find TextFSM Index file in any of {potentials}")
+        # raise FileNotFoundError(f"confload: Can't find TextFSM Index file in any of {potentials}")
 
     def __call__(self):
         return self
