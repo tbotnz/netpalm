@@ -23,21 +23,23 @@ from netpalm.backend.core.models.netmiko import NetmikoSetConfig
 from netpalm.backend.core.models.restconf import Restconf
 from netpalm.backend.core.models.task import Response, ResponseBasic
 
-from netpalm.backend.core.models.service import ServiceInstanceData, ServiceInstanceState
+from netpalm.backend.core.models.service import (
+    ServiceInstanceData,
+    ServiceInstanceState,
+)
 from netpalm.backend.core.models.task import ServiceResponse, Response
 
 from netpalm.backend.core.models.models import Script
 
 from netpalm.backend.core.models.task import Response
 
-from netpalm.backend.plugins.utilities.webhook.webhook import exec_webhook_func
-from netpalm.backend.plugins.calls.scriptrunner.script import script_model_finder
+from netpalm.backend.core.utilities.webhook.webhook import exec_webhook_func
+from netpalm.backend.core.calls.scriptrunner.script import script_model_finder
 
 log = logging.getLogger(__name__)
 
 
 class NetpalmManager(Rediz):
-
     def _get_config(self, getcfg: GetConfig, library: str = None) -> Response:
         """ executes the base netpalm getconfig method async and returns the task id response obj """
         if isinstance(getcfg, dict):
@@ -147,7 +149,9 @@ class NetpalmManager(Rediz):
             req_data = service
         else:
             req_data = service.dict(exclude_none=True)
-        r = self.execute_create_service_task(metho="service_create", model=service_model, kwargs=req_data)
+        r = self.execute_create_service_task(
+            metho="service_create", model=service_model, kwargs=req_data
+        )
         resp = jsonable_encoder(r)
         return resp
 
@@ -155,9 +159,13 @@ class NetpalmManager(Rediz):
         """ lists services in the netpalm service inventory """
         r = self.get_service_instances()
         if r:
-            formatted_result = ResponseBasic(status="success", data={"task_result": r}).dict()
+            formatted_result = ResponseBasic(
+                status="success", data={"task_result": r}
+            ).dict()
         else:
-            formatted_result = ResponseBasic(status="success", data={"task_result": None}).dict()
+            formatted_result = ResponseBasic(
+                status="success", data={"task_result": None}
+            ).dict()
         resp = jsonable_encoder(formatted_result)
         return resp
 
@@ -165,7 +173,9 @@ class NetpalmManager(Rediz):
         """ gets a from the service inventory """
         r = self.fetch_service_instance_args(sid=service_id)
         if r:
-            formatted_result = ResponseBasic(status="success", data={"task_result": r}).dict()
+            formatted_result = ResponseBasic(
+                status="success", data={"task_result": r}
+            ).dict()
             resp = jsonable_encoder(formatted_result)
             return resp
         else:
@@ -243,7 +253,9 @@ class NetpalmManager(Rediz):
 
             while True:
                 r = self.fetchtask(task_id=task_id)
-                if (r["data"]["task_status"] == "finished") or (r["data"]["task_status"] == "failed"):
+                if (r["data"]["task_status"] == "finished") or (
+                    r["data"]["task_status"] == "failed"
+                ):
                     return r
                 time.sleep(0.3)
         else:
@@ -251,14 +263,14 @@ class NetpalmManager(Rediz):
 
     def retrieve_task_result_multiple(self, netpalm_response_list: list):
         """
-            retrieves multiple task results in a sync fashion
+        retrieves multiple task results in a sync fashion
 
-            Args:
-                netpalm_response_list: list of netpalm response objects
+        Args:
+            netpalm_response_list: list of netpalm response objects
 
 
-            Returns:
-                list of netpalm responses objects with result
+        Returns:
+            list of netpalm responses objects with result
         """
 
         result = []
@@ -270,23 +282,25 @@ class NetpalmManager(Rediz):
 
     def trigger_webhook(self, webhook_payload: dict, webhook_meta_data: dict):
         """
-            executes a webhook call
+        executes a webhook call
 
-            can also run the job_data through a j2 template if the j2template name is specificed in the
+        can also run the job_data through a j2 template if the j2template name is specificed in the
 
-            Args:
-                webhook_payload: dictionary containing the result of the job to be passed into the webhook e.g a netpalm Response dict
-                webhook_meta_data: This is a dictionary describing the metadata of webhook itself e.g webhook name, user specified args to pass into the webhook itself
-                        {
-                            "name": "default_webhook", # webhook name
-                            "args": {
-                                "insert": "something useful" # args to pass into webhook
-                            },
-                            "j2template": "myj2template" # add this key if you want to run the job data through a j2template before passing it into the webhook
-                        }
+        Args:
+            webhook_payload: dictionary containing the result of the job to be passed into the webhook e.g a netpalm Response dict
+            webhook_meta_data: This is a dictionary describing the metadata of webhook itself e.g webhook name, user specified args to pass into the webhook itself
+                    {
+                        "name": "default_webhook", # webhook name
+                        "args": {
+                            "insert": "something useful" # args to pass into webhook
+                        },
+                        "j2template": "myj2template" # add this key if you want to run the job data through a j2template before passing it into the webhook
+                    }
 
-            Returns:
-                the result of executing the webhook
+        Returns:
+            the result of executing the webhook
         """
-        res = exec_webhook_func(jobdata=webhook_payload, webhook_payload=webhook_meta_data)
+        res = exec_webhook_func(
+            jobdata=webhook_payload, webhook_payload=webhook_meta_data
+        )
         return res

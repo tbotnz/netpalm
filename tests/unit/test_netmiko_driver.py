@@ -5,7 +5,7 @@ from pytest_mock import MockerFixture
 
 from netpalm.exceptions import NetpalmMetaProcessedException
 from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
-from netpalm.backend.plugins.calls.getconfig.exec_command import exec_command
+from netpalm.backend.core.calls.getconfig.exec_command import exec_command
 
 NETMIKO_COMMANDS = {
     "show run": """running config\na line\nanother line

@@ -1,13 +1,8 @@
 import logging
 
-import importlib
-import inspect
-
 from pydantic import BaseModel
 
 from netpalm.backend.core.confload.confload import config
-
-#from netpalm.backend.core.manager.netpalm_manager import NetpalmManager
 
 log = logging.getLogger(__name__)
 
@@ -15,7 +10,6 @@ log = logging.getLogger(__name__)
 class NetpalmService:
     def __init__(self, model, service_id=None):
         log.info(f"netpalm service: invoking")
-        #self.netpalm_controller = NetpalmManager()
         self.model = model
         self.service_id = service_id
 
@@ -40,5 +34,7 @@ class NetpalmService:
         pass
 
     def health_check(self):
-        log.info(f"netpalm service: health_check method not implemented on your service")
+        log.info(
+            f"netpalm service: health_check method not implemented on your service"
+        )
         pass

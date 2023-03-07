@@ -3,7 +3,7 @@ import json
 import logging
 
 from netpalm.backend.core.confload.confload import config
-from netpalm.backend.plugins.utilities.jinja2.j2 import render_j2template
+from netpalm.backend.core.utilities.jinja2.j2 import render_j2template
 
 log = logging.getLogger(__name__)
 

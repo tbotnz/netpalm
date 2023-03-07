@@ -10,6 +10,7 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 
 from netpalm.backend.core.confload.confload import config
+
 # load models
 from netpalm.backend.core.models.models import Script, ScriptCustom
 from netpalm.backend.core.models.task import Response
@@ -20,7 +21,7 @@ from netpalm.routers.route_utils import HttpErrorHandler
 
 from netpalm.backend.core.manager import ntplm
 
-from netpalm.backend.plugins.calls.scriptrunner.script import script_model_finder
+from netpalm.backend.core.calls.scriptrunner.script import script_model_finder
 
 from netpalm.routers.route_utils import error_handle_w_cache
 
@@ -46,10 +47,11 @@ def execute_script(script: Script):
         req_data = script.dict(exclude_none=True)
     return ntplm.execute_script(**req_data)
 
+
 r = routes["ls"](fldr="script")
 for script in r["data"]["task_result"]["templates"]:
     model = script_model_finder(script_name=script)[0]
-    
+
     @router.post(f"/script/v1/{script}", response_model=Response, status_code=201)
     @error_handle_w_cache
     def execute_script(script: model):
@@ -58,6 +60,7 @@ for script in r["data"]["task_result"]["templates"]:
         else:
             req_data = script.dict(exclude_none=True)
         return ntplm.execute_script(**req_data)
+
 
 # get template list
 @router.get("/webhook", response_model=ResponseBasic)

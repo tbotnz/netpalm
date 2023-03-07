@@ -1,22 +1,27 @@
 # load plugins
-from netpalm.backend.plugins.calls.dryrun.dryrun import dryrun
-from netpalm.backend.plugins.calls.getconfig.exec_command import exec_command
-from netpalm.backend.plugins.calls.getconfig.ncclient_get import ncclient_get
-from netpalm.backend.plugins.calls.scriptrunner.script import script_kiddy
-from netpalm.backend.plugins.calls.service.procedures import (
+from netpalm.backend.core.calls.dryrun.dryrun import dryrun
+from netpalm.backend.core.calls.getconfig.exec_command import exec_command
+from netpalm.backend.core.calls.getconfig.ncclient_get import ncclient_get
+from netpalm.backend.core.calls.scriptrunner.script import script_kiddy
+from netpalm.backend.core.calls.service.procedures import (
     create,
     update,
     delete,
     re_deploy,
     validate,
-    health_check
+    health_check,
 )
-from netpalm.backend.plugins.calls.setconfig.exec_config import exec_config
-from netpalm.backend.plugins.utilities.jinja2.j2 import j2gettemplate
-from netpalm.backend.plugins.utilities.jinja2.j2 import render_j2template
-from netpalm.backend.plugins.utilities.ls.ls import list_files
-from netpalm.backend.plugins.utilities.textfsm.template import listtemplates, pushtemplate, addtemplate, removetemplate, \
-    gettemplate
+from netpalm.backend.core.calls.setconfig.exec_config import exec_config
+from netpalm.backend.core.utilities.jinja2.j2 import j2gettemplate
+from netpalm.backend.core.utilities.jinja2.j2 import render_j2template
+from netpalm.backend.core.utilities.ls.ls import list_files
+from netpalm.backend.core.utilities.textfsm.template import (
+    listtemplates,
+    pushtemplate,
+    addtemplate,
+    removetemplate,
+    gettemplate,
+)
 
 routes = {
     "getconfig": exec_command,
@@ -37,5 +42,5 @@ routes = {
     "service_delete": delete,
     "service_re_deploy": re_deploy,
     "service_validate": validate,
-    "service_health_check": health_check
+    "service_health_check": health_check,
 }

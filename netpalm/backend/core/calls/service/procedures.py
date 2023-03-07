@@ -6,11 +6,14 @@ import inspect
 from typing import Any
 
 from pydantic import BaseModel
-from netpalm.backend.plugins.calls.service.netpalmservice import NetpalmService
+from netpalm.backend.core.calls.service.netpalmservice import NetpalmService
 
 from netpalm.backend.core.confload.confload import config
 
-from netpalm.backend.core.utilities.rediz_meta import write_meta_error, write_mandatory_meta
+from netpalm.backend.core.utilities.rediz_meta import (
+    write_meta_error,
+    write_mandatory_meta,
+)
 
 log = logging.getLogger(__name__)
 
@@ -21,7 +24,7 @@ def get_service(service_name):
     model_name = f"{service_name}"
     return_obj = {"service_model": None, "service_class": None}
     template_model_path_raw = config.python_service_templates
-    template_model_path = template_model_path_raw.replace('/', '.') + model_name
+    template_model_path = template_model_path_raw.replace("/", ".") + model_name
     module = importlib.import_module(template_model_path)
     for name, obj in inspect.getmembers(module, inspect.isclass):
         if issubclass(obj, BaseModel):
@@ -40,8 +43,12 @@ def create(**kwargs):
         service_name = kwargs["service_meta"]["service_model"]
         user_payload = kwargs["service_data"]
         service_lookup = get_service(service_name)
-        svc = service_lookup["service_class"](service_lookup["service_model"], kwargs["service_meta"]["service_id"])
-        log.debug(f"create: calling create on {service_name} with user data {user_payload}")
+        svc = service_lookup["service_class"](
+            service_lookup["service_model"], kwargs["service_meta"]["service_id"]
+        )
+        log.debug(
+            f"create: calling create on {service_name} with user data {user_payload}"
+        )
         res = svc.create(service_lookup["service_model"](**user_payload))
         return res
     except Exception as e:
@@ -57,8 +64,12 @@ def update(**kwargs):
         service_name = kwargs["service_meta"]["service_model"]
         user_payload = kwargs["service_data"]
         service_lookup = get_service(service_name)
-        svc = service_lookup["service_class"](service_lookup["service_model"], kwargs["service_meta"]["service_id"])
-        log.debug(f"update: calling update on {service_name} with user data {user_payload}")
+        svc = service_lookup["service_class"](
+            service_lookup["service_model"], kwargs["service_meta"]["service_id"]
+        )
+        log.debug(
+            f"update: calling update on {service_name} with user data {user_payload}"
+        )
         res = svc.update(service_lookup["service_model"](**user_payload))
         return res
     except Exception as e:
@@ -74,8 +85,12 @@ def delete(**kwargs):
         service_name = kwargs["service_meta"]["service_model"]
         user_payload = kwargs["service_data"]
         service_lookup = get_service(service_name)
-        svc = service_lookup["service_class"](service_lookup["service_model"], kwargs["service_meta"]["service_id"])
-        log.debug(f"delete: calling delete on {service_name} with user data {user_payload}")
+        svc = service_lookup["service_class"](
+            service_lookup["service_model"], kwargs["service_meta"]["service_id"]
+        )
+        log.debug(
+            f"delete: calling delete on {service_name} with user data {user_payload}"
+        )
         res = svc.delete(service_lookup["service_model"](**user_payload))
         return res
     except Exception as e:
@@ -91,8 +106,12 @@ def re_deploy(**kwargs):
         service_name = kwargs["service_meta"]["service_model"]
         user_payload = kwargs["service_data"]
         service_lookup = get_service(service_name)
-        svc = service_lookup["service_class"](service_lookup["service_model"], kwargs["service_meta"]["service_id"])
-        log.debug(f"re_deploy: calling re_deploy on {service_name} with user data {user_payload}")
+        svc = service_lookup["service_class"](
+            service_lookup["service_model"], kwargs["service_meta"]["service_id"]
+        )
+        log.debug(
+            f"re_deploy: calling re_deploy on {service_name} with user data {user_payload}"
+        )
         res = svc.re_deploy(service_lookup["service_model"](**user_payload))
         return res
     except Exception as e:
@@ -108,8 +127,12 @@ def validate(**kwargs):
         service_name = kwargs["service_meta"]["service_model"]
         user_payload = kwargs["service_data"]
         service_lookup = get_service(service_name)
-        svc = service_lookup["service_class"](service_lookup["service_model"], kwargs["service_meta"]["service_id"])
-        log.debug(f"validate: calling validate on {service_name} with user data {user_payload}")
+        svc = service_lookup["service_class"](
+            service_lookup["service_model"], kwargs["service_meta"]["service_id"]
+        )
+        log.debug(
+            f"validate: calling validate on {service_name} with user data {user_payload}"
+        )
         res = svc.validate(service_lookup["service_model"](**user_payload))
         return res
     except Exception as e:
@@ -125,8 +148,12 @@ def health_check(**kwargs):
         service_name = kwargs["service_meta"]["service_model"]
         user_payload = kwargs["service_data"]
         service_lookup = get_service(service_name)
-        svc = service_lookup["service_class"](service_lookup["service_model"], kwargs["service_meta"]["service_id"])
-        log.debug(f"health_check: calling health_check on {service_name} with user data {user_payload}")
+        svc = service_lookup["service_class"](
+            service_lookup["service_model"], kwargs["service_meta"]["service_id"]
+        )
+        log.debug(
+            f"health_check: calling health_check on {service_name} with user data {user_payload}"
+        )
         res = svc.health_check(service_lookup["service_model"](**user_payload))
         return res
     except Exception as e:

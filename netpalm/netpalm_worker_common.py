@@ -14,13 +14,13 @@ from netpalm.backend.core.manager import ntplm, NetpalmManager
 from netpalm.backend.core.utilities.rediz_kill_worker import kill_worker_pid
 from netpalm.backend.core.utilities.rediz_worker_controller import RedisWorker
 
-from netpalm.backend.plugins.utilities.textfsm.template import (
+from netpalm.backend.core.utilities.textfsm.template import (
     listtemplates,
     addtemplate,
     removetemplate,
     pushtemplate,
 )
-from netpalm.backend.plugins.utilities.universal_template_mgr.unvrsl import unvrsl
+from netpalm.backend.core.utilities.universal_template_mgr.unvrsl import unvrsl
 
 log = logging.getLogger(__name__)
 #

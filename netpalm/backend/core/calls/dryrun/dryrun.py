@@ -1,10 +1,13 @@
-from netpalm.backend.core.utilities.rediz_meta import render_netpalm_payload, write_mandatory_meta
+from netpalm.backend.core.utilities.rediz_meta import (
+    render_netpalm_payload,
+    write_mandatory_meta,
+)
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
 from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
-from netpalm.backend.plugins.utilities.jinja2.j2 import render_j2template
-from netpalm.backend.plugins.utilities.webhook.webhook import exec_webhook_func
+from netpalm.backend.core.utilities.jinja2.j2 import render_j2template
+from netpalm.backend.core.utilities.webhook.webhook import exec_webhook_func
 
 
 def dryrun(**kwargs):
@@ -20,7 +23,9 @@ def dryrun(**kwargs):
 
         if j2conf:
             j2confargs = j2conf.get("args")
-            res = render_j2template(j2conf["template"], template_type="config", kwargs=j2confargs)
+            res = render_j2template(
+                j2conf["template"], template_type="config", kwargs=j2confargs
+            )
             config = res["data"]["task_result"]["template_render_result"]
 
         result = {}
@@ -32,9 +37,9 @@ def dryrun(**kwargs):
         elif lib == "ncclient":
             # if we rendered j2config, add it to the kwargs['args'] dict
             if j2conf and config:
-                if not kwargs.get('args', False):
-                    kwargs['args'] = {}
-                kwargs['args']['config'] = config
+                if not kwargs.get("args", False):
+                    kwargs["args"] = {}
+                kwargs["args"]["config"] = config
             ncc = ncclien(**kwargs)
             sesh = ncc.connect()
             result = ncc.editconfig(session=sesh, dry_run=True)

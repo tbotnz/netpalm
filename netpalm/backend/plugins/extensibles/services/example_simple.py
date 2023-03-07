@@ -1,7 +1,7 @@
 import logging
 
 from pydantic import BaseModel
-from netpalm.backend.plugins.calls.service.netpalmservice import NetpalmService
+from netpalm.backend.core.calls.service.netpalmservice import NetpalmService
 from netpalm.backend.core.manager.netpalm_manager import NetpalmManager
 
 log = logging.getLogger(__name__)
@@ -27,10 +27,10 @@ class NetpalmUserService(NetpalmService):
                 "host": model_data.hostname,
                 "username": "admin",
                 "password": "admin",
-                "timeout": 5
+                "timeout": 5,
             },
             "command": "show run | i hostname",
-            "queue_strategy": "pinned"
+            "queue_strategy": "pinned",
         }
         job_result = self.mgr.get_config_netmiko(netmiko_send_data)
         return_result = self.mgr.retrieve_task_result(job_result)
@@ -54,6 +54,7 @@ class NetpalmUserService(NetpalmService):
         pass
 
     def health_check(self, model: model):
-        log.info(f"netpalm service: health_check method not implemented on your service")
+        log.info(
+            f"netpalm service: health_check method not implemented on your service"
+        )
         pass
-
