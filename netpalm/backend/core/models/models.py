@@ -58,7 +58,7 @@ class SetConfig(BaseModel):
     connection_args: dict
     config: Optional[Any] = None
     j2config: Optional[J2Config] = None
-    args: Optional[SetConfigArgs] = {}
+    args: Optional[dict] = {}
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
     pre_checks: Optional[List[GenericPrePostCheck]] = None
@@ -160,6 +160,7 @@ class GetConfig(BaseModel):
     queue_strategy: Optional[QueueStrategy] = None
     post_checks: Optional[List[GenericPrePostCheck]] = []
     cache: Optional[CacheConfig] = {}
+    enable_mode: bool = False
     ttl: Optional[int] = None
 
     class Config:
