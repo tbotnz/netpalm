@@ -4,7 +4,7 @@ netmiko==3.3.2
 napalm
 ncclient==0.6.9
 requests
-redis==4.5.1
+redis==4.5.4
 rq
 xmltodict
 jinja2
