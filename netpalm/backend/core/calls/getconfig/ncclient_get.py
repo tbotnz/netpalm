@@ -1,7 +1,12 @@
 import logging
 
-from netpalm.backend.core.utilities.rediz_meta import write_meta_error, write_mandatory_meta
+from netpalm.backend.core.utilities.rediz_meta import (
+    write_meta_error,
+    write_mandatory_meta,
+)
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
+
+from netpalm.backend.core.mongo.utils import write_task_result
 
 log = logging.getLogger(__name__)
 
@@ -25,4 +30,5 @@ def ncclient_get(**kwargs):
     except Exception as e:
         write_meta_error(e)
 
+    write_task_result(result_payload=result)
     return result

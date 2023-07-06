@@ -6,6 +6,8 @@ from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.core.utilities.jinja2.j2 import render_j2template
 from netpalm.backend.core.utilities.webhook.webhook import exec_webhook_func
 
+from netpalm.backend.core.mongo.utils import write_task_result
+
 from netpalm.backend.core.driver import driver_map
 
 
@@ -58,4 +60,5 @@ def dryrun(**kwargs):
     except Exception as e:
         write_meta_error(e)
 
+    write_task_result(result_payload=result)
     return result

@@ -17,6 +17,8 @@ from netpalm.backend.core.utilities.rediz_meta import (
 
 log = logging.getLogger(__name__)
 
+from netpalm.backend.core.mongo.utils import write_task_result
+
 
 def get_service(service_name):
     log.debug(f"get_service: importing {service_name}")
@@ -50,6 +52,7 @@ def create(**kwargs):
             f"create: calling create on {service_name} with user data {user_payload}"
         )
         res = svc.create(service_lookup["service_model"](**user_payload))
+        write_task_result(result_payload=res)
         return res
     except Exception as e:
         write_meta_error(f"create service: {kwargs} {e}")
@@ -71,6 +74,7 @@ def update(**kwargs):
             f"update: calling update on {service_name} with user data {user_payload}"
         )
         res = svc.update(service_lookup["service_model"](**user_payload))
+        write_task_result(result_payload=res)
         return res
     except Exception as e:
         write_meta_error(f"update service: {kwargs} {e}")
@@ -92,6 +96,7 @@ def delete(**kwargs):
             f"delete: calling delete on {service_name} with user data {user_payload}"
         )
         res = svc.delete(service_lookup["service_model"](**user_payload))
+        write_task_result(result_payload=res)
         return res
     except Exception as e:
         write_meta_error(f"delete service: {kwargs} {e}")
@@ -113,6 +118,7 @@ def re_deploy(**kwargs):
             f"re_deploy: calling re_deploy on {service_name} with user data {user_payload}"
         )
         res = svc.re_deploy(service_lookup["service_model"](**user_payload))
+        write_task_result(result_payload=res)
         return res
     except Exception as e:
         write_meta_error(f"re_deploy service: {kwargs} {e}")
@@ -134,6 +140,7 @@ def validate(**kwargs):
             f"validate: calling validate on {service_name} with user data {user_payload}"
         )
         res = svc.validate(service_lookup["service_model"](**user_payload))
+        write_task_result(result_payload=res)
         return res
     except Exception as e:
         write_meta_error(f"validate service: {kwargs} {e}")
@@ -155,6 +162,7 @@ def health_check(**kwargs):
             f"health_check: calling health_check on {service_name} with user data {user_payload}"
         )
         res = svc.health_check(service_lookup["service_model"](**user_payload))
+        write_task_result(result_payload=res)
         return res
     except Exception as e:
         write_meta_error(f"health_check service: {kwargs} {e}")

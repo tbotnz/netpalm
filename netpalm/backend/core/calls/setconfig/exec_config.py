@@ -7,6 +7,8 @@ from netpalm.backend.core.utilities.jinja2.j2 import render_j2template
 from netpalm.backend.core.utilities.webhook.webhook import exec_webhook_func
 from netpalm.exceptions import NetpalmCheckError
 
+from netpalm.backend.core.mongo.utils import write_task_result
+
 from netpalm.backend.core.driver import driver_map
 
 
@@ -101,4 +103,5 @@ def exec_config(**kwargs):
     except Exception as e:
         write_meta_error(e)
 
+    write_task_result(result_payload=res)
     return result

@@ -20,3 +20,4 @@ apscheduler==3.6.3
 puresnmp==1.9.1
 pydantic
 names_generator==0.1.0
+pymongo==4.2.0

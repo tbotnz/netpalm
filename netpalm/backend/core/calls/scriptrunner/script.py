@@ -13,6 +13,9 @@ from netpalm.backend.core.utilities.webhook.webhook import exec_webhook_func
 
 from netpalm.backend.core.models.models import Script, ScriptCustom
 
+from netpalm.backend.core.mongo.utils import write_task_result
+
+
 log = logging.getLogger(__name__)
 
 
@@ -108,4 +111,5 @@ def script_kiddy(**kwargs):
         )
         write_meta_error(e)
 
+    write_task_result(result_payload=result)
     return result

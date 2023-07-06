@@ -147,6 +147,10 @@ class Config:
         self.webhook_jinja2_templates = data["webhook_jinja2_templates"]
         self.log_config_filename = data["log_config_filename"]
         self.ttp_templates = data["ttp_templates"]
+        self.mongo_server_ip = data["mongo_server_ip"]
+        self.mongo_server_port = data["mongo_server_port"]
+        self.mongo_user = data["mongo_user"]
+        self.mongo_password = data["mongo_password"]
         self.apscheduler_num_processes = data["apscheduler_num_processes"]
         self.apscheduler_num_threads = data["apscheduler_num_threads"]
         self.whitelist = DeviceWhitelist(data.get("device_whitelist"))

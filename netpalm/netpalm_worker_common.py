@@ -31,7 +31,7 @@ class UpdateLogProcessor:
     def __init__(self, ntplm: NetpalmManager):  # quotes to avoid import issues
         self.lock = update_log_lock  # Purpose of this lock is to stop multiple processes (ex. gunicorn workers)
         # from processing the update log at once
-        self.log = ntplm.extn_update_log
+        self.log = ntplm.redis.extn_update_log
         self.last_seq_number = (
             -1
         )  # last sequence number handled.  -1 == not initialized

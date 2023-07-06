@@ -55,10 +55,11 @@ class HttpErrorHandler(SyncAsyncDecoratorFactory):
             raise
         except Exception as e:
             import traceback
+
             log.exception(f"HttpErrorHandler Log: {e}")
             detail = {
                 "Error": f"{e!r}",
-                "Traceback": traceback.format_exc().splitlines()
+                "Traceback": traceback.format_exc().splitlines(),
             }
             raise HTTPException(status_code=500, detail=detail)
             # raise HTTPException(status_code=500, detail=str(e).split("\n"))
@@ -82,8 +83,10 @@ def serialized_for_hash(obj) -> str:
         if hasattr(obj, "__len__"):
             if not isinstance(obj, str):
                 # this is some kind of container and we should handle it recursively but we don't know how
-                log.error(f"attempting to serialize {obj!r} but it's {type=}.  Defaulting to generic repr."
-                          f"This might result in bad cache performance")
+                log.error(
+                    f"attempting to serialize {obj!r} but it's {type=}.  Defaulting to generic repr."
+                    f"This might result in bad cache performance"
+                )
                 return repr(obj)
 
         return repr(obj)  # this catches str, int, etc... also custom classes
@@ -92,8 +95,7 @@ def serialized_for_hash(obj) -> str:
 
     if isinstance(obj, dict):
         item_pairs = [
-            f"{repr(key)}: {serialized_for_hash(value)}"
-            for key, value in obj.items()
+            f"{repr(key)}: {serialized_for_hash(value)}" for key, value in obj.items()
         ]
         items_string = ", ".join(sorted(item_pairs))
 
@@ -119,7 +121,9 @@ def cache_key_from_req_data(req_data: dict, unsafe_logging: bool = False) -> str
     if req_data.get("connection_args", False):
         connection_args_set = True
         connection_args = req_data["connection_args"]
-        library_args = req_data.get("args", {})  # still necessary because maybe not all models will have an 'args' key
+        library_args = req_data.get(
+            "args", {}
+        )  # still necessary because maybe not all models will have an 'args' key
         host = connection_args.get("host")
         port = connection_args.get("port")
         command = req_data.get("command")
@@ -149,7 +153,7 @@ def cache_key_from_req_data(req_data: dict, unsafe_logging: bool = False) -> str
     log.info(f"hashed key: {hash}")
 
     if connection_args_set:
-        cache_key = f'{host}:{port}:{command}:{hash}'
+        cache_key = f"{host}:{port}:{command}:{hash}"
         log.debug(f"cache_key_from_req_data: cache key {cache_key}")
     else:
         # script is used
@@ -159,16 +163,18 @@ def cache_key_from_req_data(req_data: dict, unsafe_logging: bool = False) -> str
 
 def poison_host_cache(f):
     """THIS IS PROBABLY NOT ASYNC SAFE YET"""
+
     @wraps(f)
     def wrapper(*args, **kwargs):
         model = [
-            item for item in chain(args, kwargs.values())
-            if isinstance(item, BaseModel)
-        ][0]  # only take first model found because any more than that doesn't make sense
+            item for item in chain(args, kwargs.values()) if isinstance(item, BaseModel)
+        ][
+            0
+        ]  # only take first model found because any more than that doesn't make sense
         req_data = model.dict()
 
         cache_key = cache_key_from_req_data(req_data)
-        ntplm.clear_cache_for_host(cache_key)
+        ntplm.redis.clear_cache_for_host(cache_key)
         return f(*args, **kwargs)
 
     return wrapper
@@ -182,9 +188,10 @@ def cacheable_model(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         model = [
-            item for item in chain(args, kwargs.values())
-            if isinstance(item, BaseModel)
-        ][0]  # only take first model found because any more than that doesn't make sense
+            item for item in chain(args, kwargs.values()) if isinstance(item, BaseModel)
+        ][
+            0
+        ]  # only take first model found because any more than that doesn't make sense
 
         req_data = model.dict()
         log.debug(f"cacheable_model: req_data {req_data}")
@@ -193,10 +200,10 @@ def cacheable_model(f):
         cache_key = cache_key_from_req_data(req_data)
 
         if poison := cache_config.get("poison"):
-            ntplm.clear_cache_for_host(cache_key)
+            ntplm.redis.clear_cache_for_host(cache_key)
 
         if cacheable := cache_config.get("enabled") and not poison:
-            if cache_result := ntplm.cache.get(cache_key):
+            if cache_result := ntplm.redis.cache.get(cache_key):
                 # log.debug(f"cacheable_model: retrieving from cache with {cache_key}")
                 return cache_result
 
@@ -208,7 +215,7 @@ def cacheable_model(f):
                 cache_kwargs = {"timeout": ttl}
             else:
                 cache_kwargs = {}
-            ntplm.cache.set(cache_key, result, **cache_kwargs)
+            ntplm.redis.cache.set(cache_key, result, **cache_kwargs)
 
         return result
 
@@ -229,16 +236,10 @@ def error_handle_w_cache(f):
 
 def add_transaction_log_entry(entry_type: TransactionLogEntryType, data: Dict):
     log.debug(f"Adding {entry_type}: {data}")
-    item_dict = {
-        "type": entry_type,
-        "data": data
-    }
-    ntplm.extn_update_log.add(item_dict)
-    worker_message = {
-        "type": "process_update_log",
-        "kwargs": {}
-    }
-    ntplm.send_broadcast(json.dumps(worker_message))
+    item_dict = {"type": entry_type, "data": data}
+    ntplm.redis.extn_update_log.add(item_dict)
+    worker_message = {"type": "process_update_log", "kwargs": {}}
+    ntplm.redis.send_broadcast(json.dumps(worker_message))
 
 
 def whitelist(f):
@@ -259,14 +260,18 @@ def whitelist(f):
         try:
             model = [arg for arg in arg_list if isinstance(arg, BaseModel)][0]
         except IndexError:
-            raise NotImplementedError(f"`@whitelist` only supports routes with a valid BaseModel")
+            raise NotImplementedError(
+                f"`@whitelist` only supports routes with a valid BaseModel"
+            )
 
         hostnames = get_hosts_and_ips(model)
         # all hostnames found must match at least one whitelist rule
         valid = all(config.whitelist.match(hostname) for hostname in hostnames)
         if not valid:
-            raise HTTPException(status_code=403,
-                                detail=f"hosts in {hostnames} not permitted by whitelist: {config.whitelist.definition}")
+            raise HTTPException(
+                status_code=403,
+                detail=f"hosts in {hostnames} not permitted by whitelist: {config.whitelist.definition}",
+            )
 
         return f(*args, **kwargs)
 

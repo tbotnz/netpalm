@@ -15,7 +15,7 @@ router = APIRouter()
 @router.get("/task/{task_id}", response_model=Response)  # this can *also* return ServiceResponse, but trying to typdef it doesn't seem to work
 def get_task(task_id: str):
     try:
-        r = ntplm.fetchtask(task_id=task_id)
+        r = ntplm.redis.fetchtask(task_id=task_id)
         resp = jsonable_encoder(r)
         if not resp:
             raise HTTPException(status_code=404)
@@ -27,7 +27,7 @@ def get_task(task_id: str):
 @router.get("/taskqueue/")
 def get_task_list():
     try:
-        r = ntplm.getjoblist(q=False)
+        r = ntplm.redis.getjoblist(q=False)
         resp = jsonable_encoder(r)
         return resp
     except Exception as e:
@@ -38,7 +38,7 @@ def get_task_list():
 @router.get("/taskqueue/{host}")
 def get_host_task_list(host: str):
     try:
-        r = ntplm.getjobliststatus(q=host)
+        r = ntplm.redis.getjobliststatus(q=host)
         resp = jsonable_encoder(r)
         if not resp:
             raise HTTPException(status_code=404)
@@ -51,7 +51,7 @@ def get_host_task_list(host: str):
 @router.get("/workers/", response_model=List[WorkerResponse])
 def list_workers():
     try:
-        r = ntplm.get_workers()
+        r = ntplm.redis.get_workers()
         resp = jsonable_encoder(r)
         return resp
     except Exception as e:
@@ -62,7 +62,7 @@ def list_workers():
 @router.post("/workers/kill/{name}")
 def kill_worker(name: str):
     try:
-        r = ntplm.kill_worker(worker_name=name)
+        r = ntplm.redis.kill_worker(worker_name=name)
         resp = jsonable_encoder(r)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split('\n'))
@@ -72,7 +72,7 @@ def kill_worker(name: str):
 @router.get("/containers/pinned/", response_model=List)
 def list_pinned_containers():
     try:
-        r = ntplm.fetch_pinned_store()
+        r = ntplm.redis.fetch_pinned_store()
         resp = jsonable_encoder(r)
         return resp
     except Exception as e:

@@ -33,11 +33,8 @@ async def route_logout_and_remove_cookie():
 @router.get("/worker-ping")
 async def ping():
     log.info(f"SENDING PING")
-    worker_message = {
-        "type": "ping",
-        "kwargs": {}
-    }
-    rslt = ntplm.send_broadcast(json.dumps(worker_message))
+    worker_message = {"type": "ping", "kwargs": {}}
+    rslt = ntplm.redis.send_broadcast(json.dumps(worker_message))
     # rslt = ntplm.send_broadcast("PING")  # only way to see "response" is look at logs
     resp = jsonable_encoder(rslt)
     return resp
@@ -46,13 +43,13 @@ async def ping():
 # utility route - flush cache
 @router.delete("/cache")
 @HttpErrorHandler()
-def flush_cache(fail: Optional[bool] = Query(False, title="Fail", description="Fail on purpose")):
+def flush_cache(
+    fail: Optional[bool] = Query(False, title="Fail", description="Fail on purpose")
+):
     if fail:
         raise RuntimeError(f"Failing on Purpose")
     log.info(f"Flushing Cache")
-    rslt = {
-        "cleared_records": int(ntplm.cache.clear())
-    }
+    rslt = {"cleared_records": int(ntplm.redis.cache.clear())}
     log.info(f"flush got this result: {rslt}")
     return rslt
 
@@ -61,13 +58,15 @@ def flush_cache(fail: Optional[bool] = Query(False, title="Fail", description="F
 @router.delete("/cache/{cache_key}")
 @HttpErrorHandler()
 def flush_cache_device(
-        cache_key: str = Path(...,
-                              title="The cache key to invalidate",
-                              description="must be of form host_or_ip:port:command_or_*")
+    cache_key: str = Path(
+        ...,
+        title="The cache key to invalidate",
+        description="must be of form host_or_ip:port:command_or_*",
+    )
 ):
     log.info(f"Flushing Cache for {cache_key}")
     rslt = {
-        "cleared_records": int(ntplm.clear_cache_for_host(cache_key=cache_key))
+        "cleared_records": int(ntplm.redis.clear_cache_for_host(cache_key=cache_key))
     }
     log.info(f"flush got this result: {rslt}")
     return rslt
@@ -77,27 +76,26 @@ def flush_cache_device(
 @HttpErrorHandler()
 def list_cached_items():
     log.info(f"Getting cache info")
-    keys = ntplm.cache.keys()
-    rslt = {
-        "cache": keys,
-        "size": len(keys)
-    }
+    keys = ntplm.redis.cache.keys()
+    rslt = {"cache": keys, "size": len(keys)}
     return rslt
 
 
 @router.get("/cache/{cache_key}")
 @HttpErrorHandler()
 def get_cache_item(
-        cache_key: str = Path(...,
-                              title="The cache key to retrieve",
-                              description="may include prefix, rest of the key must be complete")
+    cache_key: str = Path(
+        ...,
+        title="The cache key to retrieve",
+        description="may include prefix, rest of the key must be complete",
+    )
 ):
     log.info(f"Getting cache info for {cache_key}")
-    prefix = ntplm.cache.key_prefix
-    cache_key = cache_key.replace(prefix, "")  # no way to stop cache from adding this right now, so ensure no duplicate
-    rslt = {
-        cache_key: ntplm.cache.get(cache_key)
-    }
+    prefix = ntplm.redis.cache.key_prefix
+    cache_key = cache_key.replace(
+        prefix, ""
+    )  # no way to stop cache from adding this right now, so ensure no duplicate
+    rslt = {cache_key: ntplm.redis.cache.get(cache_key)}
     return rslt
 
 

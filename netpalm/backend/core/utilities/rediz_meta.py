@@ -15,7 +15,7 @@ def exception_full_name(exception: BaseException):
     if (module := inspect.getmodule(exception)) is None:
         return name
 
-    name = f'{module.__name__}.{name}'
+    name = f"{module.__name__}.{name}"
     return name
 
 
@@ -31,7 +31,7 @@ def write_meta_error(exception: Exception):
     if isinstance(exception, NetpalmMetaProcessedException):
         raise exception from None  # Don't process the same exception twice
 
-    log.exception('`write_meta_error` processing error')
+    log.exception("`write_meta_error` processing error")
 
     job = get_current_job()
     job.meta["result"] = "failed"
@@ -40,8 +40,8 @@ def write_meta_error(exception: Exception):
 
     for exception in reversed(list(exception_chain)):
         task_error = {
-            'exception_class': exception_full_name(exception),
-            'exception_args': [arg for arg in exception.args if arg is not None]
+            "exception_class": exception_full_name(exception),
+            "exception_args": [arg for arg in exception.args if arg is not None],
         }
         job.meta["errors"].append(task_error)
 
@@ -70,14 +70,20 @@ def render_netpalm_payload(job_result={}):
     """in band rpc job result renderer"""
     try:
         job = get_current_job()
-        resultdata = Response(status="success",
-                              data={"task_id": job.id,
-                                    "created_on": job.created_at.strftime("%Y-%m-%d %H:%M:%S.%f"),
-                                    "task_queue": job.description,
-                                    "task_status": "finished",
-                                    "task_result": job_result,
-                                    "task_errors": job.meta["errors"]
-                                    }).dict()
+        job_status = "failed"
+        if len(job.meta["errors"]) == 0:
+            job_status = "finished"
+        resultdata = Response(
+            status="success",
+            data={
+                "task_id": job.id,
+                "created_on": job.created_at.strftime("%Y-%m-%d %H:%M:%S.%f"),
+                "task_queue": job.description,
+                "task_status": job_status,
+                "task_result": job_result,
+                "task_errors": job.meta["errors"],
+            },
+        ).dict()
         return resultdata
 
     except Exception as e:

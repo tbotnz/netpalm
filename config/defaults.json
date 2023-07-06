@@ -52,5 +52,9 @@
   "log_config_filename": "config/log-config.yml",
   "apscheduler_num_processes": 1,
   "apscheduler_num_threads": 5,
-  "device_whitelist": []
+  "device_whitelist": [],
+  "mongo_server_ip": "mongo",
+  "mongo_server_port":27017,
+  "mongo_user":"root",
+  "mongo_password":"root"
 }

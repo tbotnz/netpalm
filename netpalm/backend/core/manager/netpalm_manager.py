@@ -5,7 +5,7 @@ import logging
 
 from typing import Any
 
-from netpalm.backend.core.redis.rediz import Rediz
+from netpalm.backend.core.manager.db_manager import DBManager
 from fastapi.encoders import jsonable_encoder
 
 from netpalm.backend.core.models.models import GetConfig
@@ -39,7 +39,7 @@ from netpalm.backend.core.calls.scriptrunner.script import script_model_finder
 log = logging.getLogger(__name__)
 
 
-class NetpalmManager(Rediz):
+class NetpalmManager(DBManager):
     def _get_config(self, getcfg: GetConfig, library: str = None) -> Response:
         """ executes the base netpalm getconfig method async and returns the task id response obj """
         if isinstance(getcfg, dict):
@@ -149,7 +149,7 @@ class NetpalmManager(Rediz):
             req_data = service
         else:
             req_data = service.dict(exclude_none=True)
-        r = self.execute_create_service_task(
+        r = self.redis.execute_create_service_task(
             metho="service_create", model=service_model, kwargs=req_data
         )
         resp = jsonable_encoder(r)
@@ -157,7 +157,7 @@ class NetpalmManager(Rediz):
 
     def list_service_instances(self):
         """ lists services in the netpalm service inventory """
-        r = self.get_service_instances()
+        r = self.redis.get_service_instances()
         if r:
             formatted_result = ResponseBasic(
                 status="success", data={"task_result": r}
@@ -171,7 +171,7 @@ class NetpalmManager(Rediz):
 
     def get_service_instance(self, service_id: str):
         """ gets a from the service inventory """
-        r = self.fetch_service_instance_args(sid=service_id)
+        r = self.redis.fetch_service_instance_args(sid=service_id)
         if r:
             formatted_result = ResponseBasic(
                 status="success", data={"task_result": r}
@@ -184,7 +184,7 @@ class NetpalmManager(Rediz):
     def validate_service_instance_state(self, service_id: str):
         """ runs the validate method on the service template """
         try:
-            r = self.validate_service_instance(sid=service_id)
+            r = self.redis.validate_service_instance(sid=service_id)
             resp = jsonable_encoder(r)
             return resp
         except Exception:
@@ -193,7 +193,7 @@ class NetpalmManager(Rediz):
     def health_check_service_instance_state(self, service_id: str):
         """ runs the validate method on the service template """
         try:
-            r = self.health_check_service_instance(sid=service_id)
+            r = self.redis.health_check_service_instance(sid=service_id)
             resp = jsonable_encoder(r)
             return resp
         except Exception:
@@ -201,15 +201,15 @@ class NetpalmManager(Rediz):
 
     def retrieve_service_instance_state(self, service_id: str):
         """ retrieves the service current state """
-        r = self.retrieve_service_instance(sid=service_id)
+        r = self.redis.retrieve_service_instance(sid=service_id)
         resp = jsonable_encoder(r)
         return resp
 
     def redeploy_service_instance_state(self, service_id: str):
         """ redeploys the service instance """
         try:
-            self.set_service_instance_status(self.service_id, state="deploying")
-            r = self.redeploy_service_instance(sid=service_id)
+            self.redis.set_service_instance_status(self.service_id, state="deploying")
+            r = self.redis.redeploy_service_instance(sid=service_id)
             resp = jsonable_encoder(r)
             return resp
         except Exception:
@@ -217,7 +217,7 @@ class NetpalmManager(Rediz):
 
     def delete_service_instance_state(self, service_id: str):
         """ deletes the service instance """
-        r = self.delete_service_instance(sid=service_id)
+        r = self.redis.delete_service_instance(sid=service_id)
         resp = jsonable_encoder(r)
         return resp
 
@@ -229,12 +229,12 @@ class NetpalmManager(Rediz):
         else:
             req_data = service_data.dict(exclude_none=True)
 
-        data = self.fetch_service_instance(service_id)
+        data = self.redis.fetch_service_instance(service_id)
         if data:
             service_json = json.loads(data)
             service_json["service_data"] = req_data
             service_json["service_meta"]["service_state"] = "deploying"
-            self.update_service_instance_data(service_id, service_json)
+            self.redis.update_service_instance_data(service_id, service_json)
             r = self.execute_task(method="service_update", kwargs=service_json)
             resp = jsonable_encoder(r)
             return resp
@@ -252,7 +252,7 @@ class NetpalmManager(Rediz):
             task_id = req_data["data"]["task_id"]
 
             while True:
-                r = self.fetchtask(task_id=task_id)
+                r = self.redis.fetchtask(task_id=task_id)
                 if (r["data"]["task_status"] == "finished") or (
                     r["data"]["task_status"] == "failed"
                 ):

@@ -1,7 +1,6 @@
 version: "3.7"
 
 services:
-
   netpalm-controller:
     build:
       context: .
@@ -29,8 +28,8 @@ services:
       - redis
     networks:
       - "netpalm-network"
-#    deploy:
-#      replicas: 2
+  #    deploy:
+  #      replicas: 2
 
   worker-fifo:
     image: netpalm_netpalm-controller
@@ -51,14 +50,24 @@ services:
     networks:
       - "netpalm-network"
 
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    networks:
+      - "netpalm-network"
+
   cisgo:
     image: apcela/cisshgo:v0.1.1
     ports:
-        - "10005:10005"  # one port just for convenience in case you need to ssh from outside for some reason
+      - "10005:10005" # one port just for convenience in case you need to ssh from outside for some reason
     networks:
       - "netpalm-network"
 
 networks:
-
   netpalm-network:
     name: "netpalm-network"

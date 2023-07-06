@@ -7,18 +7,24 @@ from netpalm.backend.core.confload.confload import config
 
 from netpalm.backend.core.confload import confload
 from netpalm.backend.core.manager import ntplm
-from netpalm.backend.core.redis.rediz import ExtnUpdateLog, TransactionLogEntryType, TransactionLogEntryModel
+from netpalm.backend.core.redis.rediz import (
+    ExtnUpdateLog,
+    TransactionLogEntryType,
+    TransactionLogEntryModel,
+)
 
 
 @pytest.fixture(scope="function")
 def clean_log():
     config = confload.initialize_config()
-    extn_log = ExtnUpdateLog(ntplm.base_connection, config.redis_update_log, create=False)
+    extn_log = ExtnUpdateLog(
+        ntplm.redis.base_connection, config.redis_update_log, create=False
+    )
     extn_log.clear()
 
 
 def test_extensible_update_lock_behavior():
-    lock = ntplm.extn_update_log.lock
+    lock = ntplm.redis.extn_update_log.lock
     assert not lock.locked()
 
     with lock:  # should work
@@ -31,58 +37,53 @@ def test_extensible_update_lock_behavior():
         with pytest.raises(redis_lock.AlreadyAcquired):
             lock.acquire()
 
-        new_lock = redis_lock.Lock(ntplm.base_connection, config.redis_update_log)
-        assert not new_lock.acquire(blocking=False)  # proving 'acquire' fails with a new instance
+        new_lock = redis_lock.Lock(ntplm.redis.base_connection, config.redis_update_log)
+        assert not new_lock.acquire(
+            blocking=False
+        )  # proving 'acquire' fails with a new instance
 
 
 def test_extensible_update_log_creation(clean_log):
-    extn_update_log = ntplm.extn_update_log
+    extn_update_log = ntplm.redis.extn_update_log
     assert not extn_update_log.exists
     extn_update_log.create()
     assert extn_update_log.exists
 
-    new_log_obj = ExtnUpdateLog(ntplm.base_connection, ntplm.extn_update_log.log_name)
+    new_log_obj = ExtnUpdateLog(
+        ntplm.redis.base_connection, ntplm.redis.extn_update_log.log_name
+    )
     assert new_log_obj.exists
 
     assert new_log_obj.get(-1).type is TransactionLogEntryType.init
 
 
 def test_extensible_update_log_add_fetch(clean_log):
-    extn_update_log = ntplm.extn_update_log
-    ntplm.extn_update_log.create(strict=True)
+    extn_update_log = ntplm.redis.extn_update_log
+    ntplm.redis.extn_update_log.create(strict=True)
 
     item_1_dict = {
         "type": TransactionLogEntryType.tfsm_pull,
-        "data": {
-            "key": "123_432",
-            "driver": "dell_force10",
-            "command": "show version"
-        }
+        "data": {"key": "123_432", "driver": "dell_force10", "command": "show version"},
     }
     item_2_dict = {
         "type": TransactionLogEntryType.tfsm_pull,
-        "data": {
-            "key": "999_876",
-            "driver": "cisco_ios",
-            "command": "show version"
-        }
+        "data": {"key": "999_876", "driver": "cisco_ios", "command": "show version"},
     }
-    init_dict = {
-        "type": TransactionLogEntryType.init,
-        "data": {
-            "init": True
-        }
-    }
+    init_dict = {"type": TransactionLogEntryType.init, "data": {"init": True}}
     item_dicts = [item_1_dict, item_2_dict]
-    items = [TransactionLogEntryModel(seq=index, **item_dict)
-             for index, item_dict in enumerate(item_dicts, start=1)]
+    items = [
+        TransactionLogEntryModel(seq=index, **item_dict)
+        for index, item_dict in enumerate(item_dicts, start=1)
+    ]
 
     pprint(items)
 
     with pytest.raises(ValueError):  # init records are only valid at very start
         extn_update_log.add(init_dict)
 
-    assert (start_len := len(extn_update_log)) == 1  # should only have the init record now
+    assert (
+        start_len := len(extn_update_log)
+    ) == 1  # should only have the init record now
 
     for item in items:
         extn_update_log.add(item)
@@ -106,14 +107,13 @@ def test_extensible_update_log_add_fetch(clean_log):
 
 def test_update_log_processor(clean_log):
     from netpalm.netpalm_worker_common import UpdateLogProcessor, update_log_processor
+
     up = update_log_processor
     additional_up = UpdateLogProcessor(ntplm)
 
     echo_dict = {
         "type": TransactionLogEntryType.echo,
-        "data": {
-            "msg": "echo? ?   ECHO!!"
-        }
+        "data": {"msg": "echo? ?   ECHO!!"},
     }
     assert up._get_lock()
     assert not additional_up._get_lock()

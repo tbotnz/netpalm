@@ -4,11 +4,14 @@ from netpalm.backend.core.utilities.rediz_meta import (
     render_netpalm_payload,
     write_mandatory_meta,
 )
+
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.core.utilities.webhook.webhook import exec_webhook_func
 from netpalm.exceptions import NetpalmCheckError
 
 from netpalm.backend.core.driver import driver_map
+
+from netpalm.backend.core.mongo.utils import write_task_result
 
 log = logging.getLogger(__name__)
 
@@ -76,4 +79,5 @@ def exec_command(**kwargs):
     except Exception as e:
         write_meta_error(e)
 
+    write_task_result(result_payload=result)
     return result
