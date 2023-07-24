@@ -37,7 +37,7 @@ class PureSNMPGetConfig(BaseModel):
     ttl: Optional[int] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "library": "puresnmp",
                 "connection_args": {

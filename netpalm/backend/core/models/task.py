@@ -22,8 +22,8 @@ class TaskMetaData(BaseModel):
     enqueued_at: Optional[str]
     started_at: Optional[str]
     ended_at: Optional[str]
-    enqueued_elapsed_seconds: Optional[str]
-    total_elapsed_seconds: Optional[str]
+    enqueued_elapsed_seconds: Optional[int]
+    total_elapsed_seconds: Optional[int]
     assigned_worker: Optional[str]
 
 class TaskError(BaseModel):
@@ -56,7 +56,7 @@ class Response(BaseModel):
     data: TaskResponse
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "status": "success",
                 "data": {
@@ -99,7 +99,7 @@ class ServiceResponse(BaseModel):
     data: ServiceTaskResponse
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "status": "success",
                 "data": {
@@ -133,7 +133,7 @@ class ResponseBasic(BaseModel):
 
 class WorkerResponse(BaseModel):
     hostname: Optional[Any] = None
-    pid: str
+    pid: int
     name: Optional[Any] = None
     last_heartbeat: Optional[Any] = None
     birth_date: Optional[Any] = None

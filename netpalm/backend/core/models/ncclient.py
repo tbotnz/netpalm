@@ -29,7 +29,7 @@ class NcclientGetRpcArgs(BaseModel):
     capabilities: Optional[bool] = False
 
 
-class NcclientDeviceDrivers(str):
+class NcclientDeviceDrivers(str, Enum):
     default = "default"
     hpcomware = "hpcomware"
     h3c = "h3c"
@@ -45,6 +45,7 @@ class NcclientDeviceDrivers(str):
 
 class NcclientDeviceParams(BaseModel):
     name: NcclientDeviceDrivers
+
 
 class NcclientManagerParams(BaseModel):
     timeout: int
@@ -74,7 +75,7 @@ class NcclientSetConfig(BaseModel):
     ttl: Optional[int] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "library": "ncclient",
                 "connection_args": {
@@ -104,7 +105,7 @@ class NcclientGetConfig(BaseModel):
     ttl: Optional[int] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "library": "ncclient",
                 "connection_args": {
@@ -139,7 +140,7 @@ class NcclientGet(BaseModel):
     ttl: Optional[int] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "library": "ncclient",
                 "connection_args": {
