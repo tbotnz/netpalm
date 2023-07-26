@@ -58,7 +58,7 @@ class NetmikoConnectionArgs(BaseModel):
     serial_settings: Optional[str] = None
     fast_cli: Optional[bool] = False
     session_log: Optional[str] = None
-    session_log_record_writes = False
+    session_log_record_writes: Optional[bool] = False
     session_log_file_mode: Optional[str] = "write"
     allow_auto_change: Optional[bool] = False
     encoding: Optional[str] = "ascii"
@@ -78,7 +78,7 @@ class NetmikoGetConfig(BaseModel):
     enable_mode: Optional[bool] = False
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "library": "netmiko",
                 "connection_args": {
@@ -114,7 +114,7 @@ class NetmikoSetConfig(BaseModel):
     ttl: Optional[int] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "library": "netmiko",
                 "connection_args": {

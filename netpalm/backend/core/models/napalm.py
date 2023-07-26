@@ -45,7 +45,7 @@ class NapalmGetConfig(BaseModel):
     cache: Optional[CacheConfig] = {}
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "library": "napalm",
                 "connection_args": {
@@ -72,7 +72,7 @@ class NapalmSetConfig(BaseModel):
     post_checks: Optional[List[GenericPrePostCheck]] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "library": "napalm",
                 "connection_args": {

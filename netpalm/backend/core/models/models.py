@@ -67,7 +67,7 @@ class SetConfig(BaseModel):
     ttl: Optional[int] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "library":
                 "napalm",
@@ -109,7 +109,7 @@ class CacheConfig(BaseModel):
     poison: Optional[bool] = False
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             'example': {
                 'enabled': True,
                 'ttl': 300,
@@ -126,7 +126,7 @@ class Script(BaseModel):
     ttl: Optional[int] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "script": "hello_world",
                 "args": {
@@ -144,7 +144,7 @@ class ScriptCustom(BaseModel):
     ttl: Optional[int] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "script": "hello_world",
                 "queue_strategy": "fifo"
@@ -163,7 +163,7 @@ class GetConfig(BaseModel):
     ttl: Optional[int] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "library": "netmiko",
                 "connection_args": {

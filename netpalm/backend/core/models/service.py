@@ -42,7 +42,7 @@ class ServiceModel(BaseModel):
     ttl: Optional[int] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "operation": "retrieve",
                 "args": {
@@ -52,24 +52,18 @@ class ServiceModel(BaseModel):
             }
         }
 
+
 # now redundant
 class ServiceModelMethods(BaseModel):
     operation: ServiceLifecycle
     path: Optional[str] = None
     payload: dict
 
+
 # now redundant
 class ServiceModelSupportedMethods(BaseModel):
     supported_methods: List[ServiceModelMethods] = None
 
-# now redundant
-class ServiceModelTemplate(BaseModel):
-    __root__: List[ServiceModelSupportedMethods]
-
 
 class ServiceInventorySchema(BaseModel):
     service_meta: dict
-
-
-class ServiceInventoryResponse(BaseModel):
-    __root__: List[ServiceInventorySchema]

@@ -25,7 +25,7 @@ class hello_world_model(BaseModel):
 
     class Config:
         # add an example payload under the "example" dict 
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "script": "hello_world",
                 "args": {

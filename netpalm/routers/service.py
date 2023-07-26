@@ -12,7 +12,7 @@ from fastapi import APIRouter, Request, HTTPException
 from netpalm.backend.core.confload.confload import config
 
 # load models
-from netpalm.backend.core.models.service import ServiceModel, ServiceInventoryResponse
+from netpalm.backend.core.models.service import ServiceModel
 from netpalm.backend.core.models.task import ServiceResponse, Response, ResponseBasic
 
 from netpalm.backend.core.manager import ntplm

@@ -93,7 +93,7 @@ def script_kiddy(**kwargs):
 
     try:
         log.debug(f"script_kiddy: attempting to run script {script_path_full_name}")
-        if not model_is_defined or model_mode is "legacy":
+        if not model_is_defined or model_mode == "legacy":
             result = runscrp(kwargs=arg)
         else:
             data_to_send = model_to_validate(**kwarg)
