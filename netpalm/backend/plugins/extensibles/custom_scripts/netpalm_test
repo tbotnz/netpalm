@@ -1,0 +1,31 @@
+def run(**kwargs):
+    try:
+        # mandatory get of kwargs - payload comes through as {"kwargs": {"hello": "world"}}
+        args = kwargs.get("kwargs")
+        # access your vars here in a dict format - payload is now {"hello": "world"}
+        username = args["username"]
+        password = args["password"]
+        host = args["host"]
+        device_type= args["device_type"]
+        command= args["command"]
+        # use_textfsm = args["use_textfsm"]
+
+        netmiko_send_data = {
+            "library": "netmiko",
+            "connection_args": {
+                "device_type": device_type,
+                "host": host,
+                "username": username,
+                "password": password,
+                "timeout": 5
+            },
+            "command": command,
+            "queue_strategy": "pinned"
+        }
+
+        # reutn "world"
+        return netmiko_send_data
+    except KeyError as e:
+        raise Exception(f"Required args: {e}")
+    except Exception as e:
+        raise Exception(e)
