@@ -18,5 +18,5 @@ filelock
 jsonpath_ng
 apscheduler==3.6.3
 puresnmp==1.9.1
-pydantic
+pydantic>=1.10.13,<2.0
 names_generator==0.1.0
