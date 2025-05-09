@@ -5,7 +5,7 @@ services:
     netpalm-controller:
       build:
           context: .
-          dockerfile: ./dockerfiles/netpalm_controller_dockerfile
+          dockerfile: ./dockerfiles/controller.dockerfile
       environment:
           - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
           - NETPALM_CONFIG=/code/config/config.json
@@ -21,7 +21,12 @@ services:
     netpalm-worker-pinned:
       build:
           context: .
-          dockerfile: ./dockerfiles/netpalm_pinned_worker_dockerfile
+          dockerfile: ./dockerfiles/worker.dockerfile
+      image: netpalm-worker
+      command:
+        - "python3"
+        - "worker.py"
+        - "pinned"
       environment:
         - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
         - NETPALM_CONFIG=/code/config/config.json
@@ -33,9 +38,11 @@ services:
       restart: always
 
     netpalm-worker-fifo:
-      build:
-          context: .
-          dockerfile: ./dockerfiles/netpalm_fifo_worker_dockerfile
+      image: netpalm-worker
+      command:
+        - "python3"
+        - "worker.py"
+        - "fifo"
       environment:
         - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
         - NETPALM_CONFIG=/code/config/config.json

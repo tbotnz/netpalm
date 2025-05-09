@@ -1,0 +1,42 @@
+[project]
+name = "netpalm"
+version = "0.2.8"
+description = "The Open API Platform for Network Devices"
+readme = "README.md"
+requires-python = "==3.8.*"
+dependencies = [
+    "apscheduler==3.6.3",
+    "cachelib==0.3.0",
+    "fastapi==0.115.12",
+    "filelock==3.16.1",
+    "genie==23.11",
+    "jinja2schema==0.1.4",
+    "jsonpath-ng==1.7.0",
+    "jsonschema==4.23.0",
+    "names-generator==0.1.0",
+    "napalm>=3.4.1",
+    "ncclient==0.6.9",
+    "netmiko==3.3.2",
+    "puresnmp==1.9.1",
+    "pydantic==1.10.13",
+    "python-redis-lock==4.0.0",
+    "pyyaml==6.0.2",
+    "redis==4.5.1",
+    "requests==2.32.3",
+    "rq==1.16.2",
+    "ttp==0.9.5",
+    "unicon==23.11",
+    "xmltodict==0.14.2",
+]
+
+[dependency-groups]
+controller = [
+    "aiofiles==24.1.0",
+    "gunicorn==23.0.0",
+    "httptools==0.6.4",
+    "pytest==8.3.5",
+    "pytest-mock==3.14.0",
+    "pytest-timeout==2.4.0",
+    "uvicorn==0.33.0",
+    "uvloop==0.21.0",
+]

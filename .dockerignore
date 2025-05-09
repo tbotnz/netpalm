@@ -3,6 +3,7 @@
 .gitignore
 .idea
 .vscode
+.venv
 venv
 backend/plugins/extensibles/ntc-templates
 static
