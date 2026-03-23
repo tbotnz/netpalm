@@ -12,50 +12,62 @@ netpalm is a REST API broker for your network. Point it at any device — SSH, T
 
 ## Architecture
 
-```
-                          ┌─────────────────────────────────────────────┐
-                          │              netpalm cluster                │
-                          │                                             │
-  HTTP ──────────────────►│  ┌───────────┐    ┌────────────┐            │
-  POST /getconfig         │  │  FastAPI   │───►│ PostgreSQL │            │
-  POST /setconfig         │  │  :9000     │    │  (jobs db) │            │
-  POST /script            │  └───────────┘    └─────┬──────┘            │
-  POST /service           │                         │                   │
-  GET  /task/{id}         │                   ┌─────▼──────┐            │
-                          │                   │ Scheduler   │            │
-                          │                   │ (outbox     │            │
-                          │                   │  relay)     │            │
-                          │                   └─────┬──────┘            │
-                          │                         │                   │
-                          │                   ┌─────▼──────┐            │
-                          │                   │   Kafka     │            │
-                          │                   │  (KRaft)    │            │
-                          │                   └─────┬──────┘            │
-                          │                         │                   │
-                          │        ┌────────────────┼────────────────┐  │
-                          │        │                │                │  │
-                          │  ┌─────▼─────┐   ┌─────▼─────┐  ┌──────▼┐ │
-                          │  │ Executor  │   │ Executor  │  │ ...   │ │
-                          │  └─────┬─────┘   └─────┬─────┘  └───┬──┘ │
-                          │        │                │             │    │
-                          └────────┼────────────────┼─────────────┼────┘
-                                   │                │             │
-                          ┌────────▼────────────────▼─────────────▼────┐
-                          │           Network Devices                   │
-                          │  SSH · Telnet · NETCONF · RESTCONF · SNMP  │
-                          └────────────────────────────────────────────┘
+```mermaid
+graph TB
+    Client["Client
+    POST /getconfig
+    POST /setconfig
+    POST /script
+    POST /service
+    GET /task/{id}"]
+
+    subgraph netpalm["netpalm cluster"]
+        API["FastAPI :9000"]
+        DB[(PostgreSQL)]
+        Scheduler["Scheduler
+        (outbox relay)"]
+        Kafka["Kafka (KRaft)"]
+        E1["Executor"]
+        E2["Executor"]
+        E3["Executor ..."]
+    end
+
+    Devices[/"Network Devices
+    SSH · Telnet · NETCONF · RESTCONF · SNMP"/]
+
+    Client -->|HTTP| API
+    API --> DB
+    Scheduler --> DB
+    Scheduler --> Kafka
+    Kafka --> E1 & E2 & E3
+    E1 & E2 & E3 --> Devices
+    E1 & E2 & E3 -->|result| DB
 ```
 
 ### How a request flows
 
-```
-1. Client POSTs to /getconfig (or /setconfig, /script, /service)
-2. API server writes a job record to PostgreSQL (status: pending)
-3. Client gets back a task_id immediately
-4. Scheduler polls DB, publishes pending jobs to Kafka topics
-5. Executor consumes the job, connects to the device, runs the command
-6. Result written back to PostgreSQL (status: finished)
-7. Client polls GET /task/{task_id} to retrieve the result
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant A as API Server
+    participant DB as PostgreSQL
+    participant S as Scheduler
+    participant K as Kafka
+    participant E as Executor
+    participant D as Device
+
+    C->>A: POST /getconfig
+    A->>DB: Insert job (pending)
+    A-->>C: 202 {task_id}
+    S->>DB: Poll pending jobs
+    S->>K: Publish to topic
+    K->>E: Consume job
+    E->>D: Connect & run command
+    D-->>E: Response
+    E->>DB: Write result (finished)
+    C->>A: GET /task/{task_id}
+    A->>DB: Read result
+    A-->>C: 200 {task_result}
 ```
 
 ## Drivers
@@ -139,16 +151,22 @@ Full OpenAPI docs are served at `/` when the container is running.
 - **FIFO** — pooled workers, first-in-first-out. Good default for read operations.
 - **Pinned** — one queue per device. Serializes all tasks for that host, prevents connection stomping.
 
-```
-┌──────────────────────────────────────────────────┐
-│                  Kafka Topics                     │
-│                                                   │
-│  netpalm.jobs.fifo ──────────► Worker Pool        │
-│                                (any executor)     │
-│                                                   │
-│  netpalm.jobs.pinned.10.0.1.1 ► Executor A only  │
-│  netpalm.jobs.pinned.10.0.1.2 ► Executor B only  │
-└──────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    subgraph Kafka Topics
+        FIFO["netpalm.jobs.fifo"]
+        P1["netpalm.jobs.pinned.10.0.1.1"]
+        P2["netpalm.jobs.pinned.10.0.1.2"]
+    end
+
+    Pool["Worker Pool
+    (any executor)"]
+    EA["Executor A"]
+    EB["Executor B"]
+
+    FIFO --> Pool
+    P1 --> EA
+    P2 --> EB
 ```
 
 ### Caching
@@ -187,15 +205,16 @@ If a pre-check fails, the config is not deployed. If a post-check fails, the tas
 
 Model-driven, multi-device orchestration with lifecycle management. Services support create, retrieve, delete, validate, and health check operations with automatic versioning and rollback.
 
-```
-Service State Machine:
-  deploying ──► deployed ──► updating ──► deployed
-                    │            │
-                    ▼            ▼
-                 deleting     errored (auto-rollback)
-                    │
-                    ▼
-                 deleted
+```mermaid
+stateDiagram-v2
+    [*] --> deploying
+    deploying --> deployed
+    deployed --> updating
+    updating --> deployed
+    updating --> errored : auto-rollback
+    deployed --> deleting
+    deleting --> deleted
+    deleted --> [*]
 ```
 
 Drop your service definitions in `netpalm/backend/plugins/extensibles/services/`.
@@ -232,20 +251,14 @@ Every component scales independently. Executors are stateless Kafka consumers �
 docker compose up -d --scale netpalm-executor=5
 ```
 
-```
-┌─────────────┐   ┌─────────────┐   ┌─────────────┐
-│  API Server │   │  API Server │   │  API Server │
-└──────┬──────┘   └──────┬──────┘   └──────┬──────┘
-       └─────────────────┼─────────────────┘
-                         │
-                   ┌─────▼─────┐
-                   │ PostgreSQL│
-                   │ + Kafka   │
-                   └─────┬─────┘
-                         │
-       ┌────────┬────────┼────────┬────────┐
-       ▼        ▼        ▼        ▼        ▼
-   Executor Executor Executor Executor Executor
+```mermaid
+graph TB
+    A1["API Server"] & A2["API Server"] & A3["API Server"]
+    DB["PostgreSQL + Kafka"]
+    E1["Executor"] & E2["Executor"] & E3["Executor"] & E4["Executor"] & E5["Executor"]
+
+    A1 & A2 & A3 --> DB
+    DB --> E1 & E2 & E3 & E4 & E5
 ```
 
 For production, deploy on Kubernetes or Docker Swarm.
