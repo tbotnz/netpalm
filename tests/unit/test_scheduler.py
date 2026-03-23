@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -22,55 +22,55 @@ class TestComputeNextRun:
 
     def test_interval_seconds(self):
         sched = self._make_sched("interval", {"seconds": 30})
-        now = datetime(2026, 1, 1, tzinfo=UTC)
+        now = datetime(2026, 1, 1, tzinfo=timezone.utc)
         result = _compute_next_run(sched, now)
         assert result == now + timedelta(seconds=30)
 
     def test_interval_minutes(self):
         sched = self._make_sched("interval", {"minutes": 5})
-        now = datetime(2026, 1, 1, tzinfo=UTC)
+        now = datetime(2026, 1, 1, tzinfo=timezone.utc)
         result = _compute_next_run(sched, now)
         assert result == now + timedelta(minutes=5)
 
     def test_interval_hours(self):
         sched = self._make_sched("interval", {"hours": 2})
-        now = datetime(2026, 1, 1, tzinfo=UTC)
+        now = datetime(2026, 1, 1, tzinfo=timezone.utc)
         result = _compute_next_run(sched, now)
         assert result == now + timedelta(hours=2)
 
     def test_interval_days(self):
         sched = self._make_sched("interval", {"days": 1})
-        now = datetime(2026, 1, 1, tzinfo=UTC)
+        now = datetime(2026, 1, 1, tzinfo=timezone.utc)
         result = _compute_next_run(sched, now)
         assert result == now + timedelta(days=1)
 
     def test_interval_weeks(self):
         sched = self._make_sched("interval", {"weeks": 1})
-        now = datetime(2026, 1, 1, tzinfo=UTC)
+        now = datetime(2026, 1, 1, tzinfo=timezone.utc)
         result = _compute_next_run(sched, now)
         assert result == now + timedelta(weeks=1)
 
     def test_interval_combined(self):
         sched = self._make_sched("interval", {"hours": 1, "minutes": 30})
-        now = datetime(2026, 1, 1, tzinfo=UTC)
+        now = datetime(2026, 1, 1, tzinfo=timezone.utc)
         result = _compute_next_run(sched, now)
         assert result == now + timedelta(hours=1, minutes=30)
 
     def test_interval_zero_fallback(self):
         sched = self._make_sched("interval", {})
-        now = datetime(2026, 1, 1, tzinfo=UTC)
+        now = datetime(2026, 1, 1, tzinfo=timezone.utc)
         result = _compute_next_run(sched, now)
         assert result == now + timedelta(seconds=60)
 
     def test_cron_advances_one_minute(self):
         sched = self._make_sched("cron", {"minute": "*/5"})
-        now = datetime(2026, 1, 1, 12, 0, tzinfo=UTC)
+        now = datetime(2026, 1, 1, 12, 0, tzinfo=timezone.utc)
         result = _compute_next_run(sched, now)
         assert result == now + timedelta(minutes=1)
 
     def test_date_trigger_disables(self):
         sched = self._make_sched("date", {})
-        now = datetime(2026, 1, 1, tzinfo=UTC)
+        now = datetime(2026, 1, 1, tzinfo=timezone.utc)
         result = _compute_next_run(sched, now)
         assert result == now
         assert sched.enabled is False
@@ -175,7 +175,7 @@ class TestScheduler:
         sched.payload = {"host": "10.0.0.1"}
         sched.trigger = "interval"
         sched.trigger_args = {"seconds": 60}
-        sched.next_run_at = datetime.now(UTC) - timedelta(seconds=10)
+        sched.next_run_at = datetime.now(timezone.utc) - timedelta(seconds=10)
         sched.enabled = True
 
         mock_result = MagicMock()

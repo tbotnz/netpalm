@@ -21,9 +21,11 @@ log = logging.getLogger(__name__)
 
 def run(**kwargs):
     try:
-        # mandatory get of kwargs - payload comes through as {"kwargs": {"host": "10.0.2.33", "username": "admin", "password": "admin"}}
+        # mandatory get of kwargs - payload comes through as
+        # {"kwargs": {"host": "10.0.2.33", "username": "admin", "password": "admin"}}
         args = kwargs.get("kwargs")
-        # access your passed in vars here in a dict format - payload is now {"host": "10.0.2.33", "username": "admin", "password": "admin"}
+        # access your passed in vars here in a dict format - payload is now
+        # {"host": "10.0.2.33", "username": "admin", "password": "admin"}
         username = args["username"]
         password = args["password"]
         host = args["host"]

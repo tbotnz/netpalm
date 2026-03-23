@@ -13,7 +13,7 @@ if not ACTUAL_ENV_PATH.exists():
 
 
 os.environ["NETPALM_ENV_FILE"] = str(ACTUAL_ENV_PATH)
-from netpalm.backend.core.confload import confload
+from netpalm.backend.core.confload import confload  # noqa: E402
 
 
 def test_netpalm_config_loads():

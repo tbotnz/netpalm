@@ -66,7 +66,7 @@ class netmko(NetpalmDriver):
         **kwargs: Any,
     ) -> dict[str, Any]:
         try:
-            if type(command) == list:
+            if isinstance(command, list):
                 comm = command
             else:
                 comm = command.splitlines()

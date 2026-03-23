@@ -22,7 +22,9 @@ class TestTextFSMRoutes:
     @patch("netpalm.routers.template.routes")
     def test_list_templates(self, mock_routes, client):
         mock_routes.__getitem__ = MagicMock(
-            return_value=MagicMock(return_value={"status": "success", "data": {"task_result": {"templates": ["a", "b"]}}})
+            return_value=MagicMock(
+                return_value={"status": "success", "data": {"task_result": {"templates": ["a", "b"]}}}
+            )
         )
         resp = client.get("/template")
         assert resp.status_code == 200

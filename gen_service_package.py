@@ -16,9 +16,7 @@ if __name__ == "__main__":
 
     os.mkdir(package_name)
 
-
-
-example_service = """
+    example_service = """
 """
 
     with open(f'{package_name}.py', 'w') as fp:

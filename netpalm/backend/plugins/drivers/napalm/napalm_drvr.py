@@ -57,7 +57,7 @@ class naplm(NetpalmDriver):
         self, session: Any = None, command: str | list[str] | Any = None, dry_run: bool = False, **kwargs: Any
     ) -> dict[str, Any]:
         try:
-            if type(command) == list:
+            if isinstance(command, list):
                 napalmconfig = ""
                 for comm in command:
                     napalmconfig += comm + "\n"
