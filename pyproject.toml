@@ -22,8 +22,13 @@ puresnmp = ">=2.0,<3.0"
 requests = ">=2.31,<3.0"
 
 # Messaging and state
-confluent-kafka = ">=2.3,<3.0"
+aiokafka = ">=0.11,<1.0"
 redis = ">=5.0,<6.0"
+
+# Database
+sqlalchemy = {extras = ["asyncio"], version = ">=2.0,<3.0"}
+asyncpg = ">=0.29,<1.0"
+alembic = ">=1.13,<2.0"
 
 # Templating and parsing
 jinja2 = ">=3.1,<4.0"
@@ -38,9 +43,6 @@ jsonpath-ng = ">=1.6,<2.0"
 cachelib = ">=0.12,<1.0"
 python-redis-lock = ">=4.0,<5.0"
 filelock = ">=3.0,<4.0"
-
-# Scheduling
-apscheduler = ">=3.10,<4.0"
 
 # Utilities
 names-generator = ">=0.2,<1.0"

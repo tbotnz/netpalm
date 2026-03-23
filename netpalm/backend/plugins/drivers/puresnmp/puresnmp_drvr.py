@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 from puresnmp import puresnmp
 
 from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
@@ -7,7 +11,7 @@ from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 class pursnmp(NetpalmDriver):
     driver_name = "puresnmp"
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.connection_args = kwargs.get("connection_args", False)
         if "port" not in self.connection_args.keys():
             self.connection_args["port"] = 161
@@ -18,13 +22,13 @@ class pursnmp(NetpalmDriver):
             self.input_args = {}
             self.input_args["type"] = "get"
 
-    def connect(self):
+    def connect(self) -> Any:
         try:
             return True
         except Exception as e:
             write_meta_error(e)
 
-    def sendcommand(self, session=False, command=False):
+    def sendcommand(self, session: Any = None, command: list[str] | Any = None) -> dict[str, Any]:
         try:
             result = {}
             for c in command:
@@ -74,13 +78,13 @@ class pursnmp(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def config(self, session=False, command=False, dry_run=False):
+    def config(self, session: Any = None, command: str | list[str] | Any = None, dry_run: bool = False, **kwargs: Any) -> dict[str, Any]:
         try:
             return True
         except Exception as e:
             write_meta_error(e)
 
-    def logout(self, session):
+    def logout(self, session: Any) -> None:
         try:
             return True
         except Exception as e:

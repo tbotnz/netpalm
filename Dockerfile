@@ -28,5 +28,9 @@ RUN poetry install --only-root
 
 STOPSIGNAL SIGINT
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
 # Default to controller; override in docker-compose for workers
 CMD ["gunicorn", "-c", "gunicorn.conf.py", "netpalm.netpalm_controller:app"]

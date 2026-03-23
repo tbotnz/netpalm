@@ -1,3 +1,9 @@
+"""
+Task response models — Pydantic v2.
+Legacy Response/ServiceResponse shapes kept for backward compat with existing routes.
+"""
+from __future__ import annotations
+
 from enum import Enum
 from typing import Any, Optional, Union
 
@@ -10,10 +16,11 @@ class TaskResponseEnum(str, Enum):
 
 
 class TaskStatusEnum(str, Enum):
+    pending = "pending"
     queued = "queued"
+    started = "started"
     finished = "finished"
     failed = "failed"
-    started = "started"
     deferred = "deferred"
     scheduled = "scheduled"
 
@@ -43,14 +50,14 @@ class ServiceTaskHostError(BaseModel):
 ServiceTaskErrors = list[dict[str, ServiceTaskHostError]]
 
 
-class TaskResponse(BaseModel):
+class TaskResult(BaseModel):
     task_id: str
-    created_on: str
-    task_queue: str
+    created_on: Optional[str] = None
+    task_queue: Optional[str] = None
     task_meta: Optional[TaskMetaData] = None
-    task_status: TaskStatusEnum
-    task_result: Any
-    task_errors: Union[TaskErrorList, ServiceTaskErrors]
+    task_status: str
+    task_result: Any = None
+    task_errors: Union[TaskErrorList, ServiceTaskErrors] = []
 
 
 class Response(BaseModel):
@@ -61,17 +68,8 @@ class Response(BaseModel):
                     "status": "success",
                     "data": {
                         "task_id": "b380cf2b-ba78-4aab-b157-9b87ebbe6bb3",
-                        "created_on": "2020-08-02 11:16:43.693850",
-                        "task_queue": "10.0.2.33",
-                        "task_meta": {
-                            "enqueued_at": "2020-08-02 11:16:43.693939",
-                            "started_at": "2020-08-02 11:17:32.503873",
-                            "ended_at": "2020-08-02 11:17:42.440347",
-                            "enqueued_elapsed_seconds": "35",
-                            "total_elapsed_seconds": "58",
-                        },
-                        "task_status": "finished",
-                        "task_result": {"show run | i hostname": ["hostname cat"]},
+                        "task_status": "pending",
+                        "task_result": None,
                         "task_errors": [],
                     },
                 }
@@ -80,48 +78,7 @@ class Response(BaseModel):
     )
 
     status: TaskResponseEnum
-    data: TaskResponse
-
-
-class ServiceTaskResponse(BaseModel):
-    service_id: str
-    task_id: str
-    created_on: str
-    task_queue: str
-    task_meta: Optional[TaskMetaData] = None
-    task_status: TaskStatusEnum
-    task_result: Any
-    task_errors: list[Any]
-
-
-class ServiceResponse(BaseModel):
-    model_config = ConfigDict(
-        json_schema_extra={
-            "examples": [
-                {
-                    "status": "success",
-                    "data": {
-                        "task_id": "b380cf2b-ba78-4aab-b157-9b87ebbe6bb3",
-                        "created_on": "2020-08-02 11:16:43.693850",
-                        "task_queue": "10.0.2.33",
-                        "task_meta": {
-                            "enqueued_at": "2020-08-02 11:16:43.693939",
-                            "started_at": "2020-08-02 11:17:32.503873",
-                            "ended_at": "2020-08-02 11:17:42.440347",
-                            "enqueued_elapsed_seconds": "35",
-                            "total_elapsed_seconds": "58",
-                        },
-                        "task_status": "finished",
-                        "task_result": {"show run | i hostname": ["hostname cat"]},
-                        "task_errors": [],
-                    },
-                }
-            ]
-        }
-    )
-
-    status: TaskResponseEnum
-    data: ServiceTaskResponse
+    data: dict[str, Any]
 
 
 class ResponseBasic(BaseModel):
@@ -129,9 +86,19 @@ class ResponseBasic(BaseModel):
     data: dict[str, Any]
 
 
+class ServiceResponse(BaseModel):
+    status: TaskResponseEnum
+    data: dict[str, Any]
+
+
+# Kept for backward compat — routes still import these names
+TaskResponse = TaskResult
+ServiceTaskResponse = TaskResult
+
+
 class WorkerResponse(BaseModel):
     hostname: Optional[Any] = None
-    pid: str
+    pid: Optional[str] = None
     name: Optional[Any] = None
     last_heartbeat: Optional[Any] = None
     birth_date: Optional[Any] = None

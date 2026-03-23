@@ -1,3 +1,9 @@
+"""
+Service instance models — Pydantic v2.
+ServiceInstanceState now includes all states from the new state machine.
+"""
+from __future__ import annotations
+
 from enum import Enum
 from typing import Any, Optional
 
@@ -15,9 +21,12 @@ class ServiceLifecycle(str, Enum):
 
 
 class ServiceInstanceState(str, Enum):
-    deployed = "deployed"
-    errored = "errored"
     deploying = "deploying"
+    deployed = "deployed"
+    updating = "updating"
+    deleting = "deleting"
+    deleted = "deleted"
+    errored = "errored"
 
 
 class ServiceMeta(BaseModel):

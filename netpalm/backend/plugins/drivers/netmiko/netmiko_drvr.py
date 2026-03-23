@@ -1,11 +1,11 @@
+from __future__ import annotations
+
 import logging
+from typing import Any, Optional
 
 from netmiko import ConnectHandler, BaseConnection
-from netmiko.cisco_base_connection import CiscoBaseConnection
-from typing import Optional
 
 from netpalm.backend.core.confload.confload import config
-
 from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 
@@ -26,14 +26,14 @@ class netmko(NetpalmDriver):
                 del self.kwarg["commit_label"]
         self.enable_mode = kwargs.get("enable_mode", False)
 
-    def connect(self):
+    def connect(self) -> Any:
         try:
             netmikoses = ConnectHandler(**self.connection_args)
             return netmikoses
         except Exception as e:
             write_meta_error(e)
 
-    def sendcommand(self, session=False, command=False):
+    def sendcommand(self, session: Any = None, command: list[str] | Any = None) -> dict[str, Any]:
         try:
             if self.enable_mode:
                 session.enable()
@@ -62,7 +62,7 @@ class netmko(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def config(self, session=False, command="", enter_enable=False, dry_run=False):
+    def config(self, session: Any = None, command: str | list[str] = "", enter_enable: bool = False, dry_run: bool = False, **kwargs: Any) -> dict[str, Any]:
         try:
             if type(command) == list:
                 comm = command
@@ -111,7 +111,7 @@ class netmko(NetpalmDriver):
 
         return result
 
-    def logout(self, session):
+    def logout(self, session: Any) -> None:
         try:
             response = session.disconnect()
             return response

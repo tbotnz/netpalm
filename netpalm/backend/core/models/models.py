@@ -1,3 +1,10 @@
+"""
+Pydantic v2 request/response models for netpalm API.
+"""
+from __future__ import annotations
+
+import uuid
+from datetime import datetime
 from enum import Enum
 from typing import Any, Optional
 
@@ -6,6 +13,7 @@ from pydantic import BaseModel, ConfigDict
 
 class QueueStrategy(str, Enum):
     fifo = "fifo"
+    pinned = "pinned"
 
 
 class LibraryName(str, Enum):
@@ -248,3 +256,77 @@ class ScheduleInterval(BaseModel):
     timezone: Optional[str] = None
     jitter: Optional[int] = None
     schedule_payload: ScheduleBase
+
+
+# ── Kafka payload models ──────────────────────────────────────────────────────
+
+class TaskMessage(BaseModel):
+    """Message produced to Kafka job topics by the Scheduler."""
+
+    task_id: uuid.UUID
+    method: str
+    kwargs: dict[str, Any]
+    queue_strategy: QueueStrategy = QueueStrategy.fifo
+    pinned_host: Optional[str] = None
+
+
+class ResultMessage(BaseModel):
+    """Message produced to netpalm.results by the Executor."""
+
+    task_id: uuid.UUID
+    status: str
+    result: Optional[dict[str, Any]] = None
+    error: Optional[str] = None
+
+
+# ── Event model ───────────────────────────────────────────────────────────────
+
+class NetpalmEvent(BaseModel):
+    """Parsed event produced by an EventListener."""
+
+    source_topic: str
+    device_host: Optional[str] = None
+    event_type: str
+    raw: bytes
+    data: dict[str, Any] = {}
+
+
+# ── API response models ───────────────────────────────────────────────────────
+
+class TaskResponse(BaseModel):
+    """Returned by QueueBroker and task result endpoints."""
+
+    task_id: uuid.UUID
+    status: str
+    result: Optional[dict[str, Any]] = None
+    error: Optional[str] = None
+
+
+class ServiceTaskResponse(BaseModel):
+    """Returned by service creation/update/delete endpoints."""
+
+    service_id: uuid.UUID
+    task_id: uuid.UUID
+    status: str
+
+
+class ServiceInstanceData(BaseModel):
+    """Current state of a service instance."""
+
+    service_id: uuid.UUID
+    service_model: str
+    state: str
+    data: dict[str, Any] = {}
+    created_at: datetime
+    updated_at: datetime
+    current_version: int
+
+
+class ServiceVersionSummary(BaseModel):
+    """Summary of a service instance version snapshot."""
+
+    version_id: uuid.UUID
+    service_id: uuid.UUID
+    version: int
+    state: str
+    created_at: datetime
