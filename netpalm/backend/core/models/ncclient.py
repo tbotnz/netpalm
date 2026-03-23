@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Optional, Union
 
 from pydantic import BaseModel, ConfigDict
 
@@ -12,15 +11,15 @@ from netpalm.backend.core.models.models import (
 
 
 class NcclientSendConfigArgs(BaseModel):
-    target: Optional[str] = None
-    config: Optional[str] = None
-    default_operation: Optional[str] = None
+    target: str | None = None
+    config: str | None = None
+    default_operation: str | None = None
     render_json: bool = False
 
 
 class NcclientGetConfigArgs(BaseModel):
     source: str
-    filter: Optional[str] = None
+    filter: str | None = None
     render_json: bool = False
     capabilities: bool = False
 
@@ -59,8 +58,8 @@ class NcclientConnection(BaseModel):
     password: str
     port: int
     hostkey_verify: bool
-    device_params: Optional[NcclientDeviceParams] = None
-    manager_params: Optional[NcclientManagerParams] = None
+    device_params: NcclientDeviceParams | None = None
+    manager_params: NcclientManagerParams | None = None
 
 
 class NcclientGetArgs(BaseModel):
@@ -91,10 +90,10 @@ class NcclientSetConfig(BaseModel):
     )
 
     connection_args: NcclientConnection
-    args: Optional[NcclientSendConfigArgs] = None
-    j2config: Optional[J2Config] = None
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
+    args: NcclientSendConfigArgs | None = None
+    j2config: J2Config | None = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
 
 
 class NcclientGetConfig(BaseModel):
@@ -122,10 +121,10 @@ class NcclientGetConfig(BaseModel):
     )
 
     connection_args: NcclientConnection
-    args: Union[NcclientGetConfigArgs, NcclientGetRpcArgs]
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    cache: Optional[CacheConfig] = None
+    args: NcclientGetConfigArgs | NcclientGetRpcArgs
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    cache: CacheConfig | None = None
 
 
 class NcclientGet(BaseModel):
@@ -152,5 +151,5 @@ class NcclientGet(BaseModel):
 
     connection_args: NcclientConnection
     args: NcclientGetArgs
-    queue_strategy: Optional[QueueStrategy] = None
-    cache: Optional[CacheConfig] = None
+    queue_strategy: QueueStrategy | None = None
+    cache: CacheConfig | None = None

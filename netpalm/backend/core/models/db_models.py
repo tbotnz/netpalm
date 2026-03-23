@@ -36,7 +36,9 @@ class ServiceInstanceRecord(Base):
     state: Mapped[str] = mapped_column(String(16), nullable=False, default="deploying", index=True)
     data: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
     current_version: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     # state values: deploying | deployed | updating | deleting | deleted | errored
 
@@ -46,7 +48,9 @@ class ServiceInstanceVersionRecord(Base):
     __table_args__ = (UniqueConstraint("service_id", "version", name="uq_service_version"),)
 
     version_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    service_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("service_instances.service_id"), nullable=False, index=True)
+    service_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("service_instances.service_id"), nullable=False, index=True
+    )
     version: Mapped[int] = mapped_column(Integer, nullable=False)
     state: Mapped[str] = mapped_column(String(16), nullable=False)
     data: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)

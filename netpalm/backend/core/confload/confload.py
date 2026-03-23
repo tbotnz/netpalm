@@ -4,7 +4,7 @@ import logging.config
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import yaml
 from pydantic import SecretStr, field_validator
@@ -156,7 +156,7 @@ class NetpalmSettings(BaseSettings):
     worker_name: str = "NOT A WORKER"
 
     # Computed after init
-    whitelist: Optional[DeviceWhitelist] = None
+    whitelist: DeviceWhitelist | None = None
 
     @field_validator("kafka_bootstrap_servers")
     @classmethod

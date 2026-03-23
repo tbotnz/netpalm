@@ -1,6 +1,7 @@
 """
 script routes — POST /script
 """
+
 from __future__ import annotations
 
 import logging
@@ -8,7 +9,7 @@ import logging
 from fastapi import APIRouter, Depends
 from fastapi.encoders import jsonable_encoder
 
-from netpalm.backend.core.manager import get_manager, NetpalmManager
+from netpalm.backend.core.manager import NetpalmManager, get_manager
 from netpalm.backend.core.models.models import Script
 from netpalm.backend.core.models.task import ResponseBasic
 from netpalm.backend.core.routes.routes import routes

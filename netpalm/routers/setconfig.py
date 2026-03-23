@@ -1,13 +1,14 @@
 """
 setconfig routes — POST /setconfig and library-specific variants.
 """
+
 from __future__ import annotations
 
 import logging
 
 from fastapi import APIRouter, Depends
 
-from netpalm.backend.core.manager import get_manager, NetpalmManager
+from netpalm.backend.core.manager import NetpalmManager, get_manager
 from netpalm.backend.core.models.models import SetConfig
 from netpalm.backend.core.models.napalm import NapalmSetConfig
 from netpalm.backend.core.models.ncclient import NcclientSetConfig

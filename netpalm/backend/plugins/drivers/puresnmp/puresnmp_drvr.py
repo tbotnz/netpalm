@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from puresnmp import puresnmp
-
 from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
+from puresnmp import puresnmp
 
 
 class pursnmp(NetpalmDriver):
@@ -78,7 +77,9 @@ class pursnmp(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def config(self, session: Any = None, command: str | list[str] | Any = None, dry_run: bool = False, **kwargs: Any) -> dict[str, Any]:
+    def config(
+        self, session: Any = None, command: str | list[str] | Any = None, dry_run: bool = False, **kwargs: Any
+    ) -> dict[str, Any]:
         try:
             return True
         except Exception as e:

@@ -1,9 +1,6 @@
-from typing import Optional
-
 from pydantic import BaseModel, ConfigDict
 
-from netpalm.backend.core.models.models import QueueStrategy
-from netpalm.backend.core.models.models import Webhook
+from netpalm.backend.core.models.models import QueueStrategy, Webhook
 
 #
 #
@@ -12,9 +9,11 @@ from netpalm.backend.core.models.models import Webhook
 #
 #
 
+
 class hello_world_model_args(BaseModel):
     # your model goes here!
     hello: str
+
 
 class hello_world_model(BaseModel):
     model_config = ConfigDict(
@@ -32,5 +31,5 @@ class hello_world_model(BaseModel):
     # this class MUST match the filename & the filename must be formatted $servicetemplatename_model.py
     script: str
     args: hello_world_model_args
-    queue_strategy: Optional[QueueStrategy] = None
-    webhook: Optional[Webhook] = None
+    queue_strategy: QueueStrategy | None = None
+    webhook: Webhook | None = None

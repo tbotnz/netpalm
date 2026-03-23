@@ -3,7 +3,6 @@ import time
 from json import JSONDecodeError
 
 import requests
-from typing import Dict, Tuple, List
 
 from netpalm.backend.core.confload.confload import get_settings
 
@@ -11,14 +10,13 @@ log = logging.getLogger(__name__)
 
 
 class NetpalmTestHelper:
-
     def __init__(self):
         settings = get_settings()
         self.apikey = settings.api_key.get_secret_value()
-        self.ip = '127.0.0.1'
+        self.ip = "127.0.0.1"
         self.port = settings.listen_port
         self.base_url = f"http://{self.ip}:{self.port}"
-        self.headers = {'Content-type': 'application/json', 'Accept': 'text/plain', 'x-api-key': self.apikey}
+        self.headers = {"Content-type": "application/json", "Accept": "text/plain", "x-api-key": self.apikey}
         # test devices go here
         self.test_device_ios_cli = "10.0.2.33"
         self.test_device_netconf = "10.0.2.39"
@@ -30,26 +28,28 @@ class NetpalmTestHelper:
 
     def get(self, endpoint: str):
         try:
-            r = requests.get(f"http://{self.ip}:{self.port}/{endpoint}",
-                             headers=self.headers, timeout=self.http_timeout)
+            r = requests.get(
+                f"http://{self.ip}:{self.port}/{endpoint}", headers=self.headers, timeout=self.http_timeout
+            )
             return r.json()
-        except Exception as e:
+        except Exception:
             log.exception(f"error while getting {endpoint}")
             raise
 
     def post(self, endpoint: str, data):
         try:
-            r = requests.post(f"http://{self.ip}:{self.port}/{endpoint}",
-                              headers=self.headers, json=data, timeout=self.http_timeout)
+            r = requests.post(
+                f"http://{self.ip}:{self.port}/{endpoint}", headers=self.headers, json=data, timeout=self.http_timeout
+            )
             return r.json()
-        except Exception as e:
+        except Exception:
             log.exception(f"error while posting to {endpoint}")
             raise
 
     def check_task(self, taskid):
         return self.get(f"task/{taskid}")
 
-    def poll_task(self, taskid, timeout=None) -> Tuple[Dict, List]:
+    def poll_task(self, taskid, timeout=None) -> tuple[dict, list]:
         if timeout is None:
             timeout = self.task_timeout
 
@@ -65,14 +65,14 @@ class NetpalmTestHelper:
 
             time.sleep(self.task_poll_interval)
 
-        log.error(f'got {task_res}')
+        log.error(f"got {task_res}")
         return result, errors
 
-    def poll_task_errors(self, taskid, timeout=None) -> List:
+    def poll_task_errors(self, taskid, timeout=None) -> list:
         result, errors = self.poll_task(taskid, timeout)
         return errors
 
-    def post_and_check(self, endpoint, payload) -> Dict:
+    def post_and_check(self, endpoint, payload) -> dict:
         url = f"{self.base_url}{endpoint}"
         r = requests.post(url, json=payload, headers=self.headers, timeout=self.http_timeout)
         r.raise_for_status()
@@ -86,14 +86,14 @@ class NetpalmTestHelper:
         result, errors = self.poll_task(task_id)
         return result
 
-    def post_and_check_errors(self, endpoint, payload) -> List:
+    def post_and_check_errors(self, endpoint, payload) -> list:
         url = f"{self.base_url}{endpoint}"
         r = requests.post(url, json=payload, headers=self.headers, timeout=self.http_timeout)
         task_id = r.json()["data"]["task_id"]
         errors = self.poll_task_errors(task_id)
         return errors
 
-    def check_many(self, payload) -> List[Dict]:
+    def check_many(self, payload) -> list[dict]:
         results = []
         for task in payload:
             res, err = self.poll_task(task["data"]["data"]["task_id"])

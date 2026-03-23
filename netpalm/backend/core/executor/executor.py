@@ -11,13 +11,14 @@ For each job message:
   3. UPDATE job status → finished (or failed)
   4. Produce ResultMessage to netpalm.results
 """
+
 from __future__ import annotations
 
 import json
 import logging
 import re
 from collections.abc import Callable
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
@@ -41,10 +42,12 @@ def _serialize_exception_chain(exc: BaseException) -> list[dict[str, Any]]:
     current: BaseException | None = exc
     while current is not None and id(current) not in seen:
         seen.add(id(current))
-        chain.append({
-            "exception_class": type(current).__name__,
-            "exception_args": [str(a) for a in current.args],
-        })
+        chain.append(
+            {
+                "exception_class": type(current).__name__,
+                "exception_args": [str(a) for a in current.args],
+            }
+        )
         # Prefer explicit cause (__cause__), fall back to implicit context (__context__)
         current = current.__cause__ if current.__cause__ is not None else current.__context__
     # Reverse so innermost (root cause) is first
@@ -118,16 +121,14 @@ class NetpalmExecutor:
 
         async with self._db_factory() as session:
             # Mark started
-            result = await session.execute(
-                select(JobRecord).where(JobRecord.task_id == task_id)
-            )
+            result = await session.execute(select(JobRecord).where(JobRecord.task_id == task_id))
             job: JobRecord | None = result.scalar_one_or_none()
             if job is None:
                 log.error(f"NetpalmExecutor: job {task_id} not found in DB")
                 return
 
             job.status = "started"
-            job.started_at = datetime.now(timezone.utc)
+            job.started_at = datetime.now(UTC)
             await session.commit()
 
         # Execute operation
@@ -136,9 +137,7 @@ class NetpalmExecutor:
 
         try:
             operation = self._operation_registry.get(msg.method)
-            task_result = operation.execute(
-                msg.kwargs, self._driver_registry, self._settings
-            )
+            task_result = operation.execute(msg.kwargs, self._driver_registry, self._settings)
             final_status = "finished"
         except Exception as exc:
             log.error(f"NetpalmExecutor: task {task_id} failed: {exc}")
@@ -147,15 +146,13 @@ class NetpalmExecutor:
 
         # Write result
         async with self._db_factory() as session:
-            result = await session.execute(
-                select(JobRecord).where(JobRecord.task_id == task_id)
-            )
+            result = await session.execute(select(JobRecord).where(JobRecord.task_id == task_id))
             job = result.scalar_one_or_none()
             if job:
                 job.status = final_status
                 job.result = task_result
                 job.error = task_error
-                job.ended_at = datetime.now(timezone.utc)
+                job.ended_at = datetime.now(UTC)
                 await session.commit()
 
         # Produce result message

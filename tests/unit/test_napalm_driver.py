@@ -1,11 +1,9 @@
-from typing import List
-from unittest.mock import Mock, MagicMock
+from unittest.mock import MagicMock, Mock
 
-from napalm.base.base import NetworkDriver
 import pytest
+from napalm.base.base import NetworkDriver
 from pytest_mock import MockerFixture
 
-from netpalm.exceptions import NetpalmMetaProcessedException
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
 
 NAPALM_C_ARGS = {
@@ -27,16 +25,14 @@ def napalm_get_network_driver(mocker: MockerFixture) -> MockerFixture:
     get_network_driver.return_value = mocked_driver
     get_network_driver.driver = mocked_driver  # for reference
 
-    mocked_session = MagicMock(
-        spec=NetworkDriver
-    )  # otherwise hasatter(anything) is always True
+    mocked_session = MagicMock(spec=NetworkDriver)  # otherwise hasatter(anything) is always True
     mocked_driver.return_value = mocked_session
     get_network_driver.session = mocked_session  # for reference
 
     def get_config():
         return ["my config"]
 
-    def cli(commands: List):
+    def cli(commands: list):
         return {command: f"ran {command}" for command in commands}
 
     mocked_session.get_config.side_effect = get_config

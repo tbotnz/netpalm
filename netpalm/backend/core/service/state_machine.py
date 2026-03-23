@@ -4,6 +4,7 @@ Service instance state machine.
 Defines all valid states and the allowed transition table.
 Raises InvalidStateTransitionError for any disallowed transition.
 """
+
 from __future__ import annotations
 
 from enum import Enum
@@ -47,9 +48,7 @@ class InvalidStateTransitionError(Exception):
     """Raised when a requested state transition is not permitted."""
 
     def __init__(self, from_state: ServiceInstanceState, to_state: ServiceInstanceState) -> None:
-        super().__init__(
-            f"Invalid state transition: {from_state.value} → {to_state.value}"
-        )
+        super().__init__(f"Invalid state transition: {from_state.value} → {to_state.value}")
         self.from_state = from_state
         self.to_state = to_state
 

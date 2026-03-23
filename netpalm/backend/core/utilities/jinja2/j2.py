@@ -5,9 +5,8 @@ from netpalm.backend.core.confload.confload import config
 
 
 class j2:
-
     def __init__(self, j2_type=False, **kwargs):
-        self.kwarg = kwargs.get('kwargs', False)
+        self.kwarg = kwargs.get("kwargs", False)
         if j2_type == "config":
             self.jinja_template_dir = config.jinja2_config_templates
         if j2_type == "webhook":
@@ -25,7 +24,7 @@ class j2:
 
     def gettemplate(self, template):
         try:
-            templat = self.jinja_template_dir + template + '.j2'
+            templat = self.jinja_template_dir + template + ".j2"
             res = self.opentemplate(templat)
             try:
                 schema = infer(res)
@@ -33,36 +32,28 @@ class j2:
             except Exception:
                 js_schema = "error reading schema"
             resultdata = {
-                    'status': 'success',
-                    'data': {
-                        "task_result": {
-                            "template_schema": js_schema,
-                            "template_data": res
-                        }
-                    }
+                "status": "success",
+                "data": {"task_result": {"template_schema": js_schema, "template_data": res}},
             }
             return resultdata
         except Exception as e:
-            resultdata = {
-                    'status': 'error',
-                    'data': str(e)
-            }
+            resultdata = {"status": "error", "data": str(e)}
             return resultdata
 
     def render_j2template(self, template, **kwargs):
         try:
             kwargs = kwargs.get("kwargs", False)
-            templat = template + '.j2'
+            templat = template + ".j2"
             tmp_template = self.env.get_template(templat)
             output = tmp_template.render(kwargs)
             resultdata = {
-                    'status': 'success',
-                    'data': {
-                        "task_result": {
-                            "template": template,
-                            "template_render_result": str(output),
-                        }
+                "status": "success",
+                "data": {
+                    "task_result": {
+                        "template": template,
+                        "template_render_result": str(output),
                     }
+                },
             }
             return resultdata
         except Exception as e:

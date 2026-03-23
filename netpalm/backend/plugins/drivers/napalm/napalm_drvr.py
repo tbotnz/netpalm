@@ -4,9 +4,8 @@ import logging
 from typing import Any
 
 import napalm
-
-from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
+from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 
 log = logging.getLogger(__name__)
 
@@ -54,7 +53,9 @@ class naplm(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def config(self, session: Any = None, command: str | list[str] | Any = None, dry_run: bool = False, **kwargs: Any) -> dict[str, Any]:
+    def config(
+        self, session: Any = None, command: str | list[str] | Any = None, dry_run: bool = False, **kwargs: Any
+    ) -> dict[str, Any]:
         try:
             if type(command) == list:
                 napalmconfig = ""

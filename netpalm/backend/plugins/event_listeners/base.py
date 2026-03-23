@@ -25,10 +25,11 @@ Example:
         async def on_event(self, event: NetpalmEvent, manager: NetpalmManager) -> None:
             await manager.get_config(...)
 """
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from netpalm.backend.core.models.models import NetpalmEvent
 
@@ -56,7 +57,7 @@ class EventListener(ABC):
         """
 
     @abstractmethod
-    async def on_event(self, event: NetpalmEvent, manager: "NetpalmManager") -> None:
+    async def on_event(self, event: NetpalmEvent, manager: NetpalmManager) -> None:
         """
         React to a parsed event. Use manager to schedule tasks:
             await manager.get_config(...)

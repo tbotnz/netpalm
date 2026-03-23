@@ -1,4 +1,5 @@
 """GetConfig operation — executes read-only commands via southbound drivers."""
+
 from __future__ import annotations
 
 import logging

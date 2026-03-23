@@ -1,16 +1,16 @@
 """
 service routes — CRUD for service instances + versioning/rollback.
 """
+
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 
-from netpalm.backend.core.manager import get_manager, NetpalmManager
+from netpalm.backend.core.manager import NetpalmManager, get_manager
 from netpalm.backend.core.models.task import ResponseBasic
 from netpalm.routers.route_utils import HttpErrorHandler
 
@@ -19,7 +19,7 @@ router = APIRouter()
 
 
 class RollbackRequest(BaseModel):
-    to_version: Optional[int] = None
+    to_version: int | None = None
 
 
 @router.get("/service/instances/")
@@ -36,9 +36,7 @@ async def get_service_instance(service_id: str, manager: NetpalmManager = Depend
     except Exception:
         raise HTTPException(
             status_code=404,
-            detail=ResponseBasic(
-                status="success", data={"task_result": f"{service_id} not found"}
-            ).model_dump(),
+            detail=ResponseBasic(status="success", data={"task_result": f"{service_id} not found"}).model_dump(),
         )
 
 

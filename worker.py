@@ -1,5 +1,3 @@
-import sys
-
 from netpalm import netpalm_fifo_worker
 
 

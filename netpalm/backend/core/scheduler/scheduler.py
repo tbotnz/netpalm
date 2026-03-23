@@ -7,19 +7,19 @@ Scheduler — two responsibilities running concurrently:
 
 Replaces both the old OutboxRelay and APScheduler entirely.
 """
+
 from __future__ import annotations
 
 import asyncio
-import json
 import logging
 import uuid
 from collections.abc import Callable
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from aiokafka import AIOKafkaProducer
 from aiokafka.errors import KafkaError
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from netpalm.backend.core.confload.confload import NetpalmSettings
@@ -102,7 +102,7 @@ class Scheduler:
     async def _dispatch_scheduled_jobs(self) -> int:
         """Find due scheduled jobs, insert job rows, update next_run_at. Returns count dispatched."""
         dispatched = 0
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         async with self._db_factory() as session:
             result = await session.execute(

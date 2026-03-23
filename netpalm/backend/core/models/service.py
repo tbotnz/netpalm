@@ -2,10 +2,11 @@
 Service instance models — Pydantic v2.
 ServiceInstanceState now includes all states from the new state machine.
 """
+
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, RootModel
 
@@ -32,9 +33,9 @@ class ServiceInstanceState(str, Enum):
 class ServiceMeta(BaseModel):
     service_model: str
     created_at: str
-    updated_at: Optional[str] = None
+    updated_at: str | None = None
     service_id: str
-    service_state: Optional[ServiceInstanceState] = None
+    service_state: ServiceInstanceState | None = None
 
 
 class ServiceInstanceData(BaseModel):
@@ -55,17 +56,17 @@ class ServiceModel(BaseModel):
 
     operation: ServiceLifecycle
     args: dict[str, Any]
-    queue_strategy: Optional[QueueStrategy] = None
+    queue_strategy: QueueStrategy | None = None
 
 
 class ServiceModelMethods(BaseModel):
     operation: ServiceLifecycle
-    path: Optional[str] = None
+    path: str | None = None
     payload: dict[str, Any]
 
 
 class ServiceModelSupportedMethods(BaseModel):
-    supported_methods: Optional[list[ServiceModelMethods]] = None
+    supported_methods: list[ServiceModelMethods] | None = None
 
 
 class ServiceModelTemplate(RootModel[list[ServiceModelSupportedMethods]]):

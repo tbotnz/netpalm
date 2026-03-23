@@ -1,12 +1,10 @@
-from typing import List
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 
 import pytest
 from pytest_mock import MockerFixture
 
-from netpalm.exceptions import NetpalmError
-from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
 from netpalm.backend.core.routes.routes import routes
+from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
 
 exec_command = routes["getconfig"]
 
@@ -28,9 +26,7 @@ def xml_parse(mocker: MockerFixture) -> MockerFixture:
 
 @pytest.fixture()
 def ncclient_manager(mocker: MockerFixture) -> MockerFixture:
-    manager = mocker.patch(
-        "netpalm.backend.plugins.drivers.ncclient.ncclient_drvr.manager"
-    )
+    manager = mocker.patch("netpalm.backend.plugins.drivers.ncclient.ncclient_drvr.manager")
     mocked_session = Mock()
     manager.connect.return_value = mocked_session
     manager.mocked_session = mocked_session
@@ -80,9 +76,7 @@ def test_ncclient_getmethod_rjson(ncclient_manager: Mock, xml_parse):
     ncclient_driver = ncclien(args=args.copy(), connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
     result = ncclient_driver.getmethod(sesh)
-    sesh.get.assert_called_with(
-        source=args["source"], filter=args["filter"]
-    )  # excluding render_json
+    sesh.get.assert_called_with(source=args["source"], filter=args["filter"])  # excluding render_json
     assert "get_config" in result
     assert isinstance(result["get_config"], Mock)
     assert result["get_config"] is xml_parse()
@@ -115,9 +109,7 @@ def test_ncclient_getconfig_rjson(ncclient_manager: Mock, xml_parse):
     ncclient_driver = ncclien(args=args.copy(), connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
     result = ncclient_driver.sendcommand(sesh)
-    sesh.get_config.assert_called_with(
-        source=args["source"], filter=args["filter"]
-    )  # excluding render_json
+    sesh.get_config.assert_called_with(source=args["source"], filter=args["filter"])  # excluding render_json
     assert result["get_config"] is xml_parse()
 
 
@@ -150,9 +142,7 @@ def test_ncclient_getconfig_rpc_rjson(ncclient_manager: Mock, xml_parse):
     ncclient_driver = ncclien(args=args.copy(), connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
     result = ncclient_driver.sendcommand(sesh)
-    sesh.rpc.assert_called_with(
-        source=args["source"], filter=args["filter"], rpc=True
-    )  # excluding render_json
+    sesh.rpc.assert_called_with(source=args["source"], filter=args["filter"], rpc=True)  # excluding render_json
     assert result["get_config"] is xml_parse()
 
 
@@ -185,9 +175,7 @@ def test_ncclient_config_rjson(ncclient_manager: Mock, xml_parse):
     ncclient_driver = ncclien(args=args.copy(), connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
     result = ncclient_driver.config(sesh)
-    sesh.edit_config.assert_called_with(
-        source=args["source"], filter=args["filter"]
-    )  # excluding render_json
+    sesh.edit_config.assert_called_with(source=args["source"], filter=args["filter"])  # excluding render_json
     assert result["edit_config"] is xml_parse()
 
 

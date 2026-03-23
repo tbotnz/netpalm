@@ -1,12 +1,13 @@
 """
 Pydantic v2 request/response models for netpalm API.
 """
+
 from __future__ import annotations
 
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
@@ -40,9 +41,9 @@ class GenericPrePostCheck(BaseModel):
 
 
 class Webhook(BaseModel):
-    name: Optional[str] = None
-    args: Optional[dict[str, Any]] = None
-    j2template: Optional[str] = None
+    name: str | None = None
+    args: dict[str, Any] | None = None
+    j2template: str | None = None
 
 
 class J2Config(BaseModel):
@@ -51,12 +52,12 @@ class J2Config(BaseModel):
 
 
 class SetConfigArgs(BaseModel):
-    payload: Optional[Any] = None
-    default_operation: Optional[str] = None
-    target: Optional[str] = None
-    config: Optional[str] = None
-    uri: Optional[str] = None
-    action: Optional[str] = None
+    payload: Any | None = None
+    default_operation: str | None = None
+    target: str | None = None
+    config: str | None = None
+    uri: str | None = None
+    action: str | None = None
     render_json: bool = False
 
 
@@ -96,25 +97,21 @@ class SetConfig(BaseModel):
 
     library: LibraryName
     connection_args: dict[str, Any]
-    config: Optional[Any] = None
-    j2config: Optional[J2Config] = None
-    args: Optional[SetConfigArgs] = None
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    pre_checks: Optional[list[GenericPrePostCheck]] = None
-    post_checks: Optional[list[GenericPrePostCheck]] = None
+    config: Any | None = None
+    j2config: J2Config | None = None
+    args: SetConfigArgs | None = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    pre_checks: list[GenericPrePostCheck] | None = None
+    post_checks: list[GenericPrePostCheck] | None = None
     enable_mode: bool = False
 
 
 class CacheConfig(BaseModel):
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {"enabled": True, "ttl": 300, "poison": False}
-        }
-    )
+    model_config = ConfigDict(json_schema_extra={"example": {"enabled": True, "ttl": 300, "poison": False}})
 
     enabled: bool = False
-    ttl: Optional[int] = None
+    ttl: int | None = None
     poison: bool = False
 
 
@@ -130,23 +127,19 @@ class Script(BaseModel):
     )
 
     script: str
-    args: Optional[dict[str, Any]] = None
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    cache: Optional[CacheConfig] = None
+    args: dict[str, Any] | None = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    cache: CacheConfig | None = None
 
 
 class ScriptCustom(BaseModel):
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {"script": "hello_world", "queue_strategy": "fifo"}
-        }
-    )
+    model_config = ConfigDict(json_schema_extra={"example": {"script": "hello_world", "queue_strategy": "fifo"}})
 
     script: str
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    cache: Optional[CacheConfig] = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    cache: CacheConfig | None = None
 
 
 class GetConfig(BaseModel):
@@ -171,11 +164,11 @@ class GetConfig(BaseModel):
     library: LibraryName
     connection_args: dict[str, Any]
     command: Any
-    args: Optional[dict[str, Any]] = None
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    post_checks: Optional[list[GenericPrePostCheck]] = None
-    cache: Optional[CacheConfig] = None
+    args: dict[str, Any] | None = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    post_checks: list[GenericPrePostCheck] | None = None
+    cache: CacheConfig | None = None
 
 
 class TFSMPushTemplateModel(BaseModel):
@@ -191,7 +184,7 @@ class TFSMTemplateAdd(BaseModel):
 
 
 class TFSMTemplateRemove(BaseModel):
-    template: Optional[str] = None
+    template: str | None = None
 
 
 class TFSMTemplateMatch(BaseModel):
@@ -219,12 +212,12 @@ class UniversalTemplateAdd(BaseModel):
 class UniversalTemplateRemove(BaseModel):
     """General template remover"""
 
-    name: Optional[str] = None
+    name: str | None = None
 
 
 class GeneralError(BaseModel):
-    status: Optional[str] = None
-    data: Optional[dict[str, Any]] = None
+    status: str | None = None
+    data: dict[str, Any] | None = None
 
 
 class PinnedStore(BaseModel):
@@ -240,19 +233,20 @@ class ScheduleBase(BaseModel):
 
 
 class ScheduleInterval(BaseModel):
-    weeks: Optional[int] = None
-    days: Optional[int] = None
-    hours: Optional[int] = None
-    minutes: Optional[int] = None
-    seconds: Optional[int] = None
-    start_date: Optional[str] = None
-    end_date: Optional[str] = None
-    timezone: Optional[str] = None
-    jitter: Optional[int] = None
+    weeks: int | None = None
+    days: int | None = None
+    hours: int | None = None
+    minutes: int | None = None
+    seconds: int | None = None
+    start_date: str | None = None
+    end_date: str | None = None
+    timezone: str | None = None
+    jitter: int | None = None
     schedule_payload: ScheduleBase
 
 
 # ── Kafka payload models ──────────────────────────────────────────────────────
+
 
 class TaskMessage(BaseModel):
     """Message produced to Kafka job topics by the Scheduler."""
@@ -261,7 +255,7 @@ class TaskMessage(BaseModel):
     method: str
     kwargs: dict[str, Any]
     queue_strategy: QueueStrategy = QueueStrategy.fifo
-    pinned_host: Optional[str] = None
+    pinned_host: str | None = None
 
 
 class ResultMessage(BaseModel):
@@ -269,17 +263,18 @@ class ResultMessage(BaseModel):
 
     task_id: uuid.UUID
     status: str
-    result: Optional[dict[str, Any]] = None
-    error: Optional[str] = None
+    result: dict[str, Any] | None = None
+    error: str | None = None
 
 
 # ── Event model ───────────────────────────────────────────────────────────────
+
 
 class NetpalmEvent(BaseModel):
     """Parsed event produced by an EventListener."""
 
     source_topic: str
-    device_host: Optional[str] = None
+    device_host: str | None = None
     event_type: str
     raw: bytes
     data: dict[str, Any] = {}
@@ -287,13 +282,14 @@ class NetpalmEvent(BaseModel):
 
 # ── API response models ───────────────────────────────────────────────────────
 
+
 class TaskResponse(BaseModel):
     """Returned by QueueBroker and task result endpoints."""
 
     task_id: uuid.UUID
     status: str
-    result: Optional[dict[str, Any]] = None
-    error: Optional[str] = None
+    result: dict[str, Any] | None = None
+    error: str | None = None
 
 
 class ServiceTaskResponse(BaseModel):

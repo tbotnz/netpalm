@@ -1,4 +1,5 @@
 """Shared pre/post check validation for getconfig and setconfig operations."""
+
 from __future__ import annotations
 
 import logging
@@ -29,10 +30,6 @@ def run_checks(
         result = driver.sendcommand(session, [cmd])
         for matchstr in check["match_str"]:
             if check["match_type"] == "include" and matchstr not in str(result):
-                raise NetpalmCheckError(
-                    f"{label} Failed: {matchstr} not found in {result}"
-                )
+                raise NetpalmCheckError(f"{label} Failed: {matchstr} not found in {result}")
             if check["match_type"] == "exclude" and matchstr in str(result):
-                raise NetpalmCheckError(
-                    f"{label} Failed: {matchstr} found in {result}"
-                )
+                raise NetpalmCheckError(f"{label} Failed: {matchstr} found in {result}")

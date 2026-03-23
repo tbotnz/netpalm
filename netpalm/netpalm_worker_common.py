@@ -8,6 +8,7 @@ Worker coordination is now handled by:
 
 This file is kept as a tombstone. It will be removed in a future release.
 """
+
 from __future__ import annotations
 
 import logging

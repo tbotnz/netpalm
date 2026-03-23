@@ -2,10 +2,11 @@
 Task response models — Pydantic v2.
 Legacy Response/ServiceResponse shapes kept for backward compat with existing routes.
 """
+
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Optional, Union
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
@@ -26,12 +27,12 @@ class TaskStatusEnum(str, Enum):
 
 
 class TaskMetaData(BaseModel):
-    enqueued_at: Optional[str] = None
-    started_at: Optional[str] = None
-    ended_at: Optional[str] = None
-    enqueued_elapsed_seconds: Optional[str] = None
-    total_elapsed_seconds: Optional[str] = None
-    assigned_worker: Optional[str] = None
+    enqueued_at: str | None = None
+    started_at: str | None = None
+    ended_at: str | None = None
+    enqueued_elapsed_seconds: str | None = None
+    total_elapsed_seconds: str | None = None
+    assigned_worker: str | None = None
 
 
 class TaskError(BaseModel):
@@ -39,7 +40,7 @@ class TaskError(BaseModel):
     exception_args: list[str]
 
 
-TaskErrorList = list[Union[str, TaskError]]
+TaskErrorList = list[str | TaskError]
 
 
 class ServiceTaskHostError(BaseModel):
@@ -52,12 +53,12 @@ ServiceTaskErrors = list[dict[str, ServiceTaskHostError]]
 
 class TaskResult(BaseModel):
     task_id: str
-    created_on: Optional[str] = None
-    task_queue: Optional[str] = None
-    task_meta: Optional[TaskMetaData] = None
+    created_on: str | None = None
+    task_queue: str | None = None
+    task_meta: TaskMetaData | None = None
     task_status: str
     task_result: Any = None
-    task_errors: Union[TaskErrorList, ServiceTaskErrors] = []
+    task_errors: TaskErrorList | ServiceTaskErrors = []
 
 
 class Response(BaseModel):
@@ -95,11 +96,11 @@ ServiceTaskResponse = TaskResult
 
 
 class WorkerResponse(BaseModel):
-    hostname: Optional[Any] = None
-    pid: Optional[str] = None
-    name: Optional[Any] = None
-    last_heartbeat: Optional[Any] = None
-    birth_date: Optional[Any] = None
-    successful_job_count: Optional[Any] = None
-    failed_job_count: Optional[Any] = None
-    total_working_time: Optional[Any] = None
+    hostname: Any | None = None
+    pid: str | None = None
+    name: Any | None = None
+    last_heartbeat: Any | None = None
+    birth_date: Any | None = None
+    successful_job_count: Any | None = None
+    failed_job_count: Any | None = None
+    total_working_time: Any | None = None

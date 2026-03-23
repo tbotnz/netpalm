@@ -6,6 +6,7 @@ reads results from the DB, and manages service instance lifecycle via ServiceSto
 
 No direct Kafka, Redis, or raw DB access — delegates to injected dependencies.
 """
+
 from __future__ import annotations
 
 import json
@@ -19,18 +20,12 @@ from netpalm.backend.core.cache.store import CacheStore
 from netpalm.backend.core.confload.confload import NetpalmSettings, get_settings
 from netpalm.backend.core.models.models import (
     GetConfig,
-    NetpalmEvent,
     QueueStrategy,
     Script,
-    ServiceInstanceData,
-    ServiceTaskResponse,
-    ServiceVersionSummary,
     SetConfig,
-    TaskResponse,
 )
-from netpalm.backend.core.queue.broker import QueueBroker, TaskNotFoundError
+from netpalm.backend.core.queue.broker import QueueBroker
 from netpalm.backend.core.queue.broker import TaskResponse as BrokerTaskResponse
-from netpalm.backend.core.service.state_machine import ServiceInstanceState
 from netpalm.backend.core.service.store import ServiceStore
 
 log = logging.getLogger(__name__)
@@ -199,9 +194,7 @@ class NetpalmManager:
             "data": {"versions": [jsonable_encoder(v) for v in versions]},
         }
 
-    async def rollback_service(
-        self, service_id: str, to_version: int | None = None
-    ) -> dict[str, Any]:
+    async def rollback_service(self, service_id: str, to_version: int | None = None) -> dict[str, Any]:
         instance = await self._service_store.rollback(service_id, to_version)
         return {
             "status": "success",
@@ -210,6 +203,7 @@ class NetpalmManager:
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
+
 
 def _task_to_response(task: BrokerTaskResponse) -> dict[str, Any]:
     errors: list[Any] = []

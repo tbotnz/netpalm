@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
-from netmiko import ConnectHandler, BaseConnection
-
+from netmiko import BaseConnection, ConnectHandler
 from netpalm.backend.core.confload.confload import config
 from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
@@ -43,11 +42,7 @@ class netmko(NetpalmDriver):
                     # normalise the ttp template name for ease of use
                     if "ttp_template" in self.kwarg.keys():
                         if self.kwarg["ttp_template"]:
-                            template_name = (
-                                config.ttp_templates
-                                + self.kwarg["ttp_template"]
-                                + ".ttp"
-                            )
+                            template_name = config.ttp_templates + self.kwarg["ttp_template"] + ".ttp"
                             self.kwarg["ttp_template"] = template_name
                     response = session.send_command(commands, **self.kwarg)
                     if response:
@@ -62,7 +57,14 @@ class netmko(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def config(self, session: Any = None, command: str | list[str] = "", enter_enable: bool = False, dry_run: bool = False, **kwargs: Any) -> dict[str, Any]:
+    def config(
+        self,
+        session: Any = None,
+        command: str | list[str] = "",
+        enter_enable: bool = False,
+        dry_run: bool = False,
+        **kwargs: Any,
+    ) -> dict[str, Any]:
         try:
             if type(command) == list:
                 comm = command
@@ -87,7 +89,7 @@ class netmko(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def __try_commit_or_save(self, session: BaseConnection) -> Optional[str]:
+    def __try_commit_or_save(self, session: BaseConnection) -> str | None:
         """Attempt to commit, failing that attempt to save.  If neither method exists, then the driver doesn't
         support it, so not our problem and we can presume user is aware I think."""
 

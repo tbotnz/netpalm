@@ -4,12 +4,13 @@ schedule routes — CRUD for scheduled jobs backed by PostgreSQL.
 APScheduler has been removed. Scheduled jobs are stored in the
 `scheduled_jobs` table and dispatched by the Scheduler service.
 """
+
 from __future__ import annotations
 
 import logging
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Optional
+from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -19,7 +20,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from netpalm.backend.core.db import get_db_session
 from netpalm.backend.core.models.db_models import ScheduledJobRecord
-from netpalm.backend.core.models.models import ScheduleBase, ScheduleInterval
 from netpalm.routers.route_utils import HttpErrorHandler
 
 log = logging.getLogger(__name__)
@@ -75,9 +75,7 @@ async def update_scheduled_job(
     body: dict[str, Any],
     session: AsyncSession = Depends(get_db_session),
 ):
-    result = await session.execute(
-        select(ScheduledJobRecord).where(ScheduledJobRecord.job_id == uuid.UUID(job_id))
-    )
+    result = await session.execute(select(ScheduledJobRecord).where(ScheduledJobRecord.job_id == uuid.UUID(job_id)))
     job = result.scalar_one_or_none()
     if job is None:
         raise HTTPException(status_code=404, detail=f"scheduled job {job_id} not found")
@@ -94,9 +92,7 @@ async def delete_scheduled_job(
     job_id: str,
     session: AsyncSession = Depends(get_db_session),
 ):
-    result = await session.execute(
-        select(ScheduledJobRecord).where(ScheduledJobRecord.job_id == uuid.UUID(job_id))
-    )
+    result = await session.execute(select(ScheduledJobRecord).where(ScheduledJobRecord.job_id == uuid.UUID(job_id)))
     job = result.scalar_one_or_none()
     if job is None:
         raise HTTPException(status_code=404, detail=f"scheduled job {job_id} not found")

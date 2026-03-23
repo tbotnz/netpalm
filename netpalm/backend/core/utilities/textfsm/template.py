@@ -1,7 +1,6 @@
 import logging
 import os
 import shutil
-import typing
 from collections import defaultdict
 from functools import wraps
 
@@ -30,22 +29,17 @@ class FSMTemplate:
         #
         result_data = {
             "status": "success",
-            "data": {
-                "task_result": {
-                    "template": template_filename,
-                    "template_text": template_text
-                }
-            }
+            "data": {"task_result": {"template": template_filename, "template_text": template_text}},
         }
         return result_data
 
     def get_template_list(self):
         res = defaultdict(list)  # defaultdict doesn't require initialization
 
-        with open(self.indexfile, "r", encoding="utf-8") as f:
+        with open(self.indexfile, encoding="utf-8") as f:
             for line in f:
-                if "," in line and "Template, Hostname, Platform, Command" not in line and not line.startswith('#'):
-                    fields = line.split(',')
+                if "," in line and "Template, Hostname, Platform, Command" not in line and not line.startswith("#"):
+                    fields = line.split(",")
                     template_filename = fields[0]
                     command = fields[3]
                     template_obj = {"command": command, "template": template_filename}
@@ -56,7 +50,7 @@ class FSMTemplate:
             "status": "success",
             "data": {
                 "task_result": dict(res)  # we don't want to return a DefaultDict directly
-            }
+            },
         }
         return result_data
 
@@ -76,8 +70,9 @@ class FSMTemplate:
         except HTTPError:
             if strict:
                 raise
-            self.kwargs[
-                "template_text"] = "COULD NOT FETCH"  # useful for automated tests that don't actually need the results
+            self.kwargs["template_text"] = (
+                "COULD NOT FETCH"  # useful for automated tests that don't actually need the results
+            )
 
         return self.push_template()
 
@@ -93,7 +88,7 @@ class FSMTemplate:
             file.write(template_text)
 
         # update index
-        with open(self.indexfile, "r") as infile:
+        with open(self.indexfile) as infile:
             original_index_lines = infile.readlines()
 
         new_index_lines = self.insert_template_into_index_lines(original_index_lines, template_filename)
@@ -103,12 +98,7 @@ class FSMTemplate:
 
         # overwrites indexfile
         shutil.move(tmp_index_filename, config.txtfsm_index_file)
-        result_data = {
-            "status": "success",
-            "data": {
-                "task_result": f"{template_filename} added"
-            }
-        }
+        result_data = {"status": "success", "data": {"task_result": f"{template_filename} added"}}
         return result_data
 
     def remove_template(self):
@@ -121,11 +111,10 @@ class FSMTemplate:
             log.warning(f"Tried to delete {file_path} but it wasn't there!  Cleaning index anyway")
 
         # update index
-        with open(self.indexfile, "r") as infile:
+        with open(self.indexfile) as infile:
             original_template_lines = infile.readlines()
 
-        new_index_lines = [line for line in original_template_lines
-                           if not line.startswith(template_filename)]
+        new_index_lines = [line for line in original_template_lines if not line.startswith(template_filename)]
 
         tmp_index_filename = f"{config.txtfsm_index_file}.tmp"
         with open(tmp_index_filename, "w") as outfile:
@@ -133,16 +122,10 @@ class FSMTemplate:
 
         # overwrite indexfile
         shutil.move(tmp_index_filename, config.txtfsm_index_file)
-        result_data = {
-            "status": "success",
-            "data": {
-                "task_result": f"{self.kwargs['template']} removed"
-            }
-        }
+        result_data = {"status": "success", "data": {"task_result": f"{self.kwargs['template']} removed"}}
         return result_data
 
-    def insert_template_into_index_lines(self, original_template_lines: typing.List[str],
-                                         template_filename: str) -> typing.List[str]:
+    def insert_template_into_index_lines(self, original_template_lines: list[str], template_filename: str) -> list[str]:
         """insert line into template index at end of existing section for driver"""
         driver = self.kwargs["driver"]
         command = self.kwargs["command"]
@@ -158,11 +141,11 @@ class FSMTemplate:
             if driver_section_identified and count == 0:  # first line after the last in the right driver section
                 count += 1
                 new_index_lines.append(new_line)
-            
+
             new_index_lines.append(line)
 
         if not driver_section_identified:  # no existing section, so create a new one
-            new_index_lines.append('')
+            new_index_lines.append("")
             new_index_lines.append(new_line)
 
         # remove any duplicates
@@ -176,10 +159,7 @@ def return_errors(f):
         try:
             result_data = f(*args, **kwargs)
         except Exception as e:
-            result_data = {
-                "status": "error",
-                "data": {"error": str(e)}
-            }
+            result_data = {"status": "error", "data": {"error": str(e)}}
         return result_data
 
     return wrapper

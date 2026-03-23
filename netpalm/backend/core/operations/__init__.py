@@ -1,4 +1,5 @@
 """Operations layer — typed task handlers dispatched by the executor."""
+
 from __future__ import annotations
 
 import logging

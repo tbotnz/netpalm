@@ -4,6 +4,7 @@ netpalm.executor — entry-point for the Executor (Kafka consumer) service.
 Run with:
     python -m netpalm.executor
 """
+
 from __future__ import annotations
 
 import asyncio

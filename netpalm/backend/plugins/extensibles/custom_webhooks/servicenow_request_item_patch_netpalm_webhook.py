@@ -1,7 +1,8 @@
 import json
+import logging
+
 import requests
 
-import logging
 from netpalm.backend.core.confload.confload import config
 
 """
@@ -25,7 +26,7 @@ log = logging.getLogger(__name__)
 def run_webhook(payload=False):
     try:
         if payload:
-            log.info(f"run webhook: running servicenow webhook")
+            log.info("run webhook: running servicenow webhook")
             # set variables for POST
             password = payload["webhook_args"]["password"]
             username = payload["webhook_args"]["username"]
@@ -44,13 +45,15 @@ def run_webhook(payload=False):
             verify_val = config.default_webhook_ssl_verify
             timeout_val = config.default_webhook_timeout
             # execute request
-            response = requests.request("PATCH", url=f"https://{servicenow_instance}/api/now/table/sc_req_item/{sys_id}",
-                                        headers=headers_val,
-                                        verify=verify_val,
-                                        timeout=timeout_val,
-                                        json=pl,
-                                        auth=(username, password)
-                                        )
+            response = requests.request(
+                "PATCH",
+                url=f"https://{servicenow_instance}/api/now/table/sc_req_item/{sys_id}",
+                headers=headers_val,
+                verify=verify_val,
+                timeout=timeout_val,
+                json=pl,
+                auth=(username, password),
+            )
             if str(response.status_code)[:1] != "2":
                 return False
             else:

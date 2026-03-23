@@ -1,6 +1,7 @@
 """
 task routes — GET /task/{task_id}
 """
+
 from __future__ import annotations
 
 import logging
@@ -8,7 +9,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 
-from netpalm.backend.core.manager import get_manager, NetpalmManager
+from netpalm.backend.core.manager import NetpalmManager, get_manager
 from netpalm.backend.core.queue.broker import TaskNotFoundError
 from netpalm.routers.route_utils import HttpErrorHandler
 

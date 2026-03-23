@@ -8,7 +8,6 @@ log = logging.getLogger(__name__)
 
 
 class ls:
-
     def __init__(self, folder=False):
         if folder == "config":
             self.folder_dir = config.jinja2_config_templates
@@ -44,8 +43,8 @@ class ls:
                             if "_model.py" not in f:
                                 if self.strip:
                                     if self.strip in f:
-                                        ftmpfile = f.replace(self.strip, '')
-                                        fileresult.append(ftmpfile.replace(path, ''))
+                                        ftmpfile = f.replace(self.strip, "")
+                                        fileresult.append(ftmpfile.replace(path, ""))
             resultdata = ResponseBasic(status="success", data={"task_result": {"templates": fileresult}}).model_dump()
             return resultdata
         except Exception as e:

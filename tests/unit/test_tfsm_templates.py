@@ -1,5 +1,3 @@
-import typing
-
 import pytest
 
 from netpalm.backend.core.utilities.textfsm.template import FSMTemplate
@@ -27,25 +25,19 @@ def test_get_template_list():
             assert "template" in template_mapping
 
 
-def get_driver_template_list(
-    driver: str, template_obj: FSMTemplate
-) -> typing.List[typing.Dict]:
+def get_driver_template_list(driver: str, template_obj: FSMTemplate) -> list[dict]:
     result = template_obj.get_template_list()
     template_driver_mapping = result["data"]["task_result"]
     return template_driver_mapping.get(driver, [])
 
 
-def get_matching_templates(target_template: typing.Dict, template_obj: FSMTemplate):
+def get_matching_templates(target_template: dict, template_obj: FSMTemplate):
     command = target_template["command"]
     template_name = target_template["template_name"]
     driver = target_template["driver"]
     template_list = get_driver_template_list(driver, template_obj)
     templates = []
-    for (
-        template
-    ) in (
-        template_list
-    ):  # was originally a list comprehension, expanded for easier debugging.
+    for template in template_list:  # was originally a list comprehension, expanded for easier debugging.
         command_matches = template["command"].strip() == command
         template_matches = template["template"].strip() == template_name
         if command_matches and template_matches:

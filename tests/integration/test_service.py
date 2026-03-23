@@ -1,7 +1,6 @@
-import pytest
-import requests
-import random
 import logging
+
+import pytest
 
 from tests.integration.helper import NetpalmTestHelper
 
@@ -9,9 +8,12 @@ log = logging.getLogger(__name__)
 
 helper = NetpalmTestHelper()
 
+
 @pytest.mark.service
 def test_prepare_vlan_service_environment():
     pass
+
+
 #     pl = {
 #         "operation": "create",
 #         "args": {
@@ -25,7 +27,7 @@ def test_prepare_vlan_service_environment():
 #     res = helper.check_many(reslist)
 #     if res:
 #         assert True
-        
+
 # @pytest.mark.service
 # def test_create_vlan_service_instance():
 #     pl = {
@@ -108,4 +110,3 @@ def test_prepare_vlan_service_environment():
 #     # finish off at some point
 
 #     assert True
-

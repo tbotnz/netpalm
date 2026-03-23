@@ -4,6 +4,7 @@ netpalm.scheduler — entry-point for the Scheduler service.
 Run with:
     python -m netpalm.scheduler
 """
+
 from __future__ import annotations
 
 import asyncio

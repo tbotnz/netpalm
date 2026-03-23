@@ -276,7 +276,7 @@ def test_setconfig_netmiko():
     }
     res = helper.post_and_check("/setconfig", pl)
     matchstr = r + "#"
-    assert  matchstr in res["changes"]
+    assert matchstr in res["changes"]
 
 
 @pytest.mark.setconfig
@@ -345,13 +345,11 @@ def test_setconfig_ncclient_j2():
             "port": 830,
             "hostkey_verify": False,
         },
-        "j2config": {
-            "template": "ncclient_test",
-            "args": {"vlans": ["10", "20", "30"]}
-        },
+        "j2config": {"template": "ncclient_test", "args": {"vlans": ["10", "20", "30"]}},
     }
     res = helper.post_and_check("/setconfig", pl)
     assert res == 'Namespace="http://www.cisco.com/nxos:1.0:vlan_mgr_cli"'
+
 
 @pytest.mark.setconfig
 def test_setconfig_restconf_post():
@@ -373,16 +371,14 @@ def test_setconfig_restconf_post():
         "args": {
             "uri": "/restconf/data/Cisco-IOS-XE-native:native/interface/",
             "action": "post",
-            "payload": {
-                "Cisco-IOS-XE-native:BDI": {"name": "4001", "description": "netpalm"}
-            },
+            "payload": {"Cisco-IOS-XE-native:BDI": {"name": "4001", "description": "netpalm"}},
         },
     }
     res = helper.post_and_check("/setconfig", pl)
     assert (
-        res[
-            "https://ios-xe-mgmt-latest.cisco.com:9443/restconf/data/Cisco-IOS-XE-native:native/interface/"
-        ]["status_code"]
+        res["https://ios-xe-mgmt-latest.cisco.com:9443/restconf/data/Cisco-IOS-XE-native:native/interface/"][
+            "status_code"
+        ]
         == 201
     )
 
@@ -417,9 +413,9 @@ def test_setconfig_restconf_patch():
     }
     res = helper.post_and_check("/setconfig", pl)
     assert (
-        res[
-            "https://ios-xe-mgmt-latest.cisco.com:9443/restconf/data/Cisco-IOS-XE-native:native/interface/BDI=4001"
-        ]["status_code"]
+        res["https://ios-xe-mgmt-latest.cisco.com:9443/restconf/data/Cisco-IOS-XE-native:native/interface/BDI=4001"][
+            "status_code"
+        ]
         == 204
     )
 
@@ -448,8 +444,8 @@ def test_setconfig_restconf_delete():
     }
     res = helper.post_and_check("/setconfig", pl)
     assert (
-        res[
-            "https://ios-xe-mgmt-latest.cisco.com:9443/restconf/data/Cisco-IOS-XE-native:native/interface/BDI=4001"
-        ]["status_code"]
+        res["https://ios-xe-mgmt-latest.cisco.com:9443/restconf/data/Cisco-IOS-XE-native:native/interface/BDI=4001"][
+            "status_code"
+        ]
         == 204
     )

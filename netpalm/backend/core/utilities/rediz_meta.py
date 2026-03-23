@@ -4,6 +4,7 @@ These are kept for backward compatibility with southbound driver plugins
 that catch-and-reraise via write_meta_error.  New code should simply let
 exceptions propagate — the executor catches them.
 """
+
 from __future__ import annotations
 
 import logging

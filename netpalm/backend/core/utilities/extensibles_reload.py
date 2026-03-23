@@ -1,12 +1,13 @@
 import logging
-
-import os, signal
+import os
+import signal
 
 log = logging.getLogger(__name__)
 
+
 def reload_extensibles_func():
     try:
-        with open("controller.pid", encoding = 'utf-8') as f:
+        with open("controller.pid", encoding="utf-8") as f:
             pid = f.readline()
             log.info(f"reload_extensibles: reloading extensibles for {pid}")
             os.kill(int(pid), signal.SIGHUP)

@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Literal, Optional, Union
+from typing import Literal
 
 from pydantic import BaseModel
 
@@ -46,7 +46,7 @@ class UniversalTemplateRemoveModel(BaseModel):
     """General template remover"""
 
     route_type: str
-    name: Optional[str] = None
+    name: str | None = None
 
 
 class InitEntryModel(BaseModel):
@@ -67,12 +67,12 @@ extn_update_types = {
 class TransactionLogEntryModel(BaseModel):
     seq: int
     type: TransactionLogEntryType
-    data: Union[
-        TFSMPullTemplateModel,
-        TFSMDeleteTemplateModel,
-        TFSMPushTemplateModel,
-        EchoModel,
-        InitEntryModel,
-        UniversalTemplatePushModel,
-        UniversalTemplateRemoveModel,
-    ]
+    data: (
+        TFSMPullTemplateModel
+        | TFSMDeleteTemplateModel
+        | TFSMPushTemplateModel
+        | EchoModel
+        | InitEntryModel
+        | UniversalTemplatePushModel
+        | UniversalTemplateRemoveModel
+    )

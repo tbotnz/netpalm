@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
@@ -27,7 +27,7 @@ class RestconfConnectionArgs(BaseModel):
 class RestconfPayload(BaseModel):
     uri: str
     action: SupportedOptions
-    payload: Optional[dict[str, Any]] = None
+    payload: dict[str, Any] | None = None
 
 
 class Restconf(BaseModel):
@@ -66,6 +66,6 @@ class Restconf(BaseModel):
 
     connection_args: RestconfConnectionArgs
     args: RestconfPayload
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    cache: Optional[CacheConfig] = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    cache: CacheConfig | None = None

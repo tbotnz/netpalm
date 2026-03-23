@@ -7,6 +7,7 @@ Usage:
     registry.load()
     driver_cls = registry.get("netmiko")
 """
+
 from __future__ import annotations
 
 import importlib

@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
@@ -22,18 +22,18 @@ class NapalmDeviceType(str, Enum):
 
 
 class NapalmConnectionOptionalArgs(BaseModel):
-    fortios_vdom: Optional[str] = None
-    port: Optional[int] = None
-    config_lock: Optional[bool] = None
-    dest_file_system: Optional[str] = None
-    auto_rollback_on_error: Optional[bool] = None
-    global_delay_factor: Optional[int] = None
-    nxos_protocol: Optional[str] = None
+    fortios_vdom: str | None = None
+    port: int | None = None
+    config_lock: bool | None = None
+    dest_file_system: str | None = None
+    auto_rollback_on_error: bool | None = None
+    global_delay_factor: int | None = None
+    nxos_protocol: str | None = None
 
 
 class NapalmConnectionArgs(BaseModel):
     device_type: NapalmDeviceType
-    optional_args: Optional[NapalmConnectionOptionalArgs] = None
+    optional_args: NapalmConnectionOptionalArgs | None = None
     host: str
     username: str
     password: str
@@ -59,10 +59,10 @@ class NapalmGetConfig(BaseModel):
 
     connection_args: NapalmConnectionArgs
     command: Any
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    post_checks: Optional[list[GenericPrePostCheck]] = None
-    cache: Optional[CacheConfig] = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    post_checks: list[GenericPrePostCheck] | None = None
+    cache: CacheConfig | None = None
 
 
 class NapalmSetConfig(BaseModel):
@@ -83,9 +83,9 @@ class NapalmSetConfig(BaseModel):
     )
 
     connection_args: NapalmConnectionArgs
-    config: Optional[Any] = None
-    j2config: Optional[J2Config] = None
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    pre_checks: Optional[list[GenericPrePostCheck]] = None
-    post_checks: Optional[list[GenericPrePostCheck]] = None
+    config: Any | None = None
+    j2config: J2Config | None = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    pre_checks: list[GenericPrePostCheck] | None = None
+    post_checks: list[GenericPrePostCheck] | None = None

@@ -6,8 +6,8 @@ from typing import Any
 
 import requests
 
-from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
+from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 
 log = logging.getLogger(__name__)
 
@@ -51,20 +51,13 @@ class restconf(NetpalmDriver):
         try:
             # restconf get call
             result = {}
-            url = (
-                self.transport
-                + "://"
-                + self.host
-                + ":"
-                + str(self.port)
-                + self.kwarg["uri"]
-            )
+            url = self.transport + "://" + self.host + ":" + str(self.port) + self.kwarg["uri"]
             response = requests.get(
                 url,
                 auth=(self.username, self.password),
                 params=self.params,
                 headers=self.headers,
-                **self.connection_args
+                **self.connection_args,
             )
             try:
                 res = json.loads(response.text)
@@ -81,14 +74,7 @@ class restconf(NetpalmDriver):
     def config(self, session: Any = None, command: str | list[str] | Any = None, **kwargs: Any) -> dict[str, Any]:
         try:
             result = {}
-            url = (
-                self.transport
-                + "://"
-                + self.host
-                + ":"
-                + str(self.port)
-                + self.kwarg["uri"]
-            )
+            url = self.transport + "://" + self.host + ":" + str(self.port) + self.kwarg["uri"]
             if hasattr(requests, str(self.action)):
                 response = getattr(requests, str(self.action))(
                     url,
@@ -96,7 +82,7 @@ class restconf(NetpalmDriver):
                     data=json.dumps(self.payload),
                     params=self.params,
                     headers=self.headers,
-                    **self.connection_args
+                    **self.connection_args,
                 )
                 try:
                     res = json.loads(response.text)

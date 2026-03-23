@@ -3,6 +3,7 @@
 Used by template/script routers for direct (non-queued) calls.
 Queued operations go through the executor's OperationRegistry instead.
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -61,6 +62,7 @@ def _service_op(action: str) -> Any:
     def _run(**kwargs: Any) -> Any:
         reg, settings = _ensure_initialized()
         return ServiceOperation(action).execute(kwargs, reg, settings)
+
     return _run
 
 

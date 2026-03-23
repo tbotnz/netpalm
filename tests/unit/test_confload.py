@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-import pytest
 
 ENV_FILE = "config/.env"
 ACTUAL_ENV_PATH = Path(ENV_FILE).absolute()
@@ -8,8 +7,9 @@ ACTUAL_ENV_PATH = Path(ENV_FILE).absolute()
 if not ACTUAL_ENV_PATH.exists():
     ACTUAL_ENV_PATH = ACTUAL_ENV_PATH.parent.parent / ENV_FILE  # try ../config/.env
     if not ACTUAL_ENV_PATH.exists():
-        raise FileNotFoundError(f'Can\'t run confload tests without finding .env, '
-                                f'tried looking in {ACTUAL_ENV_PATH}')
+        raise FileNotFoundError(
+            f"Can't run confload tests without finding .env, " f"tried looking in {ACTUAL_ENV_PATH}"
+        )
 
 
 os.environ["NETPALM_ENV_FILE"] = str(ACTUAL_ENV_PATH)
@@ -27,7 +27,7 @@ def test_netpalm_config_value_precedence(monkeypatch):
     monkeypatch.setenv("NETPALM_REDIS_SERVER", "123.COM")
     envvar_config = confload.NetpalmSettings()
     assert file_config.redis_key == envvar_config.redis_key
-    assert envvar_config.redis_server == '123.COM'
+    assert envvar_config.redis_server == "123.COM"
 
 
 def test_tfsm_search(monkeypatch):

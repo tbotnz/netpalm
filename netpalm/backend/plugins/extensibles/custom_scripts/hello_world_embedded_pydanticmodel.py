@@ -1,9 +1,10 @@
-from typing import Optional, Any, List
 from netpalm.backend.core.models.models import ScriptCustom
+
 
 class MyCustomScriptModel(ScriptCustom):
     script: str
-    test: Optional[str] = None
+    test: str | None = None
+
 
 def run(payload: MyCustomScriptModel):
     try:

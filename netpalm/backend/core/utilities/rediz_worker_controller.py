@@ -1,14 +1,11 @@
-
-import socket
 import json
 import logging
-import uuid
-
-from redis import Redis
-from redis.exceptions import ConnectionError
-from rq import Queue, Connection, Worker
+import socket
 
 from names_generator import generate_name
+from redis import Redis
+from redis.exceptions import ConnectionError
+from rq import Connection, Queue, Worker
 
 from netpalm.backend.core.confload.confload import Config
 from netpalm.backend.core.models.models import PinnedStore
@@ -18,7 +15,6 @@ log = logging.getLogger(__name__)
 
 class RedisWorker:
     def __init__(self, config: Config):
-
         # globals
         self.server = config.redis_server
         self.port = config.redis_port
@@ -64,7 +60,7 @@ class RedisWorker:
         self.config = config
 
     def worker_cleanup(self):
-        """cleans up jobs on container shutdown """
+        """cleans up jobs on container shutdown"""
         # clear the pinned db store for capacity mgmt
         r = self.base_connection.get(self.redis_pinned_store)
         rjson = json.loads(r)
@@ -87,9 +83,7 @@ class RedisWorker:
 
     def _listen(self, queue_name):
         log.debug(f"This worker name is: {self.worker_name}")
-        self.config.worker_name = (
-            self.worker_name
-        )  # register our name for other modules to reference
+        self.config.worker_name = self.worker_name  # register our name for other modules to reference
         queue = Queue(queue_name)
         worker = Worker(queue, name=self.worker_name)
         worker.work()

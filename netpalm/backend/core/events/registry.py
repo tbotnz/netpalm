@@ -5,13 +5,14 @@ event_listeners_dir plugin directory at startup.
 Maintains a topic → [listener, ...] mapping and dispatches incoming
 Kafka messages to all matching listeners.
 """
+
 from __future__ import annotations
 
 import importlib
 import logging
 import os
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from netpalm.backend.core.confload.confload import NetpalmSettings, get_settings
 from netpalm.backend.plugins.event_listeners.base import EventListener
@@ -34,7 +35,7 @@ class EventListenerRegistry:
 
     def __init__(
         self,
-        manager: "NetpalmManager",
+        manager: NetpalmManager,
         settings: NetpalmSettings | None = None,
     ) -> None:
         self._manager = manager
@@ -65,23 +66,15 @@ class EventListenerRegistry:
                 continue
 
             for obj in module.__dict__.values():
-                if (
-                    isinstance(obj, type)
-                    and issubclass(obj, EventListener)
-                    and obj is not EventListener
-                ):
+                if isinstance(obj, type) and issubclass(obj, EventListener) and obj is not EventListener:
                     self._validate_and_register(obj)
 
-        log.info(
-            f"EventListenerRegistry: loaded listeners for topics: {list(self._registry)}"
-        )
+        log.info(f"EventListenerRegistry: loaded listeners for topics: {list(self._registry)}")
 
     def _validate_and_register(self, cls: type[EventListener]) -> None:
         """Validate required attributes and register the listener."""
         if not hasattr(cls, "topics") or not cls.topics:
-            raise EventListenerLoadError(
-                f"{cls.__name__} is missing required 'topics' class attribute"
-            )
+            raise EventListenerLoadError(f"{cls.__name__} is missing required 'topics' class attribute")
         if not hasattr(cls, "parse"):
             raise EventListenerLoadError(f"{cls.__name__} is missing 'parse' method")
         if not hasattr(cls, "on_event"):
@@ -110,6 +103,5 @@ class EventListenerRegistry:
                     await listener.on_event(event, self._manager)
             except Exception as exc:
                 log.error(
-                    f"EventListenerRegistry.dispatch: error in {type(listener).__name__} "
-                    f"on topic {topic}: {exc}"
+                    f"EventListenerRegistry.dispatch: error in {type(listener).__name__} " f"on topic {topic}: {exc}"
                 )

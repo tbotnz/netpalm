@@ -5,6 +5,7 @@ Every driver must:
   - Set a class-level `driver_name` string
   - Implement connect(), sendcommand(), config(), logout()
 """
+
 from __future__ import annotations
 
 import logging

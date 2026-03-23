@@ -2,6 +2,7 @@
 Manager module — provides a FastAPI-compatible dependency factory
 and a legacy module-level singleton for backward compat with existing routers.
 """
+
 from __future__ import annotations
 
 from fastapi import Depends

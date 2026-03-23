@@ -1,7 +1,8 @@
 """Tests for the operations layer."""
+
 from __future__ import annotations
 
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 
 import pytest
 
@@ -15,9 +16,16 @@ class TestOperationRegistry:
         registry = OperationRegistry()
         registry.load_defaults()
         expected = {
-            "getconfig", "setconfig", "dryrun", "script",
-            "service_create", "service_update", "service_delete",
-            "service_re_deploy", "service_validate", "service_health_check",
+            "getconfig",
+            "setconfig",
+            "dryrun",
+            "script",
+            "service_create",
+            "service_update",
+            "service_delete",
+            "service_re_deploy",
+            "service_validate",
+            "service_health_check",
         }
         assert set(registry.available) == expected
 
@@ -37,42 +45,50 @@ class TestRunChecks:
     def test_include_passes(self):
         driver = Mock()
         driver.sendcommand.return_value = {"output": "hostname router1"}
-        checks = [{
-            "get_config_args": {"command": "show hostname"},
-            "match_str": ["router1"],
-            "match_type": "include",
-        }]
+        checks = [
+            {
+                "get_config_args": {"command": "show hostname"},
+                "match_str": ["router1"],
+                "match_type": "include",
+            }
+        ]
         run_checks(driver, Mock(), checks, "PostCheck")
 
     def test_include_fails(self):
         driver = Mock()
         driver.sendcommand.return_value = {"output": "hostname router1"}
-        checks = [{
-            "get_config_args": {"command": "show hostname"},
-            "match_str": ["router99"],
-            "match_type": "include",
-        }]
+        checks = [
+            {
+                "get_config_args": {"command": "show hostname"},
+                "match_str": ["router99"],
+                "match_type": "include",
+            }
+        ]
         with pytest.raises(NetpalmCheckError, match="PostCheck Failed"):
             run_checks(driver, Mock(), checks, "PostCheck")
 
     def test_exclude_passes(self):
         driver = Mock()
         driver.sendcommand.return_value = {"output": "hostname router1"}
-        checks = [{
-            "get_config_args": {"command": "show hostname"},
-            "match_str": ["router99"],
-            "match_type": "exclude",
-        }]
+        checks = [
+            {
+                "get_config_args": {"command": "show hostname"},
+                "match_str": ["router99"],
+                "match_type": "exclude",
+            }
+        ]
         run_checks(driver, Mock(), checks, "PreCheck")
 
     def test_exclude_fails(self):
         driver = Mock()
         driver.sendcommand.return_value = {"output": "hostname router1"}
-        checks = [{
-            "get_config_args": {"command": "show hostname"},
-            "match_str": ["router1"],
-            "match_type": "exclude",
-        }]
+        checks = [
+            {
+                "get_config_args": {"command": "show hostname"},
+                "match_str": ["router1"],
+                "match_type": "exclude",
+            }
+        ]
         with pytest.raises(NetpalmCheckError, match="PreCheck Failed"):
             run_checks(driver, Mock(), checks, "PreCheck")
 

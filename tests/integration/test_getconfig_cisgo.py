@@ -1,5 +1,4 @@
 import logging
-from typing import List, Union
 
 import pytest
 
@@ -25,12 +24,8 @@ class CisgoHelper:
         self.clean()
 
     def clean(self):
-        pl = {
-            "library": "netmiko",
-            "connection_args": self.netmiko_connection_args,
-            "command": "reset state"
-        }
-        result = helper.post_and_check('/getconfig', pl)
+        pl = {"library": "netmiko", "connection_args": self.netmiko_connection_args, "command": "reset state"}
+        result = helper.post_and_check("/getconfig", pl)
 
     @property
     def netmiko_connection_args(self):
@@ -55,7 +50,7 @@ class CisgoHelper:
                 "port": self.port_number,
                 "fast_cli": True,
                 # "default_enter": "\r\n"
-            }
+            },
         }
 
 
@@ -64,7 +59,7 @@ def cisgo_helper():
     return CisgoHelper()
 
 
-def hostname_from_config(config_lines: Union[List[str], str]) -> str:
+def hostname_from_config(config_lines: list[str] | str) -> str:
     if isinstance(config_lines, str):
         config_lines = config_lines.splitlines()
 
@@ -73,7 +68,7 @@ def hostname_from_config(config_lines: Union[List[str], str]) -> str:
             continue
         command, *args = line.split()
         if command == "hostname":
-            hostname = ' '.join(args)  # this will false-match if there's weird whitespace in hostname like \t, etc
+            hostname = " ".join(args)  # this will false-match if there's weird whitespace in hostname like \t, etc
             break
 
     else:
@@ -91,9 +86,9 @@ def test_getconfig_netmiko_fifo(cisgo_helper: CisgoHelper):
         "command": "show running-config",
         # "cache": {"enabled": False}
     }
-    res = helper.post_and_check('/getconfig', pl)
+    res = helper.post_and_check("/getconfig", pl)
     assert hostname_from_config(res["show running-config"]) == CISGO_DEFAULT_HOSTNAME
-    res = helper.post_and_check('/get', pl)
+    res = helper.post_and_check("/get", pl)
     assert hostname_from_config(res["show running-config"]) == CISGO_DEFAULT_HOSTNAME
 
 
@@ -107,9 +102,9 @@ def test_getconfig_netmiko_pinned(cisgo_helper: CisgoHelper):
         "queue_strategy": "pinned",
         # "cache": {"enabled": False}
     }
-    res = helper.post_and_check('/getconfig', pl)
+    res = helper.post_and_check("/getconfig", pl)
     assert hostname_from_config(res["show running-config"]) == CISGO_DEFAULT_HOSTNAME
-    res = helper.post_and_check('/get', pl)
+    res = helper.post_and_check("/get", pl)
     assert hostname_from_config(res["show running-config"]) == CISGO_DEFAULT_HOSTNAME
 
 
@@ -120,13 +115,11 @@ def test_getconfig_netmiko_with_textfsm(cisgo_helper: CisgoHelper):
         "library": "netmiko",
         "connection_args": cisgo_helper.netmiko_connection_args,
         "command": "show ip interface brief",
-        "args": {
-            "use_textfsm": True
-        }
+        "args": {"use_textfsm": True},
     }
-    res = helper.post_and_check('/getconfig', pl)
+    res = helper.post_and_check("/getconfig", pl)
     assert res["show ip interface brief"][0]["status"] == "up"
-    res = helper.post_and_check('/get', pl)
+    res = helper.post_and_check("/get", pl)
     assert res["show ip interface brief"][0]["status"] == "up"
 
 
@@ -136,12 +129,12 @@ def test_getconfig_netmiko_multiple(cisgo_helper: CisgoHelper):
     pl = {
         "library": "netmiko",
         "connection_args": cisgo_helper.netmiko_connection_args,
-        "command": ["show running-config", "show ip interface brief"]
+        "command": ["show running-config", "show ip interface brief"],
     }
-    res = helper.post_and_check('/getconfig', pl)
+    res = helper.post_and_check("/getconfig", pl)
     assert len(res["show ip interface brief"]) > 1
     assert hostname_from_config(res["show running-config"]) == CISGO_DEFAULT_HOSTNAME
-    res = helper.post_and_check('/get', pl)
+    res = helper.post_and_check("/get", pl)
     assert len(res["show ip interface brief"]) > 1
     assert hostname_from_config(res["show running-config"]) == CISGO_DEFAULT_HOSTNAME
 
@@ -152,13 +145,13 @@ def test_getconfig_napalm_multiple(cisgo_helper: CisgoHelper):
     pl = {
         "connection_args": cisgo_helper.napalm_connection_args,
         "library": "napalm",
-        "command": ["show running-config", "show ip interface brief"]
+        "command": ["show running-config", "show ip interface brief"],
     }
-    res = helper.post_and_check('/getconfig', pl)
+    res = helper.post_and_check("/getconfig", pl)
     log.error(res)
     assert len(res["show ip interface brief"]) > 1
     assert hostname_from_config(res["show running-config"])
-    res = helper.post_and_check('/get', pl)
+    res = helper.post_and_check("/get", pl)
     log.error(res)
     assert len(res["show ip interface brief"]) > 1
     assert hostname_from_config(res["show running-config"])
@@ -167,15 +160,11 @@ def test_getconfig_napalm_multiple(cisgo_helper: CisgoHelper):
 @pytest.mark.getconfig
 @pytest.mark.cisgo
 def test_getconfig_napalm_getter(cisgo_helper: CisgoHelper):
-    pl = {
-        "library": "napalm",
-        "connection_args": cisgo_helper.napalm_connection_args,
-        "command": "get_facts"
-    }
-    res = helper.post_and_check('/getconfig', pl)
+    pl = {"library": "napalm", "connection_args": cisgo_helper.napalm_connection_args, "command": "get_facts"}
+    res = helper.post_and_check("/getconfig", pl)
     log.error(res["get_facts"])
     assert res["get_facts"]["hostname"] == CISGO_DEFAULT_HOSTNAME
-    res = helper.post_and_check('/get', pl)
+    res = helper.post_and_check("/get", pl)
     log.error(res["get_facts"])
     assert res["get_facts"]["hostname"] == CISGO_DEFAULT_HOSTNAME
 
@@ -183,14 +172,10 @@ def test_getconfig_napalm_getter(cisgo_helper: CisgoHelper):
 @pytest.mark.getconfig
 @pytest.mark.cisgo
 def test_getconfig_napalm(cisgo_helper: CisgoHelper):
-    pl = {
-        "library": "napalm",
-        "connection_args": cisgo_helper.napalm_connection_args,
-        "command": "show running-config"
-    }
-    res = helper.post_and_check('/getconfig', pl)
+    pl = {"library": "napalm", "connection_args": cisgo_helper.napalm_connection_args, "command": "show running-config"}
+    res = helper.post_and_check("/getconfig", pl)
     assert hostname_from_config(res["show running-config"])
-    res = helper.post_and_check('/get', pl)
+    res = helper.post_and_check("/get", pl)
     assert hostname_from_config(res["show running-config"])
 
 
@@ -205,19 +190,15 @@ def test_getconfig_netmiko_post_check(cisgo_helper: CisgoHelper):
         "post_checks": [
             {
                 "match_type": "include",
-                "get_config_args": {
-                    "command": "show running-config"
-                },
-                "match_str": [
-                    "hostname " + CISGO_DEFAULT_HOSTNAME
-                ]
+                "get_config_args": {"command": "show running-config"},
+                "match_str": ["hostname " + CISGO_DEFAULT_HOSTNAME],
             }
-        ]
+        ],
     }
-    errors = helper.post_and_check_errors('/get', pl)
+    errors = helper.post_and_check_errors("/get", pl)
     assert len(errors) == 0
     pl["post_checks"][0]["match_str"][0] += "asdf"
-    errors = helper.post_and_check_errors('/getconfig', pl)
+    errors = helper.post_and_check_errors("/getconfig", pl)
     assert len(errors) > 0
 
 
@@ -232,18 +213,14 @@ def test_getconfig_netmiko_post_check_fails(cisgo_helper: CisgoHelper):
         "post_checks": [
             {
                 "match_type": "include",
-                "get_config_args": {
-                    "command": "show running-config"
-                },
-                "match_str": [
-                    "hostname " + CISGO_DEFAULT_HOSTNAME + "DEFINITELY WRONG"
-                ]
+                "get_config_args": {"command": "show running-config"},
+                "match_str": ["hostname " + CISGO_DEFAULT_HOSTNAME + "DEFINITELY WRONG"],
             }
-        ]
+        ],
     }
-    errors = helper.post_and_check_errors('/getconfig', pl)
+    errors = helper.post_and_check_errors("/getconfig", pl)
     assert len(errors) > 0
-    errors = helper.post_and_check_errors('/get', pl)
+    errors = helper.post_and_check_errors("/get", pl)
     assert len(errors) > 0
 
 
@@ -258,16 +235,12 @@ def test_getconfig_napalm_post_check(cisgo_helper: CisgoHelper):
         "post_checks": [
             {
                 "match_type": "include",
-                "get_config_args": {
-                    "command": "show running-config"
-                },
-                "match_str": [
-                    "hostname " + CISGO_DEFAULT_HOSTNAME
-                ]
+                "get_config_args": {"command": "show running-config"},
+                "match_str": ["hostname " + CISGO_DEFAULT_HOSTNAME],
             }
-        ]
+        ],
     }
-    errors = helper.post_and_check_errors('/getconfig', pl)
+    errors = helper.post_and_check_errors("/getconfig", pl)
     assert len(errors) == 0
-    errors = helper.post_and_check_errors('/get', pl)
+    errors = helper.post_and_check_errors("/get", pl)
     assert len(errors) == 0

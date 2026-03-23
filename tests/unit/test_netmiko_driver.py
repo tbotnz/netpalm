@@ -3,9 +3,9 @@ from unittest.mock import Mock
 import pytest
 from pytest_mock import MockerFixture
 
-from netpalm.exceptions import NetpalmCheckError
-from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
 from netpalm.backend.core.routes.routes import routes
+from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
+from netpalm.exceptions import NetpalmCheckError
 
 exec_command = routes["getconfig"]
 
@@ -13,20 +13,15 @@ NETMIKO_COMMANDS = {
     "show run": """running config\na line\nanother line
     """,
     "show version": "ios v xyz",
-    "show hostname": "wubba"
+    "show hostname": "wubba",
 }
 
-NETMIKO_C_ARGS = {
-        "device_type": "cisco_ios",
-        "host": "1.1.1.1",
-        "username": "admin",
-        "password": "admin"
-    }
+NETMIKO_C_ARGS = {"device_type": "cisco_ios", "host": "1.1.1.1", "username": "admin", "password": "admin"}
 
 
 @pytest.fixture()
 def netmiko_connection_handler(mocker: MockerFixture) -> MockerFixture:
-    mocked_CH = mocker.patch('netpalm.backend.plugins.drivers.netmiko.netmiko_drvr.ConnectHandler', autospec=True)
+    mocked_CH = mocker.patch("netpalm.backend.plugins.drivers.netmiko.netmiko_drvr.ConnectHandler", autospec=True)
 
     mocked_session = Mock()
 
@@ -34,6 +29,7 @@ def netmiko_connection_handler(mocker: MockerFixture) -> MockerFixture:
 
     def mock_results(key, **kwargs):
         return NETMIKO_COMMANDS[key]
+
     mocked_session.send_command.side_effect = mock_results
     mocked_session.commit.return_value = "committed"
     mocked_session.save_config.return_value = "config saved"
@@ -86,11 +82,7 @@ def test_netmko_config(netmiko_connection_handler: Mock):
 
 
 def test_netmiko_gc_exec_command(netmiko_connection_handler: Mock):
-    ec_kwargs = {
-        "library": "netmiko",
-        "command": list(NETMIKO_COMMANDS.keys()),
-        "connection_args": NETMIKO_C_ARGS
-    }
+    ec_kwargs = {"library": "netmiko", "command": list(NETMIKO_COMMANDS.keys()), "connection_args": NETMIKO_C_ARGS}
     result = exec_command(**ec_kwargs)
 
     netmiko_connection_handler.assert_called_once_with(**NETMIKO_C_ARGS)
@@ -107,23 +99,27 @@ def test_netmiko_gc_exec_command_post_checks(netmiko_connection_handler: Mock):
     good_post_check = {
         "get_config_args": {"command": post_check_command},
         "match_str": ["wubba"],
-        "match_type": "include"
+        "match_type": "include",
     }
 
     bad_post_check = {
         "get_config_args": {"command": post_check_command},
         "match_str": ["wubba"],
-        "match_type": "exclude"
+        "match_type": "exclude",
     }
 
-    result = exec_command(library="netmiko", command=command, connection_args=NETMIKO_C_ARGS, post_checks=[good_post_check])
+    result = exec_command(
+        library="netmiko", command=command, connection_args=NETMIKO_C_ARGS, post_checks=[good_post_check]
+    )
 
     netmiko_connection_handler.assert_called_once_with(**NETMIKO_C_ARGS)
     for command, value in list(NETMIKO_COMMANDS.items())[:1]:
         assert result[command] == value.splitlines()
 
     with pytest.raises(NetpalmCheckError):
-        result = exec_command(library="netmiko", command=command, connection_args=NETMIKO_C_ARGS, post_checks=[bad_post_check])
+        result = exec_command(
+            library="netmiko", command=command, connection_args=NETMIKO_C_ARGS, post_checks=[bad_post_check]
+        )
 
 
 def test_netmiko_gc_exec_command_ttp(netmiko_connection_handler: Mock):
@@ -131,9 +127,7 @@ def test_netmiko_gc_exec_command_ttp(netmiko_connection_handler: Mock):
 
     command = netmiko_command_list[0]
 
-    netmiko_kwarg = {
-        "ttp_template": "asdf"
-    }
+    netmiko_kwarg = {"ttp_template": "asdf"}
     result = exec_command(library="netmiko", command=command, connection_args=NETMIKO_C_ARGS, args=netmiko_kwarg.copy())
 
     with pytest.raises(AssertionError):

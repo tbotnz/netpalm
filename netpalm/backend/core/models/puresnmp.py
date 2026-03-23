@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
@@ -9,8 +9,8 @@ from netpalm.backend.core.models.models import CacheConfig, QueueStrategy, Webho
 class PureSNMPConnectionArgs(BaseModel):
     host: str
     community: str
-    port: Optional[int] = None
-    timeout: Optional[int] = None
+    port: int | None = None
+    timeout: int | None = None
 
 
 class SNMPtypes(str, Enum):
@@ -47,6 +47,6 @@ class PureSNMPGetConfig(BaseModel):
     connection_args: PureSNMPConnectionArgs
     command: Any
     args: PureSNMPArgs
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    cache: Optional[CacheConfig] = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    cache: CacheConfig | None = None

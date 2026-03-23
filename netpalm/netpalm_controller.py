@@ -1,6 +1,7 @@
 """
 netpalm api-server — FastAPI application entry-point.
 """
+
 from __future__ import annotations
 
 import logging
@@ -12,7 +13,7 @@ from starlette.responses import HTMLResponse, JSONResponse
 
 from netpalm.backend.core.confload.confload import get_settings
 from netpalm.backend.core.security.get_api_key import get_api_key
-from netpalm.routers import getconfig, setconfig, task, template, script, service, util, public, schedule
+from netpalm.routers import getconfig, public, schedule, script, service, setconfig, task, template, util
 
 log = logging.getLogger(__name__)
 

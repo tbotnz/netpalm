@@ -4,13 +4,13 @@ import logging
 from typing import Any
 
 import xmltodict
-from ncclient import manager
 
-from netpalm.backend.core.utilities.rediz_meta import (
-    write_meta_error_string,
-    write_meta_error,
-)
+from ncclient import manager
 from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
+from netpalm.backend.core.utilities.rediz_meta import (
+    write_meta_error,
+    write_meta_error_string,
+)
 
 log = logging.getLogger(__name__)
 
@@ -74,9 +74,7 @@ class ncclien(NetpalmDriver):
 
                 if "capabilities" in self.kwarg:
                     if self.kwarg.get("capabilities"):
-                        result["capabilities"] = self.__get_capabilities(
-                            session=session
-                        )
+                        result["capabilities"] = self.__get_capabilities(session=session)
                     del self.kwarg["capabilities"]
 
                 # check whether RPC required
@@ -99,7 +97,9 @@ class ncclien(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def config(self, session: Any = None, command: str | list[str] | Any = None, dry_run: bool = False, **kwargs: Any) -> dict[str, Any]:
+    def config(
+        self, session: Any = None, command: str | list[str] | Any = None, dry_run: bool = False, **kwargs: Any
+    ) -> dict[str, Any]:
         try:
             result = {}
             if self.kwarg:

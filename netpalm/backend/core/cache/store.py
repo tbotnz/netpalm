@@ -4,6 +4,7 @@ CacheStore — typed wrapper around cachelib RedisCache.
 Redis is used exclusively by this component; no other part of the
 codebase should import Redis directly.
 """
+
 from __future__ import annotations
 
 import logging

@@ -4,6 +4,7 @@ API key security middleware.
 Reads api_key from NetpalmSettings (via get_settings dependency).
 Returns HTTP 401 for missing key, HTTP 403 for invalid key.
 """
+
 from __future__ import annotations
 
 from fastapi import Depends, HTTPException, Security

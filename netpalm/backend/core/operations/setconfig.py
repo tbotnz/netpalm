@@ -2,6 +2,7 @@
 
 Also handles dryrun when instantiated with ``dry_run=True``.
 """
+
 from __future__ import annotations
 
 import logging
@@ -53,9 +54,17 @@ class SetConfigOperation(BaseOperation):
             run_checks(driver_obj, sesh, pre_checks, "PreCheck")
 
         if self._dry_run:
-            result = driver_obj.config(sesh, config, dry_run=True, enable_mode=enable_mode) if enable_mode else driver_obj.config(sesh, config, dry_run=True)
+            result = (
+                driver_obj.config(sesh, config, dry_run=True, enable_mode=enable_mode)
+                if enable_mode
+                else driver_obj.config(sesh, config, dry_run=True)
+            )
         else:
-            result = driver_obj.config(sesh, config, enable_mode=enable_mode) if enable_mode else driver_obj.config(sesh, config)
+            result = (
+                driver_obj.config(sesh, config, enable_mode=enable_mode)
+                if enable_mode
+                else driver_obj.config(sesh, config)
+            )
 
         if post_checks:
             run_checks(driver_obj, sesh, post_checks, "PostCheck")

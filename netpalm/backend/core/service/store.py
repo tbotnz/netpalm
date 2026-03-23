@@ -4,11 +4,12 @@ ServiceStore — CRUD for service instances backed by PostgreSQL.
 Enforces state machine transitions, takes version snapshots before
 every mutating transition, and auto-rolls back on updating→errored.
 """
+
 from __future__ import annotations
 
 import logging
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from sqlalchemy import select
@@ -21,8 +22,6 @@ from netpalm.backend.core.models.db_models import (
 )
 from netpalm.backend.core.models.models import ServiceInstanceData, ServiceVersionSummary
 from netpalm.backend.core.service.state_machine import (
-    VALID_TRANSITIONS,
-    InvalidStateTransitionError,
     ServiceInstanceState,
     ServiceVersionNotFoundError,
     validate_transition,
@@ -55,9 +54,7 @@ class ServiceStore:
         if isinstance(service_id, str):
             service_id = uuid.UUID(service_id)
         result = await self._db.execute(
-            select(ServiceInstanceRecord).where(
-                ServiceInstanceRecord.service_id == service_id
-            )
+            select(ServiceInstanceRecord).where(ServiceInstanceRecord.service_id == service_id)
         )
         record = result.scalar_one_or_none()
         if record is None:
@@ -125,7 +122,7 @@ class ServiceStore:
             await self._snapshot_record(record)
 
         record.state = new_state.value
-        record.updated_at = datetime.now(timezone.utc)
+        record.updated_at = datetime.now(UTC)
         await self._db.commit()
 
         # auto-rollback when update fails
@@ -146,7 +143,7 @@ class ServiceStore:
         await self._snapshot_record(record)
         record.state = ServiceInstanceState.updating.value
         record.data = data
-        record.updated_at = datetime.now(timezone.utc)
+        record.updated_at = datetime.now(UTC)
         await self._db.commit()
         await self._db.refresh(record)
         return self._to_data(record)
@@ -158,9 +155,7 @@ class ServiceStore:
     async def list_all(self) -> list[ServiceInstanceData]:
         """SELECT all non-deleted service instances."""
         result = await self._db.execute(
-            select(ServiceInstanceRecord).where(
-                ServiceInstanceRecord.state != ServiceInstanceState.deleted.value
-            )
+            select(ServiceInstanceRecord).where(ServiceInstanceRecord.state != ServiceInstanceState.deleted.value)
         )
         return [self._to_data(r) for r in result.scalars().all()]
 
@@ -222,7 +217,7 @@ class ServiceStore:
 
         record.state = ServiceInstanceState.deploying.value
         record.data = snap.data
-        record.updated_at = datetime.now(timezone.utc)
+        record.updated_at = datetime.now(UTC)
 
         # enqueue rollback job
         rollback_job = JobRecord(
@@ -243,9 +238,7 @@ class ServiceStore:
         log.info(f"ServiceStore.rollback: {service_id} → v{snap.version}")
         return self._to_data(record)
 
-    async def list_versions(
-        self, service_id: str | uuid.UUID
-    ) -> list[ServiceVersionSummary]:
+    async def list_versions(self, service_id: str | uuid.UUID) -> list[ServiceVersionSummary]:
         """Return all version snapshots ordered by version desc."""
         if isinstance(service_id, str):
             service_id = uuid.UUID(service_id)

@@ -1,8 +1,6 @@
 import ipaddress
 from fnmatch import fnmatch
 
-from typing import List
-
 
 class WhiteListRule:
     """
@@ -35,7 +33,7 @@ class DeviceWhitelist:
     evaluate rules in order, return True if any match.  If rule list is empty, return True for anything
     """
 
-    def __init__(self, definition: List[str]):
+    def __init__(self, definition: list[str]):
         self.definition = definition
         if self.definition is None:
             definition = []

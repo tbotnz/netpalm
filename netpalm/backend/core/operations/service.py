@@ -2,6 +2,7 @@
 
 Also contains the NetpalmService ABC that user-defined services subclass.
 """
+
 from __future__ import annotations
 
 import importlib
@@ -44,9 +45,7 @@ class NetpalmService:
         log.info("netpalm service: health_check method not implemented on your service")
 
 
-def _get_service(
-    service_name: str, settings: NetpalmSettings
-) -> dict[str, Any]:
+def _get_service(service_name: str, settings: NetpalmSettings) -> dict[str, Any]:
     """Import a service module and return its model and service class."""
     module_path = settings.python_service_templates.replace("/", ".") + service_name
     log.debug(f"_get_service: importing {module_path}")
@@ -78,9 +77,7 @@ class ServiceOperation(BaseOperation):
         user_data = kwargs.get("data", {})
 
         service_lookup = _get_service(service_name, settings)
-        svc = service_lookup["service_class"](
-            service_lookup["service_model"], service_id
-        )
+        svc = service_lookup["service_class"](service_lookup["service_model"], service_id)
 
         method = getattr(svc, self._action)
         return method(service_lookup["service_model"](**user_data))

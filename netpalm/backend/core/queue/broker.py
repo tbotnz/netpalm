@@ -4,6 +4,7 @@ QueueBroker — transactional outbox pattern.
 Writes jobs to PostgreSQL with status=pending.
 The Scheduler service handles Kafka publishing.
 """
+
 from __future__ import annotations
 
 import logging
@@ -90,9 +91,7 @@ class QueueBroker:
         if isinstance(task_id, str):
             task_id = uuid.UUID(task_id)
 
-        result = await self._db.execute(
-            select(JobRecord).where(JobRecord.task_id == task_id)
-        )
+        result = await self._db.execute(select(JobRecord).where(JobRecord.task_id == task_id))
         job: JobRecord | None = result.scalar_one_or_none()
         if job is None:
             raise TaskNotFoundError(f"task {task_id} not found")

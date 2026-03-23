@@ -1,13 +1,12 @@
 """
 util routes — cache management and utility endpoints.
 """
+
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
 from fastapi import APIRouter, Depends, Path, Query
-from fastapi.encoders import jsonable_encoder
 from starlette.responses import RedirectResponse
 
 from netpalm.backend.core.cache.store import CacheStore
@@ -25,7 +24,6 @@ def get_cache(settings: NetpalmSettings = Depends(get_settings)) -> CacheStore:
 
 @router.get("/logout")
 async def route_logout_and_remove_cookie(settings: NetpalmSettings = Depends(get_settings)):
-    from starlette.responses import RedirectResponse
     response = RedirectResponse(url="/")
     response.delete_cookie(settings.api_key_name, domain=settings.cookie_domain)
     response.delete_cookie("Authorization", domain=settings.cookie_domain)
@@ -35,7 +33,7 @@ async def route_logout_and_remove_cookie(settings: NetpalmSettings = Depends(get
 @router.delete("/cache")
 @HttpErrorHandler()
 def flush_cache(
-    fail: Optional[bool] = Query(False),
+    fail: bool | None = Query(False),
     cache: CacheStore = Depends(get_cache),
 ):
     if fail:

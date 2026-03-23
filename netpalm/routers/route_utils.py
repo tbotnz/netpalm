@@ -1,4 +1,5 @@
 """netpalm/routers/utils.py  Utility functions/classes for API routers"""
+
 import asyncio
 import hashlib
 import logging
@@ -7,7 +8,6 @@ from copy import deepcopy
 from enum import Enum
 from functools import wraps
 from itertools import chain
-from typing import Dict, List
 
 from fastapi import HTTPException
 from pydantic import BaseModel
@@ -51,11 +51,9 @@ class HttpErrorHandler(SyncAsyncDecoratorFactory):
             raise
         except Exception as e:
             import traceback
+
             log.exception(f"HttpErrorHandler Log: {e}")
-            detail = {
-                "Error": f"{e!r}",
-                "Traceback": traceback.format_exc().splitlines()
-            }
+            detail = {"Error": f"{e!r}", "Traceback": traceback.format_exc().splitlines()}
             raise HTTPException(status_code=500, detail=detail)
             # raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
@@ -78,8 +76,10 @@ def serialized_for_hash(obj) -> str:
         if hasattr(obj, "__len__"):
             if not isinstance(obj, str):
                 # this is some kind of container and we should handle it recursively but we don't know how
-                log.error(f"attempting to serialize {obj!r} but it's {type=}.  Defaulting to generic repr."
-                          f"This might result in bad cache performance")
+                log.error(
+                    f"attempting to serialize {obj!r} but it's {type=}.  Defaulting to generic repr."
+                    f"This might result in bad cache performance"
+                )
                 return repr(obj)
 
         return repr(obj)  # this catches str, int, etc... also custom classes
@@ -87,10 +87,7 @@ def serialized_for_hash(obj) -> str:
     # we're left w/ containers we know need recursion
 
     if isinstance(obj, dict):
-        item_pairs = [
-            f"{repr(key)}: {serialized_for_hash(value)}"
-            for key, value in obj.items()
-        ]
+        item_pairs = [f"{repr(key)}: {serialized_for_hash(value)}" for key, value in obj.items()]
         items_string = ", ".join(sorted(item_pairs))
 
         return f"{{{items_string}}}"
@@ -145,7 +142,7 @@ def cache_key_from_req_data(req_data: dict, unsafe_logging: bool = False) -> str
     log.info(f"hashed key: {hash}")
 
     if connection_args_set:
-        cache_key = f'{host}:{port}:{command}:{hash}'
+        cache_key = f"{host}:{port}:{command}:{hash}"
         log.debug(f"cache_key_from_req_data: cache key {cache_key}")
     else:
         # script is used
@@ -155,19 +152,19 @@ def cache_key_from_req_data(req_data: dict, unsafe_logging: bool = False) -> str
 
 def poison_host_cache(f):
     """Poison the cache for the host in the request model."""
+
     @wraps(f)
     def wrapper(*args, **kwargs):
         from netpalm.backend.core.cache.store import CacheStore
         from netpalm.backend.core.confload.confload import get_settings
-        model = [
-            item for item in chain(args, kwargs.values())
-            if isinstance(item, BaseModel)
-        ][0]
+
+        model = [item for item in chain(args, kwargs.values()) if isinstance(item, BaseModel)][0]
         req_data = model.model_dump()
         cache_key = cache_key_from_req_data(req_data)
         cache = CacheStore(settings=get_settings())
         cache.poison(cache_key)
         return f(*args, **kwargs)
+
     return wrapper
 
 
@@ -178,10 +175,8 @@ def cacheable_model(f):
     def wrapper(*args, **kwargs):
         from netpalm.backend.core.cache.store import CacheStore
         from netpalm.backend.core.confload.confload import get_settings
-        model = [
-            item for item in chain(args, kwargs.values())
-            if isinstance(item, BaseModel)
-        ][0]
+
+        model = [item for item in chain(args, kwargs.values()) if isinstance(item, BaseModel)][0]
 
         req_data = model.model_dump()
         log.debug(f"cacheable_model: req_data {req_data}")
@@ -220,7 +215,7 @@ def error_handle_w_cache(f):
     return wrapper
 
 
-def add_transaction_log_entry(entry_type: str, data: Dict) -> None:
+def add_transaction_log_entry(entry_type: str, data: dict) -> None:
     """No-op stub — transaction log via Redis has been removed."""
     log.debug(f"add_transaction_log_entry (no-op): {entry_type}: {data}")
 
@@ -229,13 +224,9 @@ def whitelist(f):
     """THIS IS PROBABLY NOT ASYNC SAFE YET
     Only works on routes with a properly defined BaseModel that includes `connection_args`"""
 
-    def get_hosts_and_ips(model: BaseModel) -> List[str]:
+    def get_hosts_and_ips(model: BaseModel) -> list[str]:
         connection_args = model.model_dump()["connection_args"]
-        return [
-            value
-            for key, value in connection_args.items()
-            if (key in ["host", "ip"]) and (value is not None)
-        ]
+        return [value for key, value in connection_args.items() if (key in ["host", "ip"]) and (value is not None)]
 
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -243,14 +234,16 @@ def whitelist(f):
         try:
             model = [arg for arg in arg_list if isinstance(arg, BaseModel)][0]
         except IndexError:
-            raise NotImplementedError(f"`@whitelist` only supports routes with a valid BaseModel")
+            raise NotImplementedError("`@whitelist` only supports routes with a valid BaseModel")
 
         hostnames = get_hosts_and_ips(model)
         # all hostnames found must match at least one whitelist rule
         valid = all(config.whitelist.match(hostname) for hostname in hostnames)
         if not valid:
-            raise HTTPException(status_code=403,
-                                detail=f"hosts in {hostnames} not permitted by whitelist: {config.whitelist.definition}")
+            raise HTTPException(
+                status_code=403,
+                detail=f"hosts in {hostnames} not permitted by whitelist: {config.whitelist.definition}",
+            )
 
         return f(*args, **kwargs)
 
