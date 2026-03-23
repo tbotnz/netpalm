@@ -1,8 +1,19 @@
+import os
+
 import pytest
 
 from netpalm.backend.core.utilities.textfsm.template import FSMTemplate
 
+# These tests require the ntc-templates index file which is only available
+# inside the Docker container (cloned during image build).
+_NTC_INDEX = "netpalm/backend/plugins/extensibles/ntc-templates/index"
+_has_ntc = os.path.isfile(_NTC_INDEX) or os.path.isfile(
+    "/usr/local/lib/python3.12/site-packages/ntc_templates/templates/index"
+)
+needs_ntc = pytest.mark.skipif(not _has_ntc, reason="ntc-templates index not available outside container")
 
+
+@needs_ntc
 def test_template_object():
     template_obj = FSMTemplate()
     result = template_obj.get_template_list()
@@ -11,6 +22,7 @@ def test_template_object():
 
 
 # pull mapping of drivers to list of template mappings
+@needs_ntc
 def test_get_template_list():
     template_obj = FSMTemplate()
     result = template_obj.get_template_list()
@@ -45,6 +57,7 @@ def get_matching_templates(target_template: dict, template_obj: FSMTemplate):
     return templates
 
 
+@needs_ntc
 def test_add_template():
     test_template = {
         "key": "573300637760474_59123133312286777",
@@ -102,6 +115,7 @@ def test_invalid_template_raises_error():
 #     assert len(new_driver_templates) == 1
 
 
+@needs_ntc
 def test_del_template():
     test_template = {
         "driver": "dell_force10",
