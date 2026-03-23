@@ -20,7 +20,7 @@ WORKDIR /code
 
 # Install dependencies first for better layer caching
 COPY pyproject.toml poetry.lock* ./
-RUN poetry install --no-root --no-directory
+RUN poetry install --no-root --no-directory && pip install --no-cache-dir setuptools
 
 # Copy application code
 COPY . .
