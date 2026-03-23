@@ -128,8 +128,15 @@ def test_model_default_value_behavior():
         }
     }
     m = GetConfig(**data_dict)
-    m.args['foo'] = 'asdf'
-    assert m.args == {"foo": "asdf"}
+    assert m.args is None
 
-    b = GetConfig(**data_dict)
-    assert b.args == {}
+    data_with_args = {**data_dict, "args": {"foo": "asdf"}}
+    m2 = GetConfig(**data_with_args)
+    assert m2.args == {"foo": "asdf"}
+
+    # Verify instances don't share mutable state
+    b = GetConfig(**data_with_args)
+    assert b.args == {"foo": "asdf"}
+    b.args["bar"] = "baz"
+    m3 = GetConfig(**data_with_args)
+    assert "bar" not in m3.args
