@@ -43,11 +43,13 @@ async def get_open_api_endpoint():
 async def get_documentation():
     return HTMLResponse("""
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>netpalm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="/static/css/swagger-ui.css">
   <link rel="stylesheet" href="/static/css/dark-theme.css">
 </head>
@@ -59,10 +61,13 @@ async def get_documentation():
       url: "/swaggerfile",
       dom_id: "#swagger-ui",
       deepLinking: true,
+      defaultModelsExpandDepth: -1,
+      docExpansion: "list",
       presets: [
         SwaggerUIBundle.presets.apis,
         SwaggerUIBundle.SwaggerUIStandalonePreset
       ],
+      layout: "BaseLayout",
     });
   </script>
 </body>
