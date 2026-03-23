@@ -263,7 +263,7 @@ class ResultMessage(BaseModel):
 
     task_id: uuid.UUID
     status: str
-    result: dict[str, Any] | None = None
+    result: Any = None
     error: str | None = None
 
 
