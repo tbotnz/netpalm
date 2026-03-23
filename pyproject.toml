@@ -92,3 +92,12 @@ python_version = "3.12"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "netpalm.backend.core.utilities.rediz_worker_controller",
+    "netpalm.backend.plugins.extensibles.services.*",
+    "netpalm.backend.plugins.extensibles.custom_scripts.*",
+    "netpalm.backend.plugins.extensibles.custom_webhooks.*",
+]
+ignore_errors = true

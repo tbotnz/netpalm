@@ -1,5 +1,24 @@
 services:
 
+  ci-checks:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: []
+    command:
+      - sh
+      - -c
+      - |
+        pip install --no-cache-dir ruff mypy &&
+        echo "=== Running ruff check ===" &&
+        ruff check . &&
+        echo "=== Running ruff format check ===" &&
+        ruff format --check . &&
+        echo "=== Running mypy ===" &&
+        mypy netpalm
+    profiles:
+      - checks
+
   netpalm-api-server:
     build:
       context: .

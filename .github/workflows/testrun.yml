@@ -3,25 +3,16 @@ name: tests
 on: [push, pull_request]
 
 jobs:
-  lint:
+  lint-and-typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: pip install tox
-      - run: tox -e lint
 
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: pip install tox
-      - run: tox -e typecheck
+      - name: Build CI checks container
+        run: docker compose -f docker-compose.ci.yml --profile checks build ci-checks
+
+      - name: Run lint and type checks
+        run: docker compose -f docker-compose.ci.yml --profile checks run --rm ci-checks
 
   unit:
     runs-on: ubuntu-latest

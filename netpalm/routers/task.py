@@ -23,5 +23,5 @@ async def get_task(task_id: str, manager: NetpalmManager = Depends(get_manager))
     try:
         result = await manager.fetch_task(task_id)
         return jsonable_encoder(result)
-    except TaskNotFoundError:
+    except (TaskNotFoundError, ValueError):
         raise HTTPException(status_code=404, detail=f"task {task_id} not found")

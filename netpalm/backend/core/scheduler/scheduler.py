@@ -133,9 +133,7 @@ class Scheduler:
         return dispatched
 
     def _resolve_topic(self, job: JobRecord) -> str:
-        """fifo → kafka_fifo_topic; pinned → kafka_pinned_topic_prefix.{host}"""
-        if job.queue_strategy == QueueStrategy.pinned and job.pinned_host:
-            return f"{self._settings.kafka_pinned_topic_prefix}.{job.pinned_host}"
+        """All jobs go to the fifo topic — single executor consumes everything."""
         return self._settings.kafka_fifo_topic
 
 
