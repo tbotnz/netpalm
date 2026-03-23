@@ -3,10 +3,10 @@
 import pytest
 
 from netpalm.backend.core.service.state_machine import (
+    VALID_TRANSITIONS,
     InvalidStateTransitionError,
     ServiceInstanceState,
     ServiceVersionNotFoundError,
-    VALID_TRANSITIONS,
     validate_transition,
 )
 
