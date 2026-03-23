@@ -1,7 +1,6 @@
 """netpalm/routers/utils.py  Utility functions/classes for API routers"""
 import asyncio
 import hashlib
-import json
 import logging
 from contextlib import contextmanager
 from copy import deepcopy
@@ -14,9 +13,6 @@ from fastapi import HTTPException
 from pydantic import BaseModel
 
 from netpalm.backend.core.confload.confload import config
-from netpalm.backend.core.models.transaction_log import TransactionLogEntryType
-
-from netpalm.backend.core.manager import ntplm
 
 log = logging.getLogger(__name__)
 
@@ -158,57 +154,54 @@ def cache_key_from_req_data(req_data: dict, unsafe_logging: bool = False) -> str
 
 
 def poison_host_cache(f):
-    """THIS IS PROBABLY NOT ASYNC SAFE YET"""
+    """Poison the cache for the host in the request model."""
     @wraps(f)
     def wrapper(*args, **kwargs):
+        from netpalm.backend.core.cache.store import CacheStore
+        from netpalm.backend.core.confload.confload import get_settings
         model = [
             item for item in chain(args, kwargs.values())
             if isinstance(item, BaseModel)
-        ][0]  # only take first model found because any more than that doesn't make sense
+        ][0]
         req_data = model.model_dump()
-
         cache_key = cache_key_from_req_data(req_data)
-        ntplm.clear_cache_for_host(cache_key)
+        cache = CacheStore(settings=get_settings())
+        cache.poison(cache_key)
         return f(*args, **kwargs)
-
     return wrapper
 
 
 def cacheable_model(f):
-    """THIS IS PROBABLY NOT ASYNC SAFE YET
-    Cache results according to global and per-request cache config.
-    ONLY APPLICABLE TO ROUTES WITH DEFINED MODELS THAT INCLUDE CACHE CONFIG"""
+    """Cache results according to global and per-request cache config."""
 
     @wraps(f)
     def wrapper(*args, **kwargs):
+        from netpalm.backend.core.cache.store import CacheStore
+        from netpalm.backend.core.confload.confload import get_settings
         model = [
             item for item in chain(args, kwargs.values())
             if isinstance(item, BaseModel)
-        ][0]  # only take first model found because any more than that doesn't make sense
+        ][0]
 
         req_data = model.model_dump()
         log.debug(f"cacheable_model: req_data {req_data}")
 
         cache_config = req_data.get("cache", {})
         cache_key = cache_key_from_req_data(req_data)
+        cache = CacheStore(settings=get_settings())
 
         if poison := cache_config.get("poison"):
-            ntplm.clear_cache_for_host(cache_key)
+            cache.poison(cache_key)
 
         if cacheable := cache_config.get("enabled") and not poison:
-            if cache_result := ntplm.cache.get(cache_key):
-                # log.debug(f"cacheable_model: retrieving from cache with {cache_key}")
+            if cache_result := cache.get(cache_key):
                 return cache_result
 
         result = f(*args, **kwargs)
 
         if cacheable:
-            if ttl := cache_config.get("ttl"):
-                ttl = int(ttl)
-                cache_kwargs = {"timeout": ttl}
-            else:
-                cache_kwargs = {}
-            ntplm.cache.set(cache_key, result, **cache_kwargs)
+            ttl = cache_config.get("ttl")
+            cache.set(cache_key, result, ttl=int(ttl) if ttl else None)
 
         return result
 
@@ -227,18 +220,9 @@ def error_handle_w_cache(f):
     return wrapper
 
 
-def add_transaction_log_entry(entry_type: TransactionLogEntryType, data: Dict):
-    log.debug(f"Adding {entry_type}: {data}")
-    item_dict = {
-        "type": entry_type,
-        "data": data
-    }
-    ntplm.extn_update_log.add(item_dict)
-    worker_message = {
-        "type": "process_update_log",
-        "kwargs": {}
-    }
-    ntplm.send_broadcast(json.dumps(worker_message))
+def add_transaction_log_entry(entry_type: str, data: Dict) -> None:
+    """No-op stub — transaction log via Redis has been removed."""
+    log.debug(f"add_transaction_log_entry (no-op): {entry_type}: {data}")
 
 
 def whitelist(f):

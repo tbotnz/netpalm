@@ -34,19 +34,19 @@ Incremental replacement of the Redis/RQ task queue with Apache Kafka, migration 
     - **Property 3: API key is never exposed as plain text**
     - **Validates: Requirements 1.5, 15.3**
 
-- [ ] 3. Database models and Alembic migration
+- [x] 3. Database models and Alembic migration
   - [x] 3.1 Implement SQLAlchemy async ORM models in `netpalm/backend/core/models/db_models.py`
     - Define `Base`, `JobRecord`, `ServiceInstanceRecord`, `ServiceInstanceVersionRecord`, `ScheduledJobRecord` exactly as specified in the design
     - Add `UniqueConstraint("service_id", "version")` to `ServiceInstanceVersionRecord`
     - Create async engine factory and `AsyncSession` factory in `netpalm/backend/core/db.py`
     - _Requirements: 14.1, 14.4_
 
-  - [~] 3.2 Generate initial Alembic migration
+  - [x] 3.2 Generate initial Alembic migration
     - Run `alembic revision --autogenerate -m "initial schema"` to produce the first migration script
     - Verify the generated migration creates all four tables with correct columns, indexes, and constraints
     - _Requirements: 14.2_
 
-  - [~] 3.3 Add `alembic upgrade head` to container startup
+  - [x] 3.3 Add `alembic upgrade head` to container startup
     - Update `Dockerfile` / entrypoint scripts so `alembic upgrade head` runs before the application starts
     - _Requirements: 14.3_
 
@@ -285,18 +285,18 @@ Incremental replacement of the Redis/RQ task queue with Apache Kafka, migration 
     - `POST /service/{service_id}/rollback` → `ServiceStore.rollback()` with optional `to_version`
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 9.4, 9.5_
 
-- [ ] 18. Remove dead code
+- [x] 18. Remove dead code
   - [x] 18.1 Delete or gut `netpalm/backend/core/redis/rediz.py`
     - Remove the `Rediz` class entirely; redistribute responsibilities to `QueueBroker`, `ServiceStore`, `CacheStore`, and `Scheduler` as already implemented
     - Update all import sites
     - _Requirements: 17.5_
 
-  - [-] 18.2 Remove RQ and APScheduler references
+  - [x] 18.2 Remove RQ and APScheduler references
     - Delete any remaining `rq`, `rq_scheduler`, or `apscheduler` imports and usage throughout the codebase
     - _Requirements: 17.3, 17.4_
 
-- [ ] 19. docker-compose and deployment
-  - [~] 19.1 Update `docker-compose.yml` (and `docker-compose.dev.yml`) with the new service topology
+- [x] 19. docker-compose and deployment
+  - [x] 19.1 Update `docker-compose.yml` (and `docker-compose.dev.yml`) with the new service topology
     - Add `postgres` service (`postgres:16-alpine`) with volume
     - Add `kafka` service (`apache/kafka:3.7.0`) in KRaft mode with the environment variables from the design
     - Add `kafka-ui` service (`ghcr.io/kafbat/kafka-ui:latest`) on port 8080, depending on `kafka`

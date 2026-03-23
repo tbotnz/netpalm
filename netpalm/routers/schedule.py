@@ -1,66 +1,104 @@
-from typing import Union
+"""
+schedule routes — CRUD for scheduled jobs backed by PostgreSQL.
 
-from fastapi import APIRouter, HTTPException
+APScheduler has been removed. Scheduled jobs are stored in the
+`scheduled_jobs` table and dispatched by the Scheduler service.
+"""
+from __future__ import annotations
+
+import logging
+import uuid
+from datetime import datetime, timezone
+from typing import Any, Optional
+
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
+from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from netpalm.backend.core.models.task import ResponseBasic
-from netpalm.backend.core.models.models import ScheduleInterval
+from netpalm.backend.core.db import get_db_session
+from netpalm.backend.core.models.db_models import ScheduledJobRecord
+from netpalm.backend.core.models.models import ScheduleBase, ScheduleInterval
+from netpalm.routers.route_utils import HttpErrorHandler
 
-from netpalm.backend.core.schedule import sched
-
+log = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@router.get("/schedule/", response_model=ResponseBasic)
-def get_scheduled_tasks_list():
-    try:
-        r = sched.get_scheduled_jobs()
-        resp = jsonable_encoder(r)
-        return resp
-    except Exception as e:
-        raise HTTPException(status_code=500)
+class ScheduledJobCreate(BaseModel):
+    name: str
+    method: str
+    payload: dict[str, Any]
+    trigger: str = "interval"
+    trigger_args: dict[str, Any] = {}
+    next_run_at: datetime
 
 
-@router.post("/schedule/{name}", status_code=201)
-def add_scheduled_task(name: str, schedul: ScheduleInterval):
-    try:
-        data = schedul.model_dump(exclude_none=True)
-        pl = data["schedule_payload"]
-        del data["schedule_payload"]
-
-        r = sched.add_netpalm_job(
-                                  job_name=name,
-                                  input_payload=pl,
-                                  trigger="interval",
-                                  trigger_args=data
-                                  )
-        resp = jsonable_encoder(r)
-        return resp
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e).split('\n'))
+@router.get("/schedule/")
+@HttpErrorHandler()
+async def list_scheduled_jobs(session: AsyncSession = Depends(get_db_session)):
+    result = await session.execute(select(ScheduledJobRecord))
+    jobs = result.scalars().all()
+    return {
+        "status": "success",
+        "data": {"task_result": {"scheduled_tasks": [jsonable_encoder(j) for j in jobs]}},
+    }
 
 
-@router.patch("/schedule/{id}", status_code=204)
-def modify_scheduled_task(id: str, schedul: ScheduleInterval):
-    try:
-        data = schedul.model_dump(exclude_none=True)
-        pl = data["schedule_payload"]
-        del data["schedule_payload"]
-        r = sched.modify_netpalm_job(
-                                  job_id=id,
-                                  input_payload=pl,
-                                  trigger="interval",
-                                  trigger_args=data
-                                  )
-        resp = jsonable_encoder(r)
-        return resp
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e).split('\n'))
+@router.post("/schedule/", status_code=201)
+@HttpErrorHandler()
+async def create_scheduled_job(
+    body: ScheduledJobCreate,
+    session: AsyncSession = Depends(get_db_session),
+):
+    job = ScheduledJobRecord(
+        job_id=uuid.uuid4(),
+        name=body.name,
+        method=body.method,
+        payload=body.payload,
+        trigger=body.trigger,
+        trigger_args=body.trigger_args,
+        next_run_at=body.next_run_at,
+        enabled=True,
+    )
+    session.add(job)
+    await session.commit()
+    await session.refresh(job)
+    return {"status": "success", "data": jsonable_encoder(job)}
 
 
-@router.delete("/schedule/{id}", status_code=204)
-def remove_scheduled_task(id: str):
-    try:
-        r = sched.remove_job(id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e).split("\n"))
+@router.patch("/schedule/{job_id}", status_code=200)
+@HttpErrorHandler()
+async def update_scheduled_job(
+    job_id: str,
+    body: dict[str, Any],
+    session: AsyncSession = Depends(get_db_session),
+):
+    result = await session.execute(
+        select(ScheduledJobRecord).where(ScheduledJobRecord.job_id == uuid.UUID(job_id))
+    )
+    job = result.scalar_one_or_none()
+    if job is None:
+        raise HTTPException(status_code=404, detail=f"scheduled job {job_id} not found")
+    for key, value in body.items():
+        if hasattr(job, key):
+            setattr(job, key, value)
+    await session.commit()
+    return {"status": "success", "data": jsonable_encoder(job)}
+
+
+@router.delete("/schedule/{job_id}", status_code=204)
+@HttpErrorHandler()
+async def delete_scheduled_job(
+    job_id: str,
+    session: AsyncSession = Depends(get_db_session),
+):
+    result = await session.execute(
+        select(ScheduledJobRecord).where(ScheduledJobRecord.job_id == uuid.UUID(job_id))
+    )
+    job = result.scalar_one_or_none()
+    if job is None:
+        raise HTTPException(status_code=404, detail=f"scheduled job {job_id} not found")
+    await session.delete(job)
+    await session.commit()

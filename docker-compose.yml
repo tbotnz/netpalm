@@ -1,6 +1,6 @@
 services:
 
-  netpalm-controller:
+  netpalm-api-server:
     build:
       context: .
       dockerfile: Dockerfile
@@ -8,37 +8,80 @@ services:
       - NET_TEXTFSM=/usr/local/lib/python3.12/site-packages/ntc_templates/templates/
       - NETPALM_CONFIG=/code/config/config.json
       - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+      - NETPALM_DATABASE_URL=postgresql+asyncpg://netpalm:netpalm@postgres:5432/netpalm
+      - NETPALM_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - NETPALM_REDIS_SERVER=redis
     ports:
       - "9000:9000"
     networks:
       - netpalm-network
     depends_on:
+      postgres:
+        condition: service_healthy
       kafka:
         condition: service_healthy
       redis:
         condition: service_started
     restart: always
 
-  netpalm-worker:
+  netpalm-scheduler:
     build:
       context: .
       dockerfile: Dockerfile
-    command: ["python3", "worker.py", "fifo"]
+    command: ["python", "-m", "netpalm.scheduler"]
     environment:
-      - NET_TEXTFSM=/usr/local/lib/python3.12/site-packages/ntc_templates/templates/
       - NETPALM_CONFIG=/code/config/config.json
-      - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+      - NETPALM_DATABASE_URL=postgresql+asyncpg://netpalm:netpalm@postgres:5432/netpalm
+      - NETPALM_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - netpalm-network
     depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    restart: always
+
+  netpalm-executor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["python", "-m", "netpalm.executor"]
+    environment:
+      - NETPALM_CONFIG=/code/config/config.json
+      - NETPALM_DATABASE_URL=postgresql+asyncpg://netpalm:netpalm@postgres:5432/netpalm
+      - NETPALM_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - NETPALM_REDIS_SERVER=redis
+    networks:
+      - netpalm-network
+    depends_on:
+      postgres:
+        condition: service_healthy
       kafka:
         condition: service_healthy
       redis:
         condition: service_started
+    restart: always
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: netpalm
+      POSTGRES_PASSWORD: netpalm
+      POSTGRES_DB: netpalm
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - netpalm-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U netpalm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: always
 
   kafka:
-    image: apache/kafka:3.9.0
+    image: apache/kafka:3.7.0
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
@@ -82,6 +125,9 @@ services:
     networks:
       - netpalm-network
     restart: always
+
+volumes:
+  postgres-data:
 
 networks:
   netpalm-network:
