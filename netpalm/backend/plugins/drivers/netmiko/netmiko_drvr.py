@@ -80,7 +80,9 @@ class netmko(NetpalmDriver):
                 response = session.send_config_set(comm)
 
             if not dry_run:
-                response += self.__try_commit_or_save(session)
+                commit_result = self.__try_commit_or_save(session)
+                if commit_result:
+                    response += commit_result
 
             result = {}
             result["changes"] = response.split("\n")
