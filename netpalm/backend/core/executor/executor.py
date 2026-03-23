@@ -13,6 +13,7 @@ For each job message:
 """
 from __future__ import annotations
 
+import json
 import logging
 import re
 from collections.abc import Callable
@@ -31,6 +32,21 @@ from netpalm.backend.core.models.models import ResultMessage, TaskMessage
 from netpalm.backend.core.operations import OperationRegistry
 
 log = logging.getLogger(__name__)
+
+
+def _serialize_exception_chain(exc: BaseException) -> list[dict[str, Any]]:
+    """Build a list of {exception_class, exception_args} walking the __cause__ chain."""
+    chain: list[dict[str, Any]] = []
+    current: BaseException | None = exc
+    while current is not None:
+        chain.append({
+            "exception_class": type(current).__name__,
+            "exception_args": [str(a) for a in current.args],
+        })
+        current = current.__cause__
+    # Reverse so innermost (root cause) is first
+    chain.reverse()
+    return chain
 
 
 class NetpalmExecutor:
@@ -123,7 +139,7 @@ class NetpalmExecutor:
             final_status = "finished"
         except Exception as exc:
             log.error(f"NetpalmExecutor: task {task_id} failed: {exc}")
-            task_error = str(exc)
+            task_error = json.dumps(_serialize_exception_chain(exc))
             final_status = "failed"
 
         # Write result

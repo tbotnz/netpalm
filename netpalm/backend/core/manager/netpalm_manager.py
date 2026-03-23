@@ -8,6 +8,7 @@ No direct Kafka, Redis, or raw DB access — delegates to injected dependencies.
 """
 from __future__ import annotations
 
+import json
 import logging
 import uuid
 from typing import Any
@@ -211,12 +212,19 @@ class NetpalmManager:
 # ── helpers ───────────────────────────────────────────────────────────────────
 
 def _task_to_response(task: BrokerTaskResponse) -> dict[str, Any]:
+    errors: list[Any] = []
+    if task.error:
+        try:
+            parsed = json.loads(task.error)
+            errors = parsed if isinstance(parsed, list) else [parsed]
+        except (json.JSONDecodeError, TypeError):
+            errors = [task.error]
     return {
         "status": "success",
         "data": {
             "task_id": str(task.task_id),
             "task_status": task.status,
             "task_result": task.result,
-            "task_errors": [task.error] if task.error else [],
+            "task_errors": errors,
         },
     }
