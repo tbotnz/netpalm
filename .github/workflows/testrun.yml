@@ -35,13 +35,13 @@ jobs:
         run: docker compose -f docker-compose.ci.yml up -d
 
       - name: Wait for services to be healthy
-        run: docker compose -f docker-compose.ci.yml exec -T netpalm-controller python -c "print('ready')"
+        run: docker compose -f docker-compose.ci.yml exec -T netpalm-api-server python -c "print('ready')"
 
       - name: Integration tests
-        run: docker compose -f docker-compose.ci.yml exec -T netpalm-controller pytest -m "not fulllab" -vv tests/integration
+        run: docker compose -f docker-compose.ci.yml exec -T netpalm-api-server pytest -m "not fulllab" -vv tests/integration
 
       - name: Unit tests (in container)
-        run: docker compose -f docker-compose.ci.yml exec -T netpalm-controller pytest -vv tests/unit
+        run: docker compose -f docker-compose.ci.yml exec -T netpalm-api-server pytest -vv tests/unit
 
       - name: Teardown
         if: always()

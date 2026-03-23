@@ -86,14 +86,12 @@ class JsonConfigSettingsSource(PydanticBaseSettingsSource):
         # config.json overrides defaults.json
         self._data = {**defaults, **config}
 
-    def get_fields_values(self) -> dict[str, Any]:  # type: ignore[override]
-        return self._data
+    def get_field_value(self, field: Any, field_name: str) -> tuple[Any, str, bool]:
+        val = self._data.get(field_name)
+        return val, field_name, False
 
     def __call__(self) -> dict[str, Any]:
         return self._data
-
-    def field_is_complex(self, field: Any) -> bool:  # type: ignore[override]
-        return False
 
 
 class NetpalmSettings(BaseSettings):

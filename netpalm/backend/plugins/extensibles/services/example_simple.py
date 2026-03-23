@@ -1,7 +1,7 @@
 import logging
 
 from pydantic import BaseModel
-from netpalm.backend.core.calls.service.netpalmservice import NetpalmService
+from netpalm.backend.core.operations.service import NetpalmService
 from netpalm.backend.core.manager.netpalm_manager import NetpalmManager
 
 log = logging.getLogger(__name__)

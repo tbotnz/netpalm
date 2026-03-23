@@ -1,7 +1,11 @@
 #!/bin/sh
 set -e
 
-# Run database migrations before starting the application
-alembic upgrade head
+# Only run database migrations for the API server (default command)
+case "$1" in
+  gunicorn*)
+    alembic upgrade head
+    ;;
+esac
 
 exec "$@"

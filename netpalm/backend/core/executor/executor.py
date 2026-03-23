@@ -1,22 +1,19 @@
 """
-NetpalmExecutor — Kafka consumer that executes driver tasks and writes results to PostgreSQL.
+NetpalmExecutor — Kafka consumer that executes tasks and writes results to PostgreSQL.
 
 Subscribes to:
-  - Job topics (fifo + pinned) from DriverRegistry
+  - Job topics (fifo + pinned)
   - Event topics from EventListenerRegistry
 
 For each job message:
   1. UPDATE job status → started
-  2. Look up driver via DriverRegistry
-  3. Execute driver.connect() / sendcommand() or config()
-  4. UPDATE job status → finished (or failed)
-  5. Produce ResultMessage to netpalm.results
+  2. Dispatch to the appropriate operation via OperationRegistry
+  3. UPDATE job status → finished (or failed)
+  4. Produce ResultMessage to netpalm.results
 """
 from __future__ import annotations
 
-import json
 import logging
-import uuid
 from collections.abc import Callable
 from datetime import datetime, timezone
 from typing import Any
@@ -30,13 +27,14 @@ from netpalm.backend.core.driver.driver_auto_loader import DriverRegistry
 from netpalm.backend.core.events.registry import EventListenerRegistry
 from netpalm.backend.core.models.db_models import JobRecord
 from netpalm.backend.core.models.models import ResultMessage, TaskMessage
+from netpalm.backend.core.operations import OperationRegistry
 
 log = logging.getLogger(__name__)
 
 
 class NetpalmExecutor:
     """
-    Kafka consumer that executes driver tasks and dispatches event messages.
+    Kafka consumer that dispatches tasks via OperationRegistry.
     """
 
     def __init__(
@@ -45,6 +43,7 @@ class NetpalmExecutor:
         producer: AIOKafkaProducer,
         db_factory: Callable[[], AsyncSession],
         driver_registry: DriverRegistry,
+        operation_registry: OperationRegistry,
         event_registry: EventListenerRegistry,
         settings: NetpalmSettings,
     ) -> None:
@@ -52,6 +51,7 @@ class NetpalmExecutor:
         self._producer = producer
         self._db_factory = db_factory
         self._driver_registry = driver_registry
+        self._operation_registry = operation_registry
         self._event_registry = event_registry
         self._settings = settings
 
@@ -104,20 +104,15 @@ class NetpalmExecutor:
             job.started_at = datetime.now(timezone.utc)
             await session.commit()
 
-        # Execute driver
+        # Execute operation
         task_result: dict[str, Any] | None = None
         task_error: str | None = None
 
         try:
-            driver_cls = self._driver_registry.get(msg.kwargs.get("library", ""))
-            driver = driver_cls(**msg.kwargs)
-            session_obj = driver.connect()
-            command = msg.kwargs.get("command") or msg.kwargs.get("config")
-            if msg.method == "getconfig":
-                task_result = driver.sendcommand(session_obj, command if isinstance(command, list) else [command])
-            else:
-                task_result = driver.config(session_obj, command)
-            driver.logout(session_obj)
+            operation = self._operation_registry.get(msg.method)
+            task_result = operation.execute(
+                msg.kwargs, self._driver_registry, self._settings
+            )
             final_status = "finished"
         except Exception as exc:
             log.error(f"NetpalmExecutor: task {task_id} failed: {exc}")

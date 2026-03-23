@@ -18,6 +18,7 @@ from netpalm.backend.core.driver.driver_auto_loader import DriverRegistry
 from netpalm.backend.core.events.registry import EventListenerRegistry
 from netpalm.backend.core.executor.executor import NetpalmExecutor
 from netpalm.backend.core.manager.netpalm_manager import NetpalmManager
+from netpalm.backend.core.operations import OperationRegistry
 from netpalm.backend.core.queue.broker import QueueBroker
 from netpalm.backend.core.service.store import ServiceStore
 
@@ -45,6 +46,9 @@ async def main() -> None:
     driver_registry = DriverRegistry(settings=settings)
     driver_registry.load()
 
+    operation_registry = OperationRegistry()
+    operation_registry.load_defaults()
+
     event_registry = EventListenerRegistry(manager=manager, settings=settings)
     event_registry.load()
 
@@ -60,6 +64,7 @@ async def main() -> None:
         producer=producer,
         db_factory=session_factory,
         driver_registry=driver_registry,
+        operation_registry=operation_registry,
         event_registry=event_registry,
         settings=settings,
     )
