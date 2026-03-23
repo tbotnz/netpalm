@@ -35,15 +35,18 @@ log = logging.getLogger(__name__)
 
 
 def _serialize_exception_chain(exc: BaseException) -> list[dict[str, Any]]:
-    """Build a list of {exception_class, exception_args} walking the __cause__ chain."""
+    """Build a list of {exception_class, exception_args} walking the cause/context chain."""
     chain: list[dict[str, Any]] = []
+    seen: set[int] = set()
     current: BaseException | None = exc
-    while current is not None:
+    while current is not None and id(current) not in seen:
+        seen.add(id(current))
         chain.append({
             "exception_class": type(current).__name__,
             "exception_args": [str(a) for a in current.args],
         })
-        current = current.__cause__
+        # Prefer explicit cause (__cause__), fall back to implicit context (__context__)
+        current = current.__cause__ if current.__cause__ is not None else current.__context__
     # Reverse so innermost (root cause) is first
     chain.reverse()
     return chain

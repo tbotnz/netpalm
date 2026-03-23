@@ -42,6 +42,7 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
+    restart: on-failure
 
   netpalm-executor:
     build:
@@ -62,6 +63,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+    restart: on-failure
 
   postgres:
     image: postgres:16-alpine

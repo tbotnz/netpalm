@@ -666,7 +666,6 @@ div.info {
 }
 
 .swagger-ui .model .property {
-  color: inherit !important;
 }
 
 .swagger-ui .model .property.primitive {
@@ -752,7 +751,6 @@ div.info {
 .swagger-ui .markdown code,
 .swagger-ui .renderedMarkdown code {
   background: var(--np-surface) !important;
-  color: inherit !important;
   padding: 2px 8px !important;
   border-radius: 4px !important;
   font-family: 'JetBrains Mono', monospace !important;
@@ -838,9 +836,7 @@ div.info {
 /* ============================================================
    MISC OVERRIDES — catch remaining light-theme leaks
    ============================================================ */
-.swagger-ui .opblock-body pre.microlight span {
-  color: inherit !important;
-}
+/* leave microlight syntax highlighting colors untouched */
 
 .swagger-ui svg.arrow {
   fill: var(--np-text-dim) !important;
