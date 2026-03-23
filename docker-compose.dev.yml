@@ -121,7 +121,7 @@ services:
       - netpalm-network
 
   cisgo:
-    image: apcela/cisshgo:v0.1.0
+    image: apcela/cisshgo:v0.1.1
     ports:
       - "10005:10005"
     networks:

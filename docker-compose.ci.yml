@@ -24,6 +24,7 @@ services:
         condition: service_started
       cisgo:
         condition: service_started
+    restart: on-failure
 
   netpalm-scheduler:
     build:

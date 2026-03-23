@@ -579,7 +579,6 @@ div.info {
 .swagger-ui pre,
 .swagger-ui .opblock-body pre {
   background: var(--np-bg) !important;
-  color: inherit !important;
   border: 1px solid var(--np-border) !important;
   border-radius: var(--np-radius) !important;
   font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace !important;
@@ -590,7 +589,6 @@ div.info {
 
 .swagger-ui pre.microlight {
   background: var(--np-bg) !important;
-  color: inherit !important;
   border: 1px solid var(--np-border) !important;
   border-radius: var(--np-radius) !important;
   font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace !important;
