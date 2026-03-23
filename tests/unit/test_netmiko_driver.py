@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import pytest
 from pytest_mock import MockerFixture
 
-from netpalm.exceptions import NetpalmMetaProcessedException
+from netpalm.exceptions import NetpalmCheckError
 from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
 from netpalm.backend.core.routes.routes import routes
 
@@ -122,7 +122,7 @@ def test_netmiko_gc_exec_command_post_checks(netmiko_connection_handler: Mock):
     for command, value in list(NETMIKO_COMMANDS.items())[:1]:
         assert result[command] == value.splitlines()
 
-    with pytest.raises(NetpalmMetaProcessedException):
+    with pytest.raises(NetpalmCheckError):
         result = exec_command(library="netmiko", command=command, connection_args=NETMIKO_C_ARGS, post_checks=[bad_post_check])
 
 

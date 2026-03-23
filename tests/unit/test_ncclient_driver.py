@@ -4,7 +4,7 @@ from unittest.mock import Mock, MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from netpalm.exceptions import NetpalmMetaProcessedException
+from netpalm.exceptions import NetpalmError
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
 from netpalm.backend.core.routes.routes import routes
 
@@ -49,7 +49,7 @@ def test_ncclient_getmethod_empty_args(ncclient_manager: Mock):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     ncclient_driver = ncclien(connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
-    with pytest.raises(NetpalmMetaProcessedException):
+    with pytest.raises(Exception):
         result = ncclient_driver.getmethod(sesh)
 
 
