@@ -35,8 +35,8 @@ jobs:
       - name: Start the stack
         run: docker compose -f docker-compose.ci.yml up -d
 
-      - name: Wait for services to be healthy
-        run: docker compose -f docker-compose.ci.yml exec -T netpalm-api-server python -c "print('ready')"
+      - name: Wait for API server to be ready
+        run: docker compose -f docker-compose.ci.yml exec -T netpalm-api-server python -m netpalm.wait_ready
 
       - name: Integration tests
         run: docker compose -f docker-compose.ci.yml exec -T netpalm-api-server pytest -m "not fulllab" -vv tests/integration
