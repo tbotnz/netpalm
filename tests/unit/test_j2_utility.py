@@ -1,4 +1,5 @@
 """Tests for the Jinja2 template utility."""
+
 from __future__ import annotations
 
 import os
@@ -78,9 +79,7 @@ class TestJ2Utility:
 
         from netpalm.backend.core.utilities.jinja2.j2 import render_j2template
 
-        result = render_j2template(
-            "func_test", template_type="config", kwargs={"vlan_id": "100"}
-        )
+        result = render_j2template("func_test", template_type="config", kwargs={"vlan_id": "100"})
         assert result["status"] == "success"
         assert "vlan 100" in result["data"]["task_result"]["template_render_result"]
 

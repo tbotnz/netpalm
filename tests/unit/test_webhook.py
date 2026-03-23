@@ -1,4 +1,5 @@
 """Tests for the webhook runner utility."""
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock, patch

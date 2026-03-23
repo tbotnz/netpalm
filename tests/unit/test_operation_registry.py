@@ -1,4 +1,5 @@
 """Tests for the OperationRegistry."""
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock

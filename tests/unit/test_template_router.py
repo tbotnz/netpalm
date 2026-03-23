@@ -1,4 +1,5 @@
 """Tests for the template router — TextFSM, J2, scripts, webhooks, services."""
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
@@ -74,9 +75,7 @@ class TestJ2ConfigRoutes:
         mock_instance.remove_template.return_value = None
         mock_unvrsl.return_value = mock_instance
 
-        resp = client.request(
-            "DELETE", "/j2template/config/", json={"name": "test_template"}
-        )
+        resp = client.request("DELETE", "/j2template/config/", json={"name": "test_template"})
         assert resp.status_code == 204
 
 
@@ -98,9 +97,7 @@ class TestJ2RenderRoutes:
                 return_value={"status": "success", "data": {"task_result": {"template_render_result": "rendered"}}}
             )
         )
-        resp = client.post(
-            "/j2template/render/config/my_template", json={"hostname": "switch1"}
-        )
+        resp = client.post("/j2template/render/config/my_template", json={"hostname": "switch1"})
         assert resp.status_code == 201
 
     @patch("netpalm.routers.template.routes")
@@ -110,9 +107,7 @@ class TestJ2RenderRoutes:
                 return_value={"status": "success", "data": {"task_result": {"template_render_result": "rendered"}}}
             )
         )
-        resp = client.post(
-            "/j2template/render/webhook/my_template", json={"data": "value"}
-        )
+        resp = client.post("/j2template/render/webhook/my_template", json={"data": "value"})
         assert resp.status_code == 201
 
 
@@ -134,7 +129,8 @@ class TestScriptRoutes:
     def test_get_script(self, mock_unvrsl, client):
         mock_instance = MagicMock()
         mock_instance.get_template.return_value = {
-            "status": "success", "data": {"task_result": {"base64_payload": "dGVzdA=="}}
+            "status": "success",
+            "data": {"task_result": {"base64_payload": "dGVzdA=="}},
         }
         mock_unvrsl.return_value = mock_instance
 
@@ -148,9 +144,7 @@ class TestScriptRoutes:
         mock_instance.remove_template.return_value = None
         mock_unvrsl.return_value = mock_instance
 
-        resp = client.request(
-            "DELETE", "/script/remove/", json={"name": "myscript"}
-        )
+        resp = client.request("DELETE", "/script/remove/", json={"name": "myscript"})
         assert resp.status_code == 204
 
 
@@ -187,7 +181,8 @@ class TestServiceTemplateRoutes:
     def test_get_service_file(self, mock_unvrsl, client):
         mock_instance = MagicMock()
         mock_instance.get_template.return_value = {
-            "status": "success", "data": {"task_result": {"base64_payload": "dGVzdA=="}}
+            "status": "success",
+            "data": {"task_result": {"base64_payload": "dGVzdA=="}},
         }
         mock_unvrsl.return_value = mock_instance
 
@@ -201,9 +196,7 @@ class TestServiceTemplateRoutes:
         mock_instance.remove_template.return_value = None
         mock_unvrsl.return_value = mock_instance
 
-        resp = client.request(
-            "DELETE", "/service/remove/", json={"name": "svc"}
-        )
+        resp = client.request("DELETE", "/service/remove/", json={"name": "svc"})
         assert resp.status_code == 204
 
 
@@ -220,7 +213,8 @@ class TestTTPRoutes:
     def test_get_ttp_template(self, mock_unvrsl, client):
         mock_instance = MagicMock()
         mock_instance.get_template.return_value = {
-            "status": "success", "data": {"task_result": {"base64_payload": "dGVzdA=="}}
+            "status": "success",
+            "data": {"task_result": {"base64_payload": "dGVzdA=="}},
         }
         mock_unvrsl.return_value = mock_instance
 
@@ -247,7 +241,5 @@ class TestTTPRoutes:
         mock_instance.remove_template.return_value = None
         mock_unvrsl.return_value = mock_instance
 
-        resp = client.request(
-            "DELETE", "/ttptemplate/", json={"name": "my_ttp"}
-        )
+        resp = client.request("DELETE", "/ttptemplate/", json={"name": "my_ttp"})
         assert resp.status_code == 204

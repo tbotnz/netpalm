@@ -1,8 +1,9 @@
 """Tests for Pydantic models and DB models."""
+
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from netpalm.backend.core.models.models import (
     CacheConfig,
@@ -130,7 +131,7 @@ class TestTaskResponse:
 
 class TestServiceModels:
     def test_service_instance_data(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         data = ServiceInstanceData(
             service_id=uuid.uuid4(),
             service_model="vlan_service",
@@ -143,7 +144,7 @@ class TestServiceModels:
         assert data.current_version == 3
 
     def test_service_version_summary(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         summary = ServiceVersionSummary(
             version_id=uuid.uuid4(),
             service_id=uuid.uuid4(),
@@ -187,9 +188,7 @@ class TestConfigModels:
 
 class TestTemplateModels:
     def test_tfsm_push(self):
-        m = TFSMPushTemplateModel(
-            driver="cisco_ios", command="show version", template_text="Value UPTIME (.*)"
-        )
+        m = TFSMPushTemplateModel(driver="cisco_ios", command="show version", template_text="Value UPTIME (.*)")
         assert m.driver == "cisco_ios"
 
     def test_tfsm_add(self):

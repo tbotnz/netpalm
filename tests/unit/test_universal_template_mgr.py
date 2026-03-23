@@ -1,4 +1,5 @@
 """Tests for the universal template manager utility."""
+
 from __future__ import annotations
 
 import base64
@@ -80,9 +81,7 @@ class TestUniversalTemplateMgr:
         from netpalm.backend.core.utilities.universal_template_mgr.unvrsl import unvrsl
 
         mgr = unvrsl()
-        result = mgr.get_template(
-            payload={"route_type": "custom_scripts", "name": "my_script"}
-        )
+        result = mgr.get_template(payload={"route_type": "custom_scripts", "name": "my_script"})
         assert result["status"] == "success"
         decoded = base64.b64decode(result["data"]["task_result"]["base64_payload"]).decode()
         assert decoded == "print('hello')"
@@ -99,9 +98,7 @@ class TestUniversalTemplateMgr:
         from netpalm.backend.core.utilities.universal_template_mgr.unvrsl import unvrsl
 
         mgr = unvrsl()
-        result = mgr.remove_template(
-            payload={"route_type": "custom_scripts", "name": "to_delete"}
-        )
+        result = mgr.remove_template(payload={"route_type": "custom_scripts", "name": "to_delete"})
         assert result["status"] == "success"
         assert not os.path.exists(path)
 
@@ -113,9 +110,7 @@ class TestUniversalTemplateMgr:
         from netpalm.backend.core.utilities.universal_template_mgr.unvrsl import unvrsl
 
         mgr = unvrsl()
-        result = mgr.remove_template(
-            payload={"route_type": "custom_scripts", "name": "nonexistent"}
-        )
+        result = mgr.remove_template(payload={"route_type": "custom_scripts", "name": "nonexistent"})
         assert result["status"] == "error"
 
     @patch("netpalm.backend.core.utilities.universal_template_mgr.unvrsl.config")
@@ -125,7 +120,5 @@ class TestUniversalTemplateMgr:
         from netpalm.backend.core.utilities.universal_template_mgr.unvrsl import unvrsl
 
         mgr = unvrsl()
-        result = mgr.get_template(
-            payload={"route_type": "custom_scripts", "name": "nope"}
-        )
+        result = mgr.get_template(payload={"route_type": "custom_scripts", "name": "nope"})
         assert result["status"] == "error"

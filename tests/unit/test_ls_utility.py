@@ -1,4 +1,5 @@
 """Tests for the ls (list files) utility."""
+
 from __future__ import annotations
 
 import os

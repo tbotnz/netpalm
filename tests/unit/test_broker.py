@@ -1,4 +1,5 @@
 """Tests for QueueBroker — transactional outbox pattern."""
+
 from __future__ import annotations
 
 import uuid
@@ -21,9 +22,7 @@ class TestTaskResponse:
 
     def test_model_dump_with_result(self):
         tid = uuid.uuid4()
-        resp = TaskResponse(
-            task_id=tid, status="finished", result={"data": "ok"}, error=None
-        )
+        resp = TaskResponse(task_id=tid, status="finished", result={"data": "ok"}, error=None)
         dumped = resp.model_dump()
         assert dumped["result"] == {"data": "ok"}
 
@@ -56,9 +55,7 @@ class TestQueueBroker:
     @pytest.mark.asyncio
     async def test_enqueue_task_uses_provided_task_id(self, broker, mock_db):
         tid = uuid.uuid4()
-        resp = await broker.enqueue_task(
-            method="setconfig", kwargs={"payload": "test"}, task_id=tid
-        )
+        resp = await broker.enqueue_task(method="setconfig", kwargs={"payload": "test"}, task_id=tid)
         assert resp.task_id == tid
 
     @pytest.mark.asyncio

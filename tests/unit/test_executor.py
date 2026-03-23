@@ -1,4 +1,5 @@
 """Tests for NetpalmExecutor — Kafka consumer that executes tasks."""
+
 from __future__ import annotations
 
 import json
@@ -137,9 +138,7 @@ class TestNetpalmExecutor:
 
         from netpalm.backend.core.models.models import TaskMessage
 
-        msg = TaskMessage(
-            task_id=task_id, method="getconfig", kwargs={}
-        )
+        msg = TaskMessage(task_id=task_id, method="getconfig", kwargs={})
 
         deps["mock_result"].scalar_one_or_none.return_value = None
 
@@ -157,9 +156,7 @@ class TestNetpalmExecutor:
 
         from netpalm.backend.core.models.models import TaskMessage
 
-        msg = TaskMessage(
-            task_id=task_id, method="getconfig", kwargs={}
-        )
+        msg = TaskMessage(task_id=task_id, method="getconfig", kwargs={})
 
         mock_job = MagicMock()
         mock_job.task_id = task_id

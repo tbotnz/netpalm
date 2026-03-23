@@ -1,4 +1,5 @@
 """Tests for DriverRegistry — auto-loading driver plugins."""
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock
