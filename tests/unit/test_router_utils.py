@@ -1,12 +1,11 @@
 import logging
 import typing
-from copy import deepcopy
 
 import pytest
 from fastapi import HTTPException
 
 from netpalm.backend.core.models.models import GetConfig
-from netpalm.routers.route_utils import cacheable_model, HttpErrorHandler, cache_key_from_req_data, serialized_for_hash
+from netpalm.routers.route_utils import HttpErrorHandler, cache_key_from_req_data, serialized_for_hash
 
 log = logging.getLogger(__name__)
 

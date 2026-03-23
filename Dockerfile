@@ -24,7 +24,7 @@ RUN poetry install --no-root --no-directory
 
 # Copy application code
 COPY . .
-RUN poetry install --only-root && pip install --no-cache-dir setuptools
+RUN poetry install --only-root && pip install --no-cache-dir "setuptools<81"
 
 STOPSIGNAL SIGINT
 
