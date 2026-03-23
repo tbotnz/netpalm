@@ -1,6 +1,6 @@
-from netpalm.backend.core.manager.netpalm_manager import NetpalmManager
-
 import logging
+
+from netpalm.backend.core.manager.netpalm_manager import NetpalmManager
 
 # all functions need to be wrapped in the "run" function and pass in kwargs
 # JSON example to send into the /script route is as below
@@ -21,9 +21,11 @@ log = logging.getLogger(__name__)
 
 def run(**kwargs):
     try:
-        # mandatory get of kwargs - payload comes through as {"kwargs": {"host": "10.0.2.33", "username": "admin", "password": "admin"}}
+        # mandatory get of kwargs - payload comes through as
+        # {"kwargs": {"host": "10.0.2.33", "username": "admin", "password": "admin"}}
         args = kwargs.get("kwargs")
-        # access your passed in vars here in a dict format - payload is now {"host": "10.0.2.33", "username": "admin", "password": "admin"}
+        # access your passed in vars here in a dict format - payload is now
+        # {"host": "10.0.2.33", "username": "admin", "password": "admin"}
         username = args["username"]
         password = args["password"]
         host = args["host"]
@@ -39,10 +41,10 @@ def run(**kwargs):
                 "host": host,
                 "username": username,
                 "password": password,
-                "timeout": 5
+                "timeout": 5,
             },
             "command": "show run | i hostname",
-            "queue_strategy": "pinned"
+            "queue_strategy": "pinned",
         }
         mgr = NetpalmManager()
         job_result = mgr.get_config_netmiko(netmiko_send_data)
@@ -52,12 +54,7 @@ def run(**kwargs):
 
         # we can also trigger webhooks from within the script if required using the manager as below
         # webhooks can also be triggered outside of the script by simply using the webhook key against the REST API
-        webhook_meta = {
-            "name": "default_webhook",
-            "args": {
-                "insert": "something useful"
-            }
-        }
+        webhook_meta = {"name": "default_webhook", "args": {"insert": "something useful"}}
 
         log.info(f"hello_world_advanced_using_netpalm_manager: triggering webhook with {webhook_meta}")
 

@@ -1,15 +1,23 @@
-from enum import Enum
-from typing import Optional, Any, List
+"""
+Pydantic v2 request/response models for netpalm API.
+"""
 
-from pydantic import BaseModel
+from __future__ import annotations
+
+import uuid
+from datetime import datetime
+from enum import StrEnum
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict
 
 
-class QueueStrategy(str, Enum):
+class QueueStrategy(StrEnum):
     fifo = "fifo"
     pinned = "pinned"
 
 
-class LibraryName(str, Enum):
+class LibraryName(StrEnum):
     napalm = "napalm"
     ncclient = "ncclient"
     restconf = "restconf"
@@ -17,7 +25,7 @@ class LibraryName(str, Enum):
     puresnmp = "puresnmp"
 
 
-class CheckEnum(str, Enum):
+class CheckEnum(StrEnum):
     include = "include"
     exclude = "exclude"
 
@@ -28,163 +36,139 @@ class GetConfigArgs(BaseModel):
 
 class GenericPrePostCheck(BaseModel):
     match_type: CheckEnum
-    match_str: list
+    match_str: list[str]
     get_config_args: GetConfigArgs
 
 
 class Webhook(BaseModel):
-    name: Optional[str] = None
-    args: Optional[dict] = None
-    j2template: Optional[str] = None
+    name: str | None = None
+    args: dict[str, Any] | None = None
+    j2template: str | None = None
 
 
 class J2Config(BaseModel):
     template: str
-    args: dict
+    args: dict[str, Any]
 
 
 class SetConfigArgs(BaseModel):
-    payload: Optional[Any] = None
-    default_operation: Optional[str] = None
-    target: Optional[str] = None
-    config: Optional[str] = None
-    uri: Optional[str] = None
-    action: Optional[str] = None
-    render_json: Optional[bool] = False
+    payload: Any | None = None
+    default_operation: str | None = None
+    target: str | None = None
+    config: str | None = None
+    uri: str | None = None
+    action: str | None = None
+    render_json: bool = False
 
 
 class SetConfig(BaseModel):
-    library: LibraryName
-    connection_args: dict
-    config: Optional[Any] = None
-    j2config: Optional[J2Config] = None
-    args: Optional[SetConfigArgs] = {}
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    pre_checks: Optional[List[GenericPrePostCheck]] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = None
-    enable_mode: bool = False
-    ttl: Optional[int] = None
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
-                "library":
-                "napalm",
+                "library": "napalm",
                 "connection_args": {
                     "device_type": "cisco_ios",
                     "host": "10.0.2.33",
                     "username": "device_username",
-                    "password": "device_password"
+                    "password": "device_password",
                 },
                 "j2config": {
                     "template": "test",
-                    "args": {
-                        "vlans": ["5", "3", "2"]
-                    }
+                    "args": {"vlans": ["5", "3", "2"]},
                 },
-                "queue_strategy":
-                "fifo",
-                "pre_checks": [{
-                    "match_type": "include",
-                    "get_config_args": {
-                        "command": "show run | i hostname"
-                    },
-                    "match_str": ["hostname cat"]
-                }],
-                "post_checks": [{
-                    "match_type": "include",
-                    "get_config_args": {
-                        "command": "show run | i hostname"
-                    },
-                    "match_str": ["hostname dog"]
-                }]
+                "queue_strategy": "fifo",
+                "pre_checks": [
+                    {
+                        "match_type": "include",
+                        "get_config_args": {"command": "show run | i hostname"},
+                        "match_str": ["hostname cat"],
+                    }
+                ],
+                "post_checks": [
+                    {
+                        "match_type": "include",
+                        "get_config_args": {"command": "show run | i hostname"},
+                        "match_str": ["hostname dog"],
+                    }
+                ],
             }
         }
+    )
+
+    library: LibraryName
+    connection_args: dict[str, Any]
+    config: Any | None = None
+    j2config: J2Config | None = None
+    args: SetConfigArgs | None = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    pre_checks: list[GenericPrePostCheck] | None = None
+    post_checks: list[GenericPrePostCheck] | None = None
+    enable_mode: bool = False
 
 
 class CacheConfig(BaseModel):
-    enabled: bool = False
-    ttl: Optional[int] = None
-    poison: Optional[bool] = False
+    model_config = ConfigDict(json_schema_extra={"example": {"enabled": True, "ttl": 300, "poison": False}})
 
-    class Config:
-        schema_extra = {
-            'example': {
-                'enabled': True,
-                'ttl': 300,
-                'poison': False
-            }
-        }
+    enabled: bool = False
+    ttl: int | None = None
+    poison: bool = False
+
 
 class Script(BaseModel):
-    script: str
-    args: Optional[dict] = None
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    cache: Optional[CacheConfig] = {}
-    ttl: Optional[int] = None
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "script": "hello_world",
-                "args": {
-                    "hello": "world"
-                },
-                "queue_strategy": "fifo"
+                "args": {"hello": "world"},
+                "queue_strategy": "fifo",
             }
         }
+    )
+
+    script: str
+    args: dict[str, Any] | None = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    cache: CacheConfig | None = None
+
 
 class ScriptCustom(BaseModel):
-    script: str
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    cache: Optional[CacheConfig] = {}
-    ttl: Optional[int] = None
+    model_config = ConfigDict(json_schema_extra={"example": {"script": "hello_world", "queue_strategy": "fifo"}})
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "script": "hello_world",
-                "queue_strategy": "fifo"
-            }
-        }
+    script: str
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    cache: CacheConfig | None = None
+
 
 class GetConfig(BaseModel):
-    library: LibraryName
-    connection_args: dict
-    command: Any
-    args: Optional[dict] = {}
-    webhook: Optional[Webhook] = {}
-    queue_strategy: Optional[QueueStrategy] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = []
-    cache: Optional[CacheConfig] = {}
-    ttl: Optional[int] = None
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "library": "netmiko",
                 "connection_args": {
                     "device_type": "cisco_ios",
                     "host": "10.0.2.33",
                     "username": "device_username",
-                    "password": "device_password"
+                    "password": "device_password",
                 },
                 "command": "show ip int brief",
-                "args": {
-                    "use_textfsm": True,
-                    "render_json": True
-                },
-                "queue_strategy": "pinned",
-                "cache": {
-                    "enabled": True,
-                    "ttl": 300,
-                    "poison": False
-                }
+                "args": {"use_textfsm": True, "render_json": True},
+                "queue_strategy": "fifo",
+                "cache": {"enabled": True, "ttl": 300, "poison": False},
             }
         }
+    )
+
+    library: LibraryName
+    connection_args: dict[str, Any]
+    command: Any
+    args: dict[str, Any] | None = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    post_checks: list[GenericPrePostCheck] | None = None
+    cache: CacheConfig | None = None
 
 
 class TFSMPushTemplateModel(BaseModel):
@@ -200,7 +184,7 @@ class TFSMTemplateAdd(BaseModel):
 
 
 class TFSMTemplateRemove(BaseModel):
-    template: str = None
+    template: str | None = None
 
 
 class TFSMTemplateMatch(BaseModel):
@@ -210,27 +194,30 @@ class TFSMTemplateMatch(BaseModel):
 
 class TFSMTemplateMatchResponse(BaseModel):
     """Data returned from TextFSM Library Index lookup"""
-    Template: str  # this is the filename of the template
+
+    Template: str
     Hostname: str
     Platform: str
     Command: str
-    template_text: str  # this is the actual contents of the template file
+    template_text: str
 
 
-class UnivsersalTemplateAdd(BaseModel):
-    """general template ingest0r for handling base64 ingestion and writing"""
+class UniversalTemplateAdd(BaseModel):
+    """General template ingestor for handling base64 ingestion and writing"""
+
     base64_payload: str
     name: str
 
 
-class UnivsersalTemplateRemove(BaseModel):
-    """general template remover """
-    name: str = None
+class UniversalTemplateRemove(BaseModel):
+    """General template remover"""
+
+    name: str | None = None
 
 
 class GeneralError(BaseModel):
-    status: str = None
-    data: dict = None
+    status: str | None = None
+    data: dict[str, Any] | None = None
 
 
 class PinnedStore(BaseModel):
@@ -242,17 +229,94 @@ class PinnedStore(BaseModel):
 
 class ScheduleBase(BaseModel):
     path: str
-    payload: dict
+    payload: dict[str, Any]
 
 
 class ScheduleInterval(BaseModel):
-    weeks: Optional[int] = None
-    days: Optional[int] = None
-    hours: Optional[int] = None
-    minutes: Optional[int] = None
-    seconds: Optional[int] = None
-    start_date: Optional[str] = None
-    end_date: Optional[str] = None
-    timezone: Optional[str] = None
-    jitter: Optional[int] = None
+    weeks: int | None = None
+    days: int | None = None
+    hours: int | None = None
+    minutes: int | None = None
+    seconds: int | None = None
+    start_date: str | None = None
+    end_date: str | None = None
+    timezone: str | None = None
+    jitter: int | None = None
     schedule_payload: ScheduleBase
+
+
+# ── Kafka payload models ──────────────────────────────────────────────────────
+
+
+class TaskMessage(BaseModel):
+    """Message produced to Kafka job topics by the Scheduler."""
+
+    task_id: uuid.UUID
+    method: str
+    kwargs: dict[str, Any]
+    queue_strategy: QueueStrategy = QueueStrategy.fifo
+    pinned_host: str | None = None
+
+
+class ResultMessage(BaseModel):
+    """Message produced to netpalm.results by the Executor."""
+
+    task_id: uuid.UUID
+    status: str
+    result: Any = None
+    error: str | None = None
+
+
+# ── Event model ───────────────────────────────────────────────────────────────
+
+
+class NetpalmEvent(BaseModel):
+    """Parsed event produced by an EventListener."""
+
+    source_topic: str
+    device_host: str | None = None
+    event_type: str
+    raw: bytes
+    data: dict[str, Any] = {}
+
+
+# ── API response models ───────────────────────────────────────────────────────
+
+
+class TaskResponse(BaseModel):
+    """Returned by QueueBroker and task result endpoints."""
+
+    task_id: uuid.UUID
+    status: str
+    result: dict[str, Any] | None = None
+    error: str | None = None
+
+
+class ServiceTaskResponse(BaseModel):
+    """Returned by service creation/update/delete endpoints."""
+
+    service_id: uuid.UUID
+    task_id: uuid.UUID
+    status: str
+
+
+class ServiceInstanceData(BaseModel):
+    """Current state of a service instance."""
+
+    service_id: uuid.UUID
+    service_model: str
+    state: str
+    data: dict[str, Any] = {}
+    created_at: datetime
+    updated_at: datetime
+    current_version: int
+
+
+class ServiceVersionSummary(BaseModel):
+    """Summary of a service instance version snapshot."""
+
+    version_id: uuid.UUID
+    service_id: uuid.UUID
+    version: int
+    state: str
+    created_at: datetime

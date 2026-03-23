@@ -1,6 +1,5 @@
 import logging
 import random
-from typing import List, Union
 
 import pytest
 
@@ -11,8 +10,7 @@ log = logging.getLogger(__name__)
 helper = NetpalmTestHelper()
 
 CISGO_DEFAULT_HOSTNAME = "cisshgo1000v"
-CISGO_NEW_HOSTNAME = CISGO_DEFAULT_HOSTNAME.upper() + str(
-    random.randint(100, 900))
+CISGO_NEW_HOSTNAME = CISGO_DEFAULT_HOSTNAME.upper() + str(random.randint(100, 900))
 
 
 @pytest.fixture(scope="function")
@@ -20,7 +18,7 @@ def cisgo_helper():
     return CisgoHelper()
 
 
-def hostname_from_config(config_lines: Union[List[str], str]) -> str:
+def hostname_from_config(config_lines: list[str] | str) -> str:
     if isinstance(config_lines, str):
         config_lines = config_lines.splitlines()
 
@@ -29,9 +27,7 @@ def hostname_from_config(config_lines: Union[List[str], str]) -> str:
             continue
         command, *args = line.split()
         if command == "hostname":
-            hostname = ' '.join(
-                args
-            )  # this will false-match if there's weird whitespace in hostname like \t, etc
+            hostname = " ".join(args)  # this will false-match if there's weird whitespace in hostname like \t, etc
             break
 
     else:
@@ -41,12 +37,8 @@ def hostname_from_config(config_lines: Union[List[str], str]) -> str:
 
 
 def get_hostname(connection_args):
-    pl = {
-        "library": "netmiko",
-        "connection_args": connection_args,
-        "command": "show running-config"
-    }
-    res = helper.post_and_check('/getconfig', pl)
+    pl = {"library": "netmiko", "connection_args": connection_args, "command": "show running-config"}
+    res = helper.post_and_check("/getconfig", pl)
     return hostname_from_config(res["show running-config"])
 
 
@@ -57,9 +49,9 @@ def test_setconfig_netmiko(cisgo_helper: CisgoHelper):
         "library": "netmiko",
         "connection_args": cisgo_helper.netmiko_connection_args,
         "config": ["hostname " + CISGO_NEW_HOSTNAME],
-        "enable_mode": True
+        "enable_mode": True,
     }
-    res = helper.post_and_check('/setconfig', pl)
+    res = helper.post_and_check("/setconfig", pl)
     matchstr = CISGO_NEW_HOSTNAME + "#"
     assert matchstr in res["changes"]
 
@@ -71,9 +63,9 @@ def test_setconfig_netmiko_multiple(cisgo_helper: CisgoHelper):
         "library": "netmiko",
         "connection_args": cisgo_helper.netmiko_connection_args,
         "config": ["hostname yeti", "hostname bufoon"],
-        "enable_mode": True
+        "enable_mode": True,
     }
-    res = helper.post_and_check('/setconfig', pl)
+    res = helper.post_and_check("/setconfig", pl)
     assert len(res["changes"]) > 4
 
 
@@ -84,12 +76,7 @@ def test_setconfig_netmiko_j2(cisgo_helper):
         "library": "netmiko",
         "connection_args": cisgo_helper.netmiko_connection_args,
         "enable_mode": True,
-        "j2config": {
-            "template": "test",
-            "args": {
-                "vlans": ["1", "2", "3"]
-            }
-        }
+        "j2config": {"template": "test", "args": {"vlans": ["1", "2", "3"]}},
     }
-    res = helper.post_and_check('/setconfig', pl)
+    res = helper.post_and_check("/setconfig", pl)
     assert len(res["changes"]) > 6

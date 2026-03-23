@@ -4,7 +4,12 @@
 .idea
 .vscode
 venv
+.venv
+__pycache__
+*.pyc
+.tox
+.mypy_cache
+.ruff_cache
 backend/plugins/extensibles/ntc-templates
 static
 docker-compose*.yml
-dockerfiles

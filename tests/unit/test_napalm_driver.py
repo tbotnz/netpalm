@@ -1,13 +1,10 @@
-from typing import List
-from unittest.mock import Mock, MagicMock
+from unittest.mock import MagicMock, Mock
 
-from napalm.base.base import NetworkDriver
 import pytest
+from napalm.base.base import NetworkDriver
 from pytest_mock import MockerFixture
 
-from netpalm.exceptions import NetpalmMetaProcessedException
 from netpalm.backend.plugins.drivers.napalm.napalm_drvr import naplm
-from netpalm.backend.core.calls.getconfig.exec_command import exec_command
 
 NAPALM_C_ARGS = {
     "device_type": "cisco_ios",
@@ -15,16 +12,6 @@ NAPALM_C_ARGS = {
     "username": "admin",
     "password": "admin",
 }
-
-
-@pytest.fixture()
-def rq_job(mocker: MockerFixture) -> MockerFixture:
-    mocked_get_current_job = mocker.patch(
-        "netpalm.backend.core.utilities.rediz_meta.get_current_job"
-    )
-    mocked_job = Mock()
-    mocked_job.meta = {"errors": []}
-    mocked_get_current_job.return_value = mocked_job
 
 
 @pytest.fixture()
@@ -38,16 +25,14 @@ def napalm_get_network_driver(mocker: MockerFixture) -> MockerFixture:
     get_network_driver.return_value = mocked_driver
     get_network_driver.driver = mocked_driver  # for reference
 
-    mocked_session = MagicMock(
-        spec=NetworkDriver
-    )  # otherwise hasatter(anything) is always True
+    mocked_session = MagicMock(spec=NetworkDriver)  # otherwise hasatter(anything) is always True
     mocked_driver.return_value = mocked_session
     get_network_driver.session = mocked_session  # for reference
 
     def get_config():
         return ["my config"]
 
-    def cli(commands: List):
+    def cli(commands: list):
         return {command: f"ran {command}" for command in commands}
 
     mocked_session.get_config.side_effect = get_config
@@ -57,10 +42,10 @@ def napalm_get_network_driver(mocker: MockerFixture) -> MockerFixture:
     return get_network_driver
 
 
-def test_napalm_connect(napalm_get_network_driver: Mock, rq_job):
+def test_napalm_connect(napalm_get_network_driver: Mock):
     napalm_driver = naplm(kwarg={}, connection_args=NAPALM_C_ARGS.copy())
     assert napalm_driver.driver == "ios"
-    sesh = napalm_driver.connect()
+    napalm_driver.connect()
     napalm_get_network_driver.assert_called_with("ios")
     napalm_get_network_driver.driver.assert_called_once_with(
         hostname=NAPALM_C_ARGS["host"],
@@ -69,7 +54,7 @@ def test_napalm_connect(napalm_get_network_driver: Mock, rq_job):
     )
 
 
-def test_napalm_sendcommand(napalm_get_network_driver: Mock, rq_job):
+def test_napalm_sendcommand(napalm_get_network_driver: Mock):
     napalm_driver = naplm(kwarg={}, connection_args=NAPALM_C_ARGS.copy())
     assert napalm_driver.driver == "ios"
     mock_session = napalm_driver.connect()
@@ -93,7 +78,7 @@ def test_napalm_sendcommand(napalm_get_network_driver: Mock, rq_job):
     mock_session.cli.assert_called_with(["show run"])
 
 
-def test_napalm_config(napalm_get_network_driver: Mock, rq_job):
+def test_napalm_config(napalm_get_network_driver: Mock):
     napalm_driver = naplm(kwarg={}, connection_args=NAPALM_C_ARGS.copy())
     assert napalm_driver.driver == "ios"
     mock_session = napalm_driver.connect()
@@ -114,65 +99,3 @@ def test_napalm_config(napalm_get_network_driver: Mock, rq_job):
     assert mock_session.compare_config.called
     assert not mock_session.commit_config.called
     assert mock_session.discard_config.called
-
-
-# fix test @ some point
-# def test_napalm_gc_exec_command(napalm_get_network_driver: Mock):
-#     ec_kwargs = {
-#         "library": "napalm",
-#         "command": ["get_config", "show run"],
-#         "connection_args": NAPALM_C_ARGS.copy(),
-#     }
-#     mock_session = napalm_get_network_driver.session
-
-#     result = exec_command(**ec_kwargs)
-
-#     napalm_get_network_driver.assert_called_once_with("ios")
-#     napalm_get_network_driver.driver.assert_called_once_with(
-#         hostname=NAPALM_C_ARGS["host"],
-#         username=NAPALM_C_ARGS["username"],
-#         password=NAPALM_C_ARGS["password"],
-#     )
-
-#     assert result["get_config"] == ["my config"]
-#     assert result["show run"] == ["ran show run"]
-#     assert napalm_get_network_driver.session.close.called
-
-
-# def test_napalm_gc_exec_command_post_checks(napalm_get_network_driver: Mock, rq_job):
-
-#     command, post_check_command = "get_config", "show run"
-
-#     good_post_check = {
-#         "get_config_args": {"command": post_check_command},
-#         "match_str": [post_check_command],
-#         "match_type": "include",
-#     }
-
-#     bad_post_check = {
-#         "get_config_args": {"command": post_check_command},
-#         "match_str": [post_check_command],
-#         "match_type": "exclude",
-#     }
-
-#     _ = exec_command(
-#         library="napalm",
-#         command=command,
-#         connection_args=NAPALM_C_ARGS.copy(),
-#         post_checks=[good_post_check],
-#     )
-
-#     napalm_get_network_driver.assert_called_once_with("ios")
-#     napalm_get_network_driver.driver.assert_called_once_with(
-#         hostname=NAPALM_C_ARGS["host"],
-#         username=NAPALM_C_ARGS["username"],
-#         password=NAPALM_C_ARGS["password"],
-#     )
-
-#     with pytest.raises(NetpalmMetaProcessedException):
-#         _ = exec_command(
-#             library="napalm",
-#             command=command,
-#             connection_args=NAPALM_C_ARGS.copy(),
-#             post_checks=[bad_post_check],
-#         )

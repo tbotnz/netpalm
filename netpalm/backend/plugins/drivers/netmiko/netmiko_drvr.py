@@ -1,11 +1,10 @@
+from __future__ import annotations
+
 import logging
+from typing import Any
 
-from netmiko import ConnectHandler, BaseConnection
-from netmiko.cisco_base_connection import CiscoBaseConnection
-from typing import Optional
-
+from netmiko import BaseConnection, ConnectHandler
 from netpalm.backend.core.confload.confload import config
-
 from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 
@@ -26,14 +25,14 @@ class netmko(NetpalmDriver):
                 del self.kwarg["commit_label"]
         self.enable_mode = kwargs.get("enable_mode", False)
 
-    def connect(self):
+    def connect(self) -> Any:
         try:
             netmikoses = ConnectHandler(**self.connection_args)
             return netmikoses
         except Exception as e:
             write_meta_error(e)
 
-    def sendcommand(self, session=False, command=False):
+    def sendcommand(self, session: Any = None, command: list[str] | Any = None) -> dict[str, Any]:
         try:
             if self.enable_mode:
                 session.enable()
@@ -43,11 +42,7 @@ class netmko(NetpalmDriver):
                     # normalise the ttp template name for ease of use
                     if "ttp_template" in self.kwarg.keys():
                         if self.kwarg["ttp_template"]:
-                            template_name = (
-                                config.ttp_templates
-                                + self.kwarg["ttp_template"]
-                                + ".ttp"
-                            )
+                            template_name = config.ttp_templates + self.kwarg["ttp_template"] + ".ttp"
                             self.kwarg["ttp_template"] = template_name
                     response = session.send_command(commands, **self.kwarg)
                     if response:
@@ -62,9 +57,16 @@ class netmko(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def config(self, session=False, command="", enter_enable=False, dry_run=False):
+    def config(
+        self,
+        session: Any = None,
+        command: str | list[str] = "",
+        enter_enable: bool = False,
+        dry_run: bool = False,
+        **kwargs: Any,
+    ) -> dict[str, Any]:
         try:
-            if type(command) == list:
+            if isinstance(command, list):
                 comm = command
             else:
                 comm = command.splitlines()
@@ -78,7 +80,9 @@ class netmko(NetpalmDriver):
                 response = session.send_config_set(comm)
 
             if not dry_run:
-                response += self.__try_commit_or_save(session)
+                commit_result = self.__try_commit_or_save(session)
+                if commit_result:
+                    response += commit_result
 
             result = {}
             result["changes"] = response.split("\n")
@@ -87,7 +91,7 @@ class netmko(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def __try_commit_or_save(self, session: BaseConnection) -> Optional[str]:
+    def __try_commit_or_save(self, session: BaseConnection) -> str | None:
         """Attempt to commit, failing that attempt to save.  If neither method exists, then the driver doesn't
         support it, so not our problem and we can presume user is aware I think."""
 
@@ -111,9 +115,8 @@ class netmko(NetpalmDriver):
 
         return result
 
-    def logout(self, session):
+    def logout(self, session: Any) -> None:
         try:
-            response = session.disconnect()
-            return response
+            session.disconnect()
         except Exception as e:
             write_meta_error(e)

@@ -1,28 +1,37 @@
-import logging
+"""
+NetpalmDriver — abstract base class for all southbound drivers.
 
+Every driver must:
+  - Set a class-level `driver_name` string
+  - Implement connect(), sendcommand(), config(), logout()
+"""
+
+from __future__ import annotations
+
+import logging
+from abc import ABC, abstractmethod
+from typing import Any
 
 log = logging.getLogger(__name__)
 
 
-class NetpalmDriver:
-    """ NetPalmDriver is the base class for all NetPalm drivers. """
+class NetpalmDriver(ABC):
+    """Abstract base class defining the southbound driver contract."""
 
-    def __init__(self, **kwargs):
-        log.info(f"netpalm service: invoking")
-        self.driver_name = None
+    driver_name: str  # subclasses must set this as a class attribute
 
-    def connect(self):
-        """connect to the device"""
-        raise NotImplementedError
+    @abstractmethod
+    def connect(self) -> Any:
+        """Establish a connection to the device. Return the session object."""
 
-    def sendcommand(self, session=False, command=False):
-        """send a command to the device"""
-        raise NotImplementedError
+    @abstractmethod
+    def sendcommand(self, session: Any, command: list[str]) -> dict[str, Any]:
+        """Send read commands to the device. Return a result dict."""
 
-    def config(self, sesh, config):
-        """send a config to the device"""
-        raise NotImplementedError
+    @abstractmethod
+    def config(self, session: Any, command: str | list[str], **kwargs: Any) -> dict[str, Any]:
+        """Send configuration commands to the device. Return a result dict."""
 
-    def logout(self, session=False):
-        """logout of the device"""
-        raise NotImplementedError
+    @abstractmethod
+    def logout(self, session: Any) -> None:
+        """Close the session / disconnect from the device."""

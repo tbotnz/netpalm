@@ -1,12 +1,16 @@
-import xmltodict
-import logging
-from ncclient import manager
+from __future__ import annotations
 
-from netpalm.backend.core.utilities.rediz_meta import (
-    write_meta_error_string,
-    write_meta_error,
-)
+import logging
+from typing import Any
+
+import xmltodict
+
+from ncclient import manager
 from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
+from netpalm.backend.core.utilities.rediz_meta import (
+    write_meta_error,
+    write_meta_error_string,
+)
 
 log = logging.getLogger(__name__)
 
@@ -14,11 +18,11 @@ log = logging.getLogger(__name__)
 class ncclien(NetpalmDriver):
     driver_name = "ncclient"
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.kwarg = kwargs.get("args", False)
         self.connection_args = kwargs.get("connection_args", False)
 
-    def connect(self):
+    def connect(self) -> Any:
         try:
             conn = manager.connect(**self.connection_args)
             return conn
@@ -57,7 +61,7 @@ class ncclien(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def sendcommand(self, session=False, command=False):
+    def sendcommand(self, session: Any = None, command: list[str] | Any = None) -> dict[str, Any]:
         try:
             result = {}
             if self.kwarg:
@@ -70,9 +74,7 @@ class ncclien(NetpalmDriver):
 
                 if "capabilities" in self.kwarg:
                     if self.kwarg.get("capabilities"):
-                        result["capabilities"] = self.__get_capabilities(
-                            session=session
-                        )
+                        result["capabilities"] = self.__get_capabilities(session=session)
                     del self.kwarg["capabilities"]
 
                 # check whether RPC required
@@ -95,7 +97,9 @@ class ncclien(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def config(self, session=False, dry_run=False):
+    def config(
+        self, session: Any = None, command: str | list[str] | Any = None, dry_run: bool = False, **kwargs: Any
+    ) -> dict[str, Any]:
         try:
             result = {}
             if self.kwarg:
@@ -126,9 +130,8 @@ class ncclien(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def logout(self, session):
+    def logout(self, session: Any) -> None:
         try:
-            response = session.close_session()
-            return response
+            session.close_session()
         except Exception as e:
             write_meta_error(e)

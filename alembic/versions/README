@@ -1,0 +1,9 @@
+Alembic migration scripts live here.
+
+Generate the initial migration after task 3.1 (db_models.py) is implemented:
+
+    alembic revision --autogenerate -m "initial schema"
+
+Then apply:
+
+    alembic upgrade head

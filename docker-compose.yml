@@ -1,60 +1,134 @@
-version: "3.7"
-
 services:
 
-    netpalm-controller:
-      build:
-          context: .
-          dockerfile: ./dockerfiles/netpalm_controller_dockerfile
-      environment:
-          - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
-          - NETPALM_CONFIG=/code/config/config.json
-          - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
-      ports:
-          - "9000:9000"
-      networks:
-          - "netpalm-network"
-      depends_on:
-          - redis
-      restart: always
+  netpalm-api-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NET_TEXTFSM=/usr/local/lib/python3.12/site-packages/ntc_templates/templates/
+      - NETPALM_ENV_FILE=/code/config/.env
+      - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+      - NETPALM_DATABASE_URL=postgresql+asyncpg://netpalm:netpalm@postgres:5432/netpalm
+      - NETPALM_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - NETPALM_REDIS_SERVER=redis
+    ports:
+      - "9000:9000"
+    networks:
+      - netpalm-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: always
 
-    netpalm-worker-pinned:
-      build:
-          context: .
-          dockerfile: ./dockerfiles/netpalm_pinned_worker_dockerfile
-      environment:
-        - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
-        - NETPALM_CONFIG=/code/config/config.json
-        - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
-      depends_on:
-        - redis
-      networks:
-      - "netpalm-network"
-      restart: always
+  netpalm-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["python", "-m", "netpalm.scheduler"]
+    environment:
+      - NETPALM_ENV_FILE=/code/config/.env
+      - NETPALM_DATABASE_URL=postgresql+asyncpg://netpalm:netpalm@postgres:5432/netpalm
+      - NETPALM_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - netpalm-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    restart: always
 
-    netpalm-worker-fifo:
-      build:
-          context: .
-          dockerfile: ./dockerfiles/netpalm_fifo_worker_dockerfile
-      environment:
-        - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
-        - NETPALM_CONFIG=/code/config/config.json
-        - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
-      depends_on:
-        - redis
-      networks:
-      - "netpalm-network"
-      restart: always
+  netpalm-executor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["python", "-m", "netpalm.executor"]
+    environment:
+      - NETPALM_ENV_FILE=/code/config/.env
+      - NETPALM_DATABASE_URL=postgresql+asyncpg://netpalm:netpalm@postgres:5432/netpalm
+      - NETPALM_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - NETPALM_REDIS_SERVER=redis
+    networks:
+      - netpalm-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: always
 
-    redis:
-      build:
-        context: .
-        dockerfile: ./dockerfiles/netpalm_redis_dockerfile
-      networks:
-      - "netpalm-network"
-      restart: always
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: netpalm
+      POSTGRES_PASSWORD: netpalm
+      POSTGRES_DB: netpalm
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - netpalm-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U netpalm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  kafka:
+    image: apache/kafka:3.7.0
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG_DIRS: /tmp/kafka-logs
+      CLUSTER_ID: netpalm-kafka-cluster-001
+    ports:
+      - "9092:9092"
+    networks:
+      - netpalm-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
+
+  kafbat-ui:
+    image: ghcr.io/kafbat/kafka-ui:latest
+    ports:
+      - "8080:8080"
+    environment:
+      DYNAMIC_CONFIG_ENABLED: "true"
+      KAFKA_CLUSTERS_0_NAME: netpalm
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - netpalm-network
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - netpalm-network
+    restart: always
+
+volumes:
+  postgres-data:
 
 networks:
-
   netpalm-network:
-    name: "netpalm-network"
+    name: netpalm-network

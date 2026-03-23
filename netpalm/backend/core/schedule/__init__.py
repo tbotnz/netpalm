@@ -1,4 +1,3 @@
-from netpalm.backend.core.schedule.schedule import Schedulr
-
-sched = Schedulr()
-schedule_r = sched.init_scheduler()
+# schedule module — DEPRECATED.
+# APScheduler has been removed. Scheduled jobs are now managed via the
+# `scheduled_jobs` PostgreSQL table and dispatched by the Scheduler service.

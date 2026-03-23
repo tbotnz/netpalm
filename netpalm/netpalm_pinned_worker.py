@@ -1,11 +1,11 @@
 import logging
-from multiprocessing import Process
 import sys
 import time
+from multiprocessing import Process
 
 from .backend.core.confload.confload import config
+from .backend.core.utilities.rediz_worker_controller import RedisPinnedWorker, RedisProcessWorker, RedisWorker
 from .netpalm_worker_common import start_broadcast_listener_process
-from .backend.core.utilities.rediz_worker_controller import RedisWorker, RedisPinnedWorker, RedisProcessWorker
 
 config.setup_logging(max_debug=True)
 log = logging.getLogger(__name__)
@@ -26,17 +26,18 @@ def start_processworkerprocess():
 
 def we_are_controller():
     import sys
+
     for part in sys.argv:
-        if 'controller' in part:
+        if "controller" in part:
             return True
     return False
 
 
 def processworker():
     """
-        listens on the core queue for messages from the controller,
-        single processesworker runs per controller.
-        used to create new processes on demand as needed
+    listens on the core queue for messages from the controller,
+    single processesworker runs per controller.
+    used to create new processes on demand as needed
     """
     if not we_are_controller():
         start_broadcast_listener_process()
@@ -58,5 +59,5 @@ def pinned_worker_constructor(queue):
     p.start()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     start_processworkerprocess()

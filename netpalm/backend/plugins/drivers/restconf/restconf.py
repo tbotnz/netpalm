@@ -1,16 +1,21 @@
+from __future__ import annotations
+
 import json
+import logging
+from typing import Any
 
 import requests
 
+from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
 from netpalm.backend.core.utilities.rediz_meta import write_meta_error
 
-from netpalm.backend.core.driver.netpalm_driver import NetpalmDriver
+log = logging.getLogger(__name__)
 
 
 class restconf(NetpalmDriver):
     driver_name = "restconf"
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.connection_args = kwargs.get("connection_args", False)
         self.host = self.connection_args.get("host", False)
         del self.connection_args["host"]
@@ -32,7 +37,7 @@ class restconf(NetpalmDriver):
         self.payload = self.kwarg.get("payload", False)
         self.params = self.kwarg.get("params", False)
 
-    def connect(self):
+    def connect(self) -> Any:
         try:
             if not self.headers:
                 self.headers = self.default_headers
@@ -42,24 +47,17 @@ class restconf(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def sendcommand(self, session=False, command=False):
+    def sendcommand(self, session: Any = None, command: list[str] | Any = None) -> dict[str, Any]:
         try:
             # restconf get call
-            result = {}
-            url = (
-                self.transport
-                + "://"
-                + self.host
-                + ":"
-                + str(self.port)
-                + self.kwarg["uri"]
-            )
+            result: dict[str, Any] = {}
+            url = self.transport + "://" + self.host + ":" + str(self.port) + self.kwarg["uri"]
             response = requests.get(
                 url,
                 auth=(self.username, self.password),
                 params=self.params,
                 headers=self.headers,
-                **self.connection_args
+                **self.connection_args,
             )
             try:
                 res = json.loads(response.text)
@@ -73,17 +71,10 @@ class restconf(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def config(self, session=False, command=False):
+    def config(self, session: Any = None, command: str | list[str] | Any = None, **kwargs: Any) -> dict[str, Any]:
         try:
-            result = {}
-            url = (
-                self.transport
-                + "://"
-                + self.host
-                + ":"
-                + str(self.port)
-                + self.kwarg["uri"]
-            )
+            result: dict[str, Any] = {}
+            url = self.transport + "://" + self.host + ":" + str(self.port) + self.kwarg["uri"]
             if hasattr(requests, str(self.action)):
                 response = getattr(requests, str(self.action))(
                     url,
@@ -91,7 +82,7 @@ class restconf(NetpalmDriver):
                     data=json.dumps(self.payload),
                     params=self.params,
                     headers=self.headers,
-                    **self.connection_args
+                    **self.connection_args,
                 )
                 try:
                     res = json.loads(response.text)
@@ -107,8 +98,5 @@ class restconf(NetpalmDriver):
         except Exception as e:
             write_meta_error(e)
 
-    def logout(self, session):
-        try:
-            return True
-        except Exception as e:
-            write_meta_error(e)
+    def logout(self, session: Any) -> None:
+        pass

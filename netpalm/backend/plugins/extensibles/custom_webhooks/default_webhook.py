@@ -14,19 +14,23 @@ IMPORTANT NOTES:
     - **kwargs (dict)
 
 """
+
+
 def run_webhook(payload=False):
     try:
         if payload:
-            # convert to json    
+            # convert to json
             pl = json.dumps(payload)
-            #prepare requests data
+            # prepare requests data
             url_val = config.default_webhook_url
             headers_val = config.default_webhook_headers
             verify_val = config.default_webhook_ssl_verify
             timeout_val = config.default_webhook_timeout
             pl = pl
-            #execute request
-            response = requests.request("POST", url=url_val, headers=headers_val, verify=verify_val, timeout=timeout_val, data=pl)
+            # execute request
+            response = requests.request(
+                "POST", url=url_val, headers=headers_val, verify=verify_val, timeout=timeout_val, data=pl
+            )
             if str(response.status_code)[:1] != "2":
                 return False
             else:

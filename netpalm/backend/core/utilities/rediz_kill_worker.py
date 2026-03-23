@@ -1,7 +1,7 @@
+import logging
 import os
 import signal
 import socket
-import logging
 
 log = logging.getLogger(__name__)
 

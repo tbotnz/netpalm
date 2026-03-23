@@ -1,142 +1,106 @@
-from enum import Enum
-from typing import Optional, Any, List, Union, Dict
+"""
+Task response models — Pydantic v2.
+Legacy Response/ServiceResponse shapes kept for backward compat with existing routes.
+"""
 
-from pydantic import BaseModel
+from __future__ import annotations
+
+from enum import StrEnum
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict
 
 
-class TaskResponseEnum(str, Enum):
+class TaskResponseEnum(StrEnum):
     success = "success"
     error = "error"
 
 
-class TaskStatusEnum(str, Enum):
+class TaskStatusEnum(StrEnum):
+    pending = "pending"
     queued = "queued"
+    started = "started"
     finished = "finished"
     failed = "failed"
-    started = "started"
     deferred = "deferred"
     scheduled = "scheduled"
 
 
 class TaskMetaData(BaseModel):
-    enqueued_at: Optional[str]
-    started_at: Optional[str]
-    ended_at: Optional[str]
-    enqueued_elapsed_seconds: Optional[str]
-    total_elapsed_seconds: Optional[str]
-    assigned_worker: Optional[str]
+    enqueued_at: str | None = None
+    started_at: str | None = None
+    ended_at: str | None = None
+    enqueued_elapsed_seconds: str | None = None
+    total_elapsed_seconds: str | None = None
+    assigned_worker: str | None = None
+
 
 class TaskError(BaseModel):
     exception_class: str
-    exception_args: List[str]
+    exception_args: list[str]
 
 
-TaskErrorList = List[Union[str, TaskError]]
+TaskErrorList = list[str | TaskError]
+
 
 class ServiceTaskHostError(BaseModel):
     task_id: str
     task_errors: TaskErrorList
 
 
-ServiceTaskErrors = List[Dict[str, ServiceTaskHostError]]
+ServiceTaskErrors = list[dict[str, ServiceTaskHostError]]
 
 
-class TaskResponse(BaseModel):
+class TaskResult(BaseModel):
     task_id: str
-    created_on: str
-    task_queue: str
-    task_meta: Optional[TaskMetaData] = None
-    task_status: TaskStatusEnum
-    task_result: Any
-    task_errors: Union[TaskErrorList, ServiceTaskErrors]  # Needed to get service tasks to validate when they're polled from /task/:taskid
+    created_on: str | None = None
+    task_queue: str | None = None
+    task_meta: TaskMetaData | None = None
+    task_status: str
+    task_result: Any = None
+    task_errors: TaskErrorList | ServiceTaskErrors = []
 
 
 class Response(BaseModel):
-    status: TaskResponseEnum
-    data: TaskResponse
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "status": "success",
                 "data": {
                     "task_id": "b380cf2b-ba78-4aab-b157-9b87ebbe6bb3",
-                    "created_on": "2020-08-02 11:16:43.693850",
-                    "task_queue": "10.0.2.33",
-                    "task_meta": {
-                        "enqueued_at": "2020-08-02 11:16:43.693939",
-                        "started_at": "2020-08-02 11:17:32.503873",
-                        "ended_at": "2020-08-02 11:17:42.440347",
-                        "enqueued_elapsed_seconds": "35",
-                        "started_elapsed_seconds": None,
-                        "total_elapsed_seconds": "58"
-                    },
-                    "task_status": "finished",
-                    "task_result": {
-                        "show run | i hostname": [
-                            "hostname cat"
-                        ]
-                    },
-                    "task_errors": []
-                }
+                    "task_status": "pending",
+                    "task_result": None,
+                    "task_errors": [],
+                },
             }
         }
+    )
 
-
-class ServiceTaskResponse(BaseModel):
-    service_id: str
-    task_id: str
-    created_on: str
-    task_queue: str
-    task_meta: Optional[TaskMetaData] = None
-    task_status: TaskStatusEnum
-    task_result: Any
-    task_errors: list
-
-
-class ServiceResponse(BaseModel):
     status: TaskResponseEnum
-    data: ServiceTaskResponse
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "status": "success",
-                "data": {
-                    "task_id": "b380cf2b-ba78-4aab-b157-9b87ebbe6bb3",
-                    "created_on": "2020-08-02 11:16:43.693850",
-                    "task_queue": "10.0.2.33",
-                    "task_meta": {
-                        "enqueued_at": "2020-08-02 11:16:43.693939",
-                        "started_at": "2020-08-02 11:17:32.503873",
-                        "ended_at": "2020-08-02 11:17:42.440347",
-                        "enqueued_elapsed_seconds": "35",
-                        "started_elapsed_seconds": None,
-                        "total_elapsed_seconds": "58"
-                    },
-                    "task_status": "finished",
-                    "task_result": {
-                        "show run | i hostname": [
-                            "hostname cat"
-                        ]
-                    },
-                    "task_errors": []
-                }
-            }
-        }
+    data: dict[str, Any]
 
 
 class ResponseBasic(BaseModel):
     status: TaskResponseEnum
-    data: dict
+    data: dict[str, Any]
+
+
+class ServiceResponse(BaseModel):
+    status: TaskResponseEnum
+    data: dict[str, Any]
+
+
+# Kept for backward compat — routes still import these names
+TaskResponse = TaskResult
+ServiceTaskResponse = TaskResult
 
 
 class WorkerResponse(BaseModel):
-    hostname: Optional[Any] = None
-    pid: str
-    name: Optional[Any] = None
-    last_heartbeat: Optional[Any] = None
-    birth_date: Optional[Any] = None
-    successful_job_count: Optional[Any] = None
-    failed_job_count: Optional[Any] = None
-    total_working_time: Optional[Any] = None
+    hostname: Any | None = None
+    pid: str | None = None
+    name: Any | None = None
+    last_heartbeat: Any | None = None
+    birth_date: Any | None = None
+    successful_job_count: Any | None = None
+    failed_job_count: Any | None = None
+    total_working_time: Any | None = None

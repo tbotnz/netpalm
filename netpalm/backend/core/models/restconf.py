@@ -1,14 +1,12 @@
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
+from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
-from netpalm.backend.core.models.models import CacheConfig
-from netpalm.backend.core.models.models import QueueStrategy
-from netpalm.backend.core.models.models import Webhook
+from netpalm.backend.core.models.models import CacheConfig, QueueStrategy, Webhook
 
 
-class SupportedOptions(str, Enum):
+class SupportedOptions(StrEnum):
     get = "get"
     post = "post"
     patch = "patch"
@@ -23,32 +21,32 @@ class RestconfConnectionArgs(BaseModel):
     port: int
     verify: bool
     transport: str
-    headers: dict
+    headers: dict[str, str]
 
 
 class RestconfPayload(BaseModel):
     uri: str
     action: SupportedOptions
-    payload: Optional[dict] = None
+    payload: dict[str, Any] | None = None
 
 
 class Restconf(BaseModel):
-    connection_args: RestconfConnectionArgs
-    args: RestconfPayload
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    cache: Optional[CacheConfig] = {}
-    ttl: Optional[int] = None
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "library": "restconf",
                 "connection_args": {
-                    "host": "ios-xe-mgmt-latest.cisco.com", "port": 9443, "username": "developer",
-                    "password": "C1sco12345", "verify": False, "timeout": 10, "transport": "https", "headers": {
-                        "Content-Type": "application/yang-data+json", "Accept": "application/yang-data+json"
-                    }
+                    "host": "ios-xe-mgmt-latest.cisco.com",
+                    "port": 9443,
+                    "username": "developer",
+                    "password": "C1sco12345",
+                    "verify": False,
+                    "timeout": 10,
+                    "transport": "https",
+                    "headers": {
+                        "Content-Type": "application/yang-data+json",
+                        "Accept": "application/yang-data+json",
+                    },
                 },
                 "args": {
                     "uri": "/restconf/data/Cisco-IOS-XE-native:native/interface/",
@@ -56,15 +54,18 @@ class Restconf(BaseModel):
                     "payload": {
                         "Cisco-IOS-XE-native:BDI": {
                             "name": "4001",
-                            "description": "netpalm"
+                            "description": "netpalm",
                         }
-                    }
+                    },
                 },
                 "queue_strategy": "fifo",
-                "cache": {
-                    "enabled": True,
-                    "ttl": 300,
-                    "poison": False
-                }
+                "cache": {"enabled": True, "ttl": 300, "poison": False},
             }
         }
+    )
+
+    connection_args: RestconfConnectionArgs
+    args: RestconfPayload
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    cache: CacheConfig | None = None

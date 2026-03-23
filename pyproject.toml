@@ -1,0 +1,107 @@
+[tool.poetry]
+name = "netpalm"
+version = "1.0.0"
+description = "A REST API broker for network device automation"
+authors = ["tbotnz"]
+license = "GPL-3.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+# Web framework
+fastapi = ">=0.115,<1.0"
+pydantic = ">=2.0,<3.0"
+pydantic-settings = ">=2.0,<3.0"
+
+# Network automation
+netmiko = ">=4.0,<5.0"
+napalm = ">=5.0,<6.0"
+ncclient = ">=0.6.15,<1.0"
+puresnmp = ">=2.0,<3.0"
+requests = ">=2.31,<3.0"
+
+# Messaging and state
+aiokafka = ">=0.11,<1.0"
+redis = ">=5.0,<6.0"
+
+# Database
+sqlalchemy = {extras = ["asyncio"], version = ">=2.0,<3.0"}
+asyncpg = ">=0.29,<1.0"
+alembic = ">=1.13,<2.0"
+
+# Templating and parsing
+jinja2 = ">=3.1,<4.0"
+jinja2schema = ">=0.1.4,<1.0"
+xmltodict = ">=0.13,<1.0"
+ttp = ">=0.9,<1.0"
+pyyaml = ">=6.0,<7.0"
+jsonschema = ">=4.0,<5.0"
+jsonpath-ng = ">=1.6,<2.0"
+
+# Caching and locking
+cachelib = ">=0.12,<1.0"
+python-redis-lock = ">=4.0,<5.0"
+filelock = ">=3.0,<4.0"
+
+# Utilities
+names-generator = ">=0.2,<1.0"
+aiofiles = ">=23.0,<25.0"
+
+[tool.poetry.group.controller.dependencies]
+uvicorn = {extras = ["standard"], version = ">=0.29,<1.0"}
+gunicorn = ">=22.0,<24.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.0,<9.0"
+pytest-timeout = ">=2.0,<3.0"
+pytest-mock = ">=3.0,<4.0"
+pytest-asyncio = ">=0.24,<1.0"
+httpx = ">=0.27,<1.0"
+tox = ">=4.0,<5.0"
+ruff = ">=0.4,<1.0"
+mypy = ">=1.10,<2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+markers = [
+    "getconfig: integration tests: gets config",
+    "setconfig: integration tests: sets config",
+    "script: integration tests: exec script",
+    "service: integration tests: exec service",
+    "fulllab: integration tests: tests that require full lab setup",
+    "cisgo: integration tests: tests depending on the cisgo container",
+    "cisgoalternate: tests which have a cisgo alternate",
+    "misc_worker_router: tests for worker routes",
+    "whitelist: tests for device whitelist",
+]
+asyncio_mode = "auto"
+filterwarnings = ["ignore::DeprecationWarning"]
+norecursedirs = [".git", "static"]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+disable_error_code = ["import-untyped"]
+
+[[tool.mypy.overrides]]
+module = [
+    "netpalm.backend.core.utilities.rediz_worker_controller",
+    "netpalm.backend.plugins.extensibles.services.*",
+    "netpalm.backend.plugins.extensibles.custom_scripts.*",
+    "netpalm.backend.plugins.extensibles.custom_webhooks.*",
+]
+ignore_errors = true

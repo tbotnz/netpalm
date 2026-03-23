@@ -1,13 +1,19 @@
-from enum import Enum
-from typing import Optional, List, Any
+"""
+Service instance models — Pydantic v2.
+ServiceInstanceState now includes all states from the new state machine.
+"""
 
-from pydantic import BaseModel
+from __future__ import annotations
+
+from enum import StrEnum
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, RootModel
 
 from netpalm.backend.core.models.models import QueueStrategy
 
 
-# now redundant
-class ServiceLifecycle(str, Enum):
+class ServiceLifecycle(StrEnum):
     create = "create"
     retrieve = "retrieve"
     delete = "delete"
@@ -15,18 +21,21 @@ class ServiceLifecycle(str, Enum):
     script = "script"
 
 
-class ServiceInstanceState(str, Enum):
-    deployed = "deployed"
-    errored = "errored"
+class ServiceInstanceState(StrEnum):
     deploying = "deploying"
+    deployed = "deployed"
+    updating = "updating"
+    deleting = "deleting"
+    deleted = "deleted"
+    errored = "errored"
 
 
 class ServiceMeta(BaseModel):
     service_model: str
     created_at: str
-    updated_at: Optional[str] = None
+    updated_at: str | None = None
     service_id: str
-    service_state: Optional[ServiceInstanceState] = None
+    service_state: ServiceInstanceState | None = None
 
 
 class ServiceInstanceData(BaseModel):
@@ -34,42 +43,39 @@ class ServiceInstanceData(BaseModel):
     service_data: Any
 
 
-# now redundant
 class ServiceModel(BaseModel):
-    operation: ServiceLifecycle
-    args: dict
-    queue_strategy: Optional[QueueStrategy] = None
-    ttl: Optional[int] = None
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "operation": "retrieve",
-                "args": {
-                    "your_payload_goes": "here"
-                },
-                "queue_strategy": "fifo"
+                "args": {"your_payload_goes": "here"},
+                "queue_strategy": "fifo",
             }
         }
+    )
 
-# now redundant
+    operation: ServiceLifecycle
+    args: dict[str, Any]
+    queue_strategy: QueueStrategy | None = None
+
+
 class ServiceModelMethods(BaseModel):
     operation: ServiceLifecycle
-    path: Optional[str] = None
-    payload: dict
+    path: str | None = None
+    payload: dict[str, Any]
 
-# now redundant
+
 class ServiceModelSupportedMethods(BaseModel):
-    supported_methods: List[ServiceModelMethods] = None
+    supported_methods: list[ServiceModelMethods] | None = None
 
-# now redundant
-class ServiceModelTemplate(BaseModel):
-    __root__: List[ServiceModelSupportedMethods]
+
+class ServiceModelTemplate(RootModel[list[ServiceModelSupportedMethods]]):
+    pass
 
 
 class ServiceInventorySchema(BaseModel):
-    service_meta: dict
+    service_meta: dict[str, Any]
 
 
-class ServiceInventoryResponse(BaseModel):
-    __root__: List[ServiceInventorySchema]
+class ServiceInventoryResponse(RootModel[list[ServiceInventorySchema]]):
+    pass

@@ -1,89 +1,77 @@
+"""
+getconfig routes — POST /getconfig, /get and library-specific variants.
+"""
+
+from __future__ import annotations
+
 import logging
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
-# load models
+from netpalm.backend.core.manager import NetpalmManager, get_manager
 from netpalm.backend.core.models.models import GetConfig
 from netpalm.backend.core.models.napalm import NapalmGetConfig
-from netpalm.backend.core.models.ncclient import NcclientGet
-from netpalm.backend.core.models.ncclient import NcclientGetConfig
+from netpalm.backend.core.models.ncclient import NcclientGet, NcclientGetConfig
 from netpalm.backend.core.models.netmiko import NetmikoGetConfig
 from netpalm.backend.core.models.puresnmp import PureSNMPGetConfig
 from netpalm.backend.core.models.restconf import Restconf
-from netpalm.backend.core.models.task import Response
-
-from netpalm.backend.core.manager import ntplm
-
-from netpalm.routers.route_utils import error_handle_w_cache, whitelist
+from netpalm.routers.route_utils import HttpErrorHandler, whitelist
 
 log = logging.getLogger(__name__)
 router = APIRouter()
 
 
-# read config
-@router.post("/getconfig", response_model=Response, status_code=201)
-@router.post("/get", response_model=Response, status_code=201)
-@error_handle_w_cache
+@router.post("/getconfig", status_code=201)
+@router.post("/get", status_code=201)
+@HttpErrorHandler()
 @whitelist
-def get_config(getcfg: GetConfig):
-    return ntplm._get_config(getcfg)
+async def get_config(getcfg: GetConfig, manager: NetpalmManager = Depends(get_manager)):
+    return await manager.get_config(getcfg)
 
 
-# read config
-@router.post("/getconfig/netmiko", response_model=Response, status_code=201)
-@router.post("/get/netmiko", response_model=Response, status_code=201)
-@error_handle_w_cache
+@router.post("/getconfig/netmiko", status_code=201)
+@router.post("/get/netmiko", status_code=201)
+@HttpErrorHandler()
 @whitelist
-def get_config_netmiko(getcfg: NetmikoGetConfig):
-    return ntplm.get_config_netmiko(getcfg)
+async def get_config_netmiko(getcfg: NetmikoGetConfig, manager: NetpalmManager = Depends(get_manager)):
+    return await manager.get_config(getcfg)
 
 
-# read config
-@router.post("/getconfig/napalm", response_model=Response, status_code=201)
-@router.post("/get/napalm", response_model=Response, status_code=201)
-@error_handle_w_cache
+@router.post("/getconfig/napalm", status_code=201)
+@router.post("/get/napalm", status_code=201)
+@HttpErrorHandler()
 @whitelist
-def get_config_napalm(getcfg: NapalmGetConfig):
-    return ntplm.get_config_napalm(getcfg)
+async def get_config_napalm(getcfg: NapalmGetConfig, manager: NetpalmManager = Depends(get_manager)):
+    return await manager.get_config(getcfg)
 
 
-# read config
-@router.post("/getconfig/puresnmp", response_model=Response, status_code=201)
-@router.post("/get/puresnmp", response_model=Response, status_code=201)
-@error_handle_w_cache
+@router.post("/getconfig/puresnmp", status_code=201)
+@router.post("/get/puresnmp", status_code=201)
+@HttpErrorHandler()
 @whitelist
-def get_config_puresnmp(getcfg: PureSNMPGetConfig):
-    return ntplm.get_config_puresnmp(getcfg)
+async def get_config_puresnmp(getcfg: PureSNMPGetConfig, manager: NetpalmManager = Depends(get_manager)):
+    return await manager.get_config(getcfg)
 
 
-# read config
-@router.post("/getconfig/ncclient", response_model=Response, status_code=201)
-@router.post("/get/ncclient", response_model=Response, status_code=201)
-@error_handle_w_cache
+@router.post("/getconfig/ncclient", status_code=201)
+@router.post("/get/ncclient", status_code=201)
+@HttpErrorHandler()
 @whitelist
-def get_config_ncclient(getcfg: NcclientGetConfig):
-    return ntplm.get_config_ncclient(getcfg)
+async def get_config_ncclient(getcfg: NcclientGetConfig, manager: NetpalmManager = Depends(get_manager)):
+    return await manager.get_config(getcfg)
 
 
-# ncclient Manager.get() rpc call
-# Certain device types dont have rpc methods defined in ncclient.
-# This is a work around for that.
-@router.post("/getconfig/ncclient/get",
-             response_model=Response,
-             status_code=201)
-@router.post("/get/ncclient/get",
-             response_model=Response,
-             status_code=201)
-@error_handle_w_cache
+@router.post("/getconfig/ncclient/get", status_code=201)
+@router.post("/get/ncclient/get", status_code=201)
+@HttpErrorHandler()
 @whitelist
-def ncclient_get(getcfg: NcclientGet, library: str = "ncclient"):
-    return ntplm.ncclient_get(getcfg, library)
+async def ncclient_get(getcfg: NcclientGet, manager: NetpalmManager = Depends(get_manager)):
+    return await manager.get_config(getcfg)
 
 
-# read config
-@router.post("/getconfig/restconf", response_model=Response, status_code=201)
-@router.post("/get/restconf", response_model=Response, status_code=201)
-@error_handle_w_cache
+@router.post("/getconfig/restconf", status_code=201)
+@router.post("/get/restconf", status_code=201)
+@HttpErrorHandler()
 @whitelist
-def get_config_restconf(getcfg: Restconf):
-    return ntplm.get_config_restconf(getcfg)
+async def get_config_restconf(getcfg: Restconf, manager: NetpalmManager = Depends(get_manager)):
+    return await manager.get_config(getcfg)

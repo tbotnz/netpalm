@@ -1,129 +1,126 @@
-from typing import Optional, Any, List
+from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
-from netpalm.backend.core.models.models import GenericPrePostCheck
-from netpalm.backend.core.models.models import J2Config, CacheConfig
-from netpalm.backend.core.models.models import QueueStrategy
-from netpalm.backend.core.models.models import Webhook
+from netpalm.backend.core.models.models import (
+    CacheConfig,
+    GenericPrePostCheck,
+    J2Config,
+    QueueStrategy,
+    Webhook,
+)
 
 
 class NetmikoSendConfigArgs(BaseModel):
-    command_string: Optional[str] = None
-    expect_string: Optional[str] = None
-    delay_factor: Optional[int] = None
-    commit_label: Optional[str] = None
-    max_loops: Optional[int] = None
-    auto_find_prompt: Optional[bool] = None
-    strip_prompt: Optional[bool] = None
-    strip_command: Optional[bool] = None
-    normalize: Optional[bool] = None
-    use_textfsm: Optional[bool] = None
-    textfsm_template: Optional[str] = None
-    use_ttp: Optional[bool] = None
-    ttp_template: Optional[str] = None
-    use_genie: Optional[bool] = None
-    cmd_verify: Optional[bool] = None
+    command_string: str | None = None
+    expect_string: str | None = None
+    delay_factor: int | None = None
+    commit_label: str | None = None
+    max_loops: int | None = None
+    auto_find_prompt: bool | None = None
+    strip_prompt: bool | None = None
+    strip_command: bool | None = None
+    normalize: bool | None = None
+    use_textfsm: bool | None = None
+    textfsm_template: str | None = None
+    use_ttp: bool | None = None
+    ttp_template: str | None = None
+    use_genie: bool | None = None
+    cmd_verify: bool | None = None
 
 
 class NetmikoConnectionArgs(BaseModel):
-    ip: Optional[str] = None
-    host: Optional[str] = None
+    ip: str | None = None
+    host: str | None = None
     username: str
     password: str
-    secret: Optional[str] = None
-    port: Optional[int] = 22
+    secret: str | None = None
+    port: int = 22
     device_type: str
-    verbose: Optional[bool] = None
-    global_delay_factor: Optional[int] = 1
-    global_cmd_verify: Optional[bool] = None
-    use_keys: Optional[bool] = None
-    key_file: Optional[str] = None
-    pkey: Optional[str] = None
-    passphrase: Optional[str] = None
-    allow_agent: Optional[bool] = False
-    ssh_strict: Optional[bool] = None
-    system_host_keys: Optional[bool] = False
-    alt_host_keys: Optional[bool] = False
-    alt_key_file: Optional[str] = ""
-    ssh_config_file: Optional[str] = None
-    timeout: Optional[int] = 100
-    session_timeout: Optional[int] = None
-    auth_timeout: Optional[float] = None
-    blocking_timeout: Optional[int] = 20
-    banner_timeout: Optional[int] = 15
-    keepalive: Optional[int] = 0
-    default_enter: Optional[str] = None
-    response_return: Optional[str] = None
-    serial_settings: Optional[str] = None
-    fast_cli: Optional[bool] = False
-    session_log: Optional[str] = None
-    session_log_record_writes = False
-    session_log_file_mode: Optional[str] = "write"
-    allow_auto_change: Optional[bool] = False
-    encoding: Optional[str] = "ascii"
-    sock: Optional[bool] = None
-    auto_connect: Optional[bool] = True
+    verbose: bool | None = None
+    global_delay_factor: int | None = 1
+    global_cmd_verify: bool | None = None
+    use_keys: bool | None = None
+    key_file: str | None = None
+    pkey: str | None = None
+    passphrase: str | None = None
+    allow_agent: bool = False
+    ssh_strict: bool | None = None
+    system_host_keys: bool = False
+    alt_host_keys: bool = False
+    alt_key_file: str = ""
+    ssh_config_file: str | None = None
+    timeout: int = 100
+    session_timeout: int | None = None
+    auth_timeout: float | None = None
+    blocking_timeout: int = 20
+    banner_timeout: int = 15
+    keepalive: int = 0
+    default_enter: str | None = None
+    response_return: str | None = None
+    serial_settings: str | None = None
+    fast_cli: bool = False
+    session_log: str | None = None
+    session_log_record_writes: bool = False
+    session_log_file_mode: str = "write"
+    allow_auto_change: bool = False
+    encoding: str = "ascii"
+    sock: bool | None = None
+    auto_connect: bool = True
 
 
 class NetmikoGetConfig(BaseModel):
-    connection_args: NetmikoConnectionArgs
-    command: Any
-    args: Optional[NetmikoSendConfigArgs] = None
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = None
-    cache: Optional[CacheConfig] = {}
-    ttl: Optional[int] = None
-    enable_mode: Optional[bool] = False
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "library": "netmiko",
                 "connection_args": {
                     "device_type": "cisco_ios",
                     "host": "10.0.2.33",
                     "username": "admin",
-                    "password": "admin"
+                    "password": "admin",
                 },
                 "command": "show ip int brief",
-                "args": {
-                    "use_textfsm": True
-                },
+                "args": {"use_textfsm": True},
                 "queue_strategy": "fifo",
-                "cache": {
-                    "enabled": True,
-                    "ttl": 300,
-                    "poison": False
-                }
+                "cache": {"enabled": True, "ttl": 300, "poison": False},
             }
         }
+    )
+
+    connection_args: NetmikoConnectionArgs
+    command: Any
+    args: NetmikoSendConfigArgs | None = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    post_checks: list[GenericPrePostCheck] | None = None
+    cache: CacheConfig | None = None
+    enable_mode: bool = False
 
 
 class NetmikoSetConfig(BaseModel):
-    connection_args: dict
-    config: Optional[Any] = None
-    args: Optional[NetmikoSendConfigArgs] = {}
-    j2config: Optional[J2Config] = None
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    pre_checks: Optional[List[GenericPrePostCheck]] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = None
-    enable_mode: Optional[bool] = False
-    ttl: Optional[int] = None
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "library": "netmiko",
                 "connection_args": {
                     "device_type": "cisco_ios",
                     "host": "10.0.2.33",
                     "username": "admin",
-                    "password": "admin"
+                    "password": "admin",
                 },
                 "config": ["hostname cat"],
-                "queue_strategy": "pinned"
+                "queue_strategy": "fifo",
             }
         }
+    )
+
+    connection_args: dict[str, Any]
+    config: Any | None = None
+    args: NetmikoSendConfigArgs | None = None
+    j2config: J2Config | None = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    pre_checks: list[GenericPrePostCheck] | None = None
+    post_checks: list[GenericPrePostCheck] | None = None
+    enable_mode: bool = False

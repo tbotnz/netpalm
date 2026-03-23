@@ -1,35 +1,36 @@
-from typing import Optional, Union
-from enum import Enum
+from enum import StrEnum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
-from netpalm.backend.core.models.models import CacheConfig
-from netpalm.backend.core.models.models import QueueStrategy
-from netpalm.backend.core.models.models import Webhook
-from netpalm.backend.core.models.models import J2Config
+from netpalm.backend.core.models.models import (
+    CacheConfig,
+    J2Config,
+    QueueStrategy,
+    Webhook,
+)
 
 
 class NcclientSendConfigArgs(BaseModel):
-    target: Optional[str] = None
-    config: Optional[str] = None
-    default_operation: Optional[str] = None
-    render_json: Optional[bool] = False
+    target: str | None = None
+    config: str | None = None
+    default_operation: str | None = None
+    render_json: bool = False
 
 
 class NcclientGetConfigArgs(BaseModel):
     source: str
-    filter: Optional[str] = None
-    render_json: Optional[bool] = False
-    capabilities: Optional[bool] = False
+    filter: str | None = None
+    render_json: bool = False
+    capabilities: bool = False
 
 
 class NcclientGetRpcArgs(BaseModel):
     rpc: str
-    render_json: Optional[bool] = False
-    capabilities: Optional[bool] = False
+    render_json: bool = False
+    capabilities: bool = False
 
 
-class NcclientDeviceDrivers(str):
+class NcclientDeviceDrivers(StrEnum):
     default = "default"
     hpcomware = "hpcomware"
     h3c = "h3c"
@@ -46,6 +47,7 @@ class NcclientDeviceDrivers(str):
 class NcclientDeviceParams(BaseModel):
     name: NcclientDeviceDrivers
 
+
 class NcclientManagerParams(BaseModel):
     timeout: int
 
@@ -56,25 +58,18 @@ class NcclientConnection(BaseModel):
     password: str
     port: int
     hostkey_verify: bool
-    device_params: Optional[NcclientDeviceParams] = None
-    manager_params: Optional[NcclientManagerParams] = None
+    device_params: NcclientDeviceParams | None = None
+    manager_params: NcclientManagerParams | None = None
 
 
 class NcclientGetArgs(BaseModel):
     filter: str
-    render_json: Optional[bool] = False
+    render_json: bool = False
 
 
 class NcclientSetConfig(BaseModel):
-    connection_args: NcclientConnection
-    args: Optional[NcclientSendConfigArgs] = {}
-    j2config: Optional[J2Config] = None
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    ttl: Optional[int] = None
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "library": "ncclient",
                 "connection_args": {
@@ -82,29 +77,28 @@ class NcclientSetConfig(BaseModel):
                     "username": "admin",
                     "password": "admin",
                     "port": 830,
-                    "hostkey_verify": False
+                    "hostkey_verify": False,
                 },
                 "args": {
                     "target": "running",
-                    "config":
-                    "<nc:config xmlns:nc='urn:ietf:params:xml:ns:netconf:base:1.0'><configure xmlns='http://www.cisco.com/nxos:1.0:vlan_mgr_cli'><__XML__MODE__exec_configure><interface><ethernet><interface>helloworld</interface><__XML__MODE_if-ethernet-switch><switchport><trunk><allowed><vlan><add><__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans><add-vlans>99</add-vlans></__XML__BLK_Cmd_switchport_trunk_allowed_allow-vlans></add></vlan></allowed></trunk></switchport></__XML__MODE_if-ethernet-switch></ethernet></interface></__XML__MODE__exec_configure></configure></nc:config>",
-                    "render_json": True
+                    "config": "<nc:config xmlns:nc='urn:ietf:params:xml:ns:netconf:base:1.0'/>",
+                    "render_json": True,
                 },
-                "queue_strategy": "pinned"
+                "queue_strategy": "fifo",
             }
         }
+    )
+
+    connection_args: NcclientConnection
+    args: NcclientSendConfigArgs | None = None
+    j2config: J2Config | None = None
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
 
 
 class NcclientGetConfig(BaseModel):
-    connection_args: NcclientConnection
-    args: Union[NcclientGetConfigArgs, NcclientGetRpcArgs]
-    webhook: Optional[Webhook] = None
-    queue_strategy: Optional[QueueStrategy] = None
-    cache: Optional[CacheConfig] = {}
-    ttl: Optional[int] = None
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "library": "ncclient",
                 "connection_args": {
@@ -112,34 +106,30 @@ class NcclientGetConfig(BaseModel):
                     "username": "admin",
                     "password": "admin",
                     "port": 830,
-                    "hostkey_verify": False
+                    "hostkey_verify": False,
                 },
                 "args": {
                     "source": "running",
-                    "filter":
-                    "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
+                    "filter": "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
                     "render_json": True,
-                    "capabilities": True
+                    "capabilities": True,
                 },
                 "queue_strategy": "fifo",
-                "cache": {
-                    "enabled": True,
-                    "ttl": 300,
-                    "poison": False
-                }
+                "cache": {"enabled": True, "ttl": 300, "poison": False},
             }
         }
+    )
+
+    connection_args: NcclientConnection
+    args: NcclientGetConfigArgs | NcclientGetRpcArgs
+    webhook: Webhook | None = None
+    queue_strategy: QueueStrategy | None = None
+    cache: CacheConfig | None = None
 
 
 class NcclientGet(BaseModel):
-    connection_args: NcclientConnection
-    args: NcclientGetArgs
-    queue_strategy: Optional[QueueStrategy] = None
-    cache: Optional[CacheConfig] = {}
-    ttl: Optional[int] = None
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "library": "ncclient",
                 "connection_args": {
@@ -147,18 +137,19 @@ class NcclientGet(BaseModel):
                     "username": "admin",
                     "password": "admin",
                     "port": 830,
-                    "hostkey_verify": False
+                    "hostkey_verify": False,
                 },
                 "args": {
-                    "filter":
-                    "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
-                    "render_json": True
+                    "filter": "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
+                    "render_json": True,
                 },
                 "queue_strategy": "fifo",
-                "cache": {
-                    "enabled": True,
-                    "ttl": 300,
-                    "poison": False
-                }
+                "cache": {"enabled": True, "ttl": 300, "poison": False},
             }
         }
+    )
+
+    connection_args: NcclientConnection
+    args: NcclientGetArgs
+    queue_strategy: QueueStrategy | None = None
+    cache: CacheConfig | None = None
