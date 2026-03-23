@@ -2,12 +2,10 @@ import typing
 
 import pytest
 
-from netpalm.backend.core.confload import confload
 from netpalm.backend.core.utilities.textfsm.template import FSMTemplate
 
 
 def test_template_object():
-    config = confload.initialize_config()
     template_obj = FSMTemplate()
     result = template_obj.get_template_list()
     assert "Errno" not in result.get("data", "")

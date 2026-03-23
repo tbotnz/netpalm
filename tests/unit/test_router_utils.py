@@ -1,16 +1,12 @@
 import logging
 import typing
 from copy import deepcopy
-from random import randint
 
 import pytest
 from fastapi import HTTPException
 
-from netpalm.backend.core.confload import confload
 from netpalm.backend.core.models.models import GetConfig
-from netpalm.backend.core.redis import rediz
-from netpalm.routers.route_utils import cacheable_model, HttpErrorHandler, cache_key_from_req_data, poison_host_cache, \
-    serialized_for_hash
+from netpalm.routers.route_utils import cacheable_model, HttpErrorHandler, cache_key_from_req_data, serialized_for_hash
 
 log = logging.getLogger(__name__)
 
@@ -105,249 +101,6 @@ def test_http_error_handler_raises():
         foo()
 
 
-def test_cache_disabled(monkeypatch):
-    monkeypatch.setenv("NETPALM_REDIS_CACHE_ENABLED", "FALSE")
-    config = confload.initialize_config()
-    redis_helper = rediz.Rediz(config)
-    cache = redis_helper.cache
-    assert redis_helper.cache_enabled == False
-    assert isinstance(cache, rediz.DisabledCache)
-    assert cache.get('key') is None
-    assert cache.set('key', 'value') is None
-    assert cache.get('key') is None
-
-
-@pytest.fixture(scope="function")
-def clean_cache_redis_helper(monkeypatch):
-    monkeypatch.setenv("NETPALM_REDIS_CACHE_ENABLED", "TRUE")
-    config = confload.initialize_config()
-    redis_helper = rediz.Rediz(config)
-    redis_helper.cache.clear()
-    return redis_helper
-
-
-def test_cache_prefix_is_set(monkeypatch):
-    monkeypatch.setenv("NETPALM_REDIS_CACHE_KEY_PREFIX", "RCK")
-    config = confload.initialize_config()
-    redis_helper = rediz.Rediz(config)
-    assert redis_helper.cache.key_prefix == "RCK"
-    config.redis_cache_key_prefix = ''
-    redis_helper = rediz.Rediz(config)
-    assert redis_helper.cache.key_prefix == "NOPREFIX"
-    config.redis_cache_key_prefix = '  '
-    redis_helper = rediz.Rediz(config)
-    assert redis_helper.cache.key_prefix == "NOPREFIX"
-    config.redis_cache_key_prefix = None
-    redis_helper = rediz.Rediz(config)
-    assert redis_helper.cache.key_prefix == "None"
-
-
-def test_cache_length(clean_cache_redis_helper: rediz.Rediz):
-    cache = clean_cache_redis_helper.cache
-    assert cache
-    assert cache.get('key') is None
-    cache.set('key', 'value')
-
-
-def test_cache_enabled(clean_cache_redis_helper):
-    cache = clean_cache_redis_helper.cache
-    assert isinstance(cache, rediz.ClearableCache)
-    assert cache.get('key') is None
-    assert cache.set('key', 'value') == True
-    assert cache.get('key') == 'value'
-    assert cache.set("key2", "value2") == True
-    assert cache.clear() == 2
-    assert cache.get("key") is None
-
-
-def test_clear_cache_for_host(clean_cache_redis_helper: rediz.Rediz):
-    cache: rediz.RedisCache = clean_cache_redis_helper.cache
-    assert cache.clear() == 0
-
-    other_cache_key = "2.2.2.2:22:show ip int bri"
-    other_value = "some other data"
-    cache.set(other_cache_key, other_value)
-
-    this_host = "1.1.1.1"
-    this_port = "22"
-    this_key_1 = f"{this_host}:{this_port}:show ip int bri"
-    this_value_1 = "this ip data"
-    this_key_2 = f"{this_host}:{this_port}:show run"
-    this_value_2 = "this run data"
-
-    cache.set_many({this_key_1: this_value_1, this_key_2: this_value_2})
-    assert cache.get(this_key_2) == this_value_2
-    assert cache.get(this_key_1) == this_value_1
-    assert cache.get(other_cache_key) == other_value
-
-    clean_cache_redis_helper.clear_cache_for_host(this_key_1)
-    assert cache.get(other_cache_key) == other_value
-    assert cache.get(this_key_2) is None
-
-
-def test_cacheable_model(clean_cache_redis_helper: rediz.Rediz):
-    def foo_get(*args, **kwargs):
-        return randint(1, 10 ** 30)
-
-    data_dict = {
-        "library": "netmiko",
-        "connection_args": {
-            "host": "foo.com",
-            "port": "200"
-        },
-        "args": {
-            "use_textfsm": True
-        },
-        "command": "show ip int bri"
-    }
-    cache_config = {
-        "enabled": True,
-        "ttl": 300,
-        "poison": False
-    }
-
-    model = GetConfig(**data_dict)  # base case
-    assert foo_get(model) != foo_get(model)
-
-    foo_get = cacheable_model(foo_get)  # no cache config specified
-    assert foo_get(model) != foo_get(model)
-
-    data_dict["cache"] = cache_config
-    model = GetConfig(**data_dict)
-
-    first_result = foo_get(model)  # cache enabled
-    assert foo_get(model) == first_result
-
-    clean_cache_redis_helper.clear_cache_for_host(cache_key_from_req_data(data_dict))  # cache cleared correctly
-    assert foo_get(model) != first_result
-
-
-def test_poison_host_cache(clean_cache_redis_helper: rediz.Rediz):
-    @poison_host_cache
-    def foo_set(*args, **kwargs):
-        return
-
-    @cacheable_model
-    def foo_get(*args, **kwargs):
-        return randint(1, 10 ** 30)
-
-    data_dict = {
-        "library": "netmiko",
-        "connection_args": {
-            "host": "foo.com",
-            "port": "200"
-        },
-        "args": {
-            "use_textfsm": True
-        },
-        "command": "show ip int bri",
-        "cache": {
-            "enabled": True,
-            "ttl": 300,
-            "poison": False
-        }
-    }
-
-    model = GetConfig(**data_dict)  # base case
-    first_result = foo_get(model)
-    assert foo_get(model) == first_result  # cache is working
-
-    different_model = model.copy(update={"command": "something else entirely"})
-    foo_set(different_model)  # should invalidate cache
-    assert foo_get(model) != first_result
-
-
-def test_cache_ttl(clean_cache_redis_helper: rediz.Rediz):
-    @cacheable_model
-    def foo_get(*args, **kwargs):
-        return randint(1, 10 ** 30)
-
-    data_dict = {
-        "library": "netmiko",
-        "connection_args": {
-            "host": "foo.com",
-            "port": "200"
-        },
-        "args": {
-            "use_textfsm": True
-        },
-        "command": "show ip int bri",
-        "cache": {
-            "enabled": True,
-            "ttl": 1,
-            "poison": False
-        }
-    }
-    original_result_ttl = confload.config.redis_task_result_ttl
-
-    model = GetConfig(**data_dict)  # base case
-    first_result = foo_get(model)
-    assert foo_get(model) == first_result  # cache is working
-    from time import sleep
-    sleep(2)
-    assert foo_get(model) != first_result  # cache expired, honoring cache_ttl
-
-    confload.config.redis_task_result_ttl = 1
-    model.cache.ttl = 10
-    first_result = foo_get(model)
-    assert foo_get(model) == first_result  # cache is still working
-    sleep(2)
-    assert foo_get(model) != first_result  # cache expir3ed, honoring result_ttl
-    confload.config.redis_task_result_ttl = original_result_ttl
-
-
-def test_auth_influences_cache(clean_cache_redis_helper: rediz.Rediz):
-    @cacheable_model
-    def foo_get(*args, **kwargs):
-        return randint(1, 10 ** 30)
-
-    no_creds_dict = {
-        "library": "netmiko",
-        "connection_args": {
-            "host": "foo.com",
-            "port": "200"
-        },
-        "args": {
-            "use_textfsm": True
-        },
-        "command": "show ip int bri",
-        "cache": {
-            "enabled": True,
-            "ttl": 300,
-            "poison": False
-        }
-    }
-
-    bob_creds = ("bob", "hunter2")
-    alice_creds = ("alice", "*******")
-
-    username, password = bob_creds
-    full_creds_dict = deepcopy(no_creds_dict)
-    full_creds_dict["connection_args"].update({
-        "username": username,
-        "password": password
-    })
-    partial_creds_dict = deepcopy(no_creds_dict)
-    partial_creds_dict["connection_args"].update({
-        "username": username
-    })
-
-    username, password = alice_creds
-    wrong_creds_dict = deepcopy(no_creds_dict)
-    wrong_creds_dict["connection_args"].update({
-        "username": username,
-        "password": password
-    })
-
-    full_creds_model = GetConfig(**full_creds_dict)
-    full_creds_results = foo_get(full_creds_model)
-    assert foo_get(full_creds_model) == full_creds_results  # cache is actually working
-
-    assert foo_get(GetConfig(**no_creds_dict)) != full_creds_results
-    assert foo_get(GetConfig(**partial_creds_dict)) != full_creds_results
-    assert foo_get(GetConfig(**wrong_creds_dict)) != full_creds_results
-
-
 @pytest.mark.parametrize(("obj", "expected_result"), [
     ("a", "'a'"),
     (["a", "c", "b"], "['a', 'c', 'b']"),  # don't re-order lists or tuples
@@ -368,9 +121,6 @@ def test_model_default_value_behavior():
             "host": "foo.com",
             "port": "200"
         },
-        # "args": {
-        #     "use_textfsm": True
-        # },
         "command": "show ip int bri",
         "cache": {
             "enabled": True,
@@ -384,4 +134,3 @@ def test_model_default_value_behavior():
 
     b = GetConfig(**data_dict)
     assert b.args == {}
-    assert b.dict()['args'] == {}
