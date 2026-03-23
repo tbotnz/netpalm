@@ -40,7 +40,7 @@ def netmiko_connection_handler(mocker: MockerFixture) -> MockerFixture:
 
 def test_netmko_connect(netmiko_connection_handler: Mock):
     netmiko_driver = netmko(kwarg={}, connection_args=NETMIKO_C_ARGS)
-    sesh = netmiko_driver.connect()
+    netmiko_driver.connect()
     netmiko_connection_handler.assert_called_once_with(**NETMIKO_C_ARGS)
 
 
@@ -128,7 +128,7 @@ def test_netmiko_gc_exec_command_ttp(netmiko_connection_handler: Mock):
     command = netmiko_command_list[0]
 
     netmiko_kwarg = {"ttp_template": "asdf"}
-    result = exec_command(library="netmiko", command=command, connection_args=NETMIKO_C_ARGS, args=netmiko_kwarg.copy())
+    exec_command(library="netmiko", command=command, connection_args=NETMIKO_C_ARGS, args=netmiko_kwarg.copy())
 
     with pytest.raises(AssertionError):
         netmiko_connection_handler.session.send_command.assert_called_once_with(command, **netmiko_kwarg)

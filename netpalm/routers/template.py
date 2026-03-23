@@ -164,7 +164,7 @@ def remove_ttp_template(template: UniversalTemplateRemove):
         req_data["route_type"] = "ttp_templates"
         add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data)
         tmplate_mgr = unvrsl()
-        r = tmplate_mgr.remove_template(payload=req_data)
+        tmplate_mgr.remove_template(payload=req_data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
@@ -215,7 +215,7 @@ def remove_config_j2_templates(template: UniversalTemplateRemove):
         req_data["route_type"] = "j2_config_templates"
         add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data)
         tmplate_mgr = unvrsl()
-        r = tmplate_mgr.remove_template(payload=req_data)
+        tmplate_mgr.remove_template(payload=req_data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
@@ -267,7 +267,7 @@ def remove_webhook_j2_templates(template: UniversalTemplateRemove):
         req_data["route_type"] = "j2_webhook_templates"
         add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data)
         tmplate_mgr = unvrsl()
-        r = tmplate_mgr.remove_template(payload=req_data)
+        tmplate_mgr.remove_template(payload=req_data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
@@ -345,7 +345,7 @@ def remove_script_file(template: UniversalTemplateRemove):
         req_data["route_type"] = "custom_scripts"
         add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data)
         tmplate_mgr = unvrsl()
-        r = tmplate_mgr.remove_template(payload=req_data)
+        tmplate_mgr.remove_template(payload=req_data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
@@ -399,7 +399,7 @@ def remove_webhook_script_file(template: UniversalTemplateRemove):
         req_data["route_type"] = "custom_webhooks"
         add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data)
         tmplate_mgr = unvrsl()
-        r = tmplate_mgr.remove_template(payload=req_data)
+        tmplate_mgr.remove_template(payload=req_data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split("\n"))
 
@@ -440,6 +440,6 @@ def remove_service_file(template: UniversalTemplateRemove):
         req_data["route_type"] = "python_service_templates"
         add_transaction_log_entry(entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data)
         tmplate_mgr = unvrsl()
-        r = tmplate_mgr.remove_template(payload=req_data)
+        tmplate_mgr.remove_template(payload=req_data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e).split("\n"))

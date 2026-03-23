@@ -25,7 +25,7 @@ class CisgoHelper:
 
     def clean(self):
         pl = {"library": "netmiko", "connection_args": self.netmiko_connection_args, "command": "reset state"}
-        result = helper.post_and_check("/getconfig", pl)
+        helper.post_and_check("/getconfig", pl)
 
     @property
     def netmiko_connection_args(self):

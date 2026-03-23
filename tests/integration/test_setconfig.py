@@ -293,7 +293,7 @@ def test_setconfig_netmiko_multiple():
         "config": ["hostname yeti", "hostname bufoon"],
     }
     res = helper.post_and_check("/setconfig", pl)
-    matchstr = r + "#"
+    r + "#"
     assert len(res["changes"]) > 4
 
 

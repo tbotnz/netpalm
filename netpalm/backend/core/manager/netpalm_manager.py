@@ -154,7 +154,7 @@ class NetpalmManager:
         else:
             req_data = request.model_dump(exclude_none=True)
 
-        instance = await self._service_store.update_data(service_id, req_data)
+        await self._service_store.update_data(service_id, req_data)
 
         task = await self._broker.enqueue_task(
             method="service_update",

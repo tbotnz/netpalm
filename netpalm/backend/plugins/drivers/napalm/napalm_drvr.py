@@ -67,9 +67,9 @@ class naplm(NetpalmDriver):
             session.load_merge_candidate(config=napalmconfig)
             diff = session.compare_config()
             if dry_run:
-                response = session.discard_config()
+                session.discard_config()
             else:
-                response = session.commit_config()
+                session.commit_config()
             result = {}
             result["changes"] = diff.split("\n")
             return result

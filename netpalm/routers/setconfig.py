@@ -33,9 +33,9 @@ async def set_config(setcfg: SetConfig, manager: NetpalmManager = Depends(get_ma
 async def set_config_dry_run(setcfg: SetConfig, manager: NetpalmManager = Depends(get_manager)):
     # dry-run still enqueues but marks payload with dry_run flag
     if isinstance(setcfg, dict):
-        setcfg_data = setcfg
+        pass
     else:
-        setcfg_data = setcfg.model_copy(update={})
+        setcfg.model_copy(update={})
     return await manager.set_config(setcfg)
 
 

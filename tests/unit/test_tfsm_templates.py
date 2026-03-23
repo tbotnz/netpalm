@@ -52,7 +52,7 @@ def test_add_template():
         "command": "show mac-address-table",
         "template_name": "dell_force10_show_mac-address-table.template",
     }
-    driver = test_template["driver"]
+    test_template["driver"]
 
     template_obj = FSMTemplate(**test_template)
 

@@ -72,7 +72,7 @@ def serialized_for_hash(obj) -> str:
     if isinstance(obj, Enum):
         return serialized_for_hash(obj.value)
 
-    if not isinstance(obj, (list, dict, set, tuple)):
+    if not isinstance(obj, list | dict | set | tuple):
         if hasattr(obj, "__len__"):
             if not isinstance(obj, str):
                 # this is some kind of container and we should handle it recursively but we don't know how
@@ -97,7 +97,7 @@ def serialized_for_hash(obj) -> str:
         items_string = ", ".join(sorted_items)
         return f"{{{items_string}}}"
 
-    if isinstance(obj, (list, tuple)):
+    if isinstance(obj, list | tuple):
         T = type(obj)
         new_obj = T(serialized_for_hash(item).strip("'") for item in obj)
         return repr(new_obj)

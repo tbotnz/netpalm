@@ -46,7 +46,7 @@ def test_ncclient_getmethod_empty_args(ncclient_manager: Mock):
     ncclient_driver = ncclien(connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
     with pytest.raises(Exception):
-        result = ncclient_driver.getmethod(sesh)
+        ncclient_driver.getmethod(sesh)
 
 
 def test_ncclient_getmethod(ncclient_manager: Mock):

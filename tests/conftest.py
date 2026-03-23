@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from unittest.mock import MagicMock
 
 import pytest
@@ -53,7 +53,7 @@ def sample_job_record(sample_task_id):
     job.payload = {"host": "10.0.0.1", "command": "show version"}
     job.result = None
     job.error = None
-    job.created_at = datetime.now(UTC)
+    job.created_at = datetime.now(timezone.utc)
     job.started_at = None
     job.ended_at = None
     return job

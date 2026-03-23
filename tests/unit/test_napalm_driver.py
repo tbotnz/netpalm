@@ -45,7 +45,7 @@ def napalm_get_network_driver(mocker: MockerFixture) -> MockerFixture:
 def test_napalm_connect(napalm_get_network_driver: Mock):
     napalm_driver = naplm(kwarg={}, connection_args=NAPALM_C_ARGS.copy())
     assert napalm_driver.driver == "ios"
-    sesh = napalm_driver.connect()
+    napalm_driver.connect()
     napalm_get_network_driver.assert_called_with("ios")
     napalm_get_network_driver.driver.assert_called_once_with(
         hostname=NAPALM_C_ARGS["host"],
