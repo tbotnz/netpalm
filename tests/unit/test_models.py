@@ -40,7 +40,7 @@ class TestQueueStrategy:
 class TestLibraryName:
     def test_all_libraries(self):
         expected = {"napalm", "ncclient", "restconf", "netmiko", "puresnmp"}
-        assert {l.value for l in LibraryName} == expected
+        assert {lib.value for lib in LibraryName} == expected
 
 
 class TestTaskMessage:
