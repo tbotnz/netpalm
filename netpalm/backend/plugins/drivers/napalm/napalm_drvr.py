@@ -78,7 +78,6 @@ class naplm(NetpalmDriver):
 
     def logout(self, session: Any) -> None:
         try:
-            response = session.close()
-            return response
+            session.close()
         except Exception as e:
             write_meta_error(e)

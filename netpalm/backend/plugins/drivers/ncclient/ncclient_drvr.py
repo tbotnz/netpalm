@@ -132,7 +132,6 @@ class ncclien(NetpalmDriver):
 
     def logout(self, session: Any) -> None:
         try:
-            response = session.close_session()
-            return response
+            session.close_session()
         except Exception as e:
             write_meta_error(e)

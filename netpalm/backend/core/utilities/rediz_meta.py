@@ -8,16 +8,17 @@ exceptions propagate — the executor catches them.
 from __future__ import annotations
 
 import logging
+from typing import NoReturn
 
 log = logging.getLogger(__name__)
 
 
-def write_meta_error(exception: Exception) -> None:
+def write_meta_error(exception: Exception) -> NoReturn:
     """Re-raise the exception so the executor can handle it."""
     log.exception("write_meta_error: driver error")
     raise exception
 
 
-def write_meta_error_string(data: str) -> None:
+def write_meta_error_string(data: str) -> NoReturn:
     """Raise a plain exception with the given message."""
     raise Exception(f"failed: {data}")

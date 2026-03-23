@@ -115,7 +115,6 @@ class netmko(NetpalmDriver):
 
     def logout(self, session: Any) -> None:
         try:
-            response = session.disconnect()
-            return response
+            session.disconnect()
         except Exception as e:
             write_meta_error(e)

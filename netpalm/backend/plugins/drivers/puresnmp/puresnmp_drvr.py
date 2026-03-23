@@ -80,13 +80,7 @@ class pursnmp(NetpalmDriver):
     def config(
         self, session: Any = None, command: str | list[str] | Any = None, dry_run: bool = False, **kwargs: Any
     ) -> dict[str, Any]:
-        try:
-            return True
-        except Exception as e:
-            write_meta_error(e)
+        return {}
 
     def logout(self, session: Any) -> None:
-        try:
-            return True
-        except Exception as e:
-            write_meta_error(e)
+        pass

@@ -15,7 +15,7 @@ class webhook_runner:
         self.webhook_args = whook_payload.get("args", False)
         if not self.webhook_raw_name:
             self.webhook_name = config.default_webhook_name
-        self.webhook_name = self.webhook_dir_path.replace("/", ".") + self.webhook_raw_name
+        self.webhook_name = self.webhook_dir_path.replace("/", ".") + (self.webhook_raw_name or "")
         self.webhook_j2_name = whook_payload.get("j2template")
 
     def webhook_exec(self, job_data: dict):

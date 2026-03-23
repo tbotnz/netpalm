@@ -169,8 +169,8 @@ class NetpalmSettings(BaseSettings):
     @classmethod
     def parse_webhook_headers(cls, v: Any) -> dict[str, str]:
         if isinstance(v, str):
-            return json.loads(v)
-        return v
+            return json.loads(v)  # type: ignore[no-any-return]
+        return v  # type: ignore[no-any-return]
 
     def model_post_init(self, __context: Any) -> None:
         self.whitelist = DeviceWhitelist(self.device_whitelist)

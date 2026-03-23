@@ -11,7 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 
 from netpalm.backend.core.manager import NetpalmManager, get_manager
-from netpalm.backend.core.models.task import ResponseBasic
+from netpalm.backend.core.models.task import ResponseBasic, TaskResponseEnum
 from netpalm.routers.route_utils import HttpErrorHandler
 
 log = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ async def get_service_instance(service_id: str, manager: NetpalmManager = Depend
     except Exception:
         raise HTTPException(
             status_code=404,
-            detail=ResponseBasic(status="success", data={"task_result": f"{service_id} not found"}).model_dump(),
+            detail=ResponseBasic(status=TaskResponseEnum.success, data={"task_result": f"{service_id} not found"}).model_dump(),
         )
 
 

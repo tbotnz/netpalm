@@ -66,4 +66,4 @@ class ScriptOperation(BaseOperation):
         if webhook:
             exec_webhook_func(jobdata={"task_result": result}, webhook_payload=webhook)
 
-        return result
+        return result  # type: ignore[no-any-return]

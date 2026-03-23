@@ -29,7 +29,7 @@ class SetConfigOperation(BaseOperation):
         settings: NetpalmSettings,
     ) -> dict[str, Any]:
         library = kwargs.get("library", "")
-        config = kwargs.get("config")
+        config: str | list[str] = kwargs.get("config", "")
         j2conf = kwargs.get("j2config")
         webhook = kwargs.get("webhook")
         pre_checks = kwargs.get("pre_checks")

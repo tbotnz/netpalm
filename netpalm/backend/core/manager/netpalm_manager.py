@@ -18,11 +18,10 @@ from fastapi.encoders import jsonable_encoder
 
 from netpalm.backend.core.cache.store import CacheStore
 from netpalm.backend.core.confload.confload import NetpalmSettings, get_settings
+from pydantic import BaseModel
+
 from netpalm.backend.core.models.models import (
-    GetConfig,
     QueueStrategy,
-    Script,
-    SetConfig,
 )
 from netpalm.backend.core.queue.broker import QueueBroker
 from netpalm.backend.core.queue.broker import TaskResponse as BrokerTaskResponse
@@ -51,7 +50,7 @@ class NetpalmManager:
 
     # ── task operations ───────────────────────────────────────────────────────
 
-    async def get_config(self, request: GetConfig) -> dict[str, Any]:
+    async def get_config(self, request: BaseModel) -> dict[str, Any]:
         """
         Enqueue a getconfig job.
         If cache is enabled and a result exists, return it without enqueuing.
@@ -66,7 +65,7 @@ class NetpalmManager:
             cached = self._cache.get(cache_key)
             if cached is not None:
                 log.debug(f"NetpalmManager.get_config: cache hit for {cache_key}")
-                return cached
+                return cached  # type: ignore[no-any-return]
 
         strategy = req_data.get("queue_strategy", QueueStrategy.fifo)
         pinned_host = host if strategy == QueueStrategy.pinned else None
@@ -79,7 +78,7 @@ class NetpalmManager:
         )
         return _task_to_response(task)
 
-    async def set_config(self, request: SetConfig) -> dict[str, Any]:
+    async def set_config(self, request: BaseModel) -> dict[str, Any]:
         req_data = request.model_dump(exclude_none=True)
         conn = req_data.get("connection_args", {})
         host = conn.get("host", "")
@@ -98,7 +97,7 @@ class NetpalmManager:
         )
         return _task_to_response(task)
 
-    async def execute_script(self, request: Script) -> dict[str, Any]:
+    async def execute_script(self, request: BaseModel) -> dict[str, Any]:
         req_data = request.model_dump(exclude_none=True)
         strategy = req_data.get("queue_strategy", QueueStrategy.fifo)
         pinned_host = req_data.get("script") if strategy == QueueStrategy.pinned else None

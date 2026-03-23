@@ -30,8 +30,8 @@ class GetConfigOperation(BaseOperation):
         driver_obj = driver_cls(**kwargs)
         sesh = driver_obj.connect()
 
-        commandlst = [command] if isinstance(command, str) else command
-        result = driver_obj.sendcommand(sesh, commandlst) if commandlst else driver_obj.sendcommand(sesh)
+        commandlst = [command] if isinstance(command, str) else (command or [])
+        result = driver_obj.sendcommand(sesh, commandlst)
 
         if post_checks:
             run_checks(driver_obj, sesh, post_checks, "PostCheck")

@@ -99,7 +99,4 @@ class restconf(NetpalmDriver):
             write_meta_error(e)
 
     def logout(self, session: Any) -> None:
-        try:
-            return True
-        except Exception as e:
-            write_meta_error(e)
+        pass
