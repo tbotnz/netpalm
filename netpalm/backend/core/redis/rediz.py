@@ -105,7 +105,7 @@ class ExtnUpdateLog:
         item_json = self.base_connection.lindex(self.log_name, index)
         if item_json is None:
             raise IndexError(f"index {index} out of range")
-        return TransactionLogEntryModel.parse_raw(item_json)
+        return TransactionLogEntryModel.model_validate_json(item_json)
 
     def __len__(self):
         return self.base_connection.llen(self.log_name)
@@ -361,7 +361,7 @@ class Rediz:
             "task_status": task_job.get_status(),
             "task_result": task_job.result,
             "task_errors": task_job.meta["errors"]
-        }).dict()
+        }).model_dump()
         return resultdata
 
     def __sendtask(self, q, exe, **kwargs):
@@ -411,7 +411,7 @@ class Rediz:
                 "service_id": f"{u_uid_v}"
             },
             service_data=kw
-        ).dict()
+        ).model_dump()
 
         resul = self.execute_task(method=metho, kwargs=service_data)
         serv = self.__create_service_instance(raw_data=service_data, u_uid=u_uid_v)
@@ -605,7 +605,7 @@ class Rediz:
                     successful_job_count=w.successful_job_count,
                     failed_job_count=w.failed_job_count,
                     total_working_time=w.total_working_time
-                ).dict())
+                ).model_dump())
             return result
         except Exception as e:
             log.error(f"get_workers: {e}")

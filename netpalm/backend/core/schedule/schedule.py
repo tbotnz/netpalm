@@ -122,7 +122,7 @@ class Schedulr:
                             )
         result_data = ResponseBasic(status="success", data={
             "task_result": {"scheduled_tasks": result}
-            }).dict()
+            }).model_dump()
         return result_data
 
     def add_netpalm_job(self, input_payload, job_name, trigger, trigger_args):

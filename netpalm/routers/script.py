@@ -44,7 +44,7 @@ def execute_script(script: Script):
     if isinstance(script, dict):
         req_data = script
     else:
-        req_data = script.dict(exclude_none=True)
+        req_data = script.model_dump(exclude_none=True)
     return ntplm.execute_script(**req_data)
 
 
@@ -58,7 +58,7 @@ for script in r["data"]["task_result"]["templates"]:
         if isinstance(script, dict):
             req_data = script
         else:
-            req_data = script.dict(exclude_none=True)
+            req_data = script.model_dump(exclude_none=True)
         return ntplm.execute_script(**req_data)
 
 

@@ -45,7 +45,7 @@ class NetpalmManager(Rediz):
         if isinstance(getcfg, dict):
             req_data = getcfg
         else:
-            req_data = getcfg.dict(exclude_none=True)
+            req_data = getcfg.model_dump(exclude_none=True)
         if library is not None:
             req_data["library"] = library
         r = self.execute_task(method="getconfig", kwargs=req_data)
@@ -81,7 +81,7 @@ class NetpalmManager(Rediz):
         if isinstance(getcfg, dict):
             req_data = getcfg
         else:
-            req_data = getcfg.dict(exclude_none=True)
+            req_data = getcfg.model_dump(exclude_none=True)
 
         if library is not None:
             req_data["library"] = library
@@ -94,7 +94,7 @@ class NetpalmManager(Rediz):
         if isinstance(setcfg, dict):
             req_data = setcfg
         else:
-            req_data = setcfg.dict(exclude_none=True)
+            req_data = setcfg.model_dump(exclude_none=True)
         if library is not None:
             req_data["library"] = library
         r = self.execute_task(method="setconfig", kwargs=req_data)
@@ -106,7 +106,7 @@ class NetpalmManager(Rediz):
         if isinstance(setcfg, dict):
             req_data = setcfg
         else:
-            req_data = setcfg.dict(exclude_none=True)
+            req_data = setcfg.model_dump(exclude_none=True)
         r = self.execute_task(method="dryrun", kwargs=req_data)
         resp = jsonable_encoder(r)
         return resp
@@ -148,7 +148,7 @@ class NetpalmManager(Rediz):
         if isinstance(service, dict):
             req_data = service
         else:
-            req_data = service.dict(exclude_none=True)
+            req_data = service.model_dump(exclude_none=True)
         r = self.execute_create_service_task(
             metho="service_create", model=service_model, kwargs=req_data
         )
@@ -161,11 +161,11 @@ class NetpalmManager(Rediz):
         if r:
             formatted_result = ResponseBasic(
                 status="success", data={"task_result": r}
-            ).dict()
+            ).model_dump()
         else:
             formatted_result = ResponseBasic(
                 status="success", data={"task_result": None}
-            ).dict()
+            ).model_dump()
         resp = jsonable_encoder(formatted_result)
         return resp
 
@@ -175,7 +175,7 @@ class NetpalmManager(Rediz):
         if r:
             formatted_result = ResponseBasic(
                 status="success", data={"task_result": r}
-            ).dict()
+            ).model_dump()
             resp = jsonable_encoder(formatted_result)
             return resp
         else:
@@ -227,7 +227,7 @@ class NetpalmManager(Rediz):
         if isinstance(service_data, dict):
             req_data = service_data
         else:
-            req_data = service_data.dict(exclude_none=True)
+            req_data = service_data.model_dump(exclude_none=True)
 
         data = self.fetch_service_instance(service_id)
         if data:
@@ -246,7 +246,7 @@ class NetpalmManager(Rediz):
         if isinstance(netpalm_response, dict):
             req_data = netpalm_response
         else:
-            req_data = netpalm_response.dict(exclude_none=True)
+            req_data = netpalm_response.model_dump(exclude_none=True)
 
         if req_data["status"] == "success":
             task_id = req_data["data"]["task_id"]

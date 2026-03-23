@@ -16,8 +16,8 @@ from netpalm.backend.core.models.models import (
     TFSMPushTemplateModel,
     TFSMTemplateMatch,
     TFSMTemplateMatchResponse,
-    UnivsersalTemplateAdd,
-    UnivsersalTemplateRemove,
+    UniversalTemplateAdd,
+    UniversalTemplateRemove,
 )
 from netpalm.backend.core.models.task import ResponseBasic
 from netpalm.backend.core.models.transaction_log import TransactionLogEntryType
@@ -55,7 +55,7 @@ async def get_textfsm_template(tmpname: str):
 async def add_textfsm_template(
     template_add: Union[TFSMTemplateAdd, TFSMPushTemplateModel]
 ):
-    req_data = template_add.dict()
+    req_data = template_add.model_dump()
     if isinstance(template_add, TFSMTemplateAdd):
         entry_type = TransactionLogEntryType.tfsm_pull
         template_obj = FSMTemplate(**req_data)
@@ -113,7 +113,7 @@ async def match_textfsm_templates(template_match: TFSMTemplateMatch):
 @router.delete("/template", status_code=204)
 @HttpErrorHandler()
 async def delete_textfsm_template(template_remove: TFSMTemplateRemove):
-    req_data = template_remove.dict()
+    req_data = template_remove.model_dump()
     r = routes["removetemplate"](**req_data)
     try:
         req_data["fsm_template"] = req_data.pop("template")
@@ -154,9 +154,9 @@ async def return_specific_ttp_template(tmpname: str):
 
 # add j2 config template
 @router.post("/ttptemplate/", response_model=ResponseBasic)
-def add_ttp_template(template: UnivsersalTemplateAdd):
+def add_ttp_template(template: UniversalTemplateAdd):
     try:
-        req_data = template.dict()
+        req_data = template.model_dump()
         req_data["route_type"] = "ttp_templates"
         add_transaction_log_entry(
             entry_type=TransactionLogEntryType.unvrsl_tmp_push, data=req_data
@@ -171,9 +171,9 @@ def add_ttp_template(template: UnivsersalTemplateAdd):
 
 # remove j2 config template
 @router.delete("/ttptemplate/", status_code=204)
-def remove_ttp_template(template: UnivsersalTemplateRemove):
+def remove_ttp_template(template: UniversalTemplateRemove):
     try:
-        req_data = template.dict()
+        req_data = template.model_dump()
         req_data["route_type"] = "ttp_templates"
         add_transaction_log_entry(
             entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data
@@ -209,9 +209,9 @@ async def return_specific_config_j2_template(tmpname: str):
 
 # add j2 config template
 @router.post("/j2template/config/", response_model=ResponseBasic)
-def add_config_j2_templates(template: UnivsersalTemplateAdd):
+def add_config_j2_templates(template: UniversalTemplateAdd):
     try:
-        req_data = template.dict()
+        req_data = template.model_dump()
         req_data["route_type"] = "j2_config_templates"
         add_transaction_log_entry(
             entry_type=TransactionLogEntryType.unvrsl_tmp_push, data=req_data
@@ -226,9 +226,9 @@ def add_config_j2_templates(template: UnivsersalTemplateAdd):
 
 # remove j2 config template
 @router.delete("/j2template/config/", status_code=204)
-def remove_config_j2_templates(template: UnivsersalTemplateRemove):
+def remove_config_j2_templates(template: UniversalTemplateRemove):
     try:
-        req_data = template.dict()
+        req_data = template.model_dump()
         req_data["route_type"] = "j2_config_templates"
         add_transaction_log_entry(
             entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data
@@ -265,9 +265,9 @@ async def return_specific_webhook_j2_template(tmpname: str):
 
 # add j2 webhook template
 @router.post("/j2template/webhook/", response_model=ResponseBasic)
-def add_webhook_j2_templates(template: UnivsersalTemplateAdd):
+def add_webhook_j2_templates(template: UniversalTemplateAdd):
     try:
-        req_data = template.dict()
+        req_data = template.model_dump()
         req_data["route_type"] = "j2_webhook_templates"
         add_transaction_log_entry(
             entry_type=TransactionLogEntryType.unvrsl_tmp_push, data=req_data
@@ -282,9 +282,9 @@ def add_webhook_j2_templates(template: UnivsersalTemplateAdd):
 
 # remove j2 webhook template
 @router.delete("/j2template/webhook/", status_code=204)
-def remove_webhook_j2_templates(template: UnivsersalTemplateRemove):
+def remove_webhook_j2_templates(template: UniversalTemplateRemove):
     try:
-        req_data = template.dict()
+        req_data = template.model_dump()
         req_data["route_type"] = "j2_webhook_templates"
         add_transaction_log_entry(
             entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data
@@ -353,9 +353,9 @@ async def render_j2_template_webhook(tmpname: str, data: dict):
 
 # add script file
 @router.post("/script/add/", response_model=ResponseBasic)
-def add_script_file(template: UnivsersalTemplateAdd):
+def add_script_file(template: UniversalTemplateAdd):
     try:
-        req_data = template.dict()
+        req_data = template.model_dump()
         req_data["route_type"] = "custom_scripts"
         add_transaction_log_entry(
             entry_type=TransactionLogEntryType.unvrsl_tmp_push, data=req_data
@@ -370,9 +370,9 @@ def add_script_file(template: UnivsersalTemplateAdd):
 
 # remove script file
 @router.delete("/script/remove/", status_code=204)
-def remove_script_file(template: UnivsersalTemplateRemove):
+def remove_script_file(template: UniversalTemplateRemove):
     try:
-        req_data = template.dict()
+        req_data = template.model_dump()
         req_data["route_type"] = "custom_scripts"
         add_transaction_log_entry(
             entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data
@@ -398,9 +398,9 @@ async def return_specific_script_file(tmpname: str):
 
 # webhook script file
 @router.post("/webhook/add/", response_model=ResponseBasic)
-def add_webhook_script_file(template: UnivsersalTemplateAdd):
+def add_webhook_script_file(template: UniversalTemplateAdd):
     try:
-        req_data = template.dict()
+        req_data = template.model_dump()
         req_data["route_type"] = "custom_webhooks"
         add_transaction_log_entry(
             entry_type=TransactionLogEntryType.unvrsl_tmp_push, data=req_data
@@ -428,9 +428,9 @@ async def return_specific_webhook_script_file(tmpname: str):
 
 # remove script file
 @router.delete("/webhook/remove/", status_code=204)
-def remove_webhook_script_file(template: UnivsersalTemplateRemove):
+def remove_webhook_script_file(template: UniversalTemplateRemove):
     try:
-        req_data = template.dict()
+        req_data = template.model_dump()
         req_data["route_type"] = "custom_webhooks"
         add_transaction_log_entry(
             entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data
@@ -443,9 +443,9 @@ def remove_webhook_script_file(template: UnivsersalTemplateRemove):
 
 # webhook service file
 @router.post("/service/add/", response_model=ResponseBasic)
-def add_service_file(template: UnivsersalTemplateAdd):
+def add_service_file(template: UniversalTemplateAdd):
     try:
-        req_data = template.dict()
+        req_data = template.model_dump()
         req_data["route_type"] = "python_service_templates"
         add_transaction_log_entry(
             entry_type=TransactionLogEntryType.unvrsl_tmp_push, data=req_data
@@ -473,9 +473,9 @@ async def return_service_script_file(tmpname: str):
 
 # remove service file
 @router.delete("/service/remove/", status_code=204)
-def remove_service_file(template: UnivsersalTemplateRemove):
+def remove_service_file(template: UniversalTemplateRemove):
     try:
-        req_data = template.dict()
+        req_data = template.model_dump()
         req_data["route_type"] = "python_service_templates"
         add_transaction_log_entry(
             entry_type=TransactionLogEntryType.unvrsl_tmp_delete, data=req_data

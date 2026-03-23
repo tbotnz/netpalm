@@ -1,12 +1,11 @@
 from enum import Enum
-from typing import Optional, List, Any
+from typing import Any, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, RootModel
 
 from netpalm.backend.core.models.models import QueueStrategy
 
 
-# now redundant
 class ServiceLifecycle(str, Enum):
     create = "create"
     retrieve = "retrieve"
@@ -34,42 +33,41 @@ class ServiceInstanceData(BaseModel):
     service_data: Any
 
 
-# now redundant
 class ServiceModel(BaseModel):
-    operation: ServiceLifecycle
-    args: dict
-    queue_strategy: Optional[QueueStrategy] = None
-    ttl: Optional[int] = None
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "operation": "retrieve",
-                "args": {
-                    "your_payload_goes": "here"
-                },
-                "queue_strategy": "fifo"
-            }
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "operation": "retrieve",
+                    "args": {"your_payload_goes": "here"},
+                    "queue_strategy": "fifo",
+                }
+            ]
         }
+    )
 
-# now redundant
+    operation: ServiceLifecycle
+    args: dict[str, Any]
+    queue_strategy: Optional[QueueStrategy] = None
+
+
 class ServiceModelMethods(BaseModel):
     operation: ServiceLifecycle
     path: Optional[str] = None
-    payload: dict
+    payload: dict[str, Any]
 
-# now redundant
+
 class ServiceModelSupportedMethods(BaseModel):
-    supported_methods: List[ServiceModelMethods] = None
+    supported_methods: Optional[list[ServiceModelMethods]] = None
 
-# now redundant
-class ServiceModelTemplate(BaseModel):
-    __root__: List[ServiceModelSupportedMethods]
+
+class ServiceModelTemplate(RootModel[list[ServiceModelSupportedMethods]]):
+    pass
 
 
 class ServiceInventorySchema(BaseModel):
-    service_meta: dict
+    service_meta: dict[str, Any]
 
 
-class ServiceInventoryResponse(BaseModel):
-    __root__: List[ServiceInventorySchema]
+class ServiceInventoryResponse(RootModel[list[ServiceInventorySchema]]):
+    pass

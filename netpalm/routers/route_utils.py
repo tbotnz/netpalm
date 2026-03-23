@@ -65,7 +65,7 @@ class HttpErrorHandler(SyncAsyncDecoratorFactory):
 
 
 def cache_key_from_model(model: BaseModel) -> str:
-    req_data = model.dict()
+    req_data = model.model_dump()
     return cache_key_from_req_data(req_data)
 
 
@@ -73,7 +73,7 @@ def serialized_for_hash(obj) -> str:
     """Serialize obj while attempting to guarantee consistent ordering"""
 
     if isinstance(obj, BaseModel):
-        return serialized_for_hash(obj.dict())
+        return serialized_for_hash(obj.model_dump())
 
     if isinstance(obj, Enum):
         return serialized_for_hash(obj.value)
@@ -165,7 +165,7 @@ def poison_host_cache(f):
             item for item in chain(args, kwargs.values())
             if isinstance(item, BaseModel)
         ][0]  # only take first model found because any more than that doesn't make sense
-        req_data = model.dict()
+        req_data = model.model_dump()
 
         cache_key = cache_key_from_req_data(req_data)
         ntplm.clear_cache_for_host(cache_key)
@@ -186,7 +186,7 @@ def cacheable_model(f):
             if isinstance(item, BaseModel)
         ][0]  # only take first model found because any more than that doesn't make sense
 
-        req_data = model.dict()
+        req_data = model.model_dump()
         log.debug(f"cacheable_model: req_data {req_data}")
 
         cache_config = req_data.get("cache", {})
@@ -204,7 +204,7 @@ def cacheable_model(f):
 
         if cacheable:
             if ttl := cache_config.get("ttl"):
-                ttl = min(int(ttl), int(config.redis_task_result_ttl))
+                ttl = int(ttl)
                 cache_kwargs = {"timeout": ttl}
             else:
                 cache_kwargs = {}
@@ -246,7 +246,7 @@ def whitelist(f):
     Only works on routes with a properly defined BaseModel that includes `connection_args`"""
 
     def get_hosts_and_ips(model: BaseModel) -> List[str]:
-        connection_args = model.dict()["connection_args"]
+        connection_args = model.model_dump()["connection_args"]
         return [
             value
             for key, value in connection_args.items()

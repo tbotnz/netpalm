@@ -30,7 +30,7 @@ class NetpalmUserService(NetpalmService):
                 "timeout": 5,
             },
             "command": "show run | i hostname",
-            "queue_strategy": "pinned",
+            "queue_strategy": "fifo",
         }
         job_result = self.mgr.get_config_netmiko(netmiko_send_data)
         return_result = self.mgr.retrieve_task_result(job_result)

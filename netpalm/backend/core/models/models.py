@@ -1,12 +1,11 @@
 from enum import Enum
-from typing import Optional, Any, List
+from typing import Any, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class QueueStrategy(str, Enum):
     fifo = "fifo"
-    pinned = "pinned"
 
 
 class LibraryName(str, Enum):
@@ -28,19 +27,19 @@ class GetConfigArgs(BaseModel):
 
 class GenericPrePostCheck(BaseModel):
     match_type: CheckEnum
-    match_str: list
+    match_str: list[str]
     get_config_args: GetConfigArgs
 
 
 class Webhook(BaseModel):
     name: Optional[str] = None
-    args: Optional[dict] = None
+    args: Optional[dict[str, Any]] = None
     j2template: Optional[str] = None
 
 
 class J2Config(BaseModel):
     template: str
-    args: dict
+    args: dict[str, Any]
 
 
 class SetConfigArgs(BaseModel):
@@ -50,141 +49,131 @@ class SetConfigArgs(BaseModel):
     config: Optional[str] = None
     uri: Optional[str] = None
     action: Optional[str] = None
-    render_json: Optional[bool] = False
+    render_json: bool = False
 
 
 class SetConfig(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "library": "napalm",
+                    "connection_args": {
+                        "device_type": "cisco_ios",
+                        "host": "10.0.2.33",
+                        "username": "device_username",
+                        "password": "device_password",
+                    },
+                    "j2config": {
+                        "template": "test",
+                        "args": {"vlans": ["5", "3", "2"]},
+                    },
+                    "queue_strategy": "fifo",
+                    "pre_checks": [
+                        {
+                            "match_type": "include",
+                            "get_config_args": {"command": "show run | i hostname"},
+                            "match_str": ["hostname cat"],
+                        }
+                    ],
+                    "post_checks": [
+                        {
+                            "match_type": "include",
+                            "get_config_args": {"command": "show run | i hostname"},
+                            "match_str": ["hostname dog"],
+                        }
+                    ],
+                }
+            ]
+        }
+    )
+
     library: LibraryName
-    connection_args: dict
+    connection_args: dict[str, Any]
     config: Optional[Any] = None
     j2config: Optional[J2Config] = None
-    args: Optional[SetConfigArgs] = {}
+    args: Optional[SetConfigArgs] = None
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
-    pre_checks: Optional[List[GenericPrePostCheck]] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = None
+    pre_checks: Optional[list[GenericPrePostCheck]] = None
+    post_checks: Optional[list[GenericPrePostCheck]] = None
     enable_mode: bool = False
-    ttl: Optional[int] = None
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "library":
-                "napalm",
-                "connection_args": {
-                    "device_type": "cisco_ios",
-                    "host": "10.0.2.33",
-                    "username": "device_username",
-                    "password": "device_password"
-                },
-                "j2config": {
-                    "template": "test",
-                    "args": {
-                        "vlans": ["5", "3", "2"]
-                    }
-                },
-                "queue_strategy":
-                "fifo",
-                "pre_checks": [{
-                    "match_type": "include",
-                    "get_config_args": {
-                        "command": "show run | i hostname"
-                    },
-                    "match_str": ["hostname cat"]
-                }],
-                "post_checks": [{
-                    "match_type": "include",
-                    "get_config_args": {
-                        "command": "show run | i hostname"
-                    },
-                    "match_str": ["hostname dog"]
-                }]
-            }
-        }
 
 
 class CacheConfig(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [{"enabled": True, "ttl": 300, "poison": False}]
+        }
+    )
+
     enabled: bool = False
     ttl: Optional[int] = None
-    poison: Optional[bool] = False
+    poison: bool = False
 
-    class Config:
-        schema_extra = {
-            'example': {
-                'enabled': True,
-                'ttl': 300,
-                'poison': False
-            }
-        }
 
 class Script(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "script": "hello_world",
+                    "args": {"hello": "world"},
+                    "queue_strategy": "fifo",
+                }
+            ]
+        }
+    )
+
     script: str
-    args: Optional[dict] = None
+    args: Optional[dict[str, Any]] = None
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
-    cache: Optional[CacheConfig] = {}
-    ttl: Optional[int] = None
+    cache: Optional[CacheConfig] = None
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "script": "hello_world",
-                "args": {
-                    "hello": "world"
-                },
-                "queue_strategy": "fifo"
-            }
-        }
 
 class ScriptCustom(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [{"script": "hello_world", "queue_strategy": "fifo"}]
+        }
+    )
+
     script: str
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
-    cache: Optional[CacheConfig] = {}
-    ttl: Optional[int] = None
+    cache: Optional[CacheConfig] = None
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "script": "hello_world",
-                "queue_strategy": "fifo"
-            }
-        }
 
 class GetConfig(BaseModel):
-    library: LibraryName
-    connection_args: dict
-    command: Any
-    args: Optional[dict] = {}
-    webhook: Optional[Webhook] = {}
-    queue_strategy: Optional[QueueStrategy] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = []
-    cache: Optional[CacheConfig] = {}
-    ttl: Optional[int] = None
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "library": "netmiko",
-                "connection_args": {
-                    "device_type": "cisco_ios",
-                    "host": "10.0.2.33",
-                    "username": "device_username",
-                    "password": "device_password"
-                },
-                "command": "show ip int brief",
-                "args": {
-                    "use_textfsm": True,
-                    "render_json": True
-                },
-                "queue_strategy": "pinned",
-                "cache": {
-                    "enabled": True,
-                    "ttl": 300,
-                    "poison": False
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "library": "netmiko",
+                    "connection_args": {
+                        "device_type": "cisco_ios",
+                        "host": "10.0.2.33",
+                        "username": "device_username",
+                        "password": "device_password",
+                    },
+                    "command": "show ip int brief",
+                    "args": {"use_textfsm": True, "render_json": True},
+                    "queue_strategy": "fifo",
+                    "cache": {"enabled": True, "ttl": 300, "poison": False},
                 }
-            }
+            ]
         }
+    )
+
+    library: LibraryName
+    connection_args: dict[str, Any]
+    command: Any
+    args: Optional[dict[str, Any]] = None
+    webhook: Optional[Webhook] = None
+    queue_strategy: Optional[QueueStrategy] = None
+    post_checks: Optional[list[GenericPrePostCheck]] = None
+    cache: Optional[CacheConfig] = None
 
 
 class TFSMPushTemplateModel(BaseModel):
@@ -200,7 +189,7 @@ class TFSMTemplateAdd(BaseModel):
 
 
 class TFSMTemplateRemove(BaseModel):
-    template: str = None
+    template: Optional[str] = None
 
 
 class TFSMTemplateMatch(BaseModel):
@@ -210,27 +199,30 @@ class TFSMTemplateMatch(BaseModel):
 
 class TFSMTemplateMatchResponse(BaseModel):
     """Data returned from TextFSM Library Index lookup"""
-    Template: str  # this is the filename of the template
+
+    Template: str
     Hostname: str
     Platform: str
     Command: str
-    template_text: str  # this is the actual contents of the template file
+    template_text: str
 
 
-class UnivsersalTemplateAdd(BaseModel):
-    """general template ingest0r for handling base64 ingestion and writing"""
+class UniversalTemplateAdd(BaseModel):
+    """General template ingestor for handling base64 ingestion and writing"""
+
     base64_payload: str
     name: str
 
 
-class UnivsersalTemplateRemove(BaseModel):
-    """general template remover """
-    name: str = None
+class UniversalTemplateRemove(BaseModel):
+    """General template remover"""
+
+    name: Optional[str] = None
 
 
 class GeneralError(BaseModel):
-    status: str = None
-    data: dict = None
+    status: Optional[str] = None
+    data: Optional[dict[str, Any]] = None
 
 
 class PinnedStore(BaseModel):
@@ -242,7 +234,7 @@ class PinnedStore(BaseModel):
 
 class ScheduleBase(BaseModel):
     path: str
-    payload: dict
+    payload: dict[str, Any]
 
 
 class ScheduleInterval(BaseModel):

@@ -146,7 +146,7 @@ class RedisProcessWorker(RedisWorker):
                 count=0,
                 limit=self.pinned_process_per_node,
                 pinned_listen_queue=self.queue_name,
-            ).dict()
+            ).model_dump()
             rjson.append(data)
             # log.info(rjson)
             self.base_connection.set(self.redis_pinned_store, json.dumps(rjson))

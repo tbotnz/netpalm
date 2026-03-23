@@ -1,12 +1,15 @@
 from enum import Enum
-from typing import Optional, Any, List
+from typing import Any, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
-from netpalm.backend.core.models.models import GenericPrePostCheck
-from netpalm.backend.core.models.models import J2Config, CacheConfig
-from netpalm.backend.core.models.models import QueueStrategy
-from netpalm.backend.core.models.models import Webhook
+from netpalm.backend.core.models.models import (
+    CacheConfig,
+    GenericPrePostCheck,
+    J2Config,
+    QueueStrategy,
+    Webhook,
+)
 
 
 class NapalmDeviceType(str, Enum):
@@ -37,48 +40,56 @@ class NapalmConnectionArgs(BaseModel):
 
 
 class NapalmGetConfig(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "library": "napalm",
+                    "connection_args": {
+                        "device_type": "cisco_ios",
+                        "host": "10.0.2.23",
+                        "username": "admin",
+                        "password": "admin",
+                    },
+                    "command": "get_facts",
+                    "queue_strategy": "fifo",
+                    "cache": {"enabled": True, "ttl": 300, "poison": False},
+                }
+            ]
+        }
+    )
+
     connection_args: NapalmConnectionArgs
     command: Any
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = None
-    cache: Optional[CacheConfig] = {}
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "library": "napalm",
-                "connection_args": {
-                    "device_type": "cisco_ios", "host": "10.0.2.23", "username": "admin", "password": "admin"
-                },
-                "command": "get_facts",
-                "queue_strategy": "fifo",
-                "cache": {
-                    "enabled": True,
-                    "ttl": 300,
-                    "poison": False
-                }
-            }
-        }
+    post_checks: Optional[list[GenericPrePostCheck]] = None
+    cache: Optional[CacheConfig] = None
 
 
 class NapalmSetConfig(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "library": "napalm",
+                    "connection_args": {
+                        "device_type": "cisco_ios",
+                        "host": "10.0.2.33",
+                        "username": "admin",
+                        "password": "admin",
+                    },
+                    "config": "hostnam cat",
+                    "queue_strategy": "fifo",
+                }
+            ]
+        }
+    )
+
     connection_args: NapalmConnectionArgs
     config: Optional[Any] = None
     j2config: Optional[J2Config] = None
     webhook: Optional[Webhook] = None
     queue_strategy: Optional[QueueStrategy] = None
-    pre_checks: Optional[List[GenericPrePostCheck]] = None
-    post_checks: Optional[List[GenericPrePostCheck]] = None
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "library": "napalm",
-                "connection_args": {
-                    "device_type": "cisco_ios", "host": "10.0.2.33", "username": "admin", "password": "admin"
-                },
-                "config": "hostnam cat",
-                "queue_strategy": "fifo"
-            }
-        }
+    pre_checks: Optional[list[GenericPrePostCheck]] = None
+    post_checks: Optional[list[GenericPrePostCheck]] = None

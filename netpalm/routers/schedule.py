@@ -24,7 +24,7 @@ def get_scheduled_tasks_list():
 @router.post("/schedule/{name}", status_code=201)
 def add_scheduled_task(name: str, schedul: ScheduleInterval):
     try:
-        data = schedul.dict(exclude_none=True)
+        data = schedul.model_dump(exclude_none=True)
         pl = data["schedule_payload"]
         del data["schedule_payload"]
 
@@ -43,7 +43,7 @@ def add_scheduled_task(name: str, schedul: ScheduleInterval):
 @router.patch("/schedule/{id}", status_code=204)
 def modify_scheduled_task(id: str, schedul: ScheduleInterval):
     try:
-        data = schedul.dict(exclude_none=True)
+        data = schedul.model_dump(exclude_none=True)
         pl = data["schedule_payload"]
         del data["schedule_payload"]
         r = sched.modify_netpalm_job(

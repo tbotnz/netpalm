@@ -36,7 +36,7 @@ def list_service_instances():
     if res["data"]["task_result"] is None:
         raise HTTPException(
             status_code=404,
-            detail=ResponseBasic(status="success", data={"task_result": None}).dict(),
+            detail=ResponseBasic(status="success", data={"task_result": None}).model_dump(),
         )
     return res
 
@@ -51,7 +51,7 @@ def get_service_instance(service_id: str):
             status_code=404,
             detail=ResponseBasic(
                 status="success", data={"task_result": f"{service_id} not found"}
-            ).dict(),
+            ).model_dump(),
         )
 
 
@@ -93,7 +93,7 @@ for service_model in r["data"]["task_result"]["templates"]:
                 status_code=404,
                 detail=ResponseBasic(
                     status="success", data={"task_result": f"{service_id} not found"}
-                ).dict(),
+                ).model_dump(),
             )
 
 
@@ -117,7 +117,7 @@ def redeploy_service_instance_state(service_id: str):
             status_code=404,
             detail=ResponseBasic(
                 status="success", data={"task_result": f"{service_id} not found"}
-            ).dict(),
+            ).model_dump(),
         )
 
 
@@ -133,7 +133,7 @@ def validate_service_instance_state(service_id: str):
             status_code=404,
             detail=ResponseBasic(
                 status="success", data={"task_result": f"{service_id} not found"}
-            ).dict(),
+            ).model_dump(),
         )
 
 
@@ -151,5 +151,5 @@ def health_check_service_instance_state(service_id: str):
             status_code=404,
             detail=ResponseBasic(
                 status="success", data={"task_result": f"{service_id} not found"}
-            ).dict(),
+            ).model_dump(),
         )

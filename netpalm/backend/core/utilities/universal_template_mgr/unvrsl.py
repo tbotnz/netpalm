@@ -27,21 +27,21 @@ class unvrsl:
             with open(template_path, "w") as file:
                 file.write(raw_base)
             reload_extensibles_func()
-            resultdata = ResponseBasic(status="success", data={"task_result": {"added": payload["name"]}}).dict()
+            resultdata = ResponseBasic(status="success", data={"task_result": {"added": payload["name"]}}).model_dump()
             return resultdata
         except Exception as e:
-            error = ResponseBasic(status="error", data={"task_result": {"error": str(e)}}).dict()
+            error = ResponseBasic(status="error", data={"task_result": {"error": str(e)}}).model_dump()
             return error
 
     def remove_template(self, payload: Dict[str, str]):
         try:
             template_path = self.routing_table[payload["route_type"]]["path"] + payload["name"] + self.routing_table[payload["route_type"]]["extn"]
             os.remove(template_path)
-            resultdata = ResponseBasic(status="success", data={"task_result": {"removed": payload["name"]}}).dict()
+            resultdata = ResponseBasic(status="success", data={"task_result": {"removed": payload["name"]}}).model_dump()
             reload_extensibles_func()
             return resultdata
         except Exception as e:
-            error = ResponseBasic(status="error", data={"task_result": {"error": str(e)}}).dict()
+            error = ResponseBasic(status="error", data={"task_result": {"error": str(e)}}).model_dump()
             return error
 
     def get_template(self, payload: Dict[str, str]):
@@ -51,8 +51,8 @@ class unvrsl:
             with open(template_path, "r") as file:
                 result = file.read()
             raw_base = base64.b64encode(result.encode('utf-8'))
-            resultdata = ResponseBasic(status="success", data={"task_result": {"base64_payload": raw_base}}).dict()
+            resultdata = ResponseBasic(status="success", data={"task_result": {"base64_payload": raw_base}}).model_dump()
             return resultdata
         except Exception as e:
-            error = ResponseBasic(status="error", data={"task_result": {"error": str(e)}}).dict()
+            error = ResponseBasic(status="error", data={"task_result": {"error": str(e)}}).model_dump()
             return error

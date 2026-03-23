@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Union, Literal
+from typing import Literal, Optional, Union
 
 from pydantic import BaseModel
 
@@ -34,31 +34,33 @@ class TFSMDeleteTemplateModel(BaseModel):
     fsm_template: str
 
 
-class UnivsersalTemplatePushModel(BaseModel):
-    """general template ingest0r for handling base64 ingestion and writing"""
+class UniversalTemplatePushModel(BaseModel):
+    """General template ingestor for handling base64 ingestion and writing"""
+
     route_type: str
     base64_payload: str
     name: str
 
 
-class UnivsersalTemplateRemoveModel(BaseModel):
-    """general template remover """
+class UniversalTemplateRemoveModel(BaseModel):
+    """General template remover"""
+
     route_type: str
-    name: str = None
+    name: Optional[str] = None
 
 
 class InitEntryModel(BaseModel):
-    init: Literal[True]  # only here to stop model from greedily matching literally any input
+    init: Literal[True]
 
 
 extn_update_types = {
     TransactionLogEntryType.tfsm_pull: TFSMPullTemplateModel,
     TransactionLogEntryType.tfsm_delete: TFSMDeleteTemplateModel,
     TransactionLogEntryType.tfsm_push: TFSMPushTemplateModel,
-    TransactionLogEntryType.unvrsl_tmp_push: UnivsersalTemplatePushModel,
-    TransactionLogEntryType.unvrsl_tmp_delete: UnivsersalTemplateRemoveModel,
+    TransactionLogEntryType.unvrsl_tmp_push: UniversalTemplatePushModel,
+    TransactionLogEntryType.unvrsl_tmp_delete: UniversalTemplateRemoveModel,
     TransactionLogEntryType.init: InitEntryModel,
-    TransactionLogEntryType.echo: EchoModel
+    TransactionLogEntryType.echo: EchoModel,
 }
 
 
@@ -66,11 +68,11 @@ class TransactionLogEntryModel(BaseModel):
     seq: int
     type: TransactionLogEntryType
     data: Union[
-                TFSMPullTemplateModel,
-                TFSMDeleteTemplateModel,
-                TFSMPushTemplateModel,
-                EchoModel,
-                InitEntryModel,
-                UnivsersalTemplatePushModel,
-                UnivsersalTemplateRemoveModel
-                ]
+        TFSMPullTemplateModel,
+        TFSMDeleteTemplateModel,
+        TFSMPushTemplateModel,
+        EchoModel,
+        InitEntryModel,
+        UniversalTemplatePushModel,
+        UniversalTemplateRemoveModel,
+    ]

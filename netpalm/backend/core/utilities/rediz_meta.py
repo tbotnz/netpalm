@@ -77,7 +77,7 @@ def render_netpalm_payload(job_result={}):
                                     "task_status": "finished",
                                     "task_result": job_result,
                                     "task_errors": job.meta["errors"]
-                                    }).dict()
+                                    }).model_dump()
         return resultdata
 
     except Exception as e:
