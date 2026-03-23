@@ -1,5 +1,6 @@
 import ipaddress
 from fnmatch import fnmatch
+from typing import Union
 
 
 class WhiteListRule:
@@ -11,21 +12,24 @@ class WhiteListRule:
     """
 
     def __init__(self, definition: str):
+        self.type: str
+        self.ip_network: Union[ipaddress.IPv4Network, ipaddress.IPv6Network, None] = None
+        self.pattern: str = ""
         try:
-            self.definition = ipaddress.ip_interface(definition).network
+            self.ip_network = ipaddress.ip_interface(definition).network
             self.type = "ip"
         except ValueError:
-            self.definition = definition
+            self.pattern = definition
             self.type = "str"
 
     def match(self, host: str) -> bool:
-        if self.type == "ip":
+        if self.type == "ip" and self.ip_network is not None:
             try:
-                return ipaddress.ip_address(host) in self.definition
+                return ipaddress.ip_address(host) in self.ip_network
             except ValueError:
                 return False
 
-        return fnmatch(host, self.definition)
+        return fnmatch(host, self.pattern)
 
 
 class DeviceWhitelist:
@@ -40,7 +44,7 @@ class DeviceWhitelist:
 
         self.rules = [WhiteListRule(rule_definition) for rule_definition in definition]
 
-    def match(self, hostname):
+    def match(self, hostname: str) -> bool:
         if not self.rules:
             return True
 

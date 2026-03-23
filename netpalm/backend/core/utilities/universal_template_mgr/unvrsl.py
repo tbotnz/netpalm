@@ -2,7 +2,7 @@ import base64
 import os
 
 from netpalm.backend.core.confload.confload import config
-from netpalm.backend.core.models.task import ResponseBasic
+from netpalm.backend.core.models.task import ResponseBasic, TaskResponseEnum
 from netpalm.backend.core.utilities.extensibles_reload import reload_extensibles_func
 
 
