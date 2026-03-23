@@ -72,21 +72,19 @@ class NetmikoConnectionArgs(BaseModel):
 class NetmikoGetConfig(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "library": "netmiko",
-                    "connection_args": {
-                        "device_type": "cisco_ios",
-                        "host": "10.0.2.33",
-                        "username": "admin",
-                        "password": "admin",
-                    },
-                    "command": "show ip int brief",
-                    "args": {"use_textfsm": True},
-                    "queue_strategy": "fifo",
-                    "cache": {"enabled": True, "ttl": 300, "poison": False},
-                }
-            ]
+            "example": {
+                "library": "netmiko",
+                "connection_args": {
+                    "device_type": "cisco_ios",
+                    "host": "10.0.2.33",
+                    "username": "admin",
+                    "password": "admin",
+                },
+                "command": "show ip int brief",
+                "args": {"use_textfsm": True},
+                "queue_strategy": "fifo",
+                "cache": {"enabled": True, "ttl": 300, "poison": False},
+            }
         }
     )
 
@@ -103,19 +101,17 @@ class NetmikoGetConfig(BaseModel):
 class NetmikoSetConfig(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "library": "netmiko",
-                    "connection_args": {
-                        "device_type": "cisco_ios",
-                        "host": "10.0.2.33",
-                        "username": "admin",
-                        "password": "admin",
-                    },
-                    "config": ["hostname cat"],
-                    "queue_strategy": "fifo",
-                }
-            ]
+            "example": {
+                "library": "netmiko",
+                "connection_args": {
+                    "device_type": "cisco_ios",
+                    "host": "10.0.2.33",
+                    "username": "admin",
+                    "password": "admin",
+                },
+                "config": ["hostname cat"],
+                "queue_strategy": "fifo",
+            }
         }
     )
 

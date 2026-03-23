@@ -6,10 +6,9 @@ from __future__ import annotations
 import logging
 
 from fastapi import Depends, FastAPI
-from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 from fastapi.staticfiles import StaticFiles
-from starlette.responses import JSONResponse
+from starlette.responses import HTMLResponse, JSONResponse
 
 from netpalm.backend.core.confload.confload import get_settings
 from netpalm.backend.core.security.get_api_key import get_api_key
@@ -42,9 +41,29 @@ async def get_open_api_endpoint():
 
 @app.get("/", tags=["swaggerui"], include_in_schema=False)
 async def get_documentation():
-    return get_swagger_ui_html(
-        openapi_url="/swaggerfile",
-        title="docs",
-        swagger_js_url="/static/js/swagger-ui-bundle.min.js",
-        swagger_css_url="/static/css/swagger-ui.css",
-    )
+    return HTMLResponse("""
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>netpalm</title>
+  <link rel="stylesheet" href="/static/css/swagger-ui.css">
+  <link rel="stylesheet" href="/static/css/dark-theme.css">
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="/static/js/swagger-ui-bundle.min.js"></script>
+  <script>
+    SwaggerUIBundle({
+      url: "/swaggerfile",
+      dom_id: "#swagger-ui",
+      deepLinking: true,
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIBundle.SwaggerUIStandalonePreset
+      ],
+    });
+  </script>
+</body>
+</html>""")

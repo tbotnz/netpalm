@@ -63,36 +63,34 @@ class SetConfigArgs(BaseModel):
 class SetConfig(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "library": "napalm",
-                    "connection_args": {
-                        "device_type": "cisco_ios",
-                        "host": "10.0.2.33",
-                        "username": "device_username",
-                        "password": "device_password",
-                    },
-                    "j2config": {
-                        "template": "test",
-                        "args": {"vlans": ["5", "3", "2"]},
-                    },
-                    "queue_strategy": "fifo",
-                    "pre_checks": [
-                        {
-                            "match_type": "include",
-                            "get_config_args": {"command": "show run | i hostname"},
-                            "match_str": ["hostname cat"],
-                        }
-                    ],
-                    "post_checks": [
-                        {
-                            "match_type": "include",
-                            "get_config_args": {"command": "show run | i hostname"},
-                            "match_str": ["hostname dog"],
-                        }
-                    ],
-                }
-            ]
+            "example": {
+                "library": "napalm",
+                "connection_args": {
+                    "device_type": "cisco_ios",
+                    "host": "10.0.2.33",
+                    "username": "device_username",
+                    "password": "device_password",
+                },
+                "j2config": {
+                    "template": "test",
+                    "args": {"vlans": ["5", "3", "2"]},
+                },
+                "queue_strategy": "fifo",
+                "pre_checks": [
+                    {
+                        "match_type": "include",
+                        "get_config_args": {"command": "show run | i hostname"},
+                        "match_str": ["hostname cat"],
+                    }
+                ],
+                "post_checks": [
+                    {
+                        "match_type": "include",
+                        "get_config_args": {"command": "show run | i hostname"},
+                        "match_str": ["hostname dog"],
+                    }
+                ],
+            }
         }
     )
 
@@ -111,7 +109,7 @@ class SetConfig(BaseModel):
 class CacheConfig(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [{"enabled": True, "ttl": 300, "poison": False}]
+            "example": {"enabled": True, "ttl": 300, "poison": False}
         }
     )
 
@@ -123,13 +121,11 @@ class CacheConfig(BaseModel):
 class Script(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "script": "hello_world",
-                    "args": {"hello": "world"},
-                    "queue_strategy": "fifo",
-                }
-            ]
+            "example": {
+                "script": "hello_world",
+                "args": {"hello": "world"},
+                "queue_strategy": "fifo",
+            }
         }
     )
 
@@ -143,7 +139,7 @@ class Script(BaseModel):
 class ScriptCustom(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [{"script": "hello_world", "queue_strategy": "fifo"}]
+            "example": {"script": "hello_world", "queue_strategy": "fifo"}
         }
     )
 
@@ -156,21 +152,19 @@ class ScriptCustom(BaseModel):
 class GetConfig(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "library": "netmiko",
-                    "connection_args": {
-                        "device_type": "cisco_ios",
-                        "host": "10.0.2.33",
-                        "username": "device_username",
-                        "password": "device_password",
-                    },
-                    "command": "show ip int brief",
-                    "args": {"use_textfsm": True, "render_json": True},
-                    "queue_strategy": "fifo",
-                    "cache": {"enabled": True, "ttl": 300, "poison": False},
-                }
-            ]
+            "example": {
+                "library": "netmiko",
+                "connection_args": {
+                    "device_type": "cisco_ios",
+                    "host": "10.0.2.33",
+                    "username": "device_username",
+                    "password": "device_password",
+                },
+                "command": "show ip int brief",
+                "args": {"use_textfsm": True, "render_json": True},
+                "queue_strategy": "fifo",
+                "cache": {"enabled": True, "ttl": 300, "poison": False},
+            }
         }
     )
 

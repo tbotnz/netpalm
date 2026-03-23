@@ -1,35 +1,6 @@
-body {
-  background-color: #242423 !important;
-	animation: fadeInAnimation ease 4s;
-	animation-iteration-count: 1; 
-	animation-fill-mode: forwards;
-}
-
-@keyframes fadeInAnimation { 
-	0% { 
-		opacity: 0; 
-	} 
-	100% { 
-		opacity: 1; 
-	} 
-} 
-
-.__web-inspector-hide-shortcut__, .__web-inspector-hide-shortcut__ *, .__web-inspector-hidebefore-shortcut__::before, .__web-inspector-hideafter-shortcut__::after {
-  visibility: hidden !important;
-}
-
-div.info {
-  content:url(/static/images/netpalm_white.png);
-  max-width:200px;
-  opacity: 0.7;
-}​
-
 .swagger-ui {
   /*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */
   font-family: sans-serif;
-  color: #ffffff;
-  opacity: 1;
-  background-color: #242423;
 }
 
 .swagger-ui html {

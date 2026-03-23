@@ -42,20 +42,18 @@ class NapalmConnectionArgs(BaseModel):
 class NapalmGetConfig(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "library": "napalm",
-                    "connection_args": {
-                        "device_type": "cisco_ios",
-                        "host": "10.0.2.23",
-                        "username": "admin",
-                        "password": "admin",
-                    },
-                    "command": "get_facts",
-                    "queue_strategy": "fifo",
-                    "cache": {"enabled": True, "ttl": 300, "poison": False},
-                }
-            ]
+            "example": {
+                "library": "napalm",
+                "connection_args": {
+                    "device_type": "cisco_ios",
+                    "host": "10.0.2.23",
+                    "username": "admin",
+                    "password": "admin",
+                },
+                "command": "get_facts",
+                "queue_strategy": "fifo",
+                "cache": {"enabled": True, "ttl": 300, "poison": False},
+            }
         }
     )
 
@@ -70,19 +68,17 @@ class NapalmGetConfig(BaseModel):
 class NapalmSetConfig(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "library": "napalm",
-                    "connection_args": {
-                        "device_type": "cisco_ios",
-                        "host": "10.0.2.33",
-                        "username": "admin",
-                        "password": "admin",
-                    },
-                    "config": "hostnam cat",
-                    "queue_strategy": "fifo",
-                }
-            ]
+            "example": {
+                "library": "napalm",
+                "connection_args": {
+                    "device_type": "cisco_ios",
+                    "host": "10.0.2.33",
+                    "username": "admin",
+                    "password": "admin",
+                },
+                "config": "hostnam cat",
+                "queue_strategy": "fifo",
+            }
         }
     )
 

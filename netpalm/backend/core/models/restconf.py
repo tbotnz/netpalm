@@ -33,36 +33,34 @@ class RestconfPayload(BaseModel):
 class Restconf(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "library": "restconf",
-                    "connection_args": {
-                        "host": "ios-xe-mgmt-latest.cisco.com",
-                        "port": 9443,
-                        "username": "developer",
-                        "password": "C1sco12345",
-                        "verify": False,
-                        "timeout": 10,
-                        "transport": "https",
-                        "headers": {
-                            "Content-Type": "application/yang-data+json",
-                            "Accept": "application/yang-data+json",
-                        },
+            "example": {
+                "library": "restconf",
+                "connection_args": {
+                    "host": "ios-xe-mgmt-latest.cisco.com",
+                    "port": 9443,
+                    "username": "developer",
+                    "password": "C1sco12345",
+                    "verify": False,
+                    "timeout": 10,
+                    "transport": "https",
+                    "headers": {
+                        "Content-Type": "application/yang-data+json",
+                        "Accept": "application/yang-data+json",
                     },
-                    "args": {
-                        "uri": "/restconf/data/Cisco-IOS-XE-native:native/interface/",
-                        "action": "post",
-                        "payload": {
-                            "Cisco-IOS-XE-native:BDI": {
-                                "name": "4001",
-                                "description": "netpalm",
-                            }
-                        },
+                },
+                "args": {
+                    "uri": "/restconf/data/Cisco-IOS-XE-native:native/interface/",
+                    "action": "post",
+                    "payload": {
+                        "Cisco-IOS-XE-native:BDI": {
+                            "name": "4001",
+                            "description": "netpalm",
+                        }
                     },
-                    "queue_strategy": "fifo",
-                    "cache": {"enabled": True, "ttl": 300, "poison": False},
-                }
-            ]
+                },
+                "queue_strategy": "fifo",
+                "cache": {"enabled": True, "ttl": 300, "poison": False},
+            }
         }
     )
 

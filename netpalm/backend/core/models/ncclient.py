@@ -71,24 +71,22 @@ class NcclientGetArgs(BaseModel):
 class NcclientSetConfig(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "library": "ncclient",
-                    "connection_args": {
-                        "host": "10.0.2.39",
-                        "username": "admin",
-                        "password": "admin",
-                        "port": 830,
-                        "hostkey_verify": False,
-                    },
-                    "args": {
-                        "target": "running",
-                        "config": "<nc:config xmlns:nc='urn:ietf:params:xml:ns:netconf:base:1.0'/>",
-                        "render_json": True,
-                    },
-                    "queue_strategy": "fifo",
-                }
-            ]
+            "example": {
+                "library": "ncclient",
+                "connection_args": {
+                    "host": "10.0.2.39",
+                    "username": "admin",
+                    "password": "admin",
+                    "port": 830,
+                    "hostkey_verify": False,
+                },
+                "args": {
+                    "target": "running",
+                    "config": "<nc:config xmlns:nc='urn:ietf:params:xml:ns:netconf:base:1.0'/>",
+                    "render_json": True,
+                },
+                "queue_strategy": "fifo",
+            }
         }
     )
 
@@ -102,26 +100,24 @@ class NcclientSetConfig(BaseModel):
 class NcclientGetConfig(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "library": "ncclient",
-                    "connection_args": {
-                        "host": "10.0.2.39",
-                        "username": "admin",
-                        "password": "admin",
-                        "port": 830,
-                        "hostkey_verify": False,
-                    },
-                    "args": {
-                        "source": "running",
-                        "filter": "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
-                        "render_json": True,
-                        "capabilities": True,
-                    },
-                    "queue_strategy": "fifo",
-                    "cache": {"enabled": True, "ttl": 300, "poison": False},
-                }
-            ]
+            "example": {
+                "library": "ncclient",
+                "connection_args": {
+                    "host": "10.0.2.39",
+                    "username": "admin",
+                    "password": "admin",
+                    "port": 830,
+                    "hostkey_verify": False,
+                },
+                "args": {
+                    "source": "running",
+                    "filter": "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
+                    "render_json": True,
+                    "capabilities": True,
+                },
+                "queue_strategy": "fifo",
+                "cache": {"enabled": True, "ttl": 300, "poison": False},
+            }
         }
     )
 
@@ -135,24 +131,22 @@ class NcclientGetConfig(BaseModel):
 class NcclientGet(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "library": "ncclient",
-                    "connection_args": {
-                        "host": "10.0.2.39",
-                        "username": "admin",
-                        "password": "admin",
-                        "port": 830,
-                        "hostkey_verify": False,
-                    },
-                    "args": {
-                        "filter": "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
-                        "render_json": True,
-                    },
-                    "queue_strategy": "fifo",
-                    "cache": {"enabled": True, "ttl": 300, "poison": False},
-                }
-            ]
+            "example": {
+                "library": "ncclient",
+                "connection_args": {
+                    "host": "10.0.2.39",
+                    "username": "admin",
+                    "password": "admin",
+                    "port": 830,
+                    "hostkey_verify": False,
+                },
+                "args": {
+                    "filter": "<filter type='subtree'><System xmlns='http://cisco.com/ns/yang/cisco-nx-os-device'></System></filter>",
+                    "render_json": True,
+                },
+                "queue_strategy": "fifo",
+                "cache": {"enabled": True, "ttl": 300, "poison": False},
+            }
         }
     )
 
