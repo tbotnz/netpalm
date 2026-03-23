@@ -85,14 +85,8 @@ class NetpalmExecutor:
         event_topics = self._event_registry.get_topics()
         all_topics = list(set(job_topics + event_topics))
 
-        # Discover existing pinned topics from Kafka metadata
-        await self._consumer.start()
-        cluster_topics = self._consumer.topics()
-        pinned_prefix = self._settings.kafka_pinned_topic_prefix + "."
-        pinned_topics = [t for t in cluster_topics if t.startswith(pinned_prefix)]
-        all_topics = list(set(all_topics + pinned_topics))
-
         self._consumer.subscribe(all_topics)
+        await self._consumer.start()
         await self._producer.start()
         log.info(f"NetpalmExecutor: subscribed to {all_topics}")
 
