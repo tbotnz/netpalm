@@ -49,6 +49,8 @@ class HttpErrorHandler(SyncAsyncDecoratorFactory):
             yield
         except asyncio.CancelledError:
             raise
+        except HTTPException:
+            raise
         except Exception as e:
             import traceback
 

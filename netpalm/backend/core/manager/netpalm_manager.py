@@ -15,11 +15,10 @@ import uuid
 from typing import Any
 
 from fastapi.encoders import jsonable_encoder
+from pydantic import BaseModel
 
 from netpalm.backend.core.cache.store import CacheStore
 from netpalm.backend.core.confload.confload import NetpalmSettings, get_settings
-from pydantic import BaseModel
-
 from netpalm.backend.core.models.models import (
     QueueStrategy,
 )

@@ -33,9 +33,7 @@ class unvrsl:
             ).model_dump()
             return resultdata
         except Exception as e:
-            error = ResponseBasic(
-                status=TaskResponseEnum.error, data={"task_result": {"error": str(e)}}
-            ).model_dump()
+            error = ResponseBasic(status=TaskResponseEnum.error, data={"task_result": {"error": str(e)}}).model_dump()
             return error
 
     def remove_template(self, payload: dict[str, str]):
@@ -52,9 +50,7 @@ class unvrsl:
             reload_extensibles_func()
             return resultdata
         except Exception as e:
-            error = ResponseBasic(
-                status=TaskResponseEnum.error, data={"task_result": {"error": str(e)}}
-            ).model_dump()
+            error = ResponseBasic(status=TaskResponseEnum.error, data={"task_result": {"error": str(e)}}).model_dump()
             return error
 
     def get_template(self, payload: dict[str, str]):
@@ -73,7 +69,5 @@ class unvrsl:
             ).model_dump()
             return resultdata
         except Exception as e:
-            error = ResponseBasic(
-                status=TaskResponseEnum.error, data={"task_result": {"error": str(e)}}
-            ).model_dump()
+            error = ResponseBasic(status=TaskResponseEnum.error, data={"task_result": {"error": str(e)}}).model_dump()
             return error

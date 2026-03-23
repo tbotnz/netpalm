@@ -1,6 +1,5 @@
 import ipaddress
 from fnmatch import fnmatch
-from typing import Union
 
 
 class WhiteListRule:
@@ -13,7 +12,7 @@ class WhiteListRule:
 
     def __init__(self, definition: str):
         self.type: str
-        self.ip_network: Union[ipaddress.IPv4Network, ipaddress.IPv6Network, None] = None
+        self.ip_network: ipaddress.IPv4Network | ipaddress.IPv6Network | None = None
         self.pattern: str = ""
         try:
             self.ip_network = ipaddress.ip_interface(definition).network
