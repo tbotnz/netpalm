@@ -133,7 +133,9 @@ class TestScriptRoutes:
     @patch("netpalm.routers.template.unvrsl")
     def test_get_script(self, mock_unvrsl, client):
         mock_instance = MagicMock()
-        mock_instance.get_template.return_value = {"status": "success", "data": {"task_result": {"base64_payload": "dGVzdA=="}}}
+        mock_instance.get_template.return_value = {
+            "status": "success", "data": {"task_result": {"base64_payload": "dGVzdA=="}}
+        }
         mock_unvrsl.return_value = mock_instance
 
         resp = client.get("/script/myscript")
@@ -184,7 +186,9 @@ class TestServiceTemplateRoutes:
     @patch("netpalm.routers.template.unvrsl")
     def test_get_service_file(self, mock_unvrsl, client):
         mock_instance = MagicMock()
-        mock_instance.get_template.return_value = {"status": "success", "data": {"task_result": {"base64_payload": "dGVzdA=="}}}
+        mock_instance.get_template.return_value = {
+            "status": "success", "data": {"task_result": {"base64_payload": "dGVzdA=="}}
+        }
         mock_unvrsl.return_value = mock_instance
 
         resp = client.get("/service/svc")
@@ -215,7 +219,9 @@ class TestTTPRoutes:
     @patch("netpalm.routers.template.unvrsl")
     def test_get_ttp_template(self, mock_unvrsl, client):
         mock_instance = MagicMock()
-        mock_instance.get_template.return_value = {"status": "success", "data": {"task_result": {"base64_payload": "dGVzdA=="}}}
+        mock_instance.get_template.return_value = {
+            "status": "success", "data": {"task_result": {"base64_payload": "dGVzdA=="}}
+        }
         mock_unvrsl.return_value = mock_instance
 
         resp = client.get("/ttptemplate/my_ttp")
