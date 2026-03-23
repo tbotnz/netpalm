@@ -80,4 +80,4 @@ class ServiceOperation(BaseOperation):
         svc = service_lookup["service_class"](service_lookup["service_model"], service_id)
 
         method = getattr(svc, self._action)
-        return method(service_lookup["service_model"](**user_data))
+        return method(service_lookup["service_model"](**user_data))  # type: ignore[no-any-return]

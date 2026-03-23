@@ -88,7 +88,7 @@ class _ClearableCache(RedisCache):
 
     def keys(self, key_pattern: str = "") -> list[bytes]:
         prefix = f"{self.key_prefix}{key_pattern}*"
-        return self._write_client.keys(prefix)
+        return self._write_client.keys(prefix)  # type: ignore[no-any-return]
 
     def clear_keys(self, key_pattern: str) -> bool:
         if not key_pattern:
