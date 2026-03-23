@@ -102,6 +102,4 @@ class EventListenerRegistry:
                 if event is not None:
                     await listener.on_event(event, self._manager)
             except Exception as exc:
-                log.error(
-                    f"EventListenerRegistry.dispatch: error in {type(listener).__name__} " f"on topic {topic}: {exc}"
-                )
+                log.error(f"EventListenerRegistry.dispatch: error in {type(listener).__name__} on topic {topic}: {exc}")

@@ -7,9 +7,7 @@ ACTUAL_ENV_PATH = Path(ENV_FILE).absolute()
 if not ACTUAL_ENV_PATH.exists():
     ACTUAL_ENV_PATH = ACTUAL_ENV_PATH.parent.parent / ENV_FILE  # try ../config/.env
     if not ACTUAL_ENV_PATH.exists():
-        raise FileNotFoundError(
-            f"Can't run confload tests without finding .env, " f"tried looking in {ACTUAL_ENV_PATH}"
-        )
+        raise FileNotFoundError(f"Can't run confload tests without finding .env, tried looking in {ACTUAL_ENV_PATH}")
 
 
 os.environ["NETPALM_ENV_FILE"] = str(ACTUAL_ENV_PATH)

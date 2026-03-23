@@ -18,7 +18,7 @@ class TestServiceInstanceState:
 
     def test_string_enum(self):
         assert ServiceInstanceState.deploying == "deploying"
-        assert str(ServiceInstanceState.deployed) == "deployed"
+        assert ServiceInstanceState.deployed.value == "deployed"
 
 
 class TestValidTransitions:

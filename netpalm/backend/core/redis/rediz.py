@@ -14,6 +14,5 @@ This file is kept as a tombstone to aid migration. It will be removed in a futur
 """
 
 raise ImportError(
-    "netpalm.backend.core.redis.rediz is no longer available. "
-    "See the module docstring for the replacement components."
+    "netpalm.backend.core.redis.rediz is no longer available. See the module docstring for the replacement components."
 )
