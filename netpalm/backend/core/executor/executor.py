@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import json
 import logging
-import re
 from collections.abc import Callable
 from datetime import UTC, datetime
 from typing import Any
@@ -86,16 +85,16 @@ class NetpalmExecutor:
         event_topics = self._event_registry.get_topics()
         all_topics = list(set(job_topics + event_topics))
 
-        # Build a regex that matches all explicit topics plus any pinned topics
-        pinned_prefix = re.escape(self._settings.kafka_pinned_topic_prefix)
-        escaped = [re.escape(t) for t in all_topics]
-        escaped.append(rf"{pinned_prefix}\..+")
-        pattern = "^(" + "|".join(escaped) + ")$"
-
-        self._consumer.subscribe(pattern=pattern)
+        # Discover existing pinned topics from Kafka metadata
         await self._consumer.start()
+        cluster_topics = self._consumer.topics()
+        pinned_prefix = self._settings.kafka_pinned_topic_prefix + "."
+        pinned_topics = [t for t in cluster_topics if t.startswith(pinned_prefix)]
+        all_topics = list(set(all_topics + pinned_topics))
+
+        self._consumer.subscribe(all_topics)
         await self._producer.start()
-        log.info(f"NetpalmExecutor: subscribed with pattern={pattern}")
+        log.info(f"NetpalmExecutor: subscribed to {all_topics}")
 
         try:
             async for msg in self._consumer:
