@@ -6,8 +6,11 @@ DEFAULTS_FILENAME = "/code/config/defaults.json"
 CONFIG_FILENAME = "/code/config/config.json"
 
 
-def load_config_files(defaults_filename: str = DEFAULTS_FILENAME, config_filename: str = CONFIG_FILENAME) -> dict:
-    data = {}
+def load_config_files(
+    defaults_filename: str = DEFAULTS_FILENAME,
+    config_filename: str = CONFIG_FILENAME,
+) -> dict:
+    data: dict = {}
 
     for fname in (defaults_filename, config_filename):
         try:

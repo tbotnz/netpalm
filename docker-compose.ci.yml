@@ -1,64 +1,76 @@
-version: "3.7"
-
 services:
 
   netpalm-controller:
     build:
       context: .
-      dockerfile: ./dockerfiles/netpalm_controller_dockerfile
+      dockerfile: Dockerfile
     environment:
-      - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+      - NET_TEXTFSM=/usr/local/lib/python3.12/site-packages/ntc_templates/templates/
       - NETPALM_CONFIG=/code/config/config.json
       - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
     ports:
       - "9000:9000"
     networks:
-      - "netpalm-network"
+      - netpalm-network
     depends_on:
-      - redis
-      - cisgo
-
-  worker-pinned:
-    image: netpalm_netpalm-controller
-    command: python3 worker.py pinned
-    environment:
-      - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
-      - NETPALM_CONFIG=/code/config/config.json
-      - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
-    depends_on:
-      - redis
-    networks:
-      - "netpalm-network"
-#    deploy:
-#      replicas: 2
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      cisgo:
+        condition: service_started
 
   worker-fifo:
-    image: netpalm_netpalm-controller
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: python3 worker.py fifo
     environment:
-      - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+      - NET_TEXTFSM=/usr/local/lib/python3.12/site-packages/ntc_templates/templates/
       - NETPALM_CONFIG=/code/config/config.json
       - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
     depends_on:
-      - redis
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_started
     networks:
-      - "netpalm-network"
+      - netpalm-network
+
+  kafka:
+    image: apache/kafka:3.9.0
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG_DIRS: /var/kafka-logs
+      CLUSTER_ID: netpalm-kafka-cluster-001
+    networks:
+      - netpalm-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   redis:
-    build:
-      context: .
-      dockerfile: ./dockerfiles/netpalm_redis_dockerfile
+    image: redis:7-alpine
     networks:
-      - "netpalm-network"
+      - netpalm-network
 
   cisgo:
     image: apcela/cisshgo:v0.1.1
     ports:
-        - "10005:10005"  # one port just for convenience in case you need to ssh from outside for some reason
+      - "10005:10005"
     networks:
-      - "netpalm-network"
+      - netpalm-network
 
 networks:
-
   netpalm-network:
-    name: "netpalm-network"
+    name: netpalm-network

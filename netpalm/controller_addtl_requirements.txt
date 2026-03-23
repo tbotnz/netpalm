@@ -1,9 +1,0 @@
-fastapi
-uvicorn
-uvloop
-httptools
-gunicorn
-pytest
-pytest-timeout
-pytest-mock
-aiofiles
