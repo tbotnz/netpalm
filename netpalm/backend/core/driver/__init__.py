@@ -1,3 +1,3 @@
-from netpalm.backend.core.driver.driver_auto_loader import driver_auto_loader
+from netpalm.backend.core.driver.driver_auto_loader import DriverRegistry
 
-driver_map = driver_auto_loader()
+__all__ = ["DriverRegistry"]

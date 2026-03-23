@@ -78,7 +78,7 @@ class NetpalmManager:
         task = await self._broker.enqueue_task(
             method="getconfig",
             kwargs=req_data,
-            queue_strategy=str(strategy),
+            queue_strategy=strategy.value,
             pinned_host=pinned_host,
         )
         return _task_to_response(task)
@@ -97,7 +97,7 @@ class NetpalmManager:
         task = await self._broker.enqueue_task(
             method="setconfig",
             kwargs=req_data,
-            queue_strategy=str(strategy),
+            queue_strategy=strategy.value,
             pinned_host=pinned_host,
         )
         return _task_to_response(task)
@@ -110,7 +110,7 @@ class NetpalmManager:
         task = await self._broker.enqueue_task(
             method="script",
             kwargs=req_data,
-            queue_strategy=str(strategy),
+            queue_strategy=strategy.value,
             pinned_host=pinned_host,
         )
         return _task_to_response(task)

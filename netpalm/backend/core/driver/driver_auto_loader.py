@@ -82,12 +82,3 @@ class DriverRegistry:
     @property
     def available(self) -> list[str]:
         return list(self._map.keys())
-
-
-# ── backward-compat shim ──────────────────────────────────────────────────────
-
-def driver_auto_loader() -> dict[str, type[NetpalmDriver]]:
-    """Legacy function — returns the driver map dict. Use DriverRegistry instead."""
-    registry = DriverRegistry()
-    registry.load()
-    return registry._map
