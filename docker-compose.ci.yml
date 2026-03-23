@@ -75,9 +75,10 @@ services:
       - netpalm-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U netpalm"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 10s
 
   kafka:
     image: apache/kafka:3.7.0
