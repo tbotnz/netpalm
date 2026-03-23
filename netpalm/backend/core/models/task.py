@@ -63,17 +63,15 @@ class TaskResult(BaseModel):
 class Response(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "status": "success",
-                    "data": {
-                        "task_id": "b380cf2b-ba78-4aab-b157-9b87ebbe6bb3",
-                        "task_status": "pending",
-                        "task_result": None,
-                        "task_errors": [],
-                    },
-                }
-            ]
+            "example": {
+                "status": "success",
+                "data": {
+                    "task_id": "b380cf2b-ba78-4aab-b157-9b87ebbe6bb3",
+                    "task_status": "pending",
+                    "task_result": None,
+                    "task_errors": [],
+                },
+            }
         }
     )
 

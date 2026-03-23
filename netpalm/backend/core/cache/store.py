@@ -10,7 +10,6 @@ import logging
 from typing import Any
 
 from cachelib import RedisCache
-from redis import Redis
 
 from netpalm.backend.core.confload.confload import NetpalmSettings
 
@@ -56,11 +55,10 @@ class CacheStore:
                     ssl_certfile=settings.redis_tls_cert_file,
                     ssl_ca_certs=settings.redis_tls_ca_cert_file,
                 )
-            client = Redis(**redis_kwargs)
             self._cache: Any = _ClearableCache(
-                client,
                 default_timeout=self._default_ttl,
                 key_prefix=key_prefix,
+                **redis_kwargs,
             )
             log.info("CacheStore: Redis cache enabled")
         else:
@@ -89,12 +87,12 @@ class _ClearableCache(RedisCache):
 
     def keys(self, key_pattern: str = "") -> list[bytes]:
         prefix = f"{self.key_prefix}{key_pattern}*"
-        return self._client.keys(prefix)
+        return self._write_client.keys(prefix)
 
     def clear_keys(self, key_pattern: str) -> bool:
         if not key_pattern:
             raise ValueError("key_pattern must not be empty")
         keys = self.keys(key_pattern)
         if keys:
-            return bool(self._client.delete(*keys))
+            return bool(self._write_client.delete(*keys))
         return False

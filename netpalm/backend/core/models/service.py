@@ -45,13 +45,11 @@ class ServiceInstanceData(BaseModel):
 class ServiceModel(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "operation": "retrieve",
-                    "args": {"your_payload_goes": "here"},
-                    "queue_strategy": "fifo",
-                }
-            ]
+            "example": {
+                "operation": "retrieve",
+                "args": {"your_payload_goes": "here"},
+                "queue_strategy": "fifo",
+            }
         }
     )
 

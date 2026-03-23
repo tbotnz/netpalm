@@ -26,23 +26,21 @@ class PureSNMPArgs(BaseModel):
 class PureSNMPGetConfig(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "examples": [
-                {
-                    "library": "puresnmp",
-                    "connection_args": {
-                        "host": "10.0.2.33",
-                        "community": "test",
-                        "port": 161,
-                        "timeout": 2,
-                    },
-                    "command": [
-                        ".1.3.6.1.4.1.9.2.1.58.0",
-                        "1.3.6.1.2.1.1.2.0",
-                        "1.3.6.1.2.1.1.3.0",
-                    ],
-                    "queue_strategy": "fifo",
-                }
-            ]
+            "example": {
+                "library": "puresnmp",
+                "connection_args": {
+                    "host": "10.0.2.33",
+                    "community": "test",
+                    "port": 161,
+                    "timeout": 2,
+                },
+                "command": [
+                    ".1.3.6.1.4.1.9.2.1.58.0",
+                    "1.3.6.1.2.1.1.2.0",
+                    "1.3.6.1.2.1.1.3.0",
+                ],
+                "queue_strategy": "fifo",
+            }
         }
     )
 
