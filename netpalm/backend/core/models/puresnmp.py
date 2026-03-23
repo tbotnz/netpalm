@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict
@@ -13,7 +13,7 @@ class PureSNMPConnectionArgs(BaseModel):
     timeout: int | None = None
 
 
-class SNMPtypes(str, Enum):
+class SNMPtypes(StrEnum):
     table = "table"
     get = "get"
     walk = "walk"

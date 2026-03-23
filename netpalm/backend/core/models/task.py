@@ -5,18 +5,18 @@ Legacy Response/ServiceResponse shapes kept for backward compat with existing ro
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
 
-class TaskResponseEnum(str, Enum):
+class TaskResponseEnum(StrEnum):
     success = "success"
     error = "error"
 
 
-class TaskStatusEnum(str, Enum):
+class TaskStatusEnum(StrEnum):
     pending = "pending"
     queued = "queued"
     started = "started"

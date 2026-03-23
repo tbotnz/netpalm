@@ -6,18 +6,18 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
 
-class QueueStrategy(str, Enum):
+class QueueStrategy(StrEnum):
     fifo = "fifo"
     pinned = "pinned"
 
 
-class LibraryName(str, Enum):
+class LibraryName(StrEnum):
     napalm = "napalm"
     ncclient = "ncclient"
     restconf = "restconf"
@@ -25,7 +25,7 @@ class LibraryName(str, Enum):
     puresnmp = "puresnmp"
 
 
-class CheckEnum(str, Enum):
+class CheckEnum(StrEnum):
     include = "include"
     exclude = "exclude"
 

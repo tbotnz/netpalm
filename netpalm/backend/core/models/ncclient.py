@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict
 
@@ -30,7 +30,7 @@ class NcclientGetRpcArgs(BaseModel):
     capabilities: bool = False
 
 
-class NcclientDeviceDrivers(str, Enum):
+class NcclientDeviceDrivers(StrEnum):
     default = "default"
     hpcomware = "hpcomware"
     h3c = "h3c"

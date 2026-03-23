@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict
@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict
 from netpalm.backend.core.models.models import CacheConfig, QueueStrategy, Webhook
 
 
-class SupportedOptions(str, Enum):
+class SupportedOptions(StrEnum):
     get = "get"
     post = "post"
     patch = "patch"

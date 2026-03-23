@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict
@@ -12,7 +12,7 @@ from netpalm.backend.core.models.models import (
 )
 
 
-class NapalmDeviceType(str, Enum):
+class NapalmDeviceType(StrEnum):
     cisco_ios = "cisco_ios"
     cisco_xr = "cisco_xr"
     nxos = "nxos"

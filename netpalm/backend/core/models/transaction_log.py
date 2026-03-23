@@ -1,10 +1,10 @@
-from enum import Enum
+from enum import StrEnum
 from typing import Literal
 
 from pydantic import BaseModel
 
 
-class TransactionLogEntryType(str, Enum):
+class TransactionLogEntryType(StrEnum):
     tfsm_pull = "TFSM_PULL"
     tfsm_delete = "TFSM_DELETE"
     tfsm_push = "TFSM_PUSH"

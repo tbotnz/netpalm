@@ -7,10 +7,10 @@ Raises InvalidStateTransitionError for any disallowed transition.
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 
-class ServiceInstanceState(str, Enum):
+class ServiceInstanceState(StrEnum):
     deploying = "deploying"
     deployed = "deployed"
     updating = "updating"

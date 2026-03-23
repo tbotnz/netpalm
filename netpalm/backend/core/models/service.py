@@ -5,7 +5,7 @@ ServiceInstanceState now includes all states from the new state machine.
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, RootModel
@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict, RootModel
 from netpalm.backend.core.models.models import QueueStrategy
 
 
-class ServiceLifecycle(str, Enum):
+class ServiceLifecycle(StrEnum):
     create = "create"
     retrieve = "retrieve"
     delete = "delete"
@@ -21,7 +21,7 @@ class ServiceLifecycle(str, Enum):
     script = "script"
 
 
-class ServiceInstanceState(str, Enum):
+class ServiceInstanceState(StrEnum):
     deploying = "deploying"
     deployed = "deployed"
     updating = "updating"
