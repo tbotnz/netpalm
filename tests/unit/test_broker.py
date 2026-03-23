@@ -44,7 +44,6 @@ class TestQueueBroker:
     def broker(self, mock_db, mock_settings):
         return QueueBroker(db=mock_db, settings=mock_settings)
 
-    @pytest.mark.asyncio
     async def test_enqueue_task_generates_task_id(self, broker, mock_db):
         resp = await broker.enqueue_task(method="getconfig", kwargs={"host": "10.0.0.1"})
         assert resp.status == "pending"
@@ -52,13 +51,11 @@ class TestQueueBroker:
         mock_db.add.assert_called_once()
         mock_db.commit.assert_awaited_once()
 
-    @pytest.mark.asyncio
     async def test_enqueue_task_uses_provided_task_id(self, broker, mock_db):
         tid = uuid.uuid4()
         resp = await broker.enqueue_task(method="setconfig", kwargs={"payload": "test"}, task_id=tid)
         assert resp.task_id == tid
 
-    @pytest.mark.asyncio
     async def test_enqueue_task_pinned(self, broker, mock_db):
         resp = await broker.enqueue_task(
             method="getconfig",
@@ -71,7 +68,6 @@ class TestQueueBroker:
         assert job_record.queue_strategy == "pinned"
         assert job_record.pinned_host == "switch1"
 
-    @pytest.mark.asyncio
     async def test_fetch_task_success(self, broker, mock_db):
         tid = uuid.uuid4()
         mock_job = MagicMock()
@@ -89,7 +85,6 @@ class TestQueueBroker:
         assert resp.status == "finished"
         assert resp.result == {"output": "ok"}
 
-    @pytest.mark.asyncio
     async def test_fetch_task_not_found(self, broker, mock_db):
         mock_result = MagicMock()
         mock_result.scalar_one_or_none.return_value = None
@@ -98,7 +93,6 @@ class TestQueueBroker:
         with pytest.raises(TaskNotFoundError):
             await broker.fetch_task(str(uuid.uuid4()))
 
-    @pytest.mark.asyncio
     async def test_fetch_task_accepts_uuid(self, broker, mock_db):
         tid = uuid.uuid4()
         mock_job = MagicMock()

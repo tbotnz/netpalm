@@ -105,7 +105,6 @@ class TestEventListenerRegistry:
         assert "topic.a" in registry.get_topics()
         assert "topic.b" in registry.get_topics()
 
-    @pytest.mark.asyncio
     async def test_dispatch_calls_listener(self, registry):
         registry._validate_and_register(ValidListener)
 
@@ -117,12 +116,10 @@ class TestEventListenerRegistry:
 
         listener_instance.on_event.assert_awaited_once()
 
-    @pytest.mark.asyncio
     async def test_dispatch_unknown_topic(self, registry):
         # Should not raise, just no-op
         await registry.dispatch("unknown.topic", b"data")
 
-    @pytest.mark.asyncio
     async def test_dispatch_parse_returns_none_skips_on_event(self, registry):
         class DiscardingListener(EventListener):
             topics = ["topic.discard"]
@@ -140,7 +137,6 @@ class TestEventListenerRegistry:
         await registry.dispatch("topic.discard", b"anything")
         listener_instance.on_event.assert_not_awaited()
 
-    @pytest.mark.asyncio
     async def test_dispatch_exception_in_listener_logged_not_raised(self, registry):
         class FailingListener(EventListener):
             topics = ["topic.fail"]

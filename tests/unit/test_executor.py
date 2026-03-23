@@ -101,7 +101,6 @@ class TestNetpalmExecutor:
             "event_registry": event_registry,
         }
 
-    @pytest.mark.asyncio
     async def test_handle_task_success(self, executor_deps):
         deps = executor_deps
         executor = deps["executor"]
@@ -130,7 +129,6 @@ class TestNetpalmExecutor:
         mock_op.execute.assert_called_once()
         deps["producer"].send.assert_awaited_once()
 
-    @pytest.mark.asyncio
     async def test_handle_task_job_not_found(self, executor_deps):
         deps = executor_deps
         executor = deps["executor"]
@@ -148,7 +146,6 @@ class TestNetpalmExecutor:
         deps["operation_registry"].get.assert_not_called()
         deps["producer"].send.assert_not_awaited()
 
-    @pytest.mark.asyncio
     async def test_handle_task_operation_failure(self, executor_deps):
         deps = executor_deps
         executor = deps["executor"]

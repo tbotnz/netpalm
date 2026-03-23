@@ -76,6 +76,7 @@ markers = [
     "misc_worker_router: tests for worker routes",
     "whitelist: tests for device whitelist",
 ]
+asyncio_mode = "auto"
 filterwarnings = ["ignore::DeprecationWarning"]
 norecursedirs = [".git", "static"]
 testpaths = ["tests"]

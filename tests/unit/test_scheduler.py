@@ -98,7 +98,6 @@ class TestScheduler:
             "producer": producer,
         }
 
-    @pytest.mark.asyncio
     async def test_relay_pending_jobs_empty(self, scheduler_deps):
         deps = scheduler_deps
         mock_result = MagicMock()
@@ -109,7 +108,6 @@ class TestScheduler:
         assert count == 0
         deps["producer"].send.assert_not_awaited()
 
-    @pytest.mark.asyncio
     async def test_relay_pending_jobs_publishes(self, scheduler_deps):
         deps = scheduler_deps
 
@@ -131,7 +129,6 @@ class TestScheduler:
         deps["producer"].send.assert_awaited_once()
         deps["db_session"].commit.assert_awaited()
 
-    @pytest.mark.asyncio
     async def test_relay_pending_jobs_kafka_error(self, scheduler_deps):
         from aiokafka.errors import KafkaError
 
@@ -155,7 +152,6 @@ class TestScheduler:
         assert count == 0
         assert job.status == "pending"  # status should NOT change
 
-    @pytest.mark.asyncio
     async def test_dispatch_scheduled_jobs_empty(self, scheduler_deps):
         deps = scheduler_deps
         mock_result = MagicMock()
@@ -165,7 +161,6 @@ class TestScheduler:
         count = await deps["scheduler"]._dispatch_scheduled_jobs()
         assert count == 0
 
-    @pytest.mark.asyncio
     async def test_dispatch_scheduled_jobs_creates_job(self, scheduler_deps):
         deps = scheduler_deps
 
@@ -199,7 +194,8 @@ class TestScheduler:
         job.pinned_host = None
         assert scheduler._resolve_topic(job) == "netpalm.jobs.fifo"
 
-    def test_resolve_topic_pinned(self, mock_settings):
+    def test_resolve_topic_always_fifo(self, mock_settings):
+        """_resolve_topic always returns the fifo topic (single executor model)."""
         scheduler = Scheduler(
             db_factory=MagicMock(),
             producer=AsyncMock(),
@@ -208,4 +204,4 @@ class TestScheduler:
         job = MagicMock()
         job.queue_strategy = "pinned"
         job.pinned_host = "switch1"
-        assert scheduler._resolve_topic(job) == "netpalm.jobs.pinned.switch1"
+        assert scheduler._resolve_topic(job) == "netpalm.jobs.fifo"

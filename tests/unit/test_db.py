@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
-
 from netpalm.backend.core.db import get_db_session, get_engine, get_session_factory
 
 
@@ -45,7 +43,6 @@ class TestDbModule:
 
         mock_sessionmaker.assert_called_once_with(mock_engine, expire_on_commit=False)
 
-    @pytest.mark.asyncio
     @patch("netpalm.backend.core.db.get_session_factory")
     async def test_get_db_session_yields_session(self, mock_factory_fn):
         mock_session = MagicMock()
