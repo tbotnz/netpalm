@@ -22,15 +22,15 @@ Incremental replacement of the Redis/RQ task queue with Apache Kafka, migration 
     - Expose `get_settings()` function suitable for FastAPI `Depends()`
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 13.4_
 
-  - [ ] 2.2 Write property test for NetpalmSettings source priority (Property 1)
+  - [-] 2.2 Write property test for NetpalmSettings source priority (Property 1)
     - **Property 1: Configuration source priority**
     - **Validates: Requirements 1.1**
 
-  - [ ] 2.3 Write property test for invalid configuration rejection (Property 2)
+  - [~] 2.3 Write property test for invalid configuration rejection (Property 2)
     - **Property 2: Invalid configuration is rejected at startup**
     - **Validates: Requirements 1.2**
 
-  - [ ] 2.4 Write property test for api_key SecretStr masking (Property 3)
+  - [~] 2.4 Write property test for api_key SecretStr masking (Property 3)
     - **Property 3: API key is never exposed as plain text**
     - **Validates: Requirements 1.5, 15.3**
 
@@ -50,47 +50,47 @@ Incremental replacement of the Redis/RQ task queue with Apache Kafka, migration 
     - Update `Dockerfile` / entrypoint scripts so `alembic upgrade head` runs before the application starts
     - _Requirements: 14.3_
 
-- [ ] 4. Checkpoint — database layer
+- [~] 4. Checkpoint — database layer
   - Ensure ORM models import cleanly, Alembic migration applies without errors, and async session factory is importable. Ask the user if questions arise.
 
-- [ ] 5. QueueBroker
+- [~] 5. QueueBroker
   - [x] 5.1 Implement `QueueBroker` in `netpalm/backend/core/queue/broker.py`
     - Accept `AsyncSession` and `NetpalmSettings` in `__init__`
     - `enqueue_task()`: INSERT a `JobRecord` with `status=pending`; store `pinned_host` when `queue_strategy=pinned`; return `TaskResponse` immediately — no Kafka calls
     - `fetch_task()`: SELECT `JobRecord` by `task_id`; return `TaskResponse`; raise `TaskNotFoundError` if missing
     - _Requirements: 2.2, 2.3, 2.4, 2.5_
 
-  - [ ] 5.2 Write property test for job submission creates pending record (Property 5)
+  - [~] 5.2 Write property test for job submission creates pending record (Property 5)
     - **Property 5: Job submission creates a pending record**
     - **Validates: Requirements 2.2, 2.4**
 
-  - [ ] 5.3 Write property test for QueueBroker never calls Kafka (Property 6)
+  - [~] 5.3 Write property test for QueueBroker never calls Kafka (Property 6)
     - **Property 6: QueueBroker never calls Kafka directly**
     - **Validates: Requirements 2.3**
 
-  - [ ] 5.4 Write property test for pinned strategy persists host (Property 7)
+  - [~] 5.4 Write property test for pinned strategy persists host (Property 7)
     - **Property 7: Pinned strategy persists host on JobRecord**
     - **Validates: Requirements 2.5**
 
-- [ ] 6. Pydantic v2 request/response models
+- [~] 6. Pydantic v2 request/response models
   - [x] 6.1 Migrate all API request/response models to Pydantic v2 in `netpalm/backend/core/models/`
     - Update `GetConfig`, `SetConfig`, `Script`, `TaskResponse`, `ServiceTaskResponse`, `ServiceInstanceData`, `ServiceVersionSummary` to Pydantic v2 (`model_config`, `model_validator`, etc.)
     - Add `QueueStrategy` enum (`fifo` | `pinned`) and `TaskMessage` / `ResultMessage` Kafka payload models
     - Add `NetpalmEvent` Pydantic model (`source_topic`, `device_host`, `event_type`, `raw`, `data`)
     - _Requirements: 2.1, 17.1_
 
-  - [ ] 6.2 Write property test for invalid request bodies return HTTP 422 (Property 4)
+  - [~] 6.2 Write property test for invalid request bodies return HTTP 422 (Property 4)
     - **Property 4: Invalid request bodies return HTTP 422**
     - **Validates: Requirements 2.1**
 
-- [ ] 7. ServiceStore and state machine
+- [~] 7. ServiceStore and state machine
   - [x] 7.1 Implement `ServiceInstanceState` enum and `VALID_TRANSITIONS` table in `netpalm/backend/core/service/state_machine.py`
     - Define all six states: `deploying`, `deployed`, `updating`, `deleting`, `deleted`, `errored`
     - Define `VALID_TRANSITIONS` dict exactly as specified in the design
     - Define `InvalidStateTransitionError` and `ServiceVersionNotFoundError` exceptions
     - _Requirements: 8.1, 8.2_
 
-  - [ ] 7.2 Write property test for state machine rejects invalid transitions (Property 18)
+  - [~] 7.2 Write property test for state machine rejects invalid transitions (Property 18)
     - **Property 18: State machine rejects all invalid transitions**
     - **Validates: Requirements 8.1, 8.2**
 
@@ -102,37 +102,37 @@ Incremental replacement of the Redis/RQ task queue with Apache Kafka, migration 
     - On `updating→errored` transition, automatically call `rollback()`
     - _Requirements: 7.1, 7.2, 7.3, 8.1, 8.2, 8.3, 8.4, 8.5, 9.1, 9.2, 9.3_
 
-  - [ ] 7.4 Write property test for errored-from-updating triggers rollback (Property 19)
+  - [~] 7.4 Write property test for errored-from-updating triggers rollback (Property 19)
     - **Property 19: Errored-from-updating triggers automatic rollback**
     - **Validates: Requirements 8.3, 8.4**
 
-  - [ ] 7.5 Write property test for snapshot taken before mutating transitions (Property 20)
+  - [~] 7.5 Write property test for snapshot taken before mutating transitions (Property 20)
     - **Property 20: Snapshot is taken before every mutating transition and version increments monotonically**
     - **Validates: Requirements 9.1, 9.2**
 
-  - [ ] 7.6 Write property test for version list ordered descending (Property 21)
+  - [~] 7.6 Write property test for version list ordered descending (Property 21)
     - **Property 21: Version list is ordered descending**
     - **Validates: Requirements 9.4**
 
-- [ ] 8. Checkpoint — service layer
+- [~] 8. Checkpoint — service layer
   - Ensure `ServiceStore` and state machine tests pass. Ask the user if questions arise.
 
-- [ ] 9. CacheStore
+- [~] 9. CacheStore
   - [x] 9.1 Implement `CacheStore` in `netpalm/backend/core/cache/store.py`
     - Wrap `cachelib.RedisCache` with typed `get()`, `set()`, and `poison()` methods
     - `poison(host_port_key)` invalidates all cache entries for the given `host:port` key
     - Ensure no other component imports or uses Redis directly
     - _Requirements: 11.1, 11.3, 11.4_
 
-  - [ ] 9.2 Write property test for cache set/get round-trip (Property 23)
+  - [~] 9.2 Write property test for cache set/get round-trip (Property 23)
     - **Property 23: Cache set/get round-trip**
     - **Validates: Requirements 11.1**
 
-  - [ ] 9.3 Write property test for cache poison invalidates all entries for a host (Property 24)
+  - [~] 9.3 Write property test for cache poison invalidates all entries for a host (Property 24)
     - **Property 24: Cache poison invalidates all entries for a host**
     - **Validates: Requirements 11.3**
 
-- [ ] 10. NetpalmDriver ABC and DriverRegistry
+- [~] 10. NetpalmDriver ABC and DriverRegistry
   - [x] 10.1 Implement `NetpalmDriver` ABC in `netpalm/backend/core/driver/netpalm_driver.py`
     - Declare abstract methods `connect()`, `sendcommand()`, `config()`, `logout()` with typed signatures
     - Add `driver_name: str` class attribute
@@ -148,7 +148,7 @@ Incremental replacement of the Redis/RQ task queue with Apache Kafka, migration 
     - Preserve all existing driver behaviour
     - _Requirements: 10.5_
 
-- [ ] 11. EventListener ABC and EventListenerRegistry
+- [~] 11. EventListener ABC and EventListenerRegistry
   - [x] 11.1 Implement `EventListener` ABC in `netpalm/backend/plugins/event_listeners/base.py`
     - Declare `topics: list[str]` class attribute
     - Declare abstract methods `parse(raw: bytes) -> NetpalmEvent | None` and `async on_event(event: NetpalmEvent, manager: NetpalmManager) -> None`
@@ -161,15 +161,15 @@ Incremental replacement of the Redis/RQ task queue with Apache Kafka, migration 
     - `dispatch(topic, raw)`: for each listener on the topic, call `parse(raw)`; if non-None, call `on_event(event, manager)`
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.8_
 
-  - [ ] 11.3 Write property test for registry registers listeners against all declared topics (Property 26)
+  - [~] 11.3 Write property test for registry registers listeners against all declared topics (Property 26)
     - **Property 26: EventListenerRegistry registers listeners against all declared topics**
     - **Validates: Requirements 12.2, 12.8**
 
-  - [ ] 11.4 Write property test for dispatch calls on_event iff parse returns non-None (Property 27)
+  - [~] 11.4 Write property test for dispatch calls on_event iff parse returns non-None (Property 27)
     - **Property 27: Dispatch calls on_event iff parse returns non-None**
     - **Validates: Requirements 12.4, 12.5, 12.6**
 
-- [ ] 12. NetpalmManager
+- [~] 12. NetpalmManager
   - [x] 12.1 Implement `NetpalmManager` in `netpalm/backend/core/manager/netpalm_manager.py`
     - Accept `QueueBroker`, `ServiceStore`, `CacheStore` via constructor injection (no direct Kafka/Redis/DB access)
     - Implement `get_config()`, `set_config()`, `execute_script()`, `fetch_task()`
@@ -178,22 +178,22 @@ Incremental replacement of the Redis/RQ task queue with Apache Kafka, migration 
     - Remove inheritance from `Rediz`
     - _Requirements: 2.2, 7.1, 7.2, 7.3, 11.2, 17.5_
 
-  - [ ] 12.2 Write property test for cache hit prevents new job enqueue (Property 25)
+  - [~] 12.2 Write property test for cache hit prevents new job enqueue (Property 25)
     - **Property 25: Cache hit prevents new job enqueue**
     - **Validates: Requirements 11.2**
 
-  - [ ] 12.3 Write property test for service creation initialises correct records (Property 16)
+  - [~] 12.3 Write property test for service creation initialises correct records (Property 16)
     - **Property 16: Service creation initialises correct records**
     - **Validates: Requirements 7.1, 7.4**
 
-  - [ ] 12.4 Write property test for service update and delete trigger correct transitions (Property 17)
+  - [~] 12.4 Write property test for service update and delete trigger correct transitions (Property 17)
     - **Property 17: Service update and delete trigger correct transitions and jobs**
     - **Validates: Requirements 7.2, 7.3**
 
-- [ ] 13. Checkpoint — core layer
+- [~] 13. Checkpoint — core layer
   - Ensure all core layer tests pass (QueueBroker, ServiceStore, CacheStore, NetpalmManager). Ask the user if questions arise.
 
-- [ ] 14. Scheduler service
+- [~] 14. Scheduler service
   - [x] 14.1 Implement `Scheduler` in `netpalm/backend/core/scheduler/scheduler.py`
     - Accept `db_factory`, `AIOKafkaProducer`, and `NetpalmSettings` in `__init__`
     - `_relay_pending_jobs()`: SELECT pending `JobRecord` rows in batches; produce `TaskMessage` to the correct Kafka topic via `_resolve_topic()`; UPDATE `status=queued` only after `producer.flush()` succeeds; on Kafka failure log error and leave job as `pending`
@@ -206,27 +206,27 @@ Incremental replacement of the Redis/RQ task queue with Apache Kafka, migration 
     - Wire up `AsyncSession` factory, `AIOKafkaProducer`, `NetpalmSettings`, and `Scheduler`; call `scheduler.run()`
     - _Requirements: 3.6_
 
-  - [ ] 14.3 Write property test for outbox relay round-trip (Property 8)
+  - [~] 14.3 Write property test for outbox relay round-trip (Property 8)
     - **Property 8: Outbox relay round-trip (pending → Kafka → queued)**
     - **Validates: Requirements 3.2, 3.3**
 
-  - [ ] 14.4 Write property test for Kafka failure leaves jobs pending (Property 9)
+  - [~] 14.4 Write property test for Kafka failure leaves jobs pending (Property 9)
     - **Property 9: Kafka failure leaves jobs pending**
     - **Validates: Requirements 3.4**
 
-  - [ ] 14.5 Write property test for topic resolution correctness (Property 10)
+  - [~] 14.5 Write property test for topic resolution correctness (Property 10)
     - **Property 10: Topic resolution is correct for all strategies**
     - **Validates: Requirements 3.5**
 
-  - [ ] 14.6 Write property test for only due and enabled scheduled jobs are dispatched (Property 11)
+  - [~] 14.6 Write property test for only due and enabled scheduled jobs are dispatched (Property 11)
     - **Property 11: Only due and enabled scheduled jobs are dispatched**
     - **Validates: Requirements 4.1, 4.2**
 
-  - [ ] 14.7 Write property test for scheduled job next_run_at advances after dispatch (Property 12)
+  - [~] 14.7 Write property test for scheduled job next_run_at advances after dispatch (Property 12)
     - **Property 12: Scheduled job next_run_at advances after dispatch**
     - **Validates: Requirements 4.3**
 
-- [ ] 15. Executor service
+- [~] 15. Executor service
   - [x] 15.1 Implement `NetpalmExecutor` in `netpalm/backend/core/executor/executor.py`
     - Accept `AIOKafkaConsumer`, `AIOKafkaProducer`, `db_factory`, `DriverRegistry`, `EventListenerRegistry`, and `NetpalmSettings` in `__init__`
     - `run()`: subscribe to topics from `DriverRegistry` + `EventListenerRegistry.get_topics()`; poll loop calling `_handle_task()` for job messages and `EventListenerRegistry.dispatch()` for event messages
@@ -238,28 +238,28 @@ Incremental replacement of the Redis/RQ task queue with Apache Kafka, migration 
     - Wire up consumer, producer, DB factory, `DriverRegistry`, `EventListenerRegistry`, `NetpalmSettings`; call `executor.run()`
     - _Requirements: 5.6_
 
-  - [ ] 15.3 Write property test for executor updates job status through lifecycle (Property 13)
+  - [~] 15.3 Write property test for executor updates job status through lifecycle (Property 13)
     - **Property 13: Executor updates job status through lifecycle**
     - **Validates: Requirements 5.2, 5.3, 5.4**
 
-  - [ ] 15.4 Write property test for executor produces result to results topic (Property 14)
+  - [~] 15.4 Write property test for executor produces result to results topic (Property 14)
     - **Property 14: Executor produces result to results topic**
     - **Validates: Requirements 5.5**
 
-  - [ ] 15.5 Write property test for executor selects correct driver from registry (Property 22)
+  - [~] 15.5 Write property test for executor selects correct driver from registry (Property 22)
     - **Property 22: Executor selects correct driver from registry**
     - **Validates: Requirements 10.3, 10.4**
 
-- [ ] 16. Checkpoint — scheduler and executor
+- [~] 16. Checkpoint — scheduler and executor
   - Ensure scheduler and executor tests pass. Ask the user if questions arise.
 
-- [ ] 17. API routes and security
+- [~] 17. API routes and security
   - [x] 17.1 Update API security middleware in `netpalm/backend/core/security/get_api_key.py`
     - Read `api_key` from `NetpalmSettings` (via `get_settings()` dependency)
     - Return HTTP 401/403 for requests without a valid API key
     - _Requirements: 15.1, 15.2, 15.3_
 
-  - [ ] 17.2 Write property test for unauthenticated requests are rejected (Property 28)
+  - [~] 17.2 Write property test for unauthenticated requests are rejected (Property 28)
     - **Property 28: Unauthenticated requests are rejected**
     - **Validates: Requirements 15.1, 15.2**
 
@@ -272,7 +272,7 @@ Incremental replacement of the Redis/RQ task queue with Apache Kafka, migration 
     - Query `QueueBroker.fetch_task()`; return HTTP 404 if not found; return `status` and `result` fields
     - _Requirements: 6.1, 6.2, 6.3_
 
-  - [ ] 17.5 Write property test for task result retrieval reflects DB state (Property 15)
+  - [~] 17.5 Write property test for task result retrieval reflects DB state (Property 15)
     - **Property 15: Task result retrieval reflects DB state**
     - **Validates: Requirements 6.1, 6.3**
 
@@ -307,7 +307,7 @@ Incremental replacement of the Redis/RQ task queue with Apache Kafka, migration 
     - Set `NETPALM_DATABASE_URL`, `NETPALM_KAFKA_BOOTSTRAP_SERVERS`, `NETPALM_REDIS_SERVER` env vars on each service
     - _Requirements: 13.1, 13.2, 13.3, 13.5, 16.1, 16.2, 16.3, 16.4, 16.5, 16.6_
 
-- [ ] 20. Final checkpoint — full integration
+- [~] 20. Final checkpoint — full integration
   - Ensure all tests pass, all imports resolve, `alembic upgrade head` applies cleanly, and the docker-compose topology is consistent. Ask the user if questions arise.
 
 ## Notes
