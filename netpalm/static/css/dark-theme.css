@@ -55,7 +55,7 @@
   --np-shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.3);
   --np-shadow-md:      0 4px 12px rgba(0, 0, 0, 0.4);
   --np-shadow-lg:      0 8px 30px rgba(0, 0, 0, 0.5);
-  --np-shadow-glow:    0 0 20px rgba(88, 166, 255, 0.08);
+  --np-shadow-glow:    none;
 }
 
 
@@ -106,7 +106,7 @@ div.info {
   content: url(/static/images/netpalm_white.png);
   max-width: 200px;
   opacity: 0.9;
-  filter: drop-shadow(0 0 24px rgba(88, 166, 255, 0.12));
+  filter: none;
   margin-bottom: 8px !important;
 }
 
@@ -262,7 +262,7 @@ div.info {
 }
 .swagger-ui .opblock.opblock-get .opblock-summary-method {
   background: var(--np-get) !important;
-  box-shadow: 0 0 12px rgba(88, 166, 255, 0.25);
+  box-shadow: none;
 }
 .swagger-ui .opblock.opblock-get .opblock-summary {
   border-color: var(--np-get-border) !important;
@@ -275,7 +275,7 @@ div.info {
 }
 .swagger-ui .opblock.opblock-post .opblock-summary-method {
   background: var(--np-post) !important;
-  box-shadow: 0 0 12px rgba(63, 185, 80, 0.25);
+  box-shadow: none;
 }
 .swagger-ui .opblock.opblock-post .opblock-summary {
   border-color: var(--np-post-border) !important;
@@ -288,7 +288,7 @@ div.info {
 }
 .swagger-ui .opblock.opblock-put .opblock-summary-method {
   background: var(--np-put) !important;
-  box-shadow: 0 0 12px rgba(210, 153, 34, 0.25);
+  box-shadow: none;
 }
 .swagger-ui .opblock.opblock-put .opblock-summary {
   border-color: var(--np-put-border) !important;
@@ -301,7 +301,7 @@ div.info {
 }
 .swagger-ui .opblock.opblock-delete .opblock-summary-method {
   background: var(--np-delete) !important;
-  box-shadow: 0 0 12px rgba(248, 81, 73, 0.25);
+  box-shadow: none;
 }
 .swagger-ui .opblock.opblock-delete .opblock-summary {
   border-color: var(--np-delete-border) !important;
@@ -314,7 +314,7 @@ div.info {
 }
 .swagger-ui .opblock.opblock-patch .opblock-summary-method {
   background: var(--np-patch) !important;
-  box-shadow: 0 0 12px rgba(188, 140, 255, 0.25);
+  box-shadow: none;
 }
 
 /* Expand/collapse arrow */
@@ -432,7 +432,7 @@ div.info {
 .swagger-ui textarea:focus,
 .swagger-ui select:focus {
   border-color: var(--np-accent) !important;
-  box-shadow: 0 0 0 3px var(--np-accent-glow) !important;
+  box-shadow: none !important;
 }
 
 .swagger-ui textarea {
@@ -470,14 +470,13 @@ div.info {
   color: #fff !important;
   border: none !important;
   padding: 10px 24px !important;
-  box-shadow: 0 2px 8px rgba(88, 166, 255, 0.3) !important;
+  box-shadow: none !important;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
 .swagger-ui .btn.execute:hover {
-  box-shadow: 0 4px 16px rgba(88, 166, 255, 0.45) !important;
-  transform: translateY(-1px);
+  box-shadow: none !important;
 }
 
 /* Authorize */
@@ -580,7 +579,7 @@ div.info {
 .swagger-ui pre,
 .swagger-ui .opblock-body pre {
   background: var(--np-bg) !important;
-  color: #79c0ff !important;
+  color: inherit !important;
   border: 1px solid var(--np-border) !important;
   border-radius: var(--np-radius) !important;
   font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace !important;
@@ -591,7 +590,7 @@ div.info {
 
 .swagger-ui pre.microlight {
   background: var(--np-bg) !important;
-  color: #79c0ff !important;
+  color: inherit !important;
   border: 1px solid var(--np-border) !important;
   border-radius: var(--np-radius) !important;
   font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace !important;
@@ -669,7 +668,7 @@ div.info {
 }
 
 .swagger-ui .model .property {
-  color: #79c0ff !important;
+  color: inherit !important;
 }
 
 .swagger-ui .model .property.primitive {
@@ -693,7 +692,7 @@ div.info {
   background: var(--np-bg-raised) !important;
   border: 1px solid var(--np-border-strong) !important;
   border-radius: var(--np-radius-lg) !important;
-  box-shadow: var(--np-shadow-lg), 0 0 40px rgba(88, 166, 255, 0.06) !important;
+  box-shadow: var(--np-shadow-lg) !important;
   max-width: 560px;
 }
 
@@ -755,7 +754,7 @@ div.info {
 .swagger-ui .markdown code,
 .swagger-ui .renderedMarkdown code {
   background: var(--np-surface) !important;
-  color: #79c0ff !important;
+  color: inherit !important;
   padding: 2px 8px !important;
   border-radius: 4px !important;
   font-family: 'JetBrains Mono', monospace !important;
@@ -792,7 +791,7 @@ div.info {
 
 .swagger-ui .filter .operation-filter-input:focus {
   border-color: var(--np-accent) !important;
-  box-shadow: 0 0 0 3px var(--np-accent-glow) !important;
+  box-shadow: none !important;
 }
 
 
@@ -842,7 +841,7 @@ div.info {
    MISC OVERRIDES — catch remaining light-theme leaks
    ============================================================ */
 .swagger-ui .opblock-body pre.microlight span {
-  color: #a5d6ff !important;
+  color: inherit !important;
 }
 
 .swagger-ui svg.arrow {
