@@ -50,7 +50,7 @@ class restconf(NetpalmDriver):
     def sendcommand(self, session: Any = None, command: list[str] | Any = None) -> dict[str, Any]:
         try:
             # restconf get call
-            result = {}
+            result: dict[str, Any] = {}
             url = self.transport + "://" + self.host + ":" + str(self.port) + self.kwarg["uri"]
             response = requests.get(
                 url,
@@ -73,7 +73,7 @@ class restconf(NetpalmDriver):
 
     def config(self, session: Any = None, command: str | list[str] | Any = None, **kwargs: Any) -> dict[str, Any]:
         try:
-            result = {}
+            result: dict[str, Any] = {}
             url = self.transport + "://" + self.host + ":" + str(self.port) + self.kwarg["uri"]
             if hasattr(requests, str(self.action)):
                 response = getattr(requests, str(self.action))(
