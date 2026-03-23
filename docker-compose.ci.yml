@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - NET_TEXTFSM=/usr/local/lib/python3.12/site-packages/ntc_templates/templates/
-      - NETPALM_CONFIG=/code/config/config.json
+      - NETPALM_ENV_FILE=/code/config/.env
       - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
       - NETPALM_DATABASE_URL=postgresql+asyncpg://netpalm:netpalm@postgres:5432/netpalm
       - NETPALM_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
@@ -31,7 +31,7 @@ services:
       dockerfile: Dockerfile
     command: ["python", "-m", "netpalm.scheduler"]
     environment:
-      - NETPALM_CONFIG=/code/config/config.json
+      - NETPALM_ENV_FILE=/code/config/.env
       - NETPALM_DATABASE_URL=postgresql+asyncpg://netpalm:netpalm@postgres:5432/netpalm
       - NETPALM_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     networks:
@@ -48,7 +48,7 @@ services:
       dockerfile: Dockerfile
     command: ["python", "-m", "netpalm.executor"]
     environment:
-      - NETPALM_CONFIG=/code/config/config.json
+      - NETPALM_ENV_FILE=/code/config/.env
       - NETPALM_DATABASE_URL=postgresql+asyncpg://netpalm:netpalm@postgres:5432/netpalm
       - NETPALM_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - NETPALM_REDIS_SERVER=redis

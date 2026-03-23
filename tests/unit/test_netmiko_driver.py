@@ -5,7 +5,9 @@ from pytest_mock import MockerFixture
 
 from netpalm.exceptions import NetpalmMetaProcessedException
 from netpalm.backend.plugins.drivers.netmiko.netmiko_drvr import netmko
-from netpalm.backend.core.calls.getconfig.exec_command import exec_command
+from netpalm.backend.core.routes.routes import routes
+
+exec_command = routes["getconfig"]
 
 NETMIKO_COMMANDS = {
     "show run": """running config\na line\nanother line
@@ -20,14 +22,6 @@ NETMIKO_C_ARGS = {
         "username": "admin",
         "password": "admin"
     }
-
-
-@pytest.fixture()
-def rq_job(mocker: MockerFixture) -> MockerFixture:
-    mocked_get_current_job = mocker.patch('netpalm.backend.core.utilities.rediz_meta.get_current_job')
-    mocked_job = Mock()
-    mocked_job.meta = {"errors": []}
-    mocked_get_current_job.return_value = mocked_job
 
 
 @pytest.fixture()
@@ -68,7 +62,7 @@ def test_netmko_sendcommand(netmiko_connection_handler: Mock):
         assert result[command] == value.splitlines()
 
 
-def test_netmko_config(netmiko_connection_handler: Mock, rq_job):
+def test_netmko_config(netmiko_connection_handler: Mock):
     netmiko_driver = netmko(kwarg={}, connection_args={})
     mock_session = netmiko_driver.connect()
     netmiko_connection_handler.assert_called()  # make *certain* mock is getting used
@@ -105,7 +99,7 @@ def test_netmiko_gc_exec_command(netmiko_connection_handler: Mock):
     assert netmiko_connection_handler.session.disconnect.called
 
 
-def test_netmiko_gc_exec_command_post_checks(netmiko_connection_handler: Mock, rq_job):
+def test_netmiko_gc_exec_command_post_checks(netmiko_connection_handler: Mock):
     netmiko_command_list = list(NETMIKO_COMMANDS.keys())
 
     command, post_check_command = netmiko_command_list[0], netmiko_command_list[-1]
@@ -132,7 +126,7 @@ def test_netmiko_gc_exec_command_post_checks(netmiko_connection_handler: Mock, r
         result = exec_command(library="netmiko", command=command, connection_args=NETMIKO_C_ARGS, post_checks=[bad_post_check])
 
 
-def test_netmiko_gc_exec_command_ttp(netmiko_connection_handler: Mock, rq_job):
+def test_netmiko_gc_exec_command_ttp(netmiko_connection_handler: Mock):
     netmiko_command_list = list(NETMIKO_COMMANDS.keys())
 
     command = netmiko_command_list[0]

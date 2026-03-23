@@ -1,4 +1,3 @@
-import json
 import logging
 import time
 from json import JSONDecodeError
@@ -6,34 +5,18 @@ from json import JSONDecodeError
 import requests
 from typing import Dict, Tuple, List
 
+from netpalm.backend.core.confload.confload import get_settings
+
 log = logging.getLogger(__name__)
-CONFIG_FILENAME = "config/config.json"
-DEFAULTS_FILENAME = "config/defaults.json"
-
-
-def load_config_files(defaults_filename: str = DEFAULTS_FILENAME, config_filename: str = CONFIG_FILENAME) -> dict:
-    data = {}
-
-    for fname in (defaults_filename, config_filename):
-        try:
-            with open(fname) as infil:
-                data.update(json.load(infil))
-        except FileNotFoundError:
-            log.warning(f"Couldn't find {fname}")
-
-    if not data:
-        raise RuntimeError(f"Could not find either {defaults_filename} or {config_filename}")
-
-    return data
 
 
 class NetpalmTestHelper:
 
     def __init__(self):
-        data = load_config_files()
-        self.apikey = data["api_key"]
+        settings = get_settings()
+        self.apikey = settings.api_key.get_secret_value()
         self.ip = '127.0.0.1'
-        self.port = data["listen_port"]
+        self.port = settings.listen_port
         self.base_url = f"http://{self.ip}:{self.port}"
         self.headers = {'Content-type': 'application/json', 'Accept': 'text/plain', 'x-api-key': self.apikey}
         # test devices go here

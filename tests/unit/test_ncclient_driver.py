@@ -6,7 +6,9 @@ from pytest_mock import MockerFixture
 
 from netpalm.exceptions import NetpalmMetaProcessedException
 from netpalm.backend.plugins.drivers.ncclient.ncclient_drvr import ncclien
-from netpalm.backend.core.calls.getconfig.exec_command import exec_command
+from netpalm.backend.core.routes.routes import routes
+
+exec_command = routes["getconfig"]
 
 NCCLIENT_C_ARGS = {
     "device_type": "cisco_ios",
@@ -16,16 +18,6 @@ NCCLIENT_C_ARGS = {
     "username": "admin",
     "password": "admin",
 }
-
-
-@pytest.fixture()
-def rq_job(mocker: MockerFixture) -> MockerFixture:
-    mocked_get_current_job = mocker.patch(
-        "netpalm.backend.core.utilities.rediz_meta.get_current_job"
-    )
-    mocked_job = Mock()
-    mocked_job.meta = {"errors": []}
-    mocked_get_current_job.return_value = mocked_job
 
 
 @pytest.fixture()
@@ -45,7 +37,7 @@ def ncclient_manager(mocker: MockerFixture) -> MockerFixture:
     return manager
 
 
-def test_ncclient_connect(ncclient_manager: Mock, rq_job):
+def test_ncclient_connect(ncclient_manager: Mock):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     ncclient_driver = ncclien(kwarg={}, connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
@@ -53,7 +45,7 @@ def test_ncclient_connect(ncclient_manager: Mock, rq_job):
     ncclient_manager.connect.assert_called_with(**c_arg_copy)
 
 
-def test_ncclient_getmethod_empty_args(ncclient_manager: Mock, rq_job):
+def test_ncclient_getmethod_empty_args(ncclient_manager: Mock):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     ncclient_driver = ncclien(connection_args=c_arg_copy)
     sesh = ncclient_driver.connect()
@@ -61,7 +53,7 @@ def test_ncclient_getmethod_empty_args(ncclient_manager: Mock, rq_job):
         result = ncclient_driver.getmethod(sesh)
 
 
-def test_ncclient_getmethod(ncclient_manager: Mock, rq_job):
+def test_ncclient_getmethod(ncclient_manager: Mock):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     args = {
         "source": "running",
@@ -76,7 +68,7 @@ def test_ncclient_getmethod(ncclient_manager: Mock, rq_job):
     assert result["get_config"] is sesh.get().data_xml
 
 
-def test_ncclient_getmethod_rjson(ncclient_manager: Mock, rq_job, xml_parse):
+def test_ncclient_getmethod_rjson(ncclient_manager: Mock, xml_parse):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     args = {
         "source": "running",
@@ -96,7 +88,7 @@ def test_ncclient_getmethod_rjson(ncclient_manager: Mock, rq_job, xml_parse):
     assert result["get_config"] is xml_parse()
 
 
-def test_ncclient_getconfig(ncclient_manager: Mock, rq_job):
+def test_ncclient_getconfig(ncclient_manager: Mock):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     args = {
         "source": "running",
@@ -111,7 +103,7 @@ def test_ncclient_getconfig(ncclient_manager: Mock, rq_job):
     assert result["get_config"] is sesh.get_config().data_xml
 
 
-def test_ncclient_getconfig_rjson(ncclient_manager: Mock, rq_job, xml_parse):
+def test_ncclient_getconfig_rjson(ncclient_manager: Mock, xml_parse):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     args = {
         "source": "running",
@@ -129,7 +121,7 @@ def test_ncclient_getconfig_rjson(ncclient_manager: Mock, rq_job, xml_parse):
     assert result["get_config"] is xml_parse()
 
 
-def test_ncclient_getconfig_rpc(ncclient_manager: Mock, rq_job):
+def test_ncclient_getconfig_rpc(ncclient_manager: Mock):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     args = {
         "source": "running",
@@ -145,7 +137,7 @@ def test_ncclient_getconfig_rpc(ncclient_manager: Mock, rq_job):
     assert result["get_config"] is sesh.rpc().data_xml
 
 
-def test_ncclient_getconfig_rpc_rjson(ncclient_manager: Mock, rq_job, xml_parse):
+def test_ncclient_getconfig_rpc_rjson(ncclient_manager: Mock, xml_parse):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     args = {
         "source": "running",
@@ -164,7 +156,7 @@ def test_ncclient_getconfig_rpc_rjson(ncclient_manager: Mock, rq_job, xml_parse)
     assert result["get_config"] is xml_parse()
 
 
-def test_ncclient_config(ncclient_manager: Mock, rq_job):
+def test_ncclient_config(ncclient_manager: Mock):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     args = {
         "source": "running",
@@ -181,7 +173,7 @@ def test_ncclient_config(ncclient_manager: Mock, rq_job):
     assert not sesh.discard_changes.called
 
 
-def test_ncclient_config_rjson(ncclient_manager: Mock, rq_job, xml_parse):
+def test_ncclient_config_rjson(ncclient_manager: Mock, xml_parse):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     args = {
         "source": "running",
@@ -199,7 +191,7 @@ def test_ncclient_config_rjson(ncclient_manager: Mock, rq_job, xml_parse):
     assert result["edit_config"] is xml_parse()
 
 
-def test_ncclient_config_dry_run(ncclient_manager: Mock, rq_job):
+def test_ncclient_config_dry_run(ncclient_manager: Mock):
     c_arg_copy = NCCLIENT_C_ARGS.copy()
     args = {
         "source": "running",
@@ -216,7 +208,7 @@ def test_ncclient_config_dry_run(ncclient_manager: Mock, rq_job):
     assert sesh.discard_changes.called
 
 
-def test_ncclient_gc_exec_command(ncclient_manager: Mock, rq_job):
+def test_ncclient_gc_exec_command(ncclient_manager: Mock):
     args = {
         "source": "running",
         "filter": "<filter type='subtree'>"

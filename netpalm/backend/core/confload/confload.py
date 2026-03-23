@@ -8,7 +8,7 @@ from typing import Any, Optional
 
 import yaml
 from pydantic import SecretStr, field_validator
-from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, SettingsConfigDict
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from netpalm.backend.core.security.whitelist import DeviceWhitelist
 
@@ -18,8 +18,7 @@ except AttributeError:
     yaml_loader = yaml.SafeLoader
 
 log = logging.getLogger(__name__)
-CONFIG_FILENAME = "config/config.json"
-DEFAULTS_FILENAME = "config/defaults.json"
+DEFAULT_ENV_FILE = "config/.env"
 
 
 class ScrubFilter(logging.Filter):
@@ -55,57 +54,20 @@ class ScrubFilter(logging.Filter):
         return result
 
 
-def _load_json_file(filename: str) -> dict[str, Any]:
-    """Load a JSON config file, returning an empty dict if not found."""
-    try:
-        with open(filename) as f:
-            data = json.load(f)
-        # Strip comment keys
-        return {k: v for k, v in data.items() if not k.startswith("__")}
-    except FileNotFoundError:
-        log.warning(f"Couldn't find {filename}")
-        return {}
-
-
-class JsonConfigSettingsSource(PydanticBaseSettingsSource):
-    """
-    Custom pydantic-settings source that loads from defaults.json then config.json.
-    Priority (lowest to highest): defaults.json < config.json < env vars.
-    """
-
-    def __init__(
-        self,
-        settings_cls: type[BaseSettings],
-        defaults_filename: str = DEFAULTS_FILENAME,
-        config_filename: str = CONFIG_FILENAME,
-    ) -> None:
-        super().__init__(settings_cls)
-        self._data: dict[str, Any] = {}
-        defaults = _load_json_file(defaults_filename)
-        config = _load_json_file(config_filename)
-        # config.json overrides defaults.json
-        self._data = {**defaults, **config}
-
-    def get_field_value(self, field: Any, field_name: str) -> tuple[Any, str, bool]:
-        val = self._data.get(field_name)
-        return val, field_name, False
-
-    def __call__(self) -> dict[str, Any]:
-        return self._data
-
-
 class NetpalmSettings(BaseSettings):
     """
     Single source of truth for all application configuration.
 
     Priority order (lowest → highest):
-      1. defaults.json
-      2. config.json
+      1. Field defaults (below)
+      2. config/.env file
       3. NETPALM_* environment variables
     """
 
     model_config = SettingsConfigDict(
         env_prefix="NETPALM_",
+        env_file=os.getenv("NETPALM_ENV_FILE", DEFAULT_ENV_FILE),
+        env_file_encoding="utf-8",
         env_ignore_empty=True,
         extra="ignore",
     )
@@ -191,7 +153,6 @@ class NetpalmSettings(BaseSettings):
     device_whitelist: list[str] = []
 
     # Runtime (not from config file)
-    config_filename: str = CONFIG_FILENAME
     worker_name: str = "NOT A WORKER"
 
     # Computed after init
@@ -204,23 +165,12 @@ class NetpalmSettings(BaseSettings):
             raise ValueError("kafka_bootstrap_servers must not be empty or whitespace-only")
         return v
 
+    @field_validator("default_webhook_headers", mode="before")
     @classmethod
-    def settings_customise_sources(
-        cls,
-        settings_cls: type[BaseSettings],
-        init_settings: PydanticBaseSettingsSource,
-        env_settings: PydanticBaseSettingsSource,
-        dotenv_settings: PydanticBaseSettingsSource,
-        file_secret_settings: PydanticBaseSettingsSource,
-    ) -> tuple[PydanticBaseSettingsSource, ...]:
-        config_filename = os.getenv("NETPALM_CONFIG", CONFIG_FILENAME)
-        json_source = JsonConfigSettingsSource(
-            settings_cls,
-            defaults_filename=DEFAULTS_FILENAME,
-            config_filename=config_filename,
-        )
-        # Priority (highest first): env vars > config.json/defaults.json > init kwargs
-        return (env_settings, json_source, init_settings)
+    def parse_webhook_headers(cls, v: Any) -> dict[str, str]:
+        if isinstance(v, str):
+            return json.loads(v)
+        return v
 
     def model_post_init(self, __context: Any) -> None:
         self.whitelist = DeviceWhitelist(self.device_whitelist)
@@ -242,8 +192,9 @@ class NetpalmSettings(BaseSettings):
 
     @property
     def project_root(self) -> str:
-        config_file_path = Path(self.config_filename).absolute()
-        return str(config_file_path.parent)
+        env_file = os.getenv("NETPALM_ENV_FILE", DEFAULT_ENV_FILE)
+        env_file_path = Path(env_file).absolute()
+        return str(env_file_path.parent)
 
     def _find_actual_tfsm_path(self) -> str:
         potentials = [
