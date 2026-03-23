@@ -242,6 +242,64 @@ Scripts get auto-documented in the Swagger UI. Jinja2 templates get auto-generat
 - **NAPALM getters** — vendor-abstracted structured data
 - **XML to JSON** — automatic NETCONF response rendering
 
+### Events & Webhooks
+
+netpalm has a Kafka-native event system. External events (syslog, SNMP traps) flow in, job results flow out, and webhooks fire on task completion.
+
+```mermaid
+graph LR
+    subgraph "Inbound Events"
+        Syslog["Syslog Source"]
+        SNMP["SNMP Trap Source"]
+    end
+
+    subgraph Kafka
+        ST["netpalm.events.syslog"]
+        SNT["netpalm.events.snmp-trap"]
+        JF["netpalm.jobs.fifo"]
+        JP["netpalm.jobs.pinned.*"]
+        RT["netpalm.results"]
+    end
+
+    subgraph netpalm
+        EL["Event Listeners
+        (user-defined)"]
+        Executor
+        Manager["NetpalmManager"]
+    end
+
+    subgraph "Outbound"
+        WH["Webhooks
+        (REST, Elastic,
+        ServiceNow, ...)"]
+    end
+
+    Syslog --> ST
+    SNMP --> SNT
+    ST & SNT --> EL
+    EL -->|"triggers actions via"| Manager
+    Manager -->|"enqueues jobs"| JF & JP
+    JF & JP --> Executor
+    Executor --> RT
+    Executor -->|"on completion"| WH
+```
+
+**Inbound** — External systems publish to Kafka event topics. User-defined `EventListener` plugins subscribe to topics, parse messages, and react by calling the manager (e.g. auto-remediate a syslog alert by pushing config).
+
+**Outbound** — When any operation completes, an optional webhook fires. Built-in webhooks include REST POST, Elasticsearch indexing, and ServiceNow patching. Add your own in `netpalm/backend/plugins/extensibles/custom_webhooks/`.
+
+**Kafka topics:**
+
+| Topic | Direction | Purpose |
+|-------|-----------|---------|
+| `netpalm.jobs.fifo` | Internal | FIFO job queue |
+| `netpalm.jobs.pinned.{host}` | Internal | Per-device pinned queue |
+| `netpalm.results` | Internal | Task execution results |
+| `netpalm.events.syslog` | Inbound | Syslog events from external sources |
+| `netpalm.events.snmp-trap` | Inbound | SNMP trap events from external sources |
+
+Event listeners are auto-discovered from `netpalm/backend/plugins/event_listeners/`.
+
 ## Scaling
 
 Every component scales independently. Executors are stateless Kafka consumers — add more to increase throughput.
